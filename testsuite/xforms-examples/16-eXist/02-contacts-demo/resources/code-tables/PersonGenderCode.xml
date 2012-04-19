@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>PersonGenderCode PersonSexCode Gender</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Female</Label>
+         <Value>female</Value>
+      </Item>
+      <Item>
+         <Label>Male</Label>
+         <Value>male</Value>
+      </Item>
+      <Item>
+         <Label>Unknown</Label>
+         <Value>unknown</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

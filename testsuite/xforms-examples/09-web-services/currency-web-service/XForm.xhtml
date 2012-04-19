@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:ev="http://www.w3.org/2001/xml-events"  
+xmlns:xf="http://www.w3.org/2002/xforms"
+xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+xmlns:m="urn:xmethods-CurrencyExchange"
+xmlns:n="urn:xmethods-CurrencyExchange">
+   <head>
+      <title>Submit CRV Example</title>
+      <style type="text/css">
+         @namespace xf url("http://www.w3.org/2002/xforms");
+         body {font-family: Helvetica, sans-serif}
+         .code {font-family: Courier New, fixed-width; font-weight:bold;}
+         .error-message {font-weight:bold; color: red}
+         .ok {font-weight:bold; color: green}
+         xf|output {font-weight:bold; font-size: 16pt}
+      </style>
+      <xf:model id="my-model">
+      
+          <!-- read in the country file -->
+         <xf:instance id="country-list" src="country-list.xml" xmlns=""/>
+         
+         <!-- country variables -->
+         <xf:instance id="country-vars" xmlns="">
+            <Data>
+               <From>usa</From>
+               <To>euro</To>
+            </Data>
+         </xf:instance>
+         <!-- What we send to the web service -->
+         <xf:instance id="submit-instance" xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+            <env:Envelope>
+               <env:Body>
+                  <m:getRate env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+                     <country1 xsi:type="xsd:string">usa</country1>
+                     <country2 xsi:type="xsd:string">euro</country2>
+                  </m:getRate>
+               </env:Body>
+            </env:Envelope>
+         </xf:instance>
+       
+       <!-- what gets returned 
+       <?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+   <soap:Body>
+      <n:getRateResponse xmlns:n="urn:xmethods-CurrencyExchange">
+         <Result xsi:type="xsd:float">0.7849</Result>
+      </n:getRateResponse>
+   </soap:Body>
+</soap:Envelope>
+-->
+
+      <xf:instance id="results-instance" xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+         <env:Envelope>
+            <env:Body>
+                  <n:getRateResponse xmlns:n="urn:xmethods-CurrencyExchange">
+                     <Result xsi:type="xsd:float">0</Result>
+                  </n:getRateResponse>
+            </env:Body>
+         </env:Envelope>
+      </xf:instance>
+         <!-- /env:Envelope/env:Body/m:ecrvTestResponse/result -->
+         <xf:bind id="results-bind" nodeset="instance('results-instance')/env:Envelope"/>
+         
+         <!-- just return the results into the results-instance -->
+
+         <xf:submission id="currency-exchange-web-service"
+            action="http://www.xmethods.net/sd/2001/CurrencyExchangeService.wsdl" 
+            method="post" 
+            mediatype="text/xml"
+            ref="instance('submit-instance')"
+            replace="instance" 
+            instance="results-instance">
+            <xf:toggle case="case-busy" ev:event="xforms-submit" />
+            <xf:toggle case="case-submit-error" ev:event="xforms-submit-error" />
+            <xf:toggle case="case-done" ev:event="xforms-submit-done" />         
+         </xf:submission>
+         
+         <!-- replace current page with output with the ruturned SOAP response-->
+         <xf:submission
+            id="view-soap-response"
+            action="http://www.xmethods.net/sd/2001/CurrencyExchangeService.wsdl"
+            method="post"
+            mediatype="text/xml"
+            ref="instance('submit-instance')"
+            replace="all">
+            <xf:toggle case="case-busy" ev:event="xforms-submit" />
+            <xf:toggle case="case-submit-error" ev:event="xforms-submit-error" />
+            <xf:toggle case="case-done" ev:event="xforms-submit-done" />         
+         </xf:submission>
+      </xf:model>
+
+   </head>
+   <body>
+      <h1>Currency Exchange Web Service Demo</h1>
+         <p>Note: You must add <span class="code">www.xmethods.net</span> to your XForms white list for this application to run.  In FireFox see Tools/Options/Content, check box and add URLs to Allowed Sites.</p>
+         
+      <xf:group model="my-model">
+      <xf:select1 ref="instance('country-vars')/From">
+         <xf:label>From: </xf:label>
+         <xf:itemset model="my-model" nodeset="instance('country-list')">
+             <xf:label ref=""/>
+             <xf:value ref="."/>
+         </xf:itemset>
+      </xf:select1>
+      
+      <xf:select1 ref="instance('country-vars')/To">
+         <xf:label>To: </xf:label>
+         <xf:itemset model="my-model" nodeset="instance('country-list')">
+             <xf:label ref="."/>
+             <xf:value ref="."/>
+         </xf:itemset>
+      </xf:select1>
+      <xf:submit submission="currency-exchange-web-service">
+         <xf:label>Submit Document</xf:label>
+      </xf:submit>
+         
+      <xf:submit submission="view-soap-response">
+         <xf:label>View SOAP Response in XML</xf:label>
+      </xf:submit>
+      <hr/>
+         <p>Status:</p>
+          <xf:switch>
+            <xf:case id="case-start">Status: Ready to send</xf:case>
+            <xf:case id="case-busy">Waiting for response...</xf:case>
+            <xf:case id="case-submit-error">
+               <p class="error-message">Submission error. Did you remember to allow XForms to submit data to other domains?</p>
+            </xf:case>
+            <xf:case id="case-done">
+               <p class="ok">Results returned successfully</p>
+               
+
+          <xf:output ref="instance('results-instance')/n:getRateResponse/Result">
+               <xf:label>Exchange Rate: </xf:label>
+            </xf:output>
+
+         </xf:case>
+         </xf:switch>
+         </xf:group>
+         <br/>
+         <p>Reference URLs:</p>
+         <a href="http://services.xmethods.net/ve2/ViewListing.po;jsessionid=HOnEmFX-CDGsJ7JLBKs37HhT(QHyMHiRM)?key=uuid:D784C184-99B2-DA25-ED45-3665D11A12E5">X-methods Currency Exchange Web Service</a>
+         <p>WSDL File</p>
+         <a href="http://www.xmethods.net/sd/2001/CurrencyExchangeService.wsdl">WSDL File</a>
+   </body>
+</html>

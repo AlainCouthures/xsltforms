@@ -1,0 +1,71 @@
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+.group-label {position: relative; top:-14px;}
+.multiple-buyers {margin-bottom:50px;}
+
+xf|input > xf|label, xf|select > xf|label, xf|select1 > xf|label, xf|textarea > xf|label {width:200px; float:left;}
+xf|repeat {background:#ddd; width:100%;}
+/* the line below causes a number of problems with the county edit tab - this needs to be fixed */
+/*xf|repeat .xf-value {padding:2px; margin:2px 5px 7px 5px;}*/
+
+/* personal worksheet stuff - needs to be tidied up a bit  */
+#table-worksheet xf|repeat .xf-value {padding:2px; margin:2px 5px 7px 5px;}
+/*#table-worksheet xf|repeat {float:left; padding:0;}*/
+#table-worksheet xf|repeat .xf-repeat-item {height:40px; width:954px;}
+#table-worksheet xf|repeat .xf-repeat-index {width:954px; height:40px;} 
+#table-worksheet xf|repeat .xf-value {border:1px solid #555; float:left; } 
+#table-worksheet {margin:0; padding:0; border:0;}
+#table-worksheet .worksheet-total  {color:white; font-size:1.6em; text-align:right;}
+
+.table-header {background:#4d9471; float:left; width:100%;}
+.column-header-SalesAgreementPersonalPropertyDescriptionText {color:#fff; font-size:1.4em; width:570px; font-weight:bold; float:left; padding:3px;}
+.column-header-SalesAgreementPersonalPropertyAmount {color:#fff; font-size:1.4em; font-weight:bold; float:left; padding:3px;}
+.table-footer {background:#4d9471; float:left; width:100%; margin-bottom:10px;}
+.column-footer-SalesAgreementPersonalPropertyDescriptionText {color:#fff; font-size:1.4em; width:570px; font-weight:bold; float:left; text-align:right; padding:3px;}
+#name-input .xf-value {width:560px;}
+
+xf|group {clear:both;}
+
+/* adding paddding around the multi-line-selectors for the buyer/seller categories */
+#buyers-selection xf|repeat .xf-value, #buyers-organization-selection xf|repeat .xf-value, #sellers-selection xf|repeat .xf-value, #sellers-organization-selection xf|repeat .xf-value {padding:2px; margin:2px 5px 7px 5px;}
+#buyers-selection, #buyers-organization-selection, #sellers-selection, #sellers-organization-selection {float:left;}
+#buyers-headers, #buyers-organization-headers, #sellers-headers, #sellers-organization-headers {float:left; width:955px; height:30px; background:#ff2f55;}
+#buyers-headers xf|label, #buyers-organization-headers xf|label, #sellers-headers xf|label, #sellers-organization-headers xf|label {float:left; width:48%; display:block; color:white; font-weight:bold; font-size:1.3em; padding:5px;}
+
+/*make sellers headers orange to indicate what records the user is viewing */
+#sellers-headers, #sellers-organization-headers {background:#ff6e2f;}
+
+#buyers-select, #buyers-organization-select, #sellers-select, #sellers-organization-select {float:left; width:953px;}
+#buyers-select xf|repeat, #buyers-organization-select xf|repeat, #sellers-select xf|repeat, #sellers-organization-select xf|repeat {float:left;}
+#buyers-select xf|input .xf-value, #buyers-organization-select xf|input .xf-value, #sellers-select xf|input .xf-value, #sellers-organization-select xf|input .xf-value, #table-worksheet xf|input .xf-value {width:47%; float:left;} 
+#buyers-select xf|repeat .xf-repeat-item, #buyers-organization-select xf|repeat .xf-repeat-item, #sellers-select xf|repeat .xf-repeat-item, #sellers-organization-select xf|repeat .xf-repeat-item {width:953px; float:left; height:40px; color:#888; }
+#buyers-select xf|repeat .xf-repeat-index, #buyers-organization-select xf|repeat .xf-repeat-index, #sellers-select xf|repeat .xf-repeat-index, #sellers-organization-select xf|repeat .xf-repeat-index, {width:953px; border:1px dotted black; height:40px;}
+
+/* make all greyed out fields on the repeat-selections look the same */
+#buyers-select xf|input:required .xf-value, #sellers-select xf|input:required .xf-value {background:#ddd; color:#888;}
+/* creating a separate css rule for organizations - as the greyed out fields are not required as they are with the person rules */
+#buyers-organization-select xf|input .xf-value, #sellers-organization-select xf|input .xf-value {background:#ddd; color:#888;}
+
+#buyers-select xf|repeat .xf-repeat-index .xf-value, #buyers-organization-select xf|repeat .xf-repeat-index .xf-value, #sellers-select xf|repeat .xf-repeat-index .xf-value, #sellers-organization-select xf|repeat .xf-repeat-index .xf-value  {background:white; color:black;}
+
+#buyers-select xf|label, #buyers-organization-select xf|label, #sellers-select xf|label #sellers-organization-select xf|label {float:left;}
+#buyers-select *:required::after, #buyers-organization-select *:required::after, #sellers-select *:required::after, #sellers-organization-select *:required::after {display:none;}
+
+xf|textarea .xf-value {width:450px;}
+.large-textarea .xf-value {width:480px;}
+
+xf|select .xf-value, xf|select1 .xf-value {width:150px;}
+
+#farm-view xf|input {height:40px;}
+
+#remove-debug a {display:none;}
+#remove-debug img {display:none;}
+
+/* county edit stylings 
+#parcel-class-and-values {float:left; clear:both;}
+#parcel-class-and-values xf|repeat .xf-repeat-item {width:100%;float:left; border-bottom:10px solid white;}
+#parcel-class-and-values xf|repeat .xf-value {width:100%; border:1px solid red;}*/
+/*xf|select1, xf|input, xf|textarea {width:100% clear:both;}*/
+
+/* county edit stylings */
+#reject-reason-code-repeat{}

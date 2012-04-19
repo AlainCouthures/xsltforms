@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude">
+   <head>
+      <link rel="stylesheet" href="PieChart.css" type="text/css" />
+      <title>Sample Tax Form</title>
+      <script type="text/javascript" src="TaxForm.js" />
+      <xf:model id="theModel">
+         <xf:instance id="theData">
+            <charts xmlns="">
+               <piechart>
+                  <wedge01>120</wedge01>
+                  <wedge02>120</wedge02>
+                  <wedge03>120</wedge03>
+                  <wedge04>0.00</wedge04>
+               </piechart>
+            </charts>
+         </xf:instance>
+         <!-- Section 2 -->
+         <xf:bind nodeset="/charts/piechart/wedge01" type="xsd:decimal" />
+         <xf:bind nodeset="/charts/piechart/wedge02" type="xsd:decimal"  />
+         <xf:bind nodeset="/charts/piechart/wedge03" type="xsd:decimal" />
+         <xf:bind nodeset="/charts/piechart/wedge04" type="xsd:decimal" />
+         <xf:bind nodeset="/charts/piechart/wedge04" calculate="/charts/piechart/wedge01 + /charts/piechart/wedge02 + /charts/piechart/wedge03" />
+      </xf:model>
+   </head>
+   <body onload="showChart('chart')">
+      <h1>PieChart</h1>
+      <p>This is an example of the use of XForms.</p>
+      <div id="chart">
+         <!-- Placeholder for chart.  Javascript will load here. -->
+      </div>
+       <br />
+      <xf:range ref="/charts/piechart/wedge01" id="s2l1" start="0" end="360" incremental="true">
+         <xf:label>red</xf:label>
+         <xf:action ev:event="xforms-value-changed">
+            <xf:load resource="javascript:updateChart('chart')" />
+         </xf:action>
+      </xf:range>
+      <br />
+      <xf:range ref="/charts/piechart/wedge02" start="0" end="360" incremental="true">
+         <xf:label>orange</xf:label>
+         <xf:action ev:event="xforms-value-changed">
+            <xf:load resource="javascript:updateChart('chart')" />
+         </xf:action>
+      </xf:range>
+      <br />
+      <xf:range ref="/charts/piechart/wedge03" start="0" end="360" incremental="true">
+         <xf:label>yellow</xf:label>
+         <xf:action ev:event="xforms-value-changed">
+            <xf:load resource="javascript:updateChart('chart')" />
+         </xf:action>
+      </xf:range>
+   </body>
+</html>

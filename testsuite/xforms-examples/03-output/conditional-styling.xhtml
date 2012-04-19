@@ -1,0 +1,56 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ev="http://www.w3.org/2001/xml-events"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+       <title>Conditional Display</title>
+       <style type="text/css">
+          @namespace xf url("http://www.w3.org/2002/xforms");
+          body {font-family:Helvetica, sans-serif}
+          .strong {font-weight:bold;}
+          /* this puts everything under the repeat element into a single line */
+          xf|repeat * {display:inline;}
+       </style>
+       <xf:model>
+          <xf:instance xmlns="" id="current-synset">
+            <data>
+               <synset-id>3</synset-id>
+               <synonym>
+                   <preferred>false</preferred>
+                   <syn-name>Boolean-Value</syn-name>
+               </synonym>
+                <synonym>
+                   <preferred>false</preferred>
+                   <syn-name>Conditional-Value</syn-name>
+               </synonym>
+               <synonym>
+                   <preferred>false</preferred>
+                   <syn-name>Flag</syn-name>
+               </synonym>
+                <synonym>
+                   <preferred>true</preferred>
+                   <syn-name>Indicator</syn-name>
+               </synonym>
+                <synonym>
+                   <preferred>false</preferred>
+                   <syn-name>Yes/No-Value</syn-name>
+               </synonym>
+            </data>
+          </xf:instance>
+       </xf:model>
+    </head>
+    <body>
+       <h3>Synonym Set</h3>
+       <span>(preferred term is bold)</span><br/>
+       <xf:label>Synonyms: </xf:label>
+          <xf:repeat nodeset="instance('current-synset')/synonym" id="repeat">
+             <xf:group ref=".[preferred='true']">
+                <xf:output ref="syn-name" class="strong"/>
+             </xf:group>
+              <xf:group ref=".[preferred='false']">
+                <xf:output ref="syn-name"/>
+             </xf:group>  
+          </xf:repeat>
+    </body>
+</html>

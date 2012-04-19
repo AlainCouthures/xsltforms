@@ -1,0 +1,61 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="getLocationPath.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template name="getPredicates" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="s"/>
+			<xsl:param name="r"/>
+			<xsl:param name="l" select="0"/>
+			<xsl:variable name="p">
+				<xsl:variable name="t"><xsl:call-template name="xp2js"><xsl:with-param name="xp" select="$s"/></xsl:call-template></xsl:variable>
+				<xsl:choose>
+					<xsl:when test="contains($t,'~~~~')">
+						<xsl:variable name="msg">"~~~~<xsl:value-of select="substring-after(translate(substring-before(concat($t,'~#~#'),'~#~#'),'&quot;',''),'~~~~')"/> in '<xsl:value-of select="$s"/>'~#~#"</xsl:variable>
+						<xsl:value-of select="string-length($s)-number(substring-before($t,'.'))+1"/>.<xsl:value-of select="$msg"/>
+					</xsl:when>
+					<xsl:when test="$t != ''">
+						<xsl:value-of select="string-length($s)-number(substring-before($t,'.'))+1"/>.,new XsltForms_predicateExpr(<xsl:value-of select="substring-after($t,'.')"/><xsl:text>)</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:variable name="msg">"~~~~Unrecognized expression '<xsl:value-of select="$s"/>'~#~#"</xsl:variable>
+						<xsl:value-of select="string-length($s)-number(substring-before($t,'.'))+1"/>.<xsl:value-of select="$msg"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="substring($s,number(substring-before($p,'.')),1)='['">
+					<xsl:call-template name="getPredicates">
+						<xsl:with-param name="s" select="substring($s,number(substring-before($p,'.'))+1)"/>
+						<xsl:with-param name="r" select="concat($r,substring-after($p,'.'))"/>
+						<xsl:with-param name="l" select="$l+number(substring-before($p,'.'))"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat(string($l+number(substring-before($p,'.'))),'.',$r,substring-after($p,'.'))"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</cm:source>
+</cm:component>

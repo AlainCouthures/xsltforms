@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data 
+xmlns="http://www.example.com/my-file-types" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.example.com/my-file-types schema.xsd">
+   <zip>00000</zip>
+   <zip2>^00000$</zip2>
+</data>

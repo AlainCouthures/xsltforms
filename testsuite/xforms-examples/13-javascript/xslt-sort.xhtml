@@ -1,0 +1,178 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Call JavaScript Using Load Resource</title>
+      
+      <style type="text/css">
+         body {font-family: Helvetical, Ariel, Sans-Serif;}
+         table {border: collapse;}
+         th {color:white; background-color: gray}
+         .fname {width: 10ex; border: solid black 1px;}
+         .lname {width: 10ex; border: solid black 1px;}
+         .date {width: 10ex; border: solid black 1px;}
+         .col {width: 10ex; adding-bottom: 6px; adding-top: 6px; align: center;}
+         .row {width: 22ex: border: solid blue 1px; padding: 4px 4px;}
+      </style>
+      
+      <script type="text/javascript">
+         // we really want three parameters, the instance, the element to sort by and increase or decreasing
+      function sort_instance(id) {
+  // We get the instance element
+  var instanceElement = document.getElementById(id);
+  if (instanceElement!=null) {
+ 
+   // XForms exposes the retrival of the instance document from the model element which *should*
+   // be the parent for the instance element.
+   var instance = instanceElement.parentNode.getInstanceDocument(id);
+ 
+   if (instance!=null) {
+      // Now creating the stylesheet, for this example the stylesheet document is also an instance
+      // by it can be loaded from many difference sources
+      var xslDom = instanceElement.parentNode.getInstanceDocument('stylesheet');
+ 
+      // create an XSLTProcessor and attach the stylesheet
+      var processor = new XSLTProcessor()
+      processor.importStylesheet(xslDom);
+ 
+      // now we do the sorting transformation
+      var resultDom = processor.transformToDocument(instance, instance);
+ 
+      // we then move the result info the instance dom
+      instance.removeChild(instance.documentElement);
+      instance.appendChild(resultDom.documentElement);
+ 
+      // and performs the updates for XForms
+      instanceElement.parentNode.rebuild();
+      instanceElement.parentNode.recalculate();
+      instanceElement.parentNode.revalidate();
+      instanceElement.parentNode.refresh();
+    }
+  }
+}
+ </script>
+
+
+
+<xf:model>
+  <xf:instance id="my-data">
+    <data xmlns="">
+      <item>
+        <fname>Peg</fname>
+        <lname>Jones</lname>
+        <date>2001-05-03</date>
+      </item>
+      <item>
+        <fname>Dan</fname>
+        <lname>Smith</lname>
+        <date>2005-05-03</date>
+      </item>
+      <item>
+        <fname>John</fname>
+        <lname>Erickson</lname>
+        <date>2003-05-03</date>
+      </item>
+      <item>
+        <fname>Sue</fname>
+        <lname>Brown</lname>
+        <date>2002-05-03</date>
+      </item>
+    </data>
+  </xf:instance>
+ 
+  <xf:instance id="stylesheet">
+    <xsl:stylesheet xmlns="" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+      <xsl:template match="/">
+        <data>
+          <xsl:apply-templates select="data/item">
+            <xsl:sort type="string" select="fname"/>
+          </xsl:apply-templates>
+        </data>
+      </xsl:template>
+      <xsl:template match="*|@*|text()">
+        <xsl:copy>
+          <xsl:apply-templates select="*|text()|@*"/>
+        </xsl:copy>
+      </xsl:template>
+    </xsl:stylesheet>
+  </xf:instance>
+   
+  <xf:instance id="stylesheet2">
+    <xsl:stylesheet xmlns="" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+      <xsl:template match="/">
+        <data>
+          <xsl:apply-templates select="data/item">
+            <xsl:sort type="string" select="lname"/>
+          </xsl:apply-templates>
+        </data>
+      </xsl:template>
+      <xsl:template match="*|@*|text()">
+        <xsl:copy>
+          <xsl:apply-templates select="*|text()|@*"/>
+        </xsl:copy>
+      </xsl:template>
+    </xsl:stylesheet>
+  </xf:instance>
+   
+<xf:instance id="stylesheet3">
+    <xsl:stylesheet xmlns="" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+      <xsl:template match="/">
+        <data>
+          <xsl:apply-templates select="data/item">
+            <xsl:sort type="string" select="date"/>
+          </xsl:apply-templates>
+        </data>
+      </xsl:template>
+      <xsl:template match="*|@*|text()">
+        <xsl:copy>
+          <xsl:apply-templates select="*|text()|@*"/>
+        </xsl:copy>
+      </xsl:template>
+    </xsl:stylesheet>
+  </xf:instance>
+</xf:model>
+
+   </head>
+   <body>
+      <!-- Use these as table headers -->
+      <table>
+         <thead>
+            <tr>
+               <th class="fname">
+                  <xf:trigger appearance="minimal">
+                     <xf:label>First</xf:label>
+                     <xf:action ev:event="DOMActivate">
+                        <xf:load resource="javascript:sort_instance('my-data');"/>
+                     </xf:action>
+                  </xf:trigger>
+               </th>
+               <th class="lname">
+                  <xf:trigger appearance="minimal">
+                     <xf:label>Last</xf:label>
+                     <xf:action ev:event="DOMActivate">
+                        <xf:load resource="javascript:sort_instance('my-data');"/>
+                     </xf:action>
+                  </xf:trigger>
+               </th>
+               <th class="date">
+                  <xf:trigger appearance="minimal">
+                     <xf:label>Date</xf:label>
+                     <xf:action ev:event="DOMActivate">
+                        <xf:load resource="javascript:sort_instance('my-data');"/>
+                     </xf:action>
+                  </xf:trigger>
+               </th>
+            </tr>
+         </thead>
+      </table>
+      
+      <xf:repeat nodeset="item">
+         <div class="row">
+            <xf:output ref="fname" class="fname col"/>
+            <xf:output ref="lname" class="lname col"/>
+            <xf:output ref="date" class="date col"/>
+         </div>
+      </xf:repeat>
+      
+   </body>
+</html>

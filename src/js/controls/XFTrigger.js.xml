@@ -1,0 +1,96 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFTrigger.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_trigger" class ===
+Trigger Control  Class
+* constructor function : initializes specific properties and initializes focus event management</cm:wiki>
+		<![CDATA[
+function XsltForms_trigger(subform, id, binding, clone) {
+	XsltForms_globals.counters.trigger++;
+	this.init(subform, id);
+	this.binding = binding;
+	this.hasBinding = !!binding;
+	if(!this.hasBinding) {
+		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
+	}
+	this.isTrigger = true;
+	var button = XsltForms_browser.isXhtml ? (this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "a")[0] || this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "button")[0]) : (this.element.getElementsByTagName("a")[0] || this.element.getElementsByTagName("button")[0]);
+	this.input = button;
+	this.initFocus(button);
+}
+
+XsltForms_trigger.prototype = new XsltForms_control();
+
+]]>
+		<cm:wiki>
+* '''setValue''' method : empty</cm:wiki>
+<![CDATA[
+XsltForms_trigger.prototype.setValue = function () { };
+
+]]>
+		<cm:wiki>
+* '''changeReadonly''' method : changes the read only state of this input control</cm:wiki>
+<![CDATA[
+XsltForms_trigger.prototype.changeReadonly = function() {
+	this.input.disabled = this.readonly;
+};
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new trigger control with the given id</cm:wiki>
+<![CDATA[
+XsltForms_trigger.prototype.clone = function (id) {
+	return new XsltForms_trigger(this.subform, id, this.binding, true);
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : decrements the number of triggers and calls the parent dispose() method</cm:wiki>
+<![CDATA[
+XsltForms_trigger.prototype.dispose = function() {
+	XsltForms_globals.counters.trigger--;
+	XsltForms_element.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''click''' method : dispatches a "DOMActivate" event</cm:wiki>
+<![CDATA[
+XsltForms_trigger.prototype.click = function () {
+	XsltForms_globals.openAction();
+	XsltForms_xmlevents.dispatch(this, "DOMActivate");
+	XsltForms_globals.closeAction();
+};
+
+]]>
+		<cm:wiki>
+* '''blur''' method : empty</cm:wiki>
+<![CDATA[
+XsltForms_trigger.prototype.blur = function () { };
+]]>
+	</cm:source>
+</cm:component>

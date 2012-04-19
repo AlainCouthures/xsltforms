@@ -1,0 +1,74 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+	<head>
+		<title>Repeat Demo</title>
+		<style type="text/css">
+@namespace xf url("http://www.w3.org/2002/xforms");
+#delete-confirm-box {position:absolute; left:100px; top:100px; width:500px; height:300px; border:1px solid #1c5180; background:#ddd;}
+#delete-confirm-box xf|trigger {position: relative; left:120px; top:150px; margin-right:100px;}
+#delete-confirm-box xf|output {font-family:Arial; font-weight:bold; text-align:center; position:relative; left:250px; top:50px;}
+#delete-confirm-box h2 {font-family:Arial; position:relative; left:50px;}
+</style>
+		<xf:model>
+			<xf:instance id="i1" xmlns="">
+				<data>
+					<val>1</val>
+					<val>2</val>
+					<val>3</val>
+				</data>
+			</xf:instance>
+		</xf:model>
+	</head>
+	<body>
+		<xf:repeat nodeset="val">
+			<div>
+				<xf:output ref=".">
+					<xf:label>Value: </xf:label>
+				</xf:output>
+			</div>
+		</xf:repeat>
+		<xf:trigger>
+			<xf:label>Insert new row</xf:label>
+			<xf:action ev:event="DOMActivate">
+				<xf:insert nodeset="val" position="after" at="last()" />
+				<xf:setvalue ref="val[last()]" value="count(/data/val)" />
+			</xf:action>
+		</xf:trigger>
+
+
+
+
+
+
+		<xf:switch>
+			<xf:case id="delete">
+				<xf:trigger ref="instance('i1')[count(/data/val) > 1]">
+					<xf:label>Delete last row</xf:label>
+					<xf:action ev:event="DOMActivate">
+						<xf:toggle case="confirm" />
+					</xf:action>
+				</xf:trigger>
+			</xf:case>
+			<xf:case id="confirm">
+				<div id="delete-confirm-box">
+					<h2>Are you sure you want to delete?</h2>
+					<xf:output value="count(/data/val)" />
+					<xf:trigger>
+						<xf:label>Delete</xf:label>
+						<xf:action ev:event="DOMActivate">
+							<xf:delete nodeset="val" at="last()" />
+							<xf:toggle case="delete" />
+						</xf:action>
+					</xf:trigger>
+					<xf:trigger>
+						<xf:label>Cancel</xf:label>
+						<xf:toggle case="delete" ev:event="DOMActivate" />
+					</xf:trigger>
+				</div>
+			</xf:case>
+		</xf:switch>
+		
+		
+		
+		
+	</body>
+</html>

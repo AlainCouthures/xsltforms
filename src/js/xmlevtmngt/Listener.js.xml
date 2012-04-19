@@ -1,0 +1,135 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="Listener.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2010-04-14</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_listener" class ===
+Listener  Class
+* constructor function : creates a Listener object to an observer element and attaches a standard callback function</cm:wiki>
+		<![CDATA[
+function XsltForms_listener(observer, evtTarget, name, phase, handler) {
+	phase = phase || "default";
+	if (phase !== "default" && phase !== "capture") {
+		XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-compute-exception", 
+			"Unknown event-phase(" + phase +") for event(" + name + ")"+(observer ? " on element(" + observer.id + ")":"") + "!");
+		return;
+	}
+	this.observer = observer;
+	this.evtTarget = evtTarget;
+	this.name = name;
+	this.evtName = document.addEventListener? name : "errorupdate";
+	this.phase = phase;
+	this.handler = handler;
+	XsltForms_browser.assert(observer);
+	if (!observer.listeners) {
+		observer.listeners = [];
+	}
+	observer.listeners.push(this);
+	this.callback = function(event) {
+		if (!document.addEventListener) {
+			event = event || window.event;
+			event.target = event.srcElement;
+			event.currentTarget = observer;
+			if (event.trueName && event.trueName !== name) {
+				return;
+			}
+			if (!event.phase) {
+				if (phase === "capture") {
+					return;
+				}
+			} else if (event.phase !== phase) {
+				return;
+			}
+			if (phase === "capture") {
+				event.cancelBubble = true;
+			}
+			event.preventDefault = function() {
+				this.returnValue = false;
+			};
+			event.stopPropagation = function() {
+				this.cancelBubble = true;
+				this.stopped      = true;
+			};
+		}
+		var effectiveTarget = true;
+		if (event.target && event.target.nodeType === 3) {
+			event.target = event.target.parentNode;
+		}
+		if (event.currentTarget && event.type === "DOMActivate" && event.target.nodeName === "BUTTON" && !XsltForms_browser.isFF2) {
+			effectiveTarget = false;
+		}
+		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
+			effectiveTarget = false;
+		}
+		if (event.eventPhase === 3 && event.target.xfElement && event.target === event.currentTarget && !XsltForms_browser.isFF2) {
+			effectiveTarget = false;
+		}
+		if (evtTarget && event.target != evtTarget) {
+			effectiveTarget = false;
+		}
+		if (effectiveTarget) {
+			handler.call(event.target, event);
+		}
+		if (!document.addEventListener) {
+			try {
+				event.preventDefault = null;
+				event.stopPropagation = null;
+			} catch (e) {}
+		}
+	};
+	this.attach();
+}
+
+]]>
+		<cm:wiki>
+* '''attach''' method : attaches the event according to the current phase</cm:wiki>
+<![CDATA[
+XsltForms_listener.destructs = [];
+
+XsltForms_listener.prototype.attach = function() {
+	XsltForms_browser.events.attach(this.observer, this.evtName, this.callback, this.phase === "capture");
+	if (this.evtName === "xforms-model-destruct") {
+		XsltForms_listener.destructs.push({observer: this.observer, callback: this.callback});
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''detach''' method : detaches the event according to the current phase</cm:wiki>
+<![CDATA[
+XsltForms_listener.prototype.detach = function() {
+	XsltForms_browser.events.detach(this.observer, this.evtName, this.callback, this.phase === "capture");
+};
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new listener for the given element</cm:wiki>
+<![CDATA[
+XsltForms_listener.prototype.clone = function(element) {
+	var unused = new XsltForms_listener(element, this.evtTarget, this.name, this.phase, this.handler);
+};
+]]>
+	</cm:source>
+</cm:component>

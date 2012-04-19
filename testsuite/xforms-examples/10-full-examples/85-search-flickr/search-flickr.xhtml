@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events">
+  <head>
+    <title>Search Flickr in Firefox</title>
+    <link rel="stylesheet" href="include/flickr.css" type="text/css" />
+
+    <!--
+	The XForms Model
+
+        Defining the data for the form, and the submission handling
+    -->
+    <xf:model>
+      <!-- The data sent to flickr -->
+      <xf:instance xmlns="">
+
+        <instanceData>
+          <method>flickr.photos.search</method>
+          <api_key>68149024a667e0be3c63708f002ffe1e</api_key>
+          <tags />
+          <per_page>12</per_page>
+        </instanceData>
+      </xf:instance>
+
+      <!-- The data returned by flickr -->
+      <xf:instance id="inst-rs" xmlns="">
+         <dummy />
+      </xf:instance>
+      
+      <xf:submission id="sub-flickr"
+		     method="get" action="http://www.flickr.com/services/rest/"
+		     separator="&amp;"
+		     replace="instance" instance="inst-rs">
+         <xf:toggle case="case-busy" ev:event="xforms-submit" />
+         <xf:toggle case="case-submit-error" ev:event="xforms-submit-error" />
+         <xf:toggle case="case-done" ev:event="xforms-submit-done" />
+      </xf:submission>
+
+      <!-- Used to hold image size -->
+      <xf:instance id="inst-control" xmlns="">
+	<instanceData>
+	  <size>s</size>
+	</instanceData>
+      </xf:instance>
+    </xf:model>
+
+    <!--
+	Mozilla XForms Custom Control
+
+        Until we support XForms 1.1 (which is only a draft now), we have to
+        use a custom control to "output" images.
+
+        More information about custom controls can be found at:
+        http://developer.mozilla.org/en/docs/XForms:Custom_Controls
+    -->
+
+    <bindings id="xformsBindings"
+	      xmlns="http://www.mozilla.org/xbl"
+	      xmlns:html="http://www.w3.org/1999/xhtml">
+
+      <binding id="output-image"
+	       extends="chrome://xforms/content/xforms.xml#xformswidget-base">
+	<content>
+	  <html:div>
+	    <html:img anonid="content" style="float: left; margin-right: 5px;"/>
+	  </html:div>
+	</content>
+
+	<implementation implements="nsIXFormsUIWidget">
+
+	  <method name="refresh">
+	    <body>
+	      var img = document.getAnonymousElementByAttribute(this, "anonid", "content");
+	      img.setAttribute("src", this.stringValue);
+	      return true;
+	    </body>
+	  </method>
+
+	</implementation>
+      </binding>
+    </bindings>
+
+    <!-- Bind the custom control to output with class="image" -->
+    <style type="text/css">
+      @namespace xf url(http://www.w3.org/2002/xforms);
+
+      xf|output.image {
+        -moz-binding: url('#output-image');
+      }
+    </style>
+  </head>
+
+  <!-- BODY -->
+  <body>
+   <xf:group id="main-body">
+     <xf:input ref="tags">
+
+       <xf:label>Search for a tag (f.x. "suzuki"):</xf:label>
+     </xf:input>
+     <xf:submit submission="sub-flickr">
+       <xf:label>Find</xf:label>
+     </xf:submit>
+     <xf:select1 ref="instance('inst-control')/size"
+		 incremental="true">
+       <xf:label>Size: </xf:label>
+
+       <xf:item>
+	 <xf:label>Small</xf:label>
+	 <xf:value>s</xf:value>
+       </xf:item>
+       <xf:item>
+	 <xf:label>Medium</xf:label>
+	 <xf:value>m</xf:value>
+
+       </xf:item>
+     </xf:select1>
+     <xf:switch>
+      <xf:case id="case-start">Start</xf:case>
+      <xf:case id="case-busy">
+	<img src="include/spinner.gif" alt="Busy" />
+      </xf:case>
+      <xf:case id="case-submit-error">
+
+	<span class="highlight">Submit error</span> Did you remember to allow
+	XForms to submit data to other domains?
+      </xf:case>
+      <xf:case id="case-done">Done</xf:case>
+    </xf:switch>
+    <xf:group ref="instance('inst-rs')">
+      <xf:output ref="err/@msg"/>
+      <xf:repeat nodeset="photos/photo">
+	<xf:output
+         value="concat(
+            'http://static.flickr.com/',
+            @server, '/',
+            @id, '_',
+            @secret, '_',
+	    instance('inst-control')/size,
+	    '.jpg'
+         )"
+         class="image"
+        />
+
+     </xf:repeat>
+     <div style="clear: both;"></div>
+    </xf:group>
+   </xf:group>
+
+
+   <div class="notes">
+     <div>
+       This is a slightly modified version of <a
+       href="http://skimstone.x-port.net/index.php?q=node/89">this
+       tutorial</a>. Since we have no range in the official releases yet,
+       there is only a small/large selector.
+     </div>
+
+     <div style="margin-top: 10px;">
+       <span class="highlight">NOTE:</span> To run this application you must enable XForms to submit
+       data to other domains. This is done by adding the domains to your trusted list.  This can be done by going to the FireFox "Tools" menu, -> Preferences, selecting the "Content" Tab and adding the sites to your XForms white listed sites.
+       <code>flickr.com</code>) in " <a
+       href="http://www.mozilla.org/projects/xforms/ReleaseNotes-v4.html#c12">Read
+       more here</a>.  It currently has to be loaded from a webserver, and
+       does not work when you load the form locally :(
+     </div>
+   </div>
+ </body>
+</html>

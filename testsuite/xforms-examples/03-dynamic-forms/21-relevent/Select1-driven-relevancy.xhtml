@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <title>Testing the XForms bind relevent attribute.</title>
+   <xf:model>
+      <xf:instance>
+         <data xmlns="">
+            <select1value>1</select1value>
+            <view1 />
+            <view2 />
+            <view3 />
+         </data>
+      </xf:instance>
+      <xf:bind nodeset="/data/select1value" type="xs:decimal" />
+      <xf:bind nodeset="/data/view1" relevant="/data/select1value = 1" />
+      <xf:bind nodeset="/data/view2" relevant="/data/select1value = 2" />
+      <xf:bind nodeset="/data/view3" relevant="/data/select1value = 3" />
+   </xf:model>
+   <body>
+      <p>Demonstration of relevant fields.</p>
+      <xf:select1 ref="/data/select1value">
+         <xf:label>Should I show the second question? </xf:label>
+         <br />
+         <xf:item select="yes">
+            <xf:label>View 1</xf:label>
+            <xf:value>1</xf:value>
+         </xf:item>
+         <xf:item>
+            <xf:label>View 2</xf:label>
+            <xf:value>2</xf:value>
+         </xf:item>
+          <xf:item>
+            <xf:label>View 3</xf:label>
+            <xf:value>3</xf:value>
+         </xf:item>
+      </xf:select1>
+      <br />
+      <xf:input ref="/data/view1">
+         <xf:label>First view: </xf:label>
+      </xf:input>
+
+      <xf:input ref="/data/view2">
+         <xf:label>Second view: </xf:label>
+      </xf:input>
+
+      <xf:input ref="/data/view3">
+         <xf:label>Third view: </xf:label>
+      </xf:input>
+   </body>
+</html>

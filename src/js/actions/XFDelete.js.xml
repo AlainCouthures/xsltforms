@@ -1,0 +1,93 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XsltForms_delete.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2010-06-11</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_Delete" class ===
+Delete Action Class
+* constructor function : resolves the properties of this delete action</cm:wiki>
+		<![CDATA[
+function XsltForms_delete(subform, nodeset, model, bind, at, context, ifexpr, whileexpr, iterateexpr) {
+	this.subform = subform;
+	this.binding = new XsltForms_binding(null, nodeset, model, bind);
+	//this.at = at?XsltForms_xpath.get(at):null;
+	this.at = XsltForms_xpath.get(at);
+	this.context = XsltForms_xpath.get(context);
+	this.init(ifexpr, whileexpr, iterateexpr);
+}
+
+XsltForms_delete.prototype = new XsltForms_abstractAction();
+
+]]>
+		<cm:wiki>
+* '''run''' method : executes this delete action and dispatches "xforms-delete"</cm:wiki>
+<![CDATA[
+XsltForms_delete.prototype.run = function(element, ctx) {
+	if (this.context) {
+		ctx = this.context.evaluate(ctx)[0];
+	}
+	if (!ctx) {
+		return;
+	}
+	var nodes = this.binding.evaluate(ctx);
+	if(this.at) {
+		var index = XsltForms_globals.numberValue(this.at.evaluate(new XsltForms_exprContext(ctx, 1, nodes)));
+		if(!nodes[index - 1]) {
+			return;
+		}
+		nodes = [nodes[index - 1]];
+	}
+	var model;
+	var instance;
+	if (nodes.length > 0) {
+		model = document.getElementById(XsltForms_browser.getMeta(nodes[0].documentElement ? nodes[0].documentElement : nodes[0].ownerDocument.documentElement, "model")).xfElement;
+		instance = model.findInstance(nodes[0]);
+	}
+	for (var i = 0, len = nodes.length; i < len; i++) {
+		var node = nodes[i];
+		XsltForms_mipbinding.nodedispose(node);
+		var repeat = XsltForms_browser.getMeta(node, "repeat");
+		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+			if (node.ownerElement) {
+				node.ownerElement.removeAttributeNS(node.namespaceURI, node.nodeName);
+			} else {
+				node.selectSingleNode("..").removeAttributeNS(node.namespaceURI, node.nodeName);
+			}
+		} else {
+			node.parentNode.removeChild(node);
+		}
+		if (repeat) {
+			document.getElementById(repeat).xfElement.deleteNode(node);
+		}
+	}
+	if (nodes.length > 0) {
+		XsltForms_globals.addChange(model);
+		model.setRebuilded(true);
+		XsltForms_xmlevents.dispatch(instance, "xforms-delete");
+	}
+};
+    ]]>
+	</cm:source>
+</cm:component>

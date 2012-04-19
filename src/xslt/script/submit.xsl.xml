@@ -1,0 +1,87 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="submit.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template match="xforms:submit" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ajx="http://www.ajaxforms.net/2006/ajx" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+			<xsl:apply-templates select="@*" mode="scriptattr"/>
+			<xsl:variable name="idsubmit" select="count(preceding::xforms:submit|ancestor::xforms:submit)"/>
+			<js xmlns="">
+				<xsl:text>var </xsl:text>
+				<xsl:value-of select="$vn_pf"/>
+				<xsl:text>submit_</xsl:text>
+				<xsl:value-of select="$idsubmit"/>
+				<xsl:text> = new XsltForms_trigger(</xsl:text>
+				<xsl:value-of select="$vn_subform"/>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$jsid_pf"/>
+						<xsl:text>submit-</xsl:text>
+						<xsl:value-of select="$idsubmit"/>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>",</xsl:text>
+				<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@ref"/></xsl:call-template>
+				<xsl:text>);</xsl:text>
+			</js>
+			<js>
+				<xsl:text>new XsltForms_listener(document.getElementById(</xsl:text>
+				<xsl:choose>
+					<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$jsid_pf"/>
+						<xsl:text>submit-</xsl:text>
+						<xsl:value-of select="$idsubmit"/>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>"),null,"DOMActivate",null,function(evt) {XsltForms_browser.run(new XsltForms_dispatch(</xsl:text>
+				<xsl:value-of select="$vn_subform"/>
+				<xsl:text>,"xforms-submit",</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@submission"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@if"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@while"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@iterate"/></xsl:call-template>
+				<xsl:text>),</xsl:text>
+				<xsl:choose>
+					<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$jsid_pf"/>
+						<xsl:text>submit-</xsl:text>
+						<xsl:value-of select="$idsubmit"/>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>",evt,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@ajx:synchronized"/><xsl:with-param name="default">true</xsl:with-param></xsl:call-template>
+				<xsl:text>,true)});</xsl:text>
+			</js>
+			<xsl:apply-templates select="*" mode="script"/>
+			<xsl:call-template name="listeners"/>
+		</xsl:template>
+	</cm:source>
+</cm:component>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XForms" ExtStr="xhtml">
+		<File FilePath="textarea-styled.xhtml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="CSS" ExtStr="css">
+		<File FilePath="textarea.css" HomeFolder="Yes"/>
+	</Folder>
+</Project>

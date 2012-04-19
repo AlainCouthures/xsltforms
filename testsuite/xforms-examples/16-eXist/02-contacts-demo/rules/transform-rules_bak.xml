@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Schema2XFormsRulesDocument xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:u="http://niem.gov/niem/universal/1.0" xmlns:c="http://niem.gov/niem/common/1.0" xmlns:mn="http://data.state.mn.us" xmlns:mnr="http://revenue.state.mn.us" xmlns:mnr-ptx="http://propertytax.state.mn.us" xmlns:s2x="http://schema2xforms.revenue.state.mn.us">
+   <Rule id="R1">
+      <RuleName>How to Display True/False Fields</RuleName>
+      <RuleDescriptionText>Rules for displying a boolean values in the form.  Match all elements that have a suffix of Indicator or have an XML datatype of xs:boolean.</RuleDescriptionText>
+      <RuleSelector>match ends-with(//xs:element/@ref, 'Indicator')</RuleSelector>
+      <RuleOptions>
+         <RuleOption>
+            <RuleOptionName>Display Yes/No Radio Buttons</RuleOptionName>
+            <RuleActions>
+               <Action>
+                  <AddToOutput>true</AddToOutput>
+                  <RuleFileName>boolean-radio.xml</RuleFileName>
+               </Action>
+            </RuleActions>
+         </RuleOption>
+         <RuleOption>
+            <RuleOptionName>Display Checkbox</RuleOptionName>
+            <RuleFileName>boolean-checkbox.xml</RuleFileName>
+         </RuleOption>
+      </RuleOptions>
+   </Rule>
+   <Rule id="R2">
+      <RuleName>How to Display Dates</RuleName>
+      <RuleDescriptionText>Rules for displying a date.</RuleDescriptionText>
+      <RuleSelector>match ends-with(//xs:element/@ref, 'Indicator')</RuleSelector>
+      <RuleOptions>
+         <RuleOption>
+            <RuleOptionName>Display Using Calendar Selector</RuleOptionName>
+            <RuleFileName>boolean-radio.xml</RuleFileName>
+         </RuleOption>
+         <RuleOption>
+            <RuleOptionName>Display Checkbox</RuleOptionName>
+            <InsertXML>
+               <xf:bind nodeset="//@ref" xs:type="xs:boolean"/>
+               <xf:input>
+                  <xsl:attribute name="ref" select="$leaf-name"/>
+                  <xf:label>
+                     <xsl:value-of select="$lookup-labels/data/item[from=substring-after($leaf-name,':')]/to"/>: </xf:label>
+               </xf:input>
+            </InsertXML>
+         </RuleOption>
+      </RuleOptions>
+   </Rule>
+</Schema2XFormsRulesDocument>

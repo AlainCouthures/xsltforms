@@ -1,0 +1,18 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Example of simple messages with XForms</title>
+   </head>
+   <body>
+      <p>A simple model button that brings up a message to a user window:
+		<br />
+         <xf:trigger>
+            <xf:label>Press Me</xf:label>
+            <xf:message level="modal" ev:event="DOMActivate">I see that you have clicked the button!</xf:message>
+         </xf:trigger>
+         <xf:trigger>
+            <xf:label>Simple Button</xf:label>
+            <xf:message level="modal" ev:event="DOMActivate">Button clicked</xf:message>
+         </xf:trigger>
+      </p>
+   </body>
+</html>

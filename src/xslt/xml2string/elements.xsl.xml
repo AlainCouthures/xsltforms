@@ -1,0 +1,55 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="elements.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template match="*" mode="xml2string" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="root"/>
+			<xsl:text>&lt;</xsl:text>
+			<xsl:value-of select="name()"/>
+			<xsl:variable name="parent" select=".."/>
+			<xsl:variable name="element" select="."/>
+			<xsl:choose>
+				<xsl:when test="namespace::*">
+					<xsl:for-each select="(namespace::* | @*/namespace::*)[name()!='xml']">
+						<xsl:variable name="prefix" select="name()"/>
+						<xsl:variable name="uri" select="."/>
+						<xsl:if test="(not($parent/namespace::*[name()=$prefix and . = $uri]) or $root) and (($element|$element//*|$element//@*)[namespace-uri()=$uri])"> xmlns<xsl:if test="$prefix">:<xsl:value-of select="$prefix"/></xsl:if>="<xsl:value-of select="$uri"/>"</xsl:if>
+					</xsl:for-each>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="prefixes"><xsl:for-each select="(. | @*)[name() != local-name() and not(starts-with(name(), 'xml:'))]"><xsl:sort select="substring-before(name(),':')"/><xsl:value-of select="substring-before(name(),':')"/>:<xsl:value-of select="namespace-uri()"/>|</xsl:for-each></xsl:variable>
+					<xsl:call-template name="nmdecls"><xsl:with-param name="pfs" select="$prefixes"/></xsl:call-template>
+					<xsl:if test="name() = local-name() and ($root or namespace-uri() != namespace-uri($parent))"> xmlns="<xsl:value-of select="namespace-uri()"/>"</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:apply-templates select="@*" mode="xml2string"/>
+			<xsl:choose>
+				<xsl:when test="node()">&gt;<xsl:apply-templates select="node()" mode="xml2string"><xsl:with-param name="root" select="false()"/></xsl:apply-templates>&lt;/<xsl:value-of select="name()"/>&gt;</xsl:when>
+				<xsl:otherwise>/&gt;</xsl:otherwise>
+			</xsl:choose>
+			<xsl:text></xsl:text>
+		</xsl:template>
+	</cm:source>
+</cm:component>

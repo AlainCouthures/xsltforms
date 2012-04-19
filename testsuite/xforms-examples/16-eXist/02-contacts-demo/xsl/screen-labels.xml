@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+   <xsl:variable name="lookup-labels">
+      <data>
+         <item>
+            <from>Activity</from>
+            <to>Activity</to>
+         </item>
+         <item>
+            <from>ActivityDate</from>
+            <to>Occurance Date</to>
+         </item>
+         <item>
+            <from>ActivityDateTime</from>
+            <to>Occurance Date</to>
+         </item>
+         <item>
+            <from>ActivityEndDate</from>
+            <to>End Date</to>
+         </item>
+         <item>
+            <from>ActivityStartDate</from>
+            <to>Occurance Date</to>
+         </item>
+         <item>
+            <from>ActivityYear</from>
+            <to>Activity Date</to>
+         </item>
+         <item>
+            <from>Address</from>
+            <to>Address</to>
+         </item>
+         <item>
+            <from>CRV</from>
+            <to>CRV</to>
+         </item>
+         <item>
+            <from>CRVAdjustedSaleAmount</from>
+            <to>Adjusted sale price</to>
+         </item>
+         <item>
+            <from>CRVAdjustmentAmount</from>
+            <to>Adjusted sale price</to>
+         </item>
+         <item>
+            <from>CRVAdjustmentCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVAdjustmentNoteText</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVAssessmentVersionCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVAssessmentYear</from>
+            <to>Assessment Year</to>
+         </item>
+         <item>
+            <from>CRVBuyerLeasedPropertyBeforeSaleIndicator</from>
+            <to>Did the buyer lease this property before the sale?</to>
+         </item>
+         <item>
+            <from>CRVBuyerOwnsAdjacentPropertyIndicator</from>
+            <to>Does a buyer own property adjacent to the property purchased?</to>
+         </item>
+         <item>
+            <from>CRVBuyerSellerAffiliatedIndicator</from>
+            <to>Were the buyer and seller family members, business partners, business affiliates, a subsidiary to the other, joint owners of the property or stockholders of a business?</to>
+         </item>
+         <item>
+            <from>CRVBuyerWillUseAsPrimaryResidenceIndicator</from>
+            <to>Buyer plans to use the property as their primary residence</to>
+         </item>
+         <item>
+            <from>CRVChangeFieldCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVCountyAuditorID</from>
+            <to>Audit id</to>
+         </item>
+         <item>
+            <from>CRVCountyAuditorReceivedDate</from>
+            <to>Received By County On</to>
+         </item>
+         <item>
+            <from>CRVCrossCountyIndicator</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVDeedAppliedForCountyID</from>
+            <to>Audit id</to>
+         </item>
+         <item>
+            <from>CRVExemptOrganizationIndicator</from>
+            <to>Is the buyer or seller a tax exempt organization such as a religious organization or a charity?</to>
+         </item>
+         <item>
+            <from>CRVFairMarketValueIndicator</from>
+            <to>Rejected</to>
+         </item>
+         <item>
+            <from>CRVGiftOrInheritedIndicator</from>
+            <to>Was the property received entirely or partially as a gift or through an inheritance?</to>
+         </item>
+         <item>
+            <from>CRVGoodForStudyIndicator</from>
+            <to>Good for study</to>
+         </item>
+         <item>
+            <from>CRVGovernmentSaleIndicator</from>
+            <to>Was the buyer or seller a unit of local, state or federal government?</to>
+         </item>
+         <item>
+            <from>CRVIncludesParcelsInOtherCountiesIndicator</from>
+            <to>Did this purchase include parcels in another county?</to>
+         </item>
+         <item>
+            <from>CRVKeywordText</from>
+            <to>Keyword</to>
+         </item>
+         <item>
+            <from>CRVLegalProceedingsIndicator</from>
+            <to>When the property was sold, was a foreclosure, court judgment, order or other legal proceeding pending in connection with the property?</to>
+         </item>
+         <item>
+            <from>CRVMethodBuyerLearnedOfSaleText</from>
+            <to>If the property was not publicly promoted, how did the buyer learn that the property was for sale?</to>
+         </item>
+         <item>
+            <from>CRVMinimumRentalIncomeGuaranteedIndicator</from>
+            <to>Was there a minimum future rental income guaranteed as part of the sale?</to>
+         </item>
+         <item>
+            <from>CRVMultipleParcelIndicator</from>
+            <to>Multiple Parcels</to>
+         </item>
+         <item>
+            <from>CRVOrganizationForeignIndicator</from>
+            <to>Foreign Organization</to>
+         </item>
+         <item>
+            <from>CRVOrganizationStateTaxID</from>
+            <to>State Tax ID</to>
+         </item>
+         <item>
+            <from>CRVOtherPropertiesIncludedIndicator</from>
+            <to>Were there other properties include in the Purchase Amount listed in this CRV that were sold at the same time?</to>
+         </item>
+         <item>
+            <from>CRVPriorLeaseOptionToBuyIndicator</from>
+            <to>Did the prior lease include an option to buy?</to>
+         </item>
+         <item>
+            <from>CRVPropertyPublicPromotionIndicator</from>
+            <to>Was the property sale announced and or promoted through realtor listing, newspaper or other publications, advertisement, brochures or other promotional or information mailings?</to>
+         </item>
+         <item>
+            <from>CRVRejectReasonCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVRejectReasonText</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVSellerLeaseMonthsCount</from>
+            <to>The number of months in a lease of the property after the purchase</to>
+         </item>
+         <item>
+            <from>CRVSellerLeasedPropertyAfterSaleIndicator</from>
+            <to>Did or will the seller lease the property from the buyer after the purchase?</to>
+         </item>
+         <item>
+            <from>CRVSignificantlyDifferentPricePaidExplanationText</from>
+            <to>Was the price paid for the property was different from what similar properties would sell for?</to>
+         </item>
+         <item>
+            <from>CRVSignificantlyDifferentPricePaidIndicator</from>
+            <to>Did the buyer feel that the property sold for a considerably different price from what the buyer believed other similar properties would sell for?</to>
+         </item>
+         <item>
+            <from>CRVStateAssignedID</from>
+            <to>CRV ID</to>
+         </item>
+         <item>
+            <from>CRVStudyCodeText</from>
+            <to>Study Type</to>
+         </item>
+         <item>
+            <from>CRVStudyNoteText</from>
+            <to>CRV Study Note</to>
+         </item>
+         <item>
+            <from>CRVWorkflowActivityDateTime</from>
+            <to>Date Time</to>
+         </item>
+         <item>
+            <from>CRVWorkflowCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>CRVWorkflowCountyActivityCodeText</from>
+            <to>User</to>
+         </item>
+         <item>
+            <from>CRVWorkflowID</from>
+            <to>Workflow ID</to>
+         </item>
+         <item>
+            <from>CRVWorkflowLoginID</from>
+            <to>User</to>
+         </item>
+         <item>
+            <from>CRVWorkflowNoteText</from>
+            <to>CRV Workflow Note</to>
+         </item>
+         <item>
+            <from>Contact</from>
+            <to>Contact</to>
+         </item>
+         <item>
+            <from>ContactEmailID</from>
+            <to>E mail</to>
+         </item>
+         <item>
+            <from>ContactFAXText</from>
+            <to>FAX</to>
+         </item>
+         <item>
+            <from>ContactInformationDescriptionText</from>
+            <to>Contact Note</to>
+         </item>
+         <item>
+            <from>ContactPhoneText</from>
+            <to>Phone</to>
+         </item>
+         <item>
+            <from>Deed</from>
+            <to>Deed</to>
+         </item>
+         <item>
+            <from>DeedDocumentID</from>
+            <to>Deed ID</to>
+         </item>
+         <item>
+            <from>DeedTypeCode</from>
+            <to>Deed Type</to>
+         </item>
+         <item>
+            <from>Document</from>
+            <to>Document</to>
+         </item>
+         <item>
+            <from>DocumentForm</from>
+            <to>Document</to>
+         </item>
+         <item>
+            <from>ErrorMessage</from>
+            <to>Error Message</to>
+         </item>
+         <item>
+            <from>ErrorMessageCode</from>
+            <to>Date of deed or contract</to>
+         </item>
+         <item>
+            <from>Homestead</from>
+            <to>Homestead</to>
+         </item>
+         <item>
+            <from>Homestead100PercentRelativeIndicator</from>
+            <to/>
+         </item>
+         <item>
+            <from>HomesteadCrossCountyIndicator</from>
+            <to/>
+         </item>
+         <item>
+            <from>HomesteadDocumentTypeCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>HomesteadNonOccupyingSpouseIndicator</from>
+            <to/>
+         </item>
+         <item>
+            <from>HomesteadTotalEstimatedMarketValueAmount</from>
+            <to/>
+         </item>
+         <item>
+            <from>HomesteadTotalTaxableMarketValueAmount</from>
+            <to/>
+         </item>
+         <item>
+            <from>HomesteadTypeCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>LocationCityName</from>
+            <to>City</to>
+         </item>
+         <item>
+            <from>LocationCountryName</from>
+            <to>Country</to>
+         </item>
+         <item>
+            <from>LocationPostalCodeID</from>
+            <to>Postal Code</to>
+         </item>
+         <item>
+            <from>LocationStateName</from>
+            <to>State</to>
+         </item>
+         <item>
+            <from>MN</from>
+            <to>MN</to>
+         </item>
+         <item>
+            <from>MNBodyOfWaterID</from>
+            <to/>
+         </item>
+         <item>
+            <from>MNBodyOfWaterName</from>
+            <to/>
+         </item>
+         <item>
+            <from>MNCityTownID</from>
+            <to>City-Township ID</to>
+         </item>
+         <item>
+            <from>MNCountyCode</from>
+            <to>County Sequence Number</to>
+         </item>
+         <item>
+            <from>MNCountyFIPSCode</from>
+            <to>County FIPS Code</to>
+         </item>
+         <item>
+            <from>MNCountyID</from>
+            <to>County ID</to>
+         </item>
+         <item>
+            <from>MNSchoolDistrictCode</from>
+            <to>School District</to>
+         </item>
+         <item>
+            <from>MNSchoolDistrictID</from>
+            <to>School District ID</to>
+         </item>
+         <item>
+            <from>MNSpecialTaxingDistrictCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>MNWatershedCode</from>
+            <to/>
+         </item>
+         <item>
+            <from>Organization</from>
+            <to>Org</to>
+         </item>
+         <item>
+            <from>OrganizationFederalTaxID</from>
+            <to>Fed Tax ID</to>
+         </item>
+         <item>
+            <from>OrganizationID</from>
+            <to>Org ID</to>
+         </item>
+         <item>
+            <from>OrganizationName</from>
+            <to>Organization Name</to>
+         </item>
+         <item>
+            <from>OrganizationWebsiteID</from>
+            <to>Web Site</to>
+         </item>
+         <item>
+            <from>Parcel</from>
+            <to>Parcel</to>
+         </item>
+         <item>
+            <from>ParcelAddressTypeCode</from>
+            <to>Address Type</to>
+         </item>
+         <item>
+            <from>ParcelAgricultureProgramAcresMeasure</from>
+            <to>Agriculture Program Acres</to>
+         </item>
+         <item>
+            <from>ParcelAgricultureProgramCode</from>
+            <to>Agriculture Program</to>
+         </item>
+         <item>
+            <from>ParcelApartmentBuildingCount</from>
+            <to>Number apartment buildings</to>
+         </item>
+         <item>
+            <from>ParcelApartmentUnitCount</from>
+            <to>Number apartments</to>
+         </item>
+         <item>
+            <from>ParcelBaseIndicator</from>
+            <to>Base</to>
+         </item>
+         <item>
+            <from>ParcelBlockID</from>
+            <to>Plat ID</to>
+         </item>
+         <item>
+            <from>ParcelBuildingValueAmount</from>
+            <to>Building Value</to>
+         </item>
+         <item>
+            <from>ParcelChangedClassificationIndicator</from>
+            <to>Changed Classification</to>
+         </item>
+         <item>
+            <from>ParcelClassAdditionalText</from>
+            <to>Remark</to>
+         </item>
+         <item>
+            <from>ParcelCommercialIndustrialCode</from>
+            <to>Property Usage Code</to>
+         </item>
+         <item>
+            <from>ParcelCropEquivalentPercentage</from>
+            <to>Crop Equivalent Rating</to>
+         </item>
+         <item>
+            <from>ParcelCurrentYearEstimatedMarketValueAmount</from>
+            <to>Current Year Estimated Market Value</to>
+         </item>
+         <item>
+            <from>ParcelCurrentYearTaxableMarketValueAmount</from>
+            <to>Current Year Taxible Market Value</to>
+         </item>
+         <item>
+            <from>ParcelDeededAcresMeasure</from>
+            <to>Deeded Acres</to>
+         </item>
+         <item>
+            <from>ParcelDistrictID</from>
+            <to>District ID</to>
+         </item>
+         <item>
+            <from>ParcelEstimatedMarketValueAmount</from>
+            <to>Market Value</to>
+         </item>
+         <item>
+            <from>ParcelExemptNativePrairieIndicator</from>
+            <to>Native Prairie</to>
+         </item>
+         <item>
+            <from>ParcelExemptWetlandIndicator</from>
+            <to>Wetland Exempt</to>
+         </item>
+         <item>
+            <from>ParcelFarmAcresMeasure</from>
+            <to>Farm Acres</to>
+         </item>
+         <item>
+            <from>ParcelGreenAcresCode</from>
+            <to>Green Acres</to>
+         </item>
+         <item>
+            <from>ParcelGreenAcresDefermentAmount</from>
+            <to>Green Acres Deferment</to>
+         </item>
+         <item>
+            <from>ParcelGreenAcresIndicator</from>
+            <to>GreenAcres</to>
+         </item>
+         <item>
+            <from>ParcelHomesteadBaseIndicator</from>
+            <to>Homestead Base</to>
+         </item>
+         <item>
+            <from>ParcelHomesteadIndicator</from>
+            <to>Homestead</to>
+         </item>
+         <item>
+            <from>ParcelID</from>
+            <to>Parcel ID</to>
+         </item>
+         <item>
+            <from>ParcelImprovementAmount</from>
+            <to>Improvement Value</to>
+         </item>
+         <item>
+            <from>ParcelImprovementExclusionAmount</from>
+            <to>Exclusion Value</to>
+         </item>
+         <item>
+            <from>ParcelImprovementYear</from>
+            <to>Improvement Year</to>
+         </item>
+         <item>
+            <from>ParcelIncreaseLimitAmount</from>
+            <to>Increase Limit</to>
+         </item>
+         <item>
+            <from>ParcelIrrigatedAcresMeasure</from>
+            <to>Irrigated Acres</to>
+         </item>
+         <item>
+            <from>ParcelLandValueAmount</from>
+            <to>Land Value</to>
+         </item>
+         <item>
+            <from>ParcelLegalDescriptionText</from>
+            <to>Parcel Legal Description</to>
+         </item>
+         <item>
+            <from>ParcelLotID</from>
+            <to>Lot ID</to>
+         </item>
+         <item>
+            <from>ParcelNetTaxCapacityAmount</from>
+            <to>Net Tax Capacity</to>
+         </item>
+         <item>
+            <from>ParcelNewConstructionIndicator</from>
+            <to>New Construction</to>
+         </item>
+         <item>
+            <from>ParcelNoteText</from>
+            <to>Remark</to>
+         </item>
+         <item>
+            <from>ParcelOpenSpacesDefermentAmount</from>
+            <to>Open Spaces Deferment</to>
+         </item>
+         <item>
+            <from>ParcelPlatID</from>
+            <to>Plat ID</to>
+         </item>
+         <item>
+            <from>ParcelPlatLawExclusionAmount</from>
+            <to>Plat Law Exclusion</to>
+         </item>
+         <item>
+            <from>ParcelPrimaryClassBareLandCode</from>
+            <to>Property Type</to>
+         </item>
+         <item>
+            <from>ParcelQuarterID</from>
+            <to>Quarter ID</to>
+         </item>
+         <item>
+            <from>ParcelQuarterQuarterID</from>
+            <to>Quarter ID</to>
+         </item>
+         <item>
+            <from>ParcelRangeID</from>
+            <to>Range ID</to>
+         </item>
+         <item>
+            <from>ParcelSectionID</from>
+            <to>Section ID</to>
+         </item>
+         <item>
+            <from>ParcelSequenceID</from>
+            <to>Parcel Sequence ID</to>
+         </item>
+         <item>
+            <from>ParcelShorelineFeetMeasure</from>
+            <to>Shoreline Feet</to>
+         </item>
+         <item>
+            <from>ParcelTaxableMarketValueAmount</from>
+            <to>Taxable Market Value</to>
+         </item>
+         <item>
+            <from>ParcelThisOldHouseIndicator</from>
+            <to>This Old House</to>
+         </item>
+         <item>
+            <from>ParcelTillableAcresMeasure</from>
+            <to>Tillable Acres</to>
+         </item>
+         <item>
+            <from>ParcelTillableMarketValueAmount</from>
+            <to>Tillable Value</to>
+         </item>
+         <item>
+            <from>ParcelTownshipID</from>
+            <to>Township ID</to>
+         </item>
+         <item>
+            <from>ParcelUsageExemptIndicator</from>
+            <to>New Construction</to>
+         </item>
+         <item>
+            <from>ParcelWaterValueInfluenceCode</from>
+            <to>Water Value Influence</to>
+         </item>
+         <item>
+            <from>Person</from>
+            <to>Person</to>
+         </item>
+         <item>
+            <from>PersonBirthDate</from>
+            <to>Birth Date</to>
+         </item>
+         <item>
+            <from>PersonFirstTimeHomeBuyerIndicator</from>
+            <to>First Time Buyer</to>
+         </item>
+         <item>
+            <from>PersonGenderCode</from>
+            <to>Gender</to>
+         </item>
+         <item>
+            <from>PersonGivenName</from>
+            <to>First Name</to>
+         </item>
+         <item>
+            <from>PersonMaritalStatusCode</from>
+            <to>Marital Status</to>
+         </item>
+         <item>
+            <from>PersonMiddleName</from>
+            <to>Middle</to>
+         </item>
+         <item>
+            <from>PersonPrefixName</from>
+            <to>Prefix Name</to>
+         </item>
+         <item>
+            <from>PersonSSNID</from>
+            <to>SSN</to>
+         </item>
+         <item>
+            <from>PersonSSNTrailerID</from>
+            <to>SSN Trailer Digit</to>
+         </item>
+         <item>
+            <from>PersonSocialSecurityID</from>
+            <to>SSN</to>
+         </item>
+         <item>
+            <from>PersonSpouseIndicator</from>
+            <to>Spouse</to>
+         </item>
+         <item>
+            <from>PersonSuffixName</from>
+            <to>Suffix Name</to>
+         </item>
+         <item>
+            <from>PersonSurName</from>
+            <to>Family Name</to>
+         </item>
+         <item>
+            <from>PersonTaxpayerID</from>
+            <to>Taxpayer ID</to>
+         </item>
+         <item>
+            <from>PersonalProperty</from>
+            <to>Property</to>
+         </item>
+         <item>
+            <from>Property</from>
+            <to>Property</to>
+         </item>
+         <item>
+            <from>PropertyTax</from>
+            <to>Tax Statement</to>
+         </item>
+         <item>
+            <from>PropertyTaxAssessmentYear</from>
+            <to>Assessment Year</to>
+         </item>
+         <item>
+            <from>PropertyTaxClassText</from>
+            <to>Property Tax Class</to>
+         </item>
+         <item>
+            <from>PropertyTaxCurrentYearQualifyingTaxAmount</from>
+            <to>Payable Amount</to>
+         </item>
+         <item>
+            <from>PropertyTaxDelinquentIndicator</from>
+            <to>Tax Delinquent</to>
+         </item>
+         <item>
+            <from>PropertyTaxPayableAmount</from>
+            <to>Payable Amount</to>
+         </item>
+         <item>
+            <from>PropertyTaxPayableYear</from>
+            <to>Payable Year</to>
+         </item>
+         <item>
+            <from>PropertyTaxSpecialRefundQualifyingTaxAmount</from>
+            <to>Payable Amount</to>
+         </item>
+         <item>
+            <from>PropertyTypeCode</from>
+            <to>Property Type</to>
+         </item>
+         <item>
+            <from>PropertyUseCode</from>
+            <to>Property Use</to>
+         </item>
+         <item>
+            <from>RealProperty</from>
+            <to>Property</to>
+         </item>
+         <item>
+            <from>RealPropertyHasWellIndicator</from>
+            <to>Has Well</to>
+         </item>
+         <item>
+            <from>RealPropertyID</from>
+            <to>PropertyID</to>
+         </item>
+         <item>
+            <from>RealPropertyPaidAppraisalAmount</from>
+            <to>Enter the value of the appraisal if known</to>
+         </item>
+         <item>
+            <from>RealPropertyPaidAppraisalPerformedIndicator</from>
+            <to>Did either the the buyer or a seller pay an agent to perform an appraisal of the property?</to>
+         </item>
+         <item>
+            <from>RealPropertyUsageCode</from>
+            <to>Real Property Classification</to>
+         </item>
+         <item>
+            <from>Region</from>
+            <to>Region</to>
+         </item>
+         <item>
+            <from>RegionCountyName</from>
+            <to>County Name</to>
+         </item>
+         <item>
+            <from>RegionStateFIPSCode</from>
+            <to>State FIPS Code</to>
+         </item>
+         <item>
+            <from>SalesAgreement</from>
+            <to>Sale</to>
+         </item>
+         <item>
+            <from>SalesAgreementAssumedFinancingCode</from>
+            <to>Date of deed or contract</to>
+         </item>
+         <item>
+            <from>SalesAgreementBalloonPaymentDate</from>
+            <to>Baloon payment</to>
+         </item>
+         <item>
+            <from>SalesAgreementContractPayOffIndicator</from>
+            <to>Was this sale a fulfillment or resale of a contract for deed?</to>
+         </item>
+         <item>
+            <from>SalesAgreementDate</from>
+            <to>Date of deed or contract</to>
+         </item>
+         <item>
+            <from>SalesAgreementDeedOrContractDate</from>
+            <to>Deed date</to>
+         </item>
+         <item>
+            <from>SalesAgreementDownPaymentAmount</from>
+            <to>Down payment</to>
+         </item>
+         <item>
+            <from>SalesAgreementInterestRatePercent</from>
+            <to>Interest rate now in effect</to>
+         </item>
+         <item>
+            <from>SalesAgreementLandAndBuildingsIncludedCode</from>
+            <to>Land and buidlings</to>
+         </item>
+         <item>
+            <from>SalesAgreementMonthlyPaymentAmount</from>
+            <to>Mortgage or contract for deed amount at purchase</to>
+         </item>
+         <item>
+            <from>SalesAgreementMortgageOrContractAmount</from>
+            <to>Mortgage or contract for deed amount at purchase</to>
+         </item>
+         <item>
+            <from>SalesAgreementNameChangeIndicator</from>
+            <to>Does this document indicate only a name is change or name removal from the deed?</to>
+         </item>
+         <item>
+            <from>SalesAgreementNetAmount</from>
+            <to>Total price</to>
+         </item>
+         <item>
+            <from>SalesAgreementPartialInterestIndicator</from>
+            <to>Was there only partial interest in the property transfered in this sale?</to>
+         </item>
+         <item>
+            <from>SalesAgreementPersonalPropertyAmount</from>
+            <to>Personal Property</to>
+         </item>
+         <item>
+            <from>SalesAgreementPersonalPropertyDescriptionText</from>
+            <to>Personal Property</to>
+         </item>
+         <item>
+            <from>SalesAgreementPersonalPropertyIncludedIndicator</from>
+            <to>Personal Property Included</to>
+         </item>
+         <item>
+            <from>SalesAgreementPersonalPropertyTotalAmount</from>
+            <to>Personal Property Total</to>
+         </item>
+         <item>
+            <from>SalesAgreementPreFinancingAmount</from>
+            <to>Pre-financing Non-Personal Property Sales Amount</to>
+         </item>
+         <item>
+            <from>SalesAgreementPurchaseAmount</from>
+            <to>Total price</to>
+         </item>
+         <item>
+            <from>SalesAgreementReceivedInTradeIndicator</from>
+            <to>Was the property received wholly or partially in trade?</to>
+         </item>
+         <item>
+            <from>SalesAgreementSellerPointsAmount</from>
+            <to>Points</to>
+         </item>
+         <item>
+            <from>SalesAgreementTotalPaymentsCount</from>
+            <to>Number of Payments</to>
+         </item>
+         <item>
+            <from>Street</from>
+            <to>Street</to>
+         </item>
+         <item>
+            <from>StreetFullText</from>
+            <to>Address</to>
+         </item>
+         <item>
+            <from>Structure</from>
+            <to>Structure</to>
+         </item>
+         <item>
+            <from>StructureBuiltYear</from>
+            <to>Year built</to>
+         </item>
+         <item>
+            <from>TaxRecord</from>
+            <to>Tax Record</to>
+         </item>
+         <item>
+            <from>TelephoneNumberFullID</from>
+            <to>Phone number</to>
+         </item>
+         <item>
+            <from>Thing</from>
+            <to/>
+         </item>
+         <item>
+            <from>UniqueTaxingArea</from>
+            <to>Unique Taxing Area</to>
+         </item>
+         <item>
+            <from>UniqueTaxingAreaDisparityReductionAidTaxRate</from>
+            <to>Disparity Reduction Aid Tax Rate</to>
+         </item>
+         <item>
+            <from>UniqueTaxingAreaID</from>
+            <to>Unique Taxing Area ID</to>
+         </item>
+         <item>
+            <from>UniqueTaxingAreaInitialTaxRate</from>
+            <to>Initial Tax Rate</to>
+         </item>
+         <item>
+            <from>UniqueTaxingAreaLocalTaxRate</from>
+            <to>Local Tax Rate</to>
+         </item>
+         <item>
+            <from>UniqueTaxingAreaSubID</from>
+            <to>Unique Taxing Area Sub ID</to>
+         </item>
+         <item>
+            <from>PersonHealthyIndicator</from>
+            <to>Is this person healthy?</to>
+         </item>
+         <item>
+            <from>PersonBirthDate</from>
+            <to>Birth Date</to>
+         </item>
+      </data>
+   </xsl:variable>
+</xsl:stylesheet>

@@ -1,0 +1,36 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <head>
+      <title>Your Title Here</title>
+      <xf:model>
+         <xf:instance xmlns="">
+            <Data>
+               <PersonGivenName/>
+               <PersonSurName/>
+            </Data>
+         </xf:instance>
+         <xf:bind id="PersonGivenName" nodeset="/Data/PersonGivenName"/>
+         <xf:bind id="PersonSurName" nodeset="/Data/PersonSurName"/>
+      </xf:model>
+   </head>
+   <body>
+       <xf:input bind="PersonGivenName" incremental="true">
+          <xf:label>Input First Name: </xf:label>
+       </xf:input>
+       <br/>
+       <xf:input bind="PersonSurName" incremental="true">
+          <xf:label>Input Last Name: </xf:label>
+       </xf:input>
+       <br/>
+       <xf:output bind="PersonGivenName">
+          <xf:label>Output First Name: </xf:label>
+       </xf:output>
+       <br/>
+       <xf:output bind="PersonSurName">
+          <xf:label>Output Last Name: </xf:label>
+       </xf:output>
+   </body>
+</html>

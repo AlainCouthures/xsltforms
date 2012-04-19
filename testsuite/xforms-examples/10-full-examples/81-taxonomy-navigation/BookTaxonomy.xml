@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BookTaxonomy>
+   <Primary>
+      <item>
+         <label>Fiction</label>
+         <value>fiction</value>
+      </item>
+      <item>
+         <label>Non Fiction</label>
+         <value>non-fiction</value>
+      </item>
+   </Primary>
+   <Fiction>
+      <item>
+         <label>Comics</label>
+         <value>comics</value>
+      </item>
+    <item>
+         <label>Horror</label>
+         <value>horror</value>
+      </item>
+<item>
+         <label>Romance</label>
+         <value>romance</value>
+      </item>
+      <item>
+         <label>Mystery</label>
+         <value>mystery</value>
+      </item>
+      <Science-Fiction/><item>
+         <label>Science Fiction</label>
+         <value>science-fiction</value>
+      </item>
+   </Fiction>
+   <NonFiction>
+      <item>
+         <label>Cookbooks</label>
+         <value>cookbooks</value>
+      </item>
+      <item>
+         <label>Computers</label>
+         <value>computers</value>
+      </item>
+      <item>
+         <label>History</label>
+         <value>history</value>
+      </item>
+      <item>
+         <label>Science</label>
+         <value>science</value>
+      </item>
+      <item>
+         <label>Travel</label>
+         <value>rravel</value>
+      </item>
+   </NonFiction>
+</BookTaxonomy>

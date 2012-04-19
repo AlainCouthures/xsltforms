@@ -1,0 +1,218 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFRange.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2012-04-07</cm:creationdate>
+	<cm:lastupdate>2012-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2012 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_upload" class ===
+Upload Control  Class
+* constructor function : initializes specific properties including aid button management</cm:wiki>
+		<![CDATA[
+function XsltForms_range(subform, id, valoff, binding, incremental, start, end, step, aidButton, clone) {
+	XsltForms_globals.counters.upload++;
+	this.init(subform, id);
+	this.binding = binding;
+	this.incremental = incremental;
+	var cells = this.element.children;
+	this.valoff = valoff;
+	this.cell = cells[valoff];
+	this.rail = this.cell.children[0].children[0];
+	this.cursor = this.rail.children[0];
+	this.outputvalue = this.cell.children[0].children[1];
+	this.isClone = clone;
+	this.hasBinding = true;
+	this.bolAidButton = aidButton;
+	this.start = parseFloat(start);
+	this.end = parseFloat(end);
+	this.step = parseFloat(step);
+	this.value = "";
+	this.initFocus(this.cell.children[0], true);
+	XsltForms_browser.events.attach(this.rail, "focus", function(evt) {
+		var target = XsltForms_browser.events.getTarget(evt);
+		var parent = target;
+		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			var xf = parent.xfElement;
+			if (xf) {
+				alert("rail_focus "+xf.element.id);
+				break;
+			}
+			parent = parent.parentNode;
+		}
+	} );
+	XsltForms_browser.events.attach(this.rail, "mousedown", function(evt) {
+		var target = XsltForms_browser.events.getTarget(evt);
+		var parent = target;
+		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			var xf = parent.xfElement;
+			if (xf) {
+				var newPos = evt.clientX + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
+				parent = xf.rail;
+				while (parent) {
+					newPos -= parent.offsetLeft;
+					parent = parent.offsetParent;
+				}
+				var node = xf.element.node;
+				var value = Math.round(newPos / xf.rail.clientWidth * (xf.end - xf.start) / xf.step) * xf.step + xf.start;
+				var f = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format;
+				if (f) {
+					value = f(value);
+				}
+				xf.setValue(value);
+				if (xf.incremental) {
+					XsltForms_globals.openAction();
+					xf.valueChanged(xf.value + "");
+					XsltForms_globals.closeAction();
+				}
+				if (!document.activeElement || !document.activeElement !== xf.cursor) {
+					xf.cursor.focus();
+				}
+				break;
+			}
+			parent = parent.parentNode;
+		}
+	} );
+	XsltForms_browser.events.attach(this.cursor, "mousedown", function(evt) {
+		var target = XsltForms_browser.events.getTarget(evt);
+		var parent = target;
+		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			var xf = parent.xfElement;
+			if (xf) {
+				xf.offset = evt.clientX + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
+				parent = xf.cursor;
+				while (parent) {
+					xf.offset -= parent.offsetLeft;
+					parent = parent.offsetParent;
+				}
+				document.onmousemove = function(evt) {
+					var target = XsltForms_browser.isIE ? document.activeElement : XsltForms_browser.events.getTarget(evt);
+					var parent = target;
+					while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+						var xf = parent.xfElement;
+						if (xf) {
+							var newPos = evt.clientX - xf.offset + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
+							parent = xf.rail;
+							while (parent) {
+								newPos -= parent.offsetLeft;
+								parent = parent.offsetParent;
+							}
+							var node = xf.element.node;
+							var value = Math.round(newPos / xf.rail.clientWidth * (xf.end - xf.start) / xf.step) * xf.step + xf.start;
+							value = Math.min(Math.max(value, xf.start), xf.end);
+							var f = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format;
+							if (f) {
+								value = f(value);
+							}
+							xf.setValue(value);
+							if (xf.incremental) {
+								XsltForms_globals.openAction();
+								xf.valueChanged(xf.value + "");
+								XsltForms_globals.closeAction();
+							}
+							if (!document.activeElement || !document.activeElement !== xf.cursor) {
+								xf.cursor.focus();
+							}
+							break;
+						}
+						parent = parent.parentNode;
+					}
+				};
+				document.onmouseup = function() {
+					document.onmousemove = null;
+					document.onmouseup = null;
+				};
+				if (!document.activeElement || !document.activeElement !== xf.cursor) {
+					xf.cursor.focus();
+				}
+				break;
+			}
+			parent = parent.parentNode;
+		}
+		if (typeof evt.stopPropagation == "function") {
+			evt.stopPropagation();
+		}
+		else if (typeof evt.cancelBubble != "undefined") {
+			evt.cancelBubble = true;	
+		}
+		if (evt.preventDefault) {
+			evt.preventDefault();
+		}
+	} );
+	if (aidButton) {
+		this.aidButton = cells[valoff + 1].children[0];
+		this.initFocus(this.aidButton);
+	}
+}
+
+XsltForms_range.prototype = new XsltForms_control();
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new range with the given id</cm:wiki>
+<![CDATA[
+XsltForms_range.prototype.clone = function(id) { 
+	return new XsltForms_range(this.subform, id, this.valoff, this.binding, this.incremental, this.start, this.end, this.step, this.bolAidButton, true);
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears properties of this element and calls the parent dispose() method</cm:wiki>
+<![CDATA[
+XsltForms_range.prototype.dispose = function() {
+	this.cell = null;
+	XsltForms_globals.counters.range--;
+	XsltForms_control.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''setValue''' method : sets the value of this input control according to its type</cm:wiki>
+<![CDATA[
+XsltForms_range.prototype.setValue = function(value) {
+	this.outputvalue.innerHTML = value;
+	var node = this.element.node;
+	var f = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").parse;
+	if (f) {
+		value = f(value);
+	}
+	if (this.value !== value) {
+		this.value = value;
+		this.cursor.style.left = Math.round(this.rail.clientWidth * (this.value - this.start) / (this.end - this.start)) + "px";
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''blur''' method : manages the blur event when not in incremental mode</cm:wiki>
+<![CDATA[
+XsltForms_range.prototype.blur = function(target) {
+	XsltForms_globals.focus = null;
+	if (!this.incremental) {
+		XsltForms_browser.assert(this.input, this.element.id);
+		this.valueChanged(this.value);
+	}
+};
+
+]]>
+	</cm:source>
+</cm:component>

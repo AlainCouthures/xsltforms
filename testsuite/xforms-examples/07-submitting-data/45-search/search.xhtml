@@ -1,0 +1,39 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:ev="http://www.w3.org/2001/xml-events" >
+    <title>Google Search Example</title>
+    <style type="text/css">  
+         body {font-family: Helvetica, sans-serif}        
+    </style>
+    <xf:model>
+        <xf:instance xmlns="" id ="search-params">
+            <data>
+                <hl>en</hl>
+                <q></q>
+            </data>
+        </xf:instance>
+        <!-- Send the search parameters to the Google search engine and replace this entire form with the results -->
+        <xf:submission id="search-google" method="get" 
+            action="http://www.google.com/search" replace="all"
+            separator="&amp;"/>
+ 
+        <!-- put the cursor in the first field when the form becomes ready -->
+        <xf:action ev:event="xforms-ready">
+            <xf:setfocus control="search-field"/>
+        </xf:action>
+    </xf:model>
+    <body>
+        <h1>Google Search Example</h1>
+        <xf:input ref="instance('search-params')/q" id="search-field">
+            <xf:label>Search string:</xf:label>
+            <xf:action ev:event="DOMActivate">
+                <xf:send submission="search-google"/>
+            </xf:action>
+        </xf:input>
+        <xf:submit submission="search-google">
+            <xf:label>Search</xf:label>
+        </xf:submit>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>CRVLockCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>County Edit Lock</Label>
+         <Value>county-edit-lock</Value>
+      </Item>
+      <Item>
+         <Label>County Final Lock</Label>
+         <Value>county-final-lock</Value>
+      </Item>
+      <Item>
+         <Label>State Edit Lock</Label>
+         <Value>state-edit-lock</Value>
+      </Item>
+      <Item>
+         <Label>State Study Lock</Label>
+         <Value>state-study-lock</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

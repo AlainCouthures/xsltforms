@@ -1,0 +1,53 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="espaceEntities.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template name="escapeEntities" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="text"/>
+			<xsl:param name="done"/>
+			<xsl:param name="entities">&amp;.&amp;amp;.&apos;.&amp;apos;.&lt;.&amp;lt;.&gt;.&amp;gt;.&quot;.&amp;quot;.&#xA;.&amp;#xA;.&#8232;.&amp;#xA;.\.\\.</xsl:param>
+			<xsl:param name="entity" select="substring-before($entities,'.')"/>
+			<xsl:choose>
+				<xsl:when test="contains($text, $entity)">
+					<xsl:call-template name="escapeEntities">
+						<xsl:with-param name="text" select="substring-after($text,$entity)"/>
+						<xsl:with-param name="done" select="concat($done, substring-before($text,$entity), substring-before(substring-after($entities,'.'), '.'))"/>
+						<xsl:with-param name="entities" select="$entities"/>
+						<xsl:with-param name="entity" select="$entity"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:when test="substring-after(substring-after($entities,'.'),'.') != ''">
+					<xsl:call-template name="escapeEntities">
+						<xsl:with-param name="text" select="concat($done, $text)"/>
+						<xsl:with-param name="entities" select="substring-after(substring-after($entities,'.'),'.')"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat($done, $text)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</cm:source>
+</cm:component>

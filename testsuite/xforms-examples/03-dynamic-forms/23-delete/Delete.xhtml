@@ -1,0 +1,125 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>XForms Delete Example</title>
+      <style type="text/css">
+     * {
+        font-family: Arial, Helvetica, sans-serif;
+     }
+     
+     label, legend {
+        font-weight: bold;
+     }
+     
+      .header {
+        color: white;
+        background-color: gray;
+        font-weight: bold;
+        padding: 2px;
+      }
+      
+      .header {
+         width: 370px;
+      }
+      
+       .leftColumn, .rightColumn {
+         display: inline;
+      }
+      
+      .leftColumn {
+         margin-left: 10px;
+      }
+      
+      .rightColumn {
+         position: absolute;
+         left: 0;
+         margin-left: 150px;
+      }
+      
+      fieldset {
+         width: 380px;
+      }
+      
+      *:value {
+        background-color: red;
+      }
+      
+       *:repeat-item {
+        background-color: red;
+      }
+      
+       *:repeat-index {
+        background-color: red;
+      }
+      </style>
+      <xf:model>
+         <xf:instance>
+            <PhoneList xmlns="">
+               <Person>
+                  <Name>Peggy</Name>
+                  <Phone>123</Phone>
+               </Person>
+               <Person>
+                  <Name>Dan</Name>
+                  <Phone>456</Phone>
+               </Person>
+               <Person>
+                  <Name>John</Name>
+                  <Phone>789</Phone>
+               </Person>
+               <Person>
+                  <Name>Sue</Name>
+                  <Phone>234</Phone>
+               </Person>
+               <NewPerson>
+                  <Name />
+                  <Phone />
+               </NewPerson>
+               <SelectedRow />
+            </PhoneList>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <xf:group nodeset="/PhoneList">
+      <fieldset>
+         <legend>Company Phone List</legend>
+         <div class="header">
+            <div class="leftColumn">Name</div>
+            <div class="rightColumn">Phone</div>
+         </div>
+         <xf:repeat id="list" nodeset="Person">
+            <xf:input ref="Name" class="leftColumn" />
+            <xf:input ref="Phone" class="rightColumn" />
+         </xf:repeat>
+      </fieldset>
+      <fieldset>
+         <legend>Add New Person</legend>
+         <xf:input ref="NewPerson/Name">
+            <xf:label>Name:</xf:label>
+         </xf:input>
+         <br />
+         <xf:input ref="NewPerson/Phone">
+            <xf:label>Phone:</xf:label>
+         </xf:input>
+         <xf:trigger>
+            <xf:label>Insert After Selected Row</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:insert nodeset="Person" at="index('list')" position="after" />
+               <xf:setvalue ref="Person[index('list')]/Name" value="/PhoneList/NewPerson/Name" />
+               <xf:setvalue ref="Person[index('list')]/Phone" value="/PhoneList/NewPerson/Phone" />
+               <xf:setvalue ref="SelectedRow" value="index('list')" />
+            </xf:action>
+         </xf:trigger>
+      </fieldset>
+      <xf:trigger>
+         <xf:label>Delete Selected Row</xf:label>
+         <xf:action ev:event="DOMActivate">
+            <xf:delete nodeset="Person" at="index('list')" />
+         </xf:action>
+      </xf:trigger>
+      <xf:output ref="SelectedRow">
+         <xf:label>Selected Row= </xf:label>
+      </xf:output>
+      </xf:group>
+   </body>
+</html>

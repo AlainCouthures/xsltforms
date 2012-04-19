@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<head>
+		<title>Writers (Subforms)</title>
+		<xforms:model>
+			<xforms:instance>
+				<writers xmlns="">
+					<writer firstname="Albert" lastname="Camus" selected="false">
+						<book year="1938" title="Caligula"/>
+						<book year="1942" title="L'étranger"/>
+						<book year="1947" title="La peste"/>
+						<book year="1951" title="L'homme révolté"/>
+					</writer>
+					<writer firstname="Blaise" lastname="Cendrars" selected="false">
+						<book year="1925" title="L'or"/>
+						<book year="1948" title="Bourlinguer"/>
+					</writer>
+					<writer firstname="Victor" lastname="Hugo" selected="false">
+						<book year="1831" title="Notre-Dame de Paris"/>
+						<book year="1838" title="Ruy Blas"/>
+						<book year="1856" title="Les contemplations"/>
+						<book year="1862" title="Les misérables"/>
+					</writer>
+					<writer firstname="Edmond" lastname="Rostand" selected="false">
+						<book year="1897" title="Cyrano de Bergerac"/>
+						<book year="1904" title="Chantecler"/>
+					</writer>
+					<writer firstname="Antoine" lastname="de Saint-Exupery" selected="false">
+						<book year="1931" title="Vol de nuit"/>
+						<book year="1942" title="Pilote de guerre"/>
+						<book year="1943" title="Le petit prince"/>
+					</writer>
+				</writers>
+			</xforms:instance>
+		</xforms:model>
+	</head>
+	<body>
+		<h3>Writers (Subforms)</h3>
+		<xforms:repeat nodeset="writer" appearance="compact">
+			<p>
+				<xforms:output ref="@firstname"/>&#160;<xforms:output ref="@lastname"/>&#160;
+				<xforms:trigger>
+					<xforms:label><xforms:output value="choose(@selected != 'true','Show','Hide')"/> Books</xforms:label>
+					<xforms:action ev:event="DOMActivate">
+						<xforms:load if="@selected != 'true'" show="embed" targetid="subform" resource="books.xhtml"/>
+						<xforms:unload if="@selected = 'true'" targetid="subform"/>
+						<xforms:setvalue ref="@selected" value=". != 'true'"/>
+					</xforms:action>
+				</xforms:trigger>
+				<xforms:group id="subform"/>
+			</p>
+		</xforms:repeat>
+	</body>
+</html>

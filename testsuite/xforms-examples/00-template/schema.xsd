@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="Data">
+      <xs:annotation>
+         <xs:documentation>This XML Schema file of checks postal codes to be validate by and XForm that reads in an XML schema.</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="Min1Char">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:minLength value="1"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="LocationPostalID">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:pattern value="[0-9]{5}"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="String"/>
+            <xs:element name="Byte" type="xs:byte"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

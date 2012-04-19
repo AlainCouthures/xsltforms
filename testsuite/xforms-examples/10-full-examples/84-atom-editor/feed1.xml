@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/2005/Atom">
+	<author>
+		<name>String</name>
+		<uri>http://www.example.com</uri>
+		<email>x@x.x</email>
+	</author>
+	<category term="String"/>
+	<contributor>
+		<name>String</name>
+		<uri>http://www.example.com</uri>
+		<email>x@x.x</email>
+	</contributor>
+	<generator>String</generator>
+	<icon>http://www.example.com</icon>
+	<id>http://www.example.com</id>
+	<link href="http://www.example.com">text</link>
+	<logo>http://www.example.com</logo>
+	<rights>text</rights>
+	<subtitle>text</subtitle>
+	<title>text</title>
+	<updated>2001-12-17T09:30:47.0Z</updated>
+	<entry>
+		<author>
+			<name>John Doe</name>
+			<uri>http://www.example.com</uri>
+			<email>x@x.x</email>
+		</author>
+		<category term="String"/>
+		<content>text</content>
+		<contributor>
+			<name>String</name>
+			<uri>http://www.example.com</uri>
+			<email>x@x.x</email>
+		</contributor>
+		<id>http://www.example.com</id>
+		<link href="http://www.example.com">text</link>
+		<published>2001-12-17T09:30:47.0Z</published>
+		<rights>text</rights>
+		<source>text</source>
+		<summary>text</summary>
+		<title>text</title>
+		<updated>2001-12-17T09:30:47.0Z</updated>
+	</entry>
+</feed>

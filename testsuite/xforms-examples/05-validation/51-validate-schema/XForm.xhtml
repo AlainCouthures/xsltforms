@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xml:lang="en">
+  <head>
+    <title>Complex Schema Type Check on Submission</title>
+    <xforms:model xmlns:ev="http://www.w3.org/2001/xml-events" id="model">
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="">
+        <element name="foo">
+          <complexType>
+            <sequence>
+              <element name="bar" minOccurs="3" maxOccurs="3"/>
+            </sequence>
+          </complexType>
+        </element>
+      </schema>
+      <xforms:instance xmlns="">
+        <foo xmlns="">
+          <bar>futtog</bar>
+        </foo>
+      </xforms:instance>
+      <xforms:submission action="submithandler.php" method="post" id="sub-post"/>
+    </xforms:model>
+  </head>
+  <body>
+    <div xmlns:ev="http://www.w3.org/2001/xml-events" xmlns="http://www.w3.org/1999/xhtml">
+      The model has an inline schema that demands requires <code>foo</code> to
+      have three <code>bar</code> children. Thus, submit should not be
+      possible before that is the case.
+    </div>
+    <div xmlns:ev="http://www.w3.org/2001/xml-events" xmlns="http://www.w3.org/1999/xhtml">
+      <xforms:trigger id="ins">
+        <xforms:label>Insert</xforms:label>
+        <xforms:insert ev:event="DOMActivate" nodeset="bar" position="after" at="last()"/>
+      </xforms:trigger>
+      <xforms:trigger id="del">
+        <xforms:label>Delete</xforms:label>
+        <xforms:delete ev:event="DOMActivate" nodeset="bar" at="last()"/>
+      </xforms:trigger>
+      <xforms:submit id="submit" submission="sub-post">
+        <xforms:label>Submit</xforms:label>
+      </xforms:submit>
+      <xforms:output id="count" value="count(bar)">
+        <xforms:label>count(bar): </xforms:label>
+      </xforms:output>
+      <br/>
+      <code>
+        &lt;foo&gt;
+        <xforms:repeat nodeset="bar">
+          &lt;bar&gt;<xforms:output value="."/>&lt;/bar&gt;
+        </xforms:repeat>
+        &lt;/foo&gt;
+      </code>
+    </div>
+    <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=278762">Bug 278762</a>
+  </body>
+</html>

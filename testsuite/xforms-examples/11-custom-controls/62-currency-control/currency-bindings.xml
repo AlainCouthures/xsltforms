@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbl:bindings id="xformsBindings" xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    >
+    <xbl:binding id="output-currency" extends="chrome://xforms/content/xforms.xml#xformswidget-base">
+        <xbl:content>
+            <h:div anonid="content" style="border: 1px solid red;">Test</h:div>
+            <h:span anonid="contentshadow" xbl:inherits="class style"/>
+            <xbl:children/>
+        </xbl:content>
+        <xbl:implementation implements="nsIXFormsUIWidget">
+            <xbl:method name="refresh">
+                <xbl:body>
+                    var contentshadow=document.getAnonymousElementByAttribute(this,"anonid","contentshadow");                    
+                    contentshadow.innerHTML = this.formatCurrency(this.accessors.getValue());                    
+               </xbl:body>
+            </xbl:method>
+            <xbl:property name="fractionalDelimiter">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("fractional") != null){
+    return this.getAttribute("fractional")
+    }
+else {
+    return ".";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+            <xbl:property name="thousandsDelimiter">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("thousands") != null){
+    return this.getAttribute("thousands")
+    }
+else {
+    return ",";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+            <xbl:property name="currencySymbol">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("symbol") != null){
+    return this.getAttribute("symbol")
+    }
+else {
+    return "$";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+            <xbl:property name="currencyPosition">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("position") != null){
+    return this.getAttribute("position")
+    }
+else {
+    return "before";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+            <xbl:method name="formatCurrency">
+                <xbl:parameter name="value"/>
+                <xbl:body><![CDATA[
+var sign =(value >= 0)?"":"-"; 
+var value = Math.abs(value);
+var integerPortion = parseInt(value);
+var floatPortion = (Math.round(100 * (1 + (value - integerPortion)))).toString().substr(1,2);
+var stack = [];
+while (integerPortion>0){ 
+    var triple = Math.round(1000*((integerPortion/1000) % 1)); 
+    tripleStr = (1000 + triple).toString().substr(1); 
+    stack.push(tripleStr); 
+    integerPortion = Math.floor(integerPortion/1000); 
+    } 
+var reverseStack = stack.reverse(); 
+reverseStack[0] = Math.floor(reverseStack[0]);
+var delimitedInteger = stack.join(this.thousandsDelimiter);
+if (delimitedInteger == "NaN"){delimitedInteger = "0"};
+if (this.currencyPosition == "before"){
+    var formattedStr =sign + this.currencySymbol+delimitedInteger + this.fractionalDelimiter+floatPortion;                                         
+    }
+else {
+    var formattedStr =sign + delimitedInteger + this.fractionalDelimiter+floatPortion + this.currencySymbol;                                         
+    }
+return formattedStr;
+                    ]]></xbl:body>
+            </xbl:method>
+        </xbl:implementation>
+    </xbl:binding>
+    <xbl:binding id="input-currency">
+        <xbl:content>
+            <h:input type="text" anonid="displayInput"/>
+            <h:span style="border: 1px solid blue;"><xf:input xbl:inherits="ref=ref" incremental="true" anonid="xformsInput"
+            /></h:span>
+        </xbl:content>
+        <xbl:implementation>
+            <xbl:constructor><![CDATA[
+var displayInput = document.getAnonymousElementByAttribute(this,"anonid","displayInput");
+var xformsInput = document.getAnonymousElementByAttribute(this,"anonid","xformsInput");
+var binding = this;
+var updateXforms = function(evt){
+    var value = displayInput.value;
+    var removeCurrencySymbolRe = new RegExp("(\\"+binding.currencySymbol+")","g");
+    value = value.replace(removeCurrencySymbolRe,"");
+    var removeThousandsDelimiterRe = new RegExp("(\\"+binding.thousandsDelimiter+")","g");
+    value = value.replace(removeThousandsDelimiterRe,"");
+    var replaceFractionalDelimiterRe = new RegExp("(\\"+binding.fractionalDelimiter+")");
+    value = value.replace(replaceFractionalDelimiterRe,".");
+    xformsInput.accessors.setValue(value);
+    };
+displayInput.addEventListener("keyup",updateXforms ,true);
+//    var control = this;
+//    var refreshStub = function() {
+//      control.refresh();
+//    }
+
+//    this.ref1.refresh = refreshStub;
+//    this.ref2.refresh = refreshStub;
+                                
+                                ]]></xbl:constructor>
+            <xbl:method name="update">
+                <xbl:body><![CDATA[                    
+                    ]]></xbl:body>
+            </xbl:method>
+            <xbl:method name="refresh">
+                <xbl:body><![CDATA[
+                    alert("Refresh called");
+//                    var contentshadow=document.getAnonymousElementByAttribute(this,"anonid","contentshadow");                    
+//                    contentshadow.innerHTML = this.formatCurrency(this.accessors.getValue());                    
+                ]]></xbl:body>
+            </xbl:method>
+            <xbl:property name="fractionalDelimiter">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("fractional") != null){
+    return this.getAttribute("fractional")
+    }
+else {
+    return ".";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+            <xbl:property name="thousandsDelimiter">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("thousands") != null){
+    return this.getAttribute("thousands")
+    }
+else {
+    return ",";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+            <xbl:property name="currencySymbol">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("symbol") != null){
+    return this.getAttribute("symbol")
+    }
+else {
+    return "$";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+            <xbl:property name="currencyPosition">
+                <xbl:getter><![CDATA[
+if (this.getAttribute("position") != null){
+    return this.getAttribute("position")
+    }
+else {
+    return "before";
+    }
+                    ]]></xbl:getter>
+            </xbl:property>
+        </xbl:implementation>
+    </xbl:binding>
+</xbl:bindings>

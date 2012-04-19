@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XForms" ExtStr="xhtml">
+		<File FilePath="Date.xhtml" HomeFolder="Yes"/>
+		<File FilePath="HelloWorld.xhtml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="CSS" ExtStr="css">
+		<File FilePath="output.css" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="bindings" ExtStr="xml">
+		<File FilePath="bindings.xml" HomeFolder="Yes"/>
+		<File FilePath="hello-bindings.xml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="JavaScript" ExtStr=".js"/>
+</Project>

@@ -1,0 +1,3 @@
+http://developer.mozilla.org/en/docs/CSS:Getting_Started:XBL_bindings
+
+http://developer.mozilla.org/en/docs/XBL:XBL_1.0_Reference:Elements#bindings

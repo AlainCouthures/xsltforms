@@ -1,0 +1,73 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<title>Address Form</title>
+		<xf:model>
+			<xf:instance>
+				<Address xmlns="">
+					<LocationStreetFullText />
+					<LocationCityName />
+					<LocationStateName />
+					<LocationPostalID />
+				</Address>
+			</xf:instance>
+			<xf:itext>
+				<xf:translation lang="eng">
+					<xf:text id="address">
+						<xf:value>Mailing Address</xf:value>
+					</xf:text>
+					<xf:text id="streetFullText">
+						<xf:value>Street: </xf:value>
+					</xf:text>
+					<xf:text id="cityName">
+						<xf:value>City: </xf:value>
+					</xf:text>
+					<xf:text id="stateName">
+						<xf:value>State: </xf:value>
+					</xf:text>
+					<xf:text id="postalID">
+						<xf:value>Postal Code: </xf:value>
+					</xf:text>
+				</xf:translation>
+				<xf:translation lang="fr">
+					<xf:text id="address">
+						<xf:value>Adresse postale</xf:value>
+					</xf:text>
+					<xf:text id="streetFullText">
+						<xf:value>Rue : </xf:value>
+					</xf:text>
+					<xf:text id="cityName">
+						<xf:value>Ville : </xf:value>
+					</xf:text>
+					<xf:text id="stateName">
+						<xf:value>Département : </xf:value>
+					</xf:text>
+					<xf:text id="postalID">
+						<xf:value>Code postal : </xf:value>
+					</xf:text>
+				</xf:translation>
+			</xf:itext>
+		</xf:model>
+	</head>
+	<body>
+		<xf:group ref="/Address">
+			<fieldset>
+				<legend><xf:output value="itext('address')"/></legend>
+				<xf:input ref="LocationStreetFullText">
+					<xf:label><xf:output value="itext('streetFullText')"/></xf:label>
+				</xf:input>
+				<br/>
+				<xf:input ref="LocationCityName">
+					<xf:label><xf:output value="itext('cityName')"/></xf:label>
+				</xf:input>
+				<br/>
+				<xf:input ref="LocationStateName">
+					<xf:label><xf:output value="itext('stateName')"/></xf:label>
+				</xf:input>
+				<br/>
+				<xf:input ref="LocationPostalID">
+					<xf:label><xf:output value="itext('postalID')"/></xf:label>
+				</xf:input>
+			</fieldset>
+		</xf:group>
+	</body>
+</html>

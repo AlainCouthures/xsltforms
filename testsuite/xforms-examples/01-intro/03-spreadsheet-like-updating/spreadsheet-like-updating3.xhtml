@@ -1,0 +1,73 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Demonstration of spreadsheet like update of XForms</title>
+      <style type="text/css">
+	  @namespace xf url("http://www.w3.org/2002/xforms");
+	  
+      xf|group {
+        border: black solid 1px;
+      }
+   
+      .tr {
+         display: inline;
+	  		border: blue solid 1px;
+	  	}
+	  	
+      .td {
+			
+      }
+	  </style>
+      <xf:model>
+         <xf:instance xmlns="">
+            <MySpreadsheet>
+               <Row>
+                  <Cell>10.0</Cell>
+                  <Cell>20.0</Cell>
+                  <Cell>30.0</Cell>
+               </Row>
+               <Row>
+                  <Cell>40.0</Cell>
+                  <Cell>50.0</Cell>
+                  <Cell>60.0</Cell>
+               </Row>
+               <Row>
+                  <Cell>70.0</Cell>
+                  <Cell>80.0</Cell>
+                  <Cell>90.0</Cell>
+               </Row>
+               <sum />
+               <avg />
+               <min />
+               <max />
+            </MySpreadsheet>
+         </xf:instance>
+         <xf:bind nodeset="/MySpreadsheet/sum" calculate="sum(/MySpreadsheet/Row/Cell)" type="xs:decimal" />
+         <xf:bind nodeset="/MySpreadsheet/avg" calculate="avg(/MySpreadsheet/Row/Cell)" type="xs:decimal" />
+         <xf:bind nodeset="/MySpreadsheet/min" calculate="min(/MySpreadsheet/Row/Cell)" type="xs:decimal" />
+         <xf:bind nodeset="/MySpreadsheet/max" calculate="max(/MySpreadsheet/Row/Cell)" type="xs:decimal" />
+      </xf:model>
+   </head>
+   <body>
+      <p>Demonstration of Spreadsheet-like updates.</p>
+      <xf:group nodeset="/MySpreadsheet">
+         <xf:repeat nodeset="Row">
+            <div class="tr">
+					Row=<xf:output value="position()" />
+               <xf:repeat nodeset="Cell">
+                  <div class="td">
+							Col=<xf:output value="position()"/>
+                     <xf:input ref="." />
+                  </div>
+               </xf:repeat>
+            </div>
+         </xf:repeat>
+			Sum= <xf:output ref="sum" />
+         <br />
+			Avg= <xf:output ref="avg" />
+         <br />
+			Min= <xf:output ref="min" />
+         <br />
+			Max= <xf:output ref="max" />
+      </xf:group>
+   </body>
+</html>

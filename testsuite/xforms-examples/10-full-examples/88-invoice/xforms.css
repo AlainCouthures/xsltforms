@@ -1,0 +1,27 @@
+@namespace xf url("http://www.w3.org/2002/xforms");
+body {font-family:Helvetica, sans-serif;}
+textarea {font-family:Helvetica, sans-serif;}
+
+.newline {display:block; margin:5px 0;}
+
+xf|input > xf|label, xf|select > xf|label, xf|select1 > xf|label, xf|textarea > xf|label 
+{text-align:right; padding-right:10px; width:20ex; float:left; text-align:right;}
+
+xf|group {border: solid black 1px; margin:15px 5px; padding:5px; background-color:lavender;}
+.group-label {text-align:left; font-weight:bold; font-size:12pt;}
+
+/* put each item on a new row */
+.xf-repeat-item {padding: 3px; display:block;}
+
+.Description, .Description .xf-value {text-align: left;}
+.Description {width: 50ex; text-align: left;}
+.Description .xf-value {width: 65ex; text-align: left;}
+
+.Amount,  .Amount .xf-value{text-align: right;}
+.Amount {width: 12ex;}
+.Amount .xf-value {width: 16ex;}
+
+/* add to remove spaces between table cells
+table {border-collapse: collapse;} */
+thead tr {background-color: silver;}
+thead tr th {padding: 2px 5px;}

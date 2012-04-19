@@ -1,0 +1,11 @@
+/*** XBL demonstration ***/
+[anonid="square"] {
+  width: 20em;
+  height: 20em;
+  border: 2px inset gray;
+  }
+
+[anonid="button"] {
+  margin-top: 1em;
+  padding: .5em 2em;"
+  }

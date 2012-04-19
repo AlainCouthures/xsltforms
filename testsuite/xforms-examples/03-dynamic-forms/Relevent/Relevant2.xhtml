@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xf="http://www.w3.org/2002/xforms"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ <title>Testing the bind relevant attribute</title>
+ <xf:model>
+  <xf:instance>
+     <var xmlns="">
+         <code1>true</code1>
+         <code2>false</code2>
+      </var>
+  </xf:instance>
+  
+  <xf:bind nodeset="/var/code1"/>
+  <xf:bind nodeset="/var/code2" relevant="contains(/var/code1, 'true')"/>
+ </xf:model>
+ <body>
+  <p>The second list depends on the first one being set to yes.</p>
+  <xf:select1 ref="/var/code1">
+     <xf:label>Should I show the second list? </xf:label>
+       <br/>
+     <xf:item>
+        <xf:label>Yes Please!</xf:label>
+        <xf:value>true</xf:value>
+     </xf:item>
+     <xf:item>
+        <xf:label>No Thank You</xf:label>
+        <xf:value>false</xf:value>
+     </xf:item>
+  </xf:select1>
+  <br/>
+  <xf:group ref="/var/code2">
+  <br/>
+  <xf:input>
+     <xf:label>Test:</xf:label>
+  </xf:input>
+  <br/>
+   <xf:select1>
+     <xf:label>Here is the second list: </xf:label>
+     <xf:item>
+        <xf:label>Yes Please!</xf:label>
+        <xf:value>yes</xf:value>
+     </xf:item>
+     <xf:item>
+        <xf:label>No Thank You</xf:label>
+        <xf:value>no</xf:value>
+     </xf:item>
+  </xf:select1>
+  <br/>
+  <xf:textarea>
+     <xf:label>Test:</xf:label>
+  </xf:textarea>
+  <xf:input>
+     <xf:label>Test:</xf:label>
+  </xf:input>
+  </xf:group>
+ </body>
+</html>

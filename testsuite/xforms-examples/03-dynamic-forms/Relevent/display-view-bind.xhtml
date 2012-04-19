@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <title>Binding Views</title>
+   <style />
+   <xf:model>
+<xf:instance id="crv" xmlns="">
+         <data>
+            <selected-view/>
+         </data>
+      </xf:instance>
+      <xf:instance id="view-binds" xmlns="">
+         <data>
+            <view1/>
+            <view2/>
+            <view3/>
+         </data>
+      </xf:instance>
+      <xf:bind id="view1-bind"  nodeset="instance('view-binds')/view1" relevant="contains(instance('crv')/selected-view, 'view1')" />
+      <xf:bind id="view2-bind"  nodeset="instance('view-binds')/view2" relevant="contains(instance('crv')/selected-view, 'view2')" />
+      <xf:bind id="view3-bind"  nodeset="instance('view-binds')/view3" relevant="contains(instance('crv')/selected-view, 'view3')" />
+   </xf:model>
+   <body>
+      <p>Demonstration of using Bind to select one or more views</p>
+      <xf:select1 ref="instance('crv')/selected-view">
+         <xf:label>Select the view you would like to display:</xf:label>
+         <br />
+         <xf:item>
+            <xf:label>View 1</xf:label>
+            <xf:value>view1</xf:value>
+         </xf:item>
+          <xf:item>
+            <xf:label>View 2</xf:label>
+            <xf:value>view2</xf:value>
+         </xf:item>
+          <xf:item>
+            <xf:label>View 3</xf:label>
+            <xf:value>view3</xf:value>
+         </xf:item>
+      </xf:select1>
+      <br />
+      <xf:group bind="view1-bind">
+         <h1>View 1</h1>
+      </xf:group>
+       <xf:group  ref="instance('view-binds')/view2">
+         <h1>View 2</h1>
+      </xf:group>
+       <xf:group  bind="view3-bind">
+         <h1>View 3</h1>
+      </xf:group>
+   </body>
+</html>

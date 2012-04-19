@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>RealPropertyUsageCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Agricultural property of 35 or more acres</Label>
+         <Value>agricultural</Value>
+      </Item>
+      <Item>
+         <Label>Apartment - 4 or more units</Label>
+         <Value>apartments</Value>
+      </Item>
+      <Item>
+         <Label>Commercial or industrial property</Label>
+         <Value>commercial-industrial</Value>
+      </Item>
+      <Item>
+         <Label>Property that does not fit the above classifications.</Label>
+         <Value>other</Value>
+      </Item>
+      <Item>
+         <Label>Recreational  or cabin property</Label>
+         <Value>recreational-cabin</Value>
+      </Item>
+      <Item>
+         <Label>Residential duplex or triplex</Label>
+         <Value>residential-duplex-triplex</Value>
+      </Item>
+      <Item>
+         <Label>Residential single family home</Label>
+         <Value>residential</Value>
+      </Item>
+      <Item>
+         <Label>Timber of 35 or more acres</Label>
+         <Value>timber</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

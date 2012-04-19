@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:xf="http://www.w3.org/2002/xforms" 
+xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>List appender, remover</title>
+      <xf:model>
+         <xf:instance xmlns="">
+            <data xmlns="">
+               <val>1</val>
+               <val>2</val>
+               <val>3</val>
+            </data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+         <xf:repeat nodeset="val">
+            <div>
+               <xf:output ref=".">
+                  <xf:label>Value: </xf:label>
+               </xf:output>
+            </div>
+         </xf:repeat>
+         <xf:trigger>
+            <xf:label>Insert new row</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:insert nodeset="val" position="after" at="last()" />
+               <xf:setvalue ref="val[last()]" value="count(/data/val)" />
+            </xf:action>
+         </xf:trigger>
+         <xf:trigger>
+            <xf:label>Delete last row</xf:label>
+            <xf:delete nodeset="val" at="last()" ev:event="DOMActivate" />
+         </xf:trigger>
+   </body>
+</html>

@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Phone List</title>
+      <xf:model>
+         <xf:instance>
+            <PhoneList xmlns="">
+               <Person>
+                  <Name>Peggy</Name>
+                  <Phone>123</Phone>
+               </Person>
+               <Person>
+                  <Name>Dan</Name>
+                  <Phone>456</Phone>
+               </Person>
+               <Person>
+                  <Name>John</Name>
+                  <Phone>789</Phone>
+               </Person>
+               <Person>
+                  <Name>Sue</Name>
+                  <Phone>234</Phone>
+               </Person>
+            </PhoneList>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <fieldset>
+         <legend>Company Phone List</legend>
+         <p><b>Name, Phone</b>
+         <xf:repeat nodeset="/PhoneList/Person">
+            <xf:output ref="Name"/>,
+            <xf:output ref="Phone"/>
+         </xf:repeat>
+         </p>
+      </fieldset>
+   </body>
+</html>

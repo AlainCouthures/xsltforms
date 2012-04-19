@@ -1,0 +1,103 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>XForms Graph Viewer</title>
+      <style type="text/css">
+         body { font-family: Verdana, Helvetica, sans-serif }
+         output {font-size: 10pt}
+         .bold {font-weight: bold}
+         .indent {margin-left: 250px}
+      </style>
+      <xf:model>
+         <xf:instance xmlns="" id="saved-data" src="usa.xml" />
+         <xf:instance xmlns="" id="path">
+            <data>
+               <!-- set initial value to be the root node -->
+               <current-node-id>usa</current-node-id>
+            </data>
+         </xf:instance>
+         <xf:bind id="current-node-id" nodeset="instance('path')/current-node-id" />
+         <xf:submission id="save-to-file" method="put" action="usa.xml" replace="instance" instance="saved-data" />
+      </xf:model>
+   </head>
+   <body>
+      <h1>XForms Graph Viewer</h1>
+      <p>Example of viewing arbitrarily deep hierarchies with XForms v0.1</p>
+      <xf:input ref="graph-name">
+         <xf:label>Graph Name: </xf:label>
+      </xf:input>
+       <br />
+      <xf:textarea ref="graph-description">
+         <xf:label>Description: </xf:label>
+      </xf:textarea>
+      <br />
+       <br />
+      <xf:input bind="current-node-id" incremental="true">
+         <xf:label>Search for node id:</xf:label>
+      </xf:input>
+      <br />
+      <div class="bread-crumbs">
+         <p>Sample short-cuts:</p>
+         <xf:trigger>
+            <xf:label>usa</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:setvalue bind="current-node-id" value="'usa'" />
+            </xf:action>
+         </xf:trigger>
+      -&gt;
+       <xf:trigger>
+            <xf:label>minnesota</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:setvalue bind="current-node-id" value="'minnesota'" />
+            </xf:action>
+         </xf:trigger>
+      -&gt;
+       <xf:trigger>
+            <xf:label>hennepin</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:setvalue bind="current-node-id" value="'hennepin'" />
+            </xf:action>
+         </xf:trigger>
+      -&gt;
+      <xf:trigger>
+            <xf:label>st-louis park</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:setvalue bind="current-node-id" value="'st-louis-park'" />
+            </xf:action>
+         </xf:trigger>
+      </div>
+      <h3>Current Node</h3>
+      <xf:output ref="instance('path')/current-node-id" class="bold">
+         <xf:label>Currnet node id: </xf:label>
+      </xf:output>
+      <br/>
+      <xf:output ref="//node[node-id=instance('path')/current-node-id]/links/link-id" class="bold">
+         <xf:label>Link type: </xf:label>
+      </xf:output>
+      <!-- This is the critical line.  Find all the nodes in the graph that have a node-id of the current-node-id -->
+      <xf:repeat nodeset="//node[node-id=instance('path')/current-node-id]/links/node" id="repeat-node1">
+         <xf:trigger class="indent">
+            <xf:label> <!-- the label on the button -->
+               <xf:output ref="node-id" />
+            </xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:setvalue ref="instance('path')/current-node-id" value="instance('saved-data')//node[node-id=instance('path')/current-node-id]/links/node[position()=index('repeat-node1')]/node-id" />
+            </xf:action>
+         </xf:trigger>
+      </xf:repeat>
+      <h3>All Nodes:</h3>
+      <xf:repeat nodeset="//node" id="repeat-node2">
+         <xf:output ref="node-id">
+            <xf:label>Node Name: </xf:label>
+         </xf:output>
+      </xf:repeat>
+      <h3>Link Types:</h3>
+      <xf:repeat nodeset="//links" id="repeat-link">
+         <xf:output ref="link-id">
+            <xf:label>Link Name: </xf:label>
+         </xf:output>
+      </xf:repeat>
+      <xf:submit submission="save-to-file">
+         <xf:label>Save graph</xf:label>
+      </xf:submit>
+   </body>
+</html>    

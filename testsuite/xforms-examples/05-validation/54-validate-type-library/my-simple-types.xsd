@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ftype="http://www.example.com/my-file-types" targetNamespace="http://www.example.com/my-file-types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:simpleType name="zip5Type">
+      <xs:annotation>
+         <xs:documentation>5 digit zip code</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:pattern value="\d{5}"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="zip9Type">
+      <xs:annotation>
+         <xs:documentation>9 digit zip code</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:pattern value="\d{9}"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>

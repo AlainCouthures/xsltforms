@@ -1,0 +1,94 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<style type="text/css">
+    @namespace xf url("http://www.w3.org/2002/xforms");
+
+.repeat-section-container {width:90%; background:#ccc; margin:auto; margin-bottom:20px; padding:10px 0;}
+
+.sectionLabel, .delete-section  {margin:0 0 10px 10px;}
+
+#repeatBookmarks  .xf-repeat-index {
+        background:#faa;  
+    }
+
+    xf|label.sectionLabel {
+       font-size: 20px;
+       font-weight: bold;
+       color: blue;
+    }
+      
+    .bookmark xf|label {
+       font-weight: bold;
+       color: black;
+    }
+
+    .bookmark {
+       margin-left: 12px;
+       margin: 5px 5px;
+    }
+
+    /* custom fields widths using FireFox value property */
+    .bookmark-name .xf-value {width:30ex}
+    .url .xf-value {width:60ex}
+
+    </style>
+		<title>Editing Hierarchical Bookmarks With Firefox XForms Extension</title>
+		<xf:model id="bookmarks">
+			<xf:instance src="bookmarks.xml" id="bookmarks" />
+			<xf:submission id="update-from-local-file" method="get" action="bookmarks.xml" replace="instance" instance="bookmarks" />
+			<xf:submission id="save-to-local-file" method="put" action="bookmarks.xml" />
+		</xf:model>
+	</head>
+	<body>
+		<!-- For each section -->
+		<xf:repeat nodeset="section" id="repeatSections">
+			<div class="repeat-section-container">
+				<xf:input ref="@name">
+					<xf:label class="sectionLabel">Section: </xf:label>
+				</xf:input>
+				<!-- For all bookmarks in this section -->
+				<xf:repeat nodeset="bookmark" id="repeatBookmarks">
+					<div class="bookmark">
+						<xf:input class="bookmark-name" ref="@name">
+							<xf:label>Name: </xf:label>
+						</xf:input>
+						<xf:input class="url" ref="@href">
+							<xf:label>URL: </xf:label>
+						</xf:input>
+						<xf:trigger>
+							<xf:label>Delete</xf:label>
+							<xf:delete nodeset="." at="index('repeatBookmarks')" ev:event="DOMActivate" />
+						</xf:trigger>
+					<xf:trigger>
+							<xf:label>Insert</xf:label>
+							<xf:insert nodeset="." at="index('repeatBookmarks')" position="after" ev:event="DOMActivate" />
+					</xf:trigger>						
+						
+					</div>
+				</xf:repeat>
+				<xf:trigger class="delete-section">
+					<xf:label>Delete Section</xf:label>
+					<xf:delete nodeset="." at="index('repeatSections')" ev:event="DOMActivate" />
+				</xf:trigger>
+			</div>
+		</xf:repeat>
+		<xf:trigger id="insertbutton">
+			<xf:label>Insert bookmark</xf:label>
+			<xf:insert nodeset="section[index('repeatSections')]/bookmark" at="index('repeatBookmarks')" position="after" ev:event="DOMActivate" />
+		</xf:trigger>
+	
+		<xf:trigger id="insertsectionbutton">
+			<xf:label>Insert section</xf:label>
+			<xf:insert nodeset="section" at="index('repeatSections')" position="after" ev:event="DOMActivate" />
+		</xf:trigger>
+	
+		<xf:submit submission="update-from-local-file">
+			<xf:label>Reload</xf:label>
+			<xf:hint>Reload from local file</xf:hint>
+		</xf:submit>
+		<xf:submit submission="save-to-local-file">
+			<xf:label>Save</xf:label>
+			<xf:hint>Save to local file</xf:hint>
+		</xf:submit>
+	</body>
+</html>

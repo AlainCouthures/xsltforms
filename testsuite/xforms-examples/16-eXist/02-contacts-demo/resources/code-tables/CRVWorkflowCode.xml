@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>CRVWorkflowCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Assessor Assigned</Label>
+         <Value>assessor-assigned</Value>
+      </Item>
+      <Item>
+         <Label>Assessor Complete</Label>
+         <Value>assessor-complete</Value>
+      </Item>
+      <Item>
+         <Label>Auditor Complete</Label>
+         <Value>auditor-complete</Value>
+      </Item>
+      <Item>
+         <Label>County Accepted</Label>
+         <Value>county-accepted</Value>
+      </Item>
+      <Item>
+         <Label>County Code</Label>
+         <Value>county-code</Value>
+      </Item>
+      <Item>
+         <Label>County Comment</Label>
+         <Value>county-comment</Value>
+      </Item>
+      <Item>
+         <Label>County Edit</Label>
+         <Value>county-edit</Value>
+      </Item>
+      <Item>
+         <Label>County Finalized</Label>
+         <Value>county-finalized</Value>
+      </Item>
+      <Item>
+         <Label>Deed Recorded</Label>
+         <Value>deed-recorded</Value>
+      </Item>
+      <Item>
+         <Label>Original</Label>
+         <Value>original</Value>
+      </Item>
+      <Item>
+         <Label>State Comment</Label>
+         <Value>state-comment</Value>
+      </Item>
+      <Item>
+         <Label>State Edit</Label>
+         <Value>state-edit</Value>
+      </Item>
+      <Item>
+         <Label>State Review Complete</Label>
+         <Value>state-review-complete</Value>
+      </Item>
+      <Item>
+         <Label>State Study</Label>
+         <Value>state-study</Value>
+      </Item>
+      <Item>
+         <Label>Un-Finalized</Label>
+         <Value>un-finalized</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

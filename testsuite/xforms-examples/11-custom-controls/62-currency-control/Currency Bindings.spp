@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XForms" ExtStr="xhtml">
+		<File FilePath="currency-example.xhtml" HomeFolder="Yes"/>
+		<File FilePath="currency-example-2.xhtml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Bindings" ExtStr="xml">
+		<File FilePath="currency-bindings.xml" HomeFolder="Yes"/>
+	</Folder>
+</Project>

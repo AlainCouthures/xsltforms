@@ -1,0 +1,58 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="FilterExpr.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== XsltForms_filterExpr Class ===
+XPath Expression Class for filtering nodes according to a predicate
+* constructor function : initializes specific properties</cm:wiki>
+		<![CDATA[
+function XsltForms_filterExpr(expr, predicate) {
+	this.expr = expr;
+	this.predicate = predicate;
+}
+
+]]>
+		<cm:wiki>
+* '''evaluate''' method : evaluates this filtering expression object</cm:wiki>
+<![CDATA[
+XsltForms_filterExpr.prototype.evaluate = function(ctx) {
+	var nodes = XsltForms_globals.nodeSetValue(this.expr.evaluate(ctx));
+	for (var i = 0, len = this.predicate.length; i < len; ++i) {
+		var nodes0 = nodes;
+		nodes = [];
+		for (var j = 0, len1 = nodes0.length; j < len1; ++j) {
+			var n = nodes0[j];
+			var newCtx = ctx.clone(n, j, nodes0);
+			if (XsltForms_globals.booleanValue(this.predicate[i].evaluate(newCtx))) {
+				nodes.push(n);
+			}
+		}
+	}
+	return nodes;
+};
+]]>
+	</cm:source>
+</cm:component>

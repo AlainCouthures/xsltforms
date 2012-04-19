@@ -1,0 +1,66 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+   xmlns:ev="http://www.w3.org/2001/xml-events" 
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+   xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+        <title>Displaying Links in an XForms Application</title>
+        <style type="text/css">
+          @namespace xf url("http://www.w3.org/2002/xforms");
+          body {font-family:Helvetica, sans-serif}
+          .links xf|repeat * {display: inline;}
+          .url {color: blue; text-decoration:underline; margin: 0 2px;}
+       </style>
+        <xf:model>
+            <xf:instance xmlns="" id="links">
+                <data>
+                    <link>
+                        <label>XForms</label>
+                        <wikipedia-id>XForms</wikipedia-id>
+                    </link>
+                    <link>
+                        <label>XQuery</label>
+                        <wikipedia-id>XQuery</wikipedia-id>
+                    </link>
+                    <link>
+                        <label>XSLT</label>
+                        <wikipedia-id>XSL Transformations</wikipedia-id>
+                    </link>
+                    <link>
+                        <label>XML Database</label>
+                        <wikipedia-id>XML_database</wikipedia-id>
+                    </link>
+                    <link>
+                        <label>Declarative Programming</label>
+                        <wikipedia-id>Declarative_programming</wikipedia-id>
+                    </link>
+                    <link>
+                        <label>Functional Programming</label>
+                        <wikipedia-id>Functional_programming</wikipedia-id>
+                    </link>
+                </data>
+            </xf:instance>
+            <xf:instance id="URL-container" xmlns="">
+                <URL />
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <h3>Displaying Links in an XForms Application</h3>
+        <div class="links">
+            <xf:repeat nodeset="instance('links')/link" id="link-repeat">
+                <xf:trigger submission="replace-form-with" appearance="minimal" class="url">
+                    <xf:label>
+                        <xf:output ref="label" />
+                    </xf:label>
+                    <xf:hint>
+                        <xf:output ref="wikipedia-id" />
+                    </xf:hint>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:setvalue ref="instance('URL-container')" value="concat('http://en.wikipedia.org/wiki/', instance('links')/link[index('link-repeat')]/wikipedia-id)" />
+                        <xf:load ref="instance('URL-container')" />
+                    </xf:action>
+                </xf:trigger>
+            </xf:repeat>
+        </div>
+    </body>
+</html>

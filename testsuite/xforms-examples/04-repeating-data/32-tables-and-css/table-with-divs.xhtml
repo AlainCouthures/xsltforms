@@ -1,0 +1,86 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Table with CSS and Divs</title>
+      <style type="text/css">
+* {
+   font-family: Arial, Helvetica, sans-serif;
+   border-collapse: collapse;
+}
+/* example of doing layout of a table without using the HTML table tags */
+
+.table { 
+   display: table;
+}
+
+.tableHeader, .tableRow, .tableFooter  {
+   display: table-row;
+   border: solid black 1px;
+}
+
+.leftHeaderCell, .leftCell, .leftFooterCell, 
+.rightHeaderCell, .rightCell, .rightFooterCell
+{
+   display: table-cell;
+}
+
+.leftHeaderCell, .rightHeaderCell, .leftFooterCell {
+	background-color: green;
+	color: white;
+	font-weight: bold;
+	padding-right: 10px;
+}
+
+.leftHeaderCell, .rightHeaderCell {
+   text-align: center;
+}
+
+.leftFooterCell {
+	text-align: right;
+}
+
+.rightCell {
+	text-align: right;
+}
+
+.rightFooterCell {
+   text-align: right;
+   border-top: solid black 2px; 
+   font-weight: bold; 
+}
+
+/* draw even rows with a light green color */
+.even {
+   background-color: #DDFFDD;
+}
+</style>
+   </head>
+   <body>
+      <p>Table with CSS and divs</p>
+      <div class="table">
+         <div class="tableHeader">
+            <div class="leftHeaderCell">Description</div>
+            <div class="rightHeaderCell">Value</div>
+         </div>
+         <div class="tableRow">
+            <div class="leftCell">Item One</div>
+            <div class="rightCell">$1,000.00</div>
+         </div>
+         <div class="tableRow even">
+            <div class="leftCell">Item Two</div>
+            <div class="rightCell">$2,000.00</div>
+         </div>
+         <div class="tableRow">
+            <div class="leftCell">Item Three</div>
+            <div class="rightCell">$3,000.00</div>
+         </div>
+         <div class="tableRow even">
+            <div class="leftCell">Item Four</div>
+            <div class="rightCell">$4,000.00</div>
+         </div>
+         <div class="tableFooter">
+            <div class="leftFooterCell">Total: </div>
+            <div class="rightFooterCell">$10,000.00</div>
+         </div>
+      </div>
+   </body>
+</html>

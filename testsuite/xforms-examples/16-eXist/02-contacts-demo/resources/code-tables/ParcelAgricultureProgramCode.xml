@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>ParcelAgricultureProgramCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Conservation Reserve Enhancement Program (CREP)</Label>
+         <Value>conservation-reserve-enhancement-program</Value>
+      </Item>
+      <Item>
+         <Label>Conservation Reserve Enhancement Program (CREP II)</Label>
+         <Value>conservation-reserve-enhancement-program-2</Value>
+      </Item>
+      <Item>
+         <Label>Conservation Reserve Program (CRP)</Label>
+         <Value>conservation-reserve-program</Value>
+      </Item>
+      <Item>
+         <Label>Emergency Wetlands Reserve Program (EWRP)</Label>
+         <Value>emergency-wetlands-reserve-program</Value>
+      </Item>
+      <Item>
+         <Label>Native Prairie Program (NPP)</Label>
+         <Value>native-prairie-program </Value>
+      </Item>
+      <Item>
+         <Label>Permanent Wetlands Reserve Program (PWRP)</Label>
+         <Value>permanent-wetlands-reserve-program</Value>
+      </Item>
+      <Item>
+         <Label>Reinvest in Minnesota (RIM)</Label>
+         <Value>reinvest-in-minnesota</Value>
+      </Item>
+      <Item>
+         <Label>Sustainable Forest Incentive Act</Label>
+         <Value>sustainable-forest-incentive-act</Value>
+      </Item>
+      <Item>
+         <Label>US Fish and Wildlife (USFW)</Label>
+         <Value>us-fish-and-wildlife</Value>
+      </Item>
+      <Item>
+         <Label>Wetlands Reserve Easement Program (WREP)</Label>
+         <Value>wetlands -eserve-easement-program</Value>
+      </Item>
+      <Item>
+         <Label>Wetlands Reserve Program (WRP)</Label>
+         <Value>wetlands-reserve-program</Value>
+      </Item>
+      <Item>
+         <Label>Wildlife Habitat Incentives Program (WHIP)</Label>
+         <Value>wildlife-habitat-incentives-program</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

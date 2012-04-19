@@ -1,0 +1,257 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFRepeat.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2010-06-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_repeat" class ===
+Repeat Element Class
+* constructor function : sets specific properties</cm:wiki>
+		<![CDATA[
+function XsltForms_repeat(subform, id, binding, clone) {
+	XsltForms_globals.counters.repeat++;
+	this.init(subform, id);
+	this.binding = binding;
+	this.index = 1;
+	var el = this.element;
+	this.isRepeat = true;
+	this.hasBinding = true;
+	this.root = XsltForms_browser.hasClass(el, "xforms-control")? el.lastChild : el;
+	this.isItemset = XsltForms_browser.hasClass(el, "xforms-itemset");
+}
+
+XsltForms_repeat.prototype = new XsltForms_element();
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears properties of this element and calls the parent dispose() method</cm:wiki>
+<![CDATA[
+XsltForms_repeat.prototype.dispose = function() {
+	this.root = null;
+	XsltForms_globals.counters.repeat--;
+	XsltForms_element.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''setIndex''' method : sets the current index for this repeat element</cm:wiki>
+<![CDATA[
+XsltForms_repeat.prototype.setIndex = function(index) {
+	if (this.index !== index) {
+		var node = this.nodes[index - 1];
+		if (node) {    
+			XsltForms_globals.openAction();
+			this.index = index;
+			this.element.node = node;
+			XsltForms_globals.addChange(this);
+			XsltForms_globals.addChange(document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement);
+			XsltForms_globals.closeAction();
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''deleteNode''' method : deletes the given node within this repeat element and makes sure that the current index is still valid</cm:wiki>
+<![CDATA[
+XsltForms_repeat.prototype.deleteNode = function(node) {
+	var newNodes = [];
+	var nodes = this.nodes;
+	for (var i = 0, len = nodes.length; i < len; i++) {
+		if (node !== nodes[i]) {
+			newNodes.push(nodes[i]);
+		}
+	}
+	this.nodes = newNodes;
+	this.setIndex(this.index === nodes.length? this.index - 1 : this.index);
+};
+
+]]>
+		<cm:wiki>
+* '''insertNode''' method : inserts the given node after another given node within this repeat element and updates the current index</cm:wiki>
+<![CDATA[
+XsltForms_repeat.prototype.insertNode = function(node, nodeAfter) {
+	var nodes = this.nodes;
+	if (nodeAfter) {
+		var newNodes = [];
+		var index = 1;
+		for (var i = 0, len = nodes.length; i < len; i++) {
+			if (nodeAfter === nodes[i]) {
+				newNodes.push(node);
+				index = i + 1;
+			}
+			newNodes.push(nodes[i]);
+		}
+		this.nodes = newNodes;
+		this.setIndex(index);
+	} else {
+		nodes.push(node);
+		this.setIndex(nodes.length);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''build_''' method : recreates every nodes within this repeat control and sets the current index at 1</cm:wiki>
+<![CDATA[
+XsltForms_repeat.prototype.build_ = function(ctx) {
+	var nodes = this.evaluateBinding(this.binding, ctx);
+	var r = this.root;
+	this.nodes = nodes;
+	var n = nodes.length;
+	while (r.firstChild.nodeType === XsltForms_nodeType.TEXT) {
+		r.removeChild(r.firstChild);
+	}
+	var r0 = r.children ? r.children[0] : r.childNodes[0];
+	XsltForms_repeat.forceOldId(r0);
+	var l = r.children ? r.children.length : r.childNodes.length;
+	for (var i = l; i < n; i++) {
+		var child = r0.cloneNode(true);
+		r.appendChild(child);
+		XsltForms_repeat.initClone(child);
+	}
+	for (var j = n; j < l && r.childNodes.length > 1; j++) {
+		XsltForms_globals.dispose(r.lastChild);
+		r.removeChild(r.lastChild);
+	}
+	for (var k = 0; k < n; k++) {
+		XsltForms_browser.setMeta(nodes[k], "repeat", this.element.id);
+		if (r.children) {
+			r.children[k].node = nodes[k];
+		} else {
+			r.childNodes[k].node = nodes[k];
+		}
+	}
+	if (this.index > n) {
+		this.index = 1;
+	}
+	this.element.node = nodes[this.index - 1];
+};
+
+]]>
+		<cm:wiki>
+* '''refresh''' method : refreshes this repeat element and the child elements if it is not an ItemSet</cm:wiki>
+<![CDATA[
+XsltForms_repeat.prototype.refresh = function(selected) {
+	var empty = this.nodes.length === 0;
+	XsltForms_browser.setClass(this.element, "xforms-disabled", empty);
+	if (!empty && !this.isItemset) {
+		var childs = this.root.children || this.root.childNodes;
+		for (var i = 0, len = childs.length; i < len; i++) {
+			var sel = selected && (this.index === i + 1);
+			childs[i].selected = sel;
+			XsltForms_browser.setClass(childs[i], "xforms-repeat-item-selected", sel);
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new repeat element with the given id</cm:wiki>
+<![CDATA[
+XsltForms_repeat.prototype.clone = function(id) { 
+	return new XsltForms_repeat(this.subform, id, this.binding, true);
+};
+
+]]>
+		<cm:wiki>
+* '''initClone''' function : initializes a clone for the given id</cm:wiki>
+<![CDATA[
+XsltForms_repeat.initClone = function(element) {
+	var id = element.id;
+	if (id) {
+		XsltForms_idManager.cloneId(element);
+		element.xfElement = null;
+		var oldid = element.getAttribute("oldid");
+		var original = document.getElementById(oldid);
+		var xf = original.xfElement;
+		if (xf) {
+			if (xf instanceof Array) {
+				for (var ixf = 0, lenxf = xf.length; ixf < lenxf; ixf++) {
+					xf[ixf].clone(element.id);
+				}
+			} else {
+				xf.clone(element.id);
+			}
+		}
+		var listeners = original.listeners;
+		if (listeners && (!XsltForms_browser.isIE || XsltForms_browser.isIE9)) {
+			for (var i = 0, len = listeners.length; i < len; i++) {
+				listeners[i].clone(element);
+			}
+		}
+	}
+	var next = element.firstChild;
+	while (next) {
+		var child = next;
+		next = next.nextSibling;
+		if (child.id && child.getAttribute("cloned")) {
+			element.removeChild(child);
+		} else {
+			XsltForms_repeat.initClone(child);
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''forceOldId''' function : allows this element to have oldid attributes based on id attributes</cm:wiki>
+<![CDATA[
+XsltForms_repeat.forceOldId = function(element) {
+	var id = element.id;
+	if (id) {
+		if (id.substr(0, 8) === "clonedId") {
+			return;
+		}
+		element.setAttribute("oldid", id);
+	}
+	var next = element.firstChild;
+	while (next) {
+		var child = next;
+		next = next.nextSibling;
+		XsltForms_repeat.forceOldId(child);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''selectItem''' function : set the current index at the given element within a repeat element</cm:wiki>
+<![CDATA[
+XsltForms_repeat.selectItem = function(element) {
+	var par = element.parentNode;
+	if (par) {
+		var repeat = par.xfElement? par : par.parentNode;
+		var childs = par.children;
+		XsltForms_browser.assert(repeat.xfElement, element.nodeName +  " - " + repeat.nodeName);
+		for (var i = 0, len = childs.length; i < len; i++) {
+			if (childs[i] === element) {
+				repeat.xfElement.setIndex(i + 1);
+				break;
+			}
+		}
+	}
+};
+]]>
+	</cm:source>
+</cm:component>

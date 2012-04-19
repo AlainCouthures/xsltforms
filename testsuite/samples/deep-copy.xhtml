@@ -1,0 +1,53 @@
+<html
+     xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:ev="http://www.w3.org/2001/xml-events"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xf="http://www.w3.org/2002/xforms"
+		 >
+     <head>
+          <title>Using Origin to do a Deep Copy between instances</title>
+          <style type="text/css">
+               @namespace xf url("http://www.w3.org/2002/xforms");
+               body {font-family:Helvetica, sans-serif}
+               #source-repeat {border: blue solid 1px;}
+               #destination-repeat {border: green solid 1px;}
+          </style>
+          <xf:model>
+               
+               <xf:instance id="source">
+                    <data xmlns="">
+                         <a>A1</a>
+                         <a>A2</a>
+                         <a>A3</a>
+                    </data>
+               </xf:instance>
+               
+               <xf:instance id="destination">
+                    <data xmlns=""/>
+               </xf:instance>
+               
+          </xf:model>
+     </head>
+     <body>
+          <h1>Example of deep copy using XForms insert origin</h1>
+          
+          <h3>Source:</h3>
+          <xf:repeat id="source-repeat" nodeset="instance('source')/a">
+               <xf:output ref="."/>
+          </xf:repeat> 
+          
+          <h3>Destination:</h3>
+          <xf:repeat id="destination-repeat" nodeset="instance('destination')/a">
+               <xf:output ref="."/>
+          </xf:repeat> 
+               
+          <xf:trigger>
+               <xf:label>Copy data from source to destination</xf:label>     
+               <xf:action ev:event="DOMActivate">
+                        <xf:insert
+                             origin="instance('source')"                        
+                             nodeset="instance('destination')"/>
+               </xf:action>
+          </xf:trigger>
+     </body>
+</html>

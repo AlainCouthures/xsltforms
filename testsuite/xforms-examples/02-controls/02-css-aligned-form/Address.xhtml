@@ -1,0 +1,92 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<title>Address Form Aligned Using CSS</title>
+		<style type="text/css">
+			/* a stylesheet for X-Forms input field alignment */
+			
+			@namespace xf url("http://www.w3.org/2002/xforms");
+			
+			/* give the input form labels and the fieldset legend a bold sans-serif font */
+			label, legend {
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: bold;
+			}
+			
+			/* give the fieldset some breathing room */
+			fieldset {
+			padding: 5px;
+			width: 260px;
+			}
+			
+			/* the labels are right-aligned in a 150px wide column */
+			xf|label {
+			width: 150px;
+			margin: 3px;
+			text-align: right;
+			}
+			
+			/* the input values are left aligned */
+			xf|value {
+			text-align: left;
+			}
+			
+			/* vertical area between input boxes */
+			input {
+			margin: .2em;        
+			}
+			
+			/* each group is our table */
+			xf|group {
+			display: table;
+			}
+			
+			/* each input is a row in the group table */
+			xf|input {
+			display: table-row;
+			}
+			
+			/* each label within an input is a cell in the input row */
+			xf|input xf|label {
+			display: table-cell; 
+			}
+			
+			/* each value (pseudo-element) is also a cell in the input row */
+			xf|input::value {
+			display: table-cell;
+			}
+		</style>
+		<xf:model>
+			<xf:instance xmlns="">
+				<Address>
+					<LocationStreetFullText>123 Main St</LocationStreetFullText>
+					<LocationStreetFullText2>Apartment 47</LocationStreetFullText2>
+					<LocationCityName>Anytown</LocationCityName>
+					<LocationStateName>MN</LocationStateName>
+					<LocationPostalID>55123-4567</LocationPostalID>
+				</Address>
+			</xf:instance>
+		</xf:model>
+	</head>
+	<body>
+		<xf:group ref="/Address">
+			<fieldset>
+				<legend>Mailing Address</legend>
+				<xf:input ref="LocationStreetFullText">
+					<xf:label>Street: </xf:label>
+				</xf:input>
+				<xf:input ref="LocationStreetFullText2">
+					<xf:label />
+				</xf:input>
+				<xf:input ref="LocationCityName">
+					<xf:label>City:</xf:label>
+				</xf:input>
+				<xf:input ref="LocationStateName">
+					<xf:label>State:</xf:label>
+				</xf:input>
+				<xf:input ref="LocationPostalID">
+					<xf:label>Postal Code:</xf:label>
+				</xf:input>
+			</fieldset>
+		</xf:group>
+	</body>
+</html>

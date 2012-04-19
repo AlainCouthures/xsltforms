@@ -1,0 +1,207 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="submission.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template match="xforms:submission" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:apply-templates select="@*" mode="scriptattr"/>
+			<js xmlns="">
+				<xsl:variable name="idsubmission" select="count(preceding::xforms:submission|ancestor::xforms:submission)"/>
+				<xsl:text>new XsltForms_submission(</xsl:text>
+				<xsl:value-of select="$vn_subform"/>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$jsid_pf"/>
+						<xsl:text>submission-</xsl:text>
+						<xsl:value-of select="$idsubmission"/>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>",</xsl:text>
+				<xsl:for-each select="parent::*">
+					<xsl:variable name="lname" select="local-name()"/>
+					<xsl:value-of select="$vn_pf"/>
+					<xsl:value-of select="$lname"/>
+					<xsl:text>_</xsl:text>
+					<xsl:value-of select="count(preceding::*[local-name()=$lname]|ancestor::*[local-name()=$lname])"/>
+				</xsl:for-each>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@ref"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@bind"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="xforms:resource/@value">
+						<xsl:variable name="idmodel">
+							<xsl:for-each select="ancestor::xforms:model">
+								<xsl:choose>
+									<xsl:when test="@id">"<xsl:value-of select="@id"/>"</xsl:when>
+									<xsl:otherwise>
+										<xsl:variable name="nbmodel" select="count(preceding::xforms:model|ancestor::xforms:model)"/>
+										<xsl:value-of select="$jsid_pf"/>
+										<xsl:text>model-</xsl:text>
+										<xsl:choose>
+											<xsl:when test="$nbmodel = 0">default</xsl:when>
+											<xsl:otherwise><xsl:value-of select="$nbmodel"/></xsl:otherwise>
+										</xsl:choose>
+										<xsl:text>"</xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:for-each>
+						</xsl:variable>
+						<xsl:for-each select="xforms:resource[1]">
+							<xsl:call-template name="toScriptBinding"><xsl:with-param name="model" select="$idmodel"/></xsl:call-template>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:variable name="resource">
+							<xsl:choose>
+								<xsl:when test="xforms:resource"><xsl:value-of select="xforms:resource"/></xsl:when>
+								<xsl:when test="@resource"><xsl:value-of select="@resource"/></xsl:when>
+								<xsl:otherwise><xsl:value-of select="@action"/></xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="$resource"/></xsl:call-template>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="xforms:method/@value">
+						<xsl:variable name="idmodel">
+							<xsl:for-each select="ancestor::xforms:model">
+								<xsl:choose>
+									<xsl:when test="@id">"<xsl:value-of select="@id"/>"</xsl:when>
+									<xsl:otherwise>
+										<xsl:variable name="nbmodel" select="count(preceding::xforms:model|ancestor::xforms:model)"/>
+										<xsl:value-of select="$jsid_pf"/>
+										<xsl:text>model-</xsl:text>
+										<xsl:choose>
+											<xsl:when test="$nbmodel = 0">default</xsl:when>
+											<xsl:otherwise><xsl:value-of select="$nbmodel"/></xsl:otherwise>
+										</xsl:choose>
+										<xsl:text>"</xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:for-each>
+						</xsl:variable>
+						<xsl:for-each select="xforms:method[1]">
+							<xsl:call-template name="toScriptBinding"><xsl:with-param name="model" select="$idmodel"/></xsl:call-template>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:variable name="method">
+							<xsl:choose>
+								<xsl:when test="xforms:method"><xsl:value-of select="xforms:method"/></xsl:when>
+								<xsl:when test="@method"><xsl:value-of select="@method"/></xsl:when>
+								<xsl:otherwise>post</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="$method"/></xsl:call-template>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@version"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@indent"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@mediatype"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@encoding"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@omit-xml-declaration"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@cdata-section-elements"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@replace"/><xsl:with-param name="default">"all"</xsl:with-param></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@targetref"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@instance"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@separator"/><xsl:with-param name="default">"&amp;"</xsl:with-param></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@includenamespaceprefixes"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="@validate = 'false'">false</xsl:when>
+					<xsl:when test="@validate">true</xsl:when>
+					<xsl:when test="@serialization='none'">false</xsl:when>
+					<xsl:otherwise>true</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="@relevant = 'false'">false</xsl:when>
+					<xsl:when test="@relevant">true</xsl:when>
+					<xsl:when test="@serialization='none'">false</xsl:when>
+					<xsl:otherwise>true</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@ajx:synchronized"/><xsl:with-param name="default">true</xsl:with-param></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@show"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@serialization"/></xsl:call-template>
+				<xsl:text>)</xsl:text>
+				<xsl:for-each select="xforms:header">
+					<xsl:text>.header(</xsl:text>
+					<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@nodeset"/></xsl:call-template>
+					<xsl:text>,</xsl:text>
+					<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@combine"/><xsl:with-param name="default">"append"</xsl:with-param></xsl:call-template>
+					<xsl:text>,</xsl:text>
+					<xsl:choose>
+						<xsl:when test="xforms:name/@value">
+							<xsl:text>new XsltForms_binding("xsd:string", "</xsl:text>
+							<xsl:call-template name="toXPathExpr"><xsl:with-param name="p" select="xforms:name/@value"/></xsl:call-template>
+							<xsl:text>")</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="xforms:name"/></xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:text>,[</xsl:text>
+					<xsl:for-each select="xforms:value">
+						<xsl:choose>
+							<xsl:when test="@value">
+								<xsl:text>new XsltForms_binding("xsd:string", "</xsl:text>
+								<xsl:call-template name="toXPathExpr"><xsl:with-param name="p" select="@value"/></xsl:call-template>
+								<xsl:text>")</xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="."/></xsl:call-template>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="position() != last()">
+							<xsl:text>,</xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+					<xsl:text>])</xsl:text>
+				</xsl:for-each>
+				<xsl:text>;</xsl:text>
+			</js>
+			<xsl:apply-templates select="*" mode="script"/>
+			<xsl:call-template name="listeners"/>
+		</xsl:template>
+	</cm:source>
+</cm:component>

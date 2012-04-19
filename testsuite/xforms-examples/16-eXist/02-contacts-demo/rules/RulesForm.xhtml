@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Schema2XForms Rules Editor</title>
+      <!-- generic stylesheet used by XForms -->
+      <link rel="stylesheet" type="text/css" href="../resources/css/xforms-global.css" />
+      <link rel="stylesheet" type="text/css" href="../resources/css/xforms-submit.css" />
+       
+      <xf:model>
+         <xf:instance id="rules" xmlns="" src="transform-rules.xml" />
+      </xf:model>
+   </head>
+   <body>
+      <h1>Schema to XForms Rules Editor</h1>
+      <p>This file is used to change the rules used to transform XMLSchemas into XForms. v1</p>
+      <xf:repeat nodeset="/Schema2XFormsRulesDocument/Rule">
+         <xf:input ref="@id">
+            <xf:label>Rule ID:</xf:label>
+         </xf:input>
+
+         <xf:input ref="RuleName">
+            <xf:label>Rule Name:</xf:label>
+         </xf:input>
+
+         <xf:textarea ref="RuleDescriptionText">
+            <xf:label>Rule Description:</xf:label>
+         </xf:textarea>
+
+         <xf:textarea ref="RuleSelector">
+            <xf:label>Rule Selector:</xf:label>
+         </xf:textarea>
+
+         
+
+         <h2>Rule Options</h2>
+          <!-- appearance="full" -->
+          <xf:select1 >
+             <xf:itemset nodeset="RuleOptions/RuleOption">
+                   <xf:item>
+                      <xf:value ref="RuleOptionName"/>
+                      <xf:label ref="RuleOptionName"/>
+                   </xf:item>
+             </xf:itemset>
+          </xf:select1>
+         <xf:repeat nodeset="RuleOptions/RuleOption">
+            <xf:input ref="RuleOptionName">
+               <xf:label>Rule Option:</xf:label>
+            </xf:input>
+            <xf:input ref="RuleFileName">
+               <xf:label>File Name:</xf:label>
+            </xf:input>
+            <h3>Actions</h3>
+            <xf:repeat nodeset="Actions/Action">
+            </xf:repeat>
+         </xf:repeat>
+      </xf:repeat>
+   </body>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>ParcelGreenAcresCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>G: Green Acres</Label>
+         <Value>green-acres</Value>
+      </Item>
+      <Item>
+         <Label>N: Native Prairie</Label>
+         <Value>native-prairie</Value>
+      </Item>
+      <Item>
+         <Label>W: Wetlands</Label>
+         <Value>wetlands</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

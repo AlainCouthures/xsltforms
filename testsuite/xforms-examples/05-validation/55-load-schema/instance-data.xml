@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Sample XML instance file-->
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="data-types.xsd">
+   <date>2006-09-21</date>
+   <string-required>The quick brown fox jumped over the lazey dog.</string-required>
+   <string-optional>This string is optional.</string-optional>
+   <string-unbounded>One of many.</string-unbounded>
+   <string-unbounded>Two of many.</string-unbounded>
+   <string-unbounded>Three of many.</string-unbounded>
+   <integer>-123</integer>
+   <positive-integer>2</positive-integer>
+   <short>4096</short>
+   <byte>127</byte>
+   <unsignedByte>255</unsignedByte>
+   <boolean>true</boolean>
+</Data>

@@ -1,0 +1,141 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="Schema.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_schema" class ===
+Schema  Class
+* constructor function : creates a Schema object after checking it doesn't exist yet</cm:wiki>
+		<![CDATA[
+function XsltForms_schema(subform, ns, name, prefixes) {
+	XsltForms_browser.assert(ns && !XsltForms_schema.all[ns], "Needed schema name or exists one schema with that namespace");
+	if(XsltForms_schema.all[ns]) {
+		XsltForms_globals.error(this, "xforms-link-exception", "More than one schema with the same namespace declaration");
+		return;
+	}
+	this.subform = subform;
+	this.name = name;
+	this.ns = ns;
+	this.types = {};
+	this.prefixes = prefixes || {};
+	XsltForms_schema.all[ns] = this;
+}
+
+]]>
+		<cm:wiki>
+* '''all''' associative array : stores all schemas according to their respective namespace</cm:wiki>
+<![CDATA[
+XsltForms_schema.all = {};
+
+]]>
+		<cm:wiki>
+* '''getType''' method : gets a type according to a given name for this schema</cm:wiki>
+<![CDATA[
+XsltForms_schema.prototype.getType = function(name) {
+	if (name.indexOf(":") !== -1) {
+		var res = name.split(":");
+		var prefix = res[0];
+		var ns = this.prefixes[prefix];
+		if (ns) {
+			return XsltForms_schema.getTypeNS(ns, res[1]);
+		}
+		return XsltForms_schema.getType(name);
+	}
+	var type = this.types[name];
+	if (!type) {
+		alert("Type " + name + " not defined");
+		throw "Error";
+	}
+	return type;
+};
+
+]]>
+		<cm:wiki>
+* '''getType''' function : gets a type according to a given prefix:name</cm:wiki>
+<![CDATA[
+XsltForms_schema.getType = function(name) {
+	var res = name.split(":");
+	if (typeof(res[1]) === "undefined") {
+		return XsltForms_schema.getTypeNS(XsltForms_schema.prefixes.xforms, res[0]);
+	} else {
+		return XsltForms_schema.getTypeNS(XsltForms_schema.prefixes[res[0]], res[1]);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''getTypeNS''' function : gets a type according to a given namespace and a given name</cm:wiki>
+<![CDATA[
+XsltForms_schema.getTypeNS = function(ns, name) {
+	var schema = XsltForms_schema.all[ns];
+	if (!schema) {
+		alert("Schema for namespace " + ns + " not defined for type " + name);
+		throw "Error";
+	}
+	var type = schema.types[name];	
+	if (!type) {
+		alert("Type " + name + " not defined in namespace " + ns);
+		throw "Error";
+	}
+	return type;
+};
+
+]]>
+		<cm:wiki>
+* '''get''' function : gets a schema according to a given namespace</cm:wiki>
+<![CDATA[
+XsltForms_schema.get = function(subform, ns) {
+	var schema = XsltForms_schema.all[ns];
+	if (!schema) {
+		schema = new XsltForms_schema(subform, ns);
+	}
+	return schema;
+};
+
+]]>
+		<cm:wiki>
+* '''prefixes''' associative array : initializes default prefixes and namespaces</cm:wiki>
+<![CDATA[
+XsltForms_schema.prefixes = {
+	"xsd_" : "http://www.w3.org/2001/XMLSchema",
+	"xsd" : "http://www.w3.org/2001/XMLSchema",
+	"xs" : "http://www.w3.org/2001/XMLSchema",
+	"xf" : "http://www.w3.org/2002/xforms",
+	"xform" : "http://www.w3.org/2002/xforms",
+	"xforms" : "http://www.w3.org/2002/xforms",
+	"xsltforms" : "http://www.agencexml.com/xsltforms",
+	"rte" : "http://www.agencexml.com/xsltforms/rte"
+};
+
+]]>
+		<cm:wiki>
+* '''registerPrefix''' function : adds a prefix and the corresponding namespace to the "prefixes" associative array</cm:wiki>
+<![CDATA[
+XsltForms_schema.registerPrefix = function(prefix, namespace) {
+	this.prefixes[prefix] = namespace;
+};
+    ]]>
+	</cm:source>
+</cm:component>

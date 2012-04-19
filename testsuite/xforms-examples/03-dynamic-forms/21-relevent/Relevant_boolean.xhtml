@@ -1,0 +1,33 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <title>Testing the relevant attribute of the bind element with boolean values.</title>
+   <xf:model>
+      <xf:instance>
+         <var xmlns="">
+            <first>true</first>
+            <second-view/>
+            <second-value/>
+         </var>
+      </xf:instance>
+      <xf:bind nodeset="/var/first" type="xs:boolean" />
+      <xf:bind nodeset="/var/second-view" relevant="/var/first='true'" />
+   </xf:model>
+   <body>
+      <p>The input field should only display if the first value is checked.</p>
+      <xf:input ref="/var/first">
+         <xf:label>Display the next input?: </xf:label>
+      </xf:input>
+      <br />
+      <xf:group ref="/var/second-view">
+      <xf:input ref="/var/second-value">
+         <xf:label>Display this input if the first answer is true: </xf:label>
+      </xf:input>
+      <br/>
+       <xf:output ref="/var/second-value">
+         <xf:label>Display this output if the first answer is true: </xf:label>
+      </xf:output>
+      </xf:group>
+   </body>
+</html>

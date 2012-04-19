@@ -1,0 +1,75 @@
+<xbl:bindings xmlns:xbl="http://www.mozilla.org/xbl"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:xf="http://www.w3.org/2002/xforms">
+  <xbl:binding id="rte"
+    extends="chrome://xforms/content/xforms.xml#xformswidget-base">
+    <handlers>
+      <handler event="ev_displayEditor">parentNode.focus( );</handler>
+    </handlers>
+
+    <xbl:content>
+      <span>
+        <xbl:children />
+      </span>
+      <div anonid="content"
+        style="border: thin black solid; background-color: 
+               rgb(211,233,254); width: 400px;">
+      </div>
+      <input type="button" value="Edit"
+        onclick="javascript:parentNode.displayEditor();" />
+    </xbl:content>
+
+    <xbl:implementation implements="nsIXFormsUIWidget">
+      <xbl:method name="refresh">
+        <xbl:body><![CDATA[
+          var content = document.getAnonymousElementByAttribute(
+                          this,"anonid","content");
+          /* First remove any existing content */
+          while (content.firstChild != null){
+            content.removeChild(content.firstChild);
+          }
+          var boundNode = this.accessors.getBoundNode();
+
+          /* Update the content with the XForms bound nodes */
+          for (var i=0; i < boundNode.childNodes.length; i++){          
+            content.appendChild(
+              content.ownerDocument.importNode(boundNode.childNodes[i], true));
+          }
+          return true;       
+        ]]></xbl:body>
+      </xbl:method>
+
+      <xbl:method name="displayEditor">
+        <xbl:body><![CDATA[
+          /* First link the editor to the content */
+          var editorDiv = document.getElementById('floatingText');
+          editorDiv.style.display = "block";
+          var editor = FCKeditorAPI.GetInstance('testA') ;
+          var content = document.getAnonymousElementByAttribute(
+                          this,"anonid","content");
+          editor.EditorDocument.designMode="on";
+          var boundNode = this.accessors.getBoundNode();
+          /* alert("focus(boundNode): "+boundNode.nodeName+", #="+
+              boundNode.childNodes.length); */
+          editor.xformsNode=this.accessors;
+          var body = editor.EditorDocument.body;
+
+          /* Remove the content from the editor */
+          while (body.firstChild != null){
+            body.removeChild(body.firstChild);
+          }          
+
+          /* Add the content from the XForms bound node */
+          for (var i=0; i < boundNode.childNodes.length; i++){          
+            body.appendChild(content.ownerDocument.importNode(boundNode.childNodes[i], true));
+          }
+          return true;    
+        ]]></xbl:body>
+      </xbl:method>
+
+      <xbl:method name="focus">
+        <xbl:body></xbl:body>
+      </xbl:method>
+    </xbl:implementation>
+  </xbl:binding>
+</xbl:bindings>

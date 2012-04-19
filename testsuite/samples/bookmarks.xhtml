@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events">
+    <head>
+			<title>Bookmarks</title>
+    	<meta name="description" content="Bookmarks management sample."/>
+    	<meta name="keywords" content="AJAX, Javascript, Web, XForms, AJAXForms, Ejemplos, Samples"/>
+			<xf:model>
+					<xf:instance>
+							<bookmarks xmlns="">
+									<section>
+											<title>Seccion1</title>
+											<bookmark href="#link11">Link11</bookmark>
+											<bookmark href="#link12">Link12</bookmark>
+									</section>
+									<section>
+											<title>Seccion2</title>
+											<bookmark href="#link21">Link21</bookmark>
+											<bookmark href="#link22">Link22</bookmark>
+									</section>
+							</bookmarks>
+					</xf:instance>
+					<xf:submission id="s01" method="xml-urlencoded-post" replace="all" action="http://www.agencexml.com/xsltforms/dump.php">
+						<xf:message level="modeless" ev:event="xforms-submit-error">Submit error.</xf:message>
+					</xf:submission>
+			</xf:model>
+    </head>
+    <body>
+			<h3>Bookmarks</h3>
+			<xf:repeat id="repeatSections" nodeset="section" appearance="full">
+					<xf:input ref="title">
+						<xf:label>Sección</xf:label>
+					</xf:input>
+					<xf:repeat id="repeatBookmarks" nodeset="bookmark" appearance="compact">
+						<xf:input ref=".">
+							<xf:label>Title</xf:label>
+						</xf:input>
+						<xf:input ref="@href">
+							<xf:label>URL</xf:label>
+						</xf:input>
+						<xf:trigger>
+							<xf:label>X</xf:label>
+							<xf:delete nodeset="." at="1" ev:event="DOMActivate"
+									if="count(nodeindex('repeatSections')/bookmark) > 1" />
+						</xf:trigger>
+					</xf:repeat>
+					<xf:trigger>
+						<xf:label>New link</xf:label>
+						<xf:insert nodeset="bookmark" at="index('repeatBookmarks')"
+								position="after" ev:event="DOMActivate" />
+					</xf:trigger>
+					<xf:trigger>
+						<xf:label>Delete</xf:label>
+						<xf:delete nodeset="." at="1" ev:event="DOMActivate"
+							if="count(//section) > 1" />
+					</xf:trigger>
+			</xf:repeat>
+			<xf:trigger>
+				<xf:label>New section</xf:label>
+				<xf:insert nodeset="section" at="last()"
+						position="after" ev:event="DOMActivate" />
+			</xf:trigger>
+			<xf:submit submission="s01">
+				<xf:label>Save</xf:label>
+			</xf:submit>
+			<xf:trigger>
+				<xf:label>Reset</xf:label>
+				<xf:reset ev:event="DOMActivate" />
+			</xf:trigger>
+    </body>
+</html>

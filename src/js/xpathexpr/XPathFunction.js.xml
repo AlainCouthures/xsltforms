@@ -1,0 +1,81 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XPathFunction.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== XsltForms_xpathFunction Class ===
+XPath Function Class
+* constructor function : initializes properties
+** '''acceptContext''' : whether the current context is required as first argument for this XPath Function object
+** '''defaultTo''' : default argument
+*** '''DEFAULT_NONE''' : no default argument
+*** '''DEFAULT_NODE''' : current node
+*** '''DEFAULT_NODESET''' : array containing the current node
+*** '''DEFAULT_STRING''' : text value of the current node
+** '''returnNodes''' : unused
+** '''body''' : corresponding Javascript function</cm:wiki>
+		<![CDATA[
+function XsltForms_xpathFunction(acceptContext, defaultTo, returnNodes, body) {
+	this.evaluate = body;
+	this.defaultTo = defaultTo;
+	this.acceptContext = acceptContext;
+	this.returnNodes = returnNodes;
+}
+
+XsltForms_xpathFunction.DEFAULT_NONE = null;
+XsltForms_xpathFunction.DEFAULT_NODE = 0;
+XsltForms_xpathFunction.DEFAULT_NODESET = 1;
+XsltForms_xpathFunction.DEFAULT_STRING = 2;
+
+]]>
+		<cm:wiki>
+* '''call''' method : calls the corresponding Javascript function after managing default argument and context presence</cm:wiki>
+<![CDATA[
+XsltForms_xpathFunction.prototype.call = function(context, arguments_) {
+	if (arguments_.length === 0) {
+		switch (this.defaultTo) {
+		case XsltForms_xpathFunction.DEFAULT_NODE:
+			if (context.node) {
+				arguments_ = [context.node];
+			}
+			break;
+		case XsltForms_xpathFunction.DEFAULT_NODESET:
+			if (context.node) {
+				arguments_ = [[context.node]];
+			}
+			break;
+		case XsltForms_xpathFunction.DEFAULT_STRING:
+			arguments_ = [XsltForms_xpathCoreFunctions.string.evaluate([context.node])];
+			break;
+		}
+	}
+	if (this.acceptContext) {
+		arguments_.unshift(context);
+	}
+	return this.evaluate.apply(null, arguments_);
+};
+]]>
+	</cm:source>
+</cm:component>

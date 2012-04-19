@@ -1,0 +1,39 @@
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:xf="http://www.w3.org/2002/xforms"
+ >
+   <head>
+      <title>XForms inputs with labels</title>
+      <xf:model>
+         <xf:instance>
+            <data xmlns="">
+               <readonly>readwrite</readonly>
+               <name>sample</name>
+            </data>
+         </xf:instance>
+         <xf:bind nodeset="/data/name" readonly="../readonly = 'readonly'"/>
+      </xf:model>
+   </head>
+   <body>
+      <p>Enter your first name, and last name.</p>
+         <xf:select1 ref="readonly" incremental="true">
+            <xf:item>
+               <xf:label>Read-write</xf:label>
+               <xf:value>readwrite</xf:value> 
+            </xf:item>
+            <xf:item>
+               <xf:label>Read-only</xf:label>
+               <xf:value>readonly</xf:value>
+            </xf:item>
+            <xf:label>Control readonly</xf:label>
+         </xf:select1>
+         <br/>
+         <xf:input ref="name" incremental="true">
+            <xf:label>Sample input:</xf:label>
+         </xf:input>
+         <br/>
+         <br/>
+         Output Name: <b><xf:output ref="name"/></b>
+         <br/>
+   </body>
+</html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml/events" xmlns:h="http://www.w3.org/1999/xhtml" >
+    <head>
+        <title/>
+        <xf:model>
+            <xf:instance xmlns="">
+                <data>
+                   <item>
+                    <price>0.00</price>
+                    </item>
+                     <item>
+                    <price>1</price>
+                    </item>
+                     <item>
+                    <price>1.00</price>
+                    </item>
+                     <item>
+                    <price>12.00</price>
+                    </item>
+                     <item>
+                    <price>1234.00</price>
+                    </item>
+                     <item>
+                    <price>12345.00</price>
+                    </item>
+                     <item>
+                    <price>123456.00</price>
+                    </item>
+                     <item>
+                    <price>1234567.00</price>
+                    </item>
+                     <item>
+                     <price>12345678.00</price>
+                     </item>
+                     <item>
+                     <price>123456789.00</price>
+                     </item>
+                     <item>
+                     <price>1234567890.00</price>
+                     </item>
+                    <price2>0.00</price2>
+                </data>
+            </xf:instance>
+        </xf:model>
+        <style type="text/css"><![CDATA[
+output[appearance='currency']
+{-moz-binding:url('currency-bindings.xml#output-currency');display:inline;}            
+currency_input  {-moz-binding:url('currency-bindings.xml#input-currency');display:inline;}            
+            ]]></style>
+    </head>
+    <body>
+        <xf:group nodeset="/data/item">
+            <div>
+                <p>This shows the default price entry formats on input and output.</p>
+                <xf:label>Enter a price: </xf:label>
+                <currency_input ref="price"/> 
+                <xf:output ref="price" appearance="currency"/>
+            </div>            
+            <div>
+                <p>This shows the price entry format for prices in the form 32.224,53#</p>
+                <xf:label>Enter a price: </xf:label>
+                <currency_input ref="price2" appearance="currency" fractional=","
+                thousands="." symbol="#"/> 
+            <xf:output ref="price2" appearance="currency" fractional="," thousands="." symbol="#"
+            position="after"/>
+            </div>            
+        </xf:group>
+        <p>repeat:</p>
+        <xf:repeat nodeset="/data">
+            <xf:output ref="price">
+               <xf:label>No formatting: </xf:label>
+            </xf:output>
+         
+           <xf:output ref="price" appearance="currency">
+               <xf:label>Formatting: </xf:label>
+            </xf:output>
+         
+        </xf:repeat>
+    </body>
+</html>

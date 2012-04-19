@@ -1,0 +1,31 @@
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:xf="http://www.w3.org/2002/xforms"
+ xmlns:ev="http://www.w3.org/2001/xml-events"
+>
+   <head>
+      <title>XForms Message</title>
+      <xf:model>
+        <xf:instance xmlns="">
+        	<data/>
+        </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+   
+	   <xf:trigger>
+            <xf:label>Ephemeral</xf:label>
+            <xf:message level="ephemeral" ev:event="DOMFocusIn">Example of an ephemeral message.</xf:message>
+         </xf:trigger>
+         
+         <xf:trigger>
+            <xf:label>Modeless</xf:label>
+            <xf:message level="modeless" ev:event="xforms-help">Example of a modeless message.</xf:message>
+         </xf:trigger>
+         
+         <xf:trigger>
+            <xf:label>Model</xf:label>
+            <xf:message level="modal" ev:event="click">Example of an model message.</xf:message>
+         </xf:trigger>
+   </body>
+</html>

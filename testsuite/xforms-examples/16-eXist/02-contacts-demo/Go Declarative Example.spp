@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XSL Transforms" ExtStr="xsl">
+		<File FilePath="xsl\schema2xforms.xsl" HomeFolder="Yes"/>
+		<File FilePath="xsl\screen-labels.xml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="HTML Files" ExtStr="html;htm;xhtml;asp"/>
+	<Folder FolderName="Constraint Schema" ExtStr="xsd" XSL_XMLUseSet="Yes" XSL_XMLUseFile="xsl\schema2xforms.xsl" XSL_DestFolderSet="Yes" XSL_DestFolder="xforms" XSL_DestFileExtSet="Yes" XSL_DestFileExt=".xhtml">
+		<File FilePath="ContactsDocument.xsd" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="XForms" ExtStr="xhtml">
+		<File FilePath="xforms\ContactsDocument.xhtml" HomeFolder="Yes"/>
+		<File FilePath="xforms\instance.xml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Wantlist" ExtStr="xml">
+		<File FilePath="wantlist.xml" HomeFolder="Yes"/>
+	</Folder>
+	<ExtMountFolder FolderName="resources"/>
+	<ExtMountFolder FolderName="instances" ExtStr="xml" ValidFileSet="Yes" ValidFile="ContactsDocument.xsd"/>
+	<ExtMountFolder FolderName="xqueries"/>
+	<ExtMountFolder FolderName="schemas" XSL_XMLUseSet="Yes" XSL_XMLUseFile="xsl\schema2xforms.xsl" XSL_DestFolderSet="Yes" XSL_DestFolder="xforms" XSL_DestFileExtSet="Yes" XSL_DestFileExt=".xhtml"/>
+	<ExtMountFolder FolderName="rules"/>
+</Project>

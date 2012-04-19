@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Hello World in XForms</title>
+      <xf:model>
+         <xf:instance xmlns="">
+            <data>
+               <first-name/>
+            </data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <p>Type in your name in the input field box. <br/>
+        If you are running XForms, the output should be displayed in the output area.</p>
+        
+         <xf:input ref="first-name" incremental="true">
+            <xf:label>Please enter your first name: </xf:label>
+         </xf:input>
+         
+         <br />
+         
+         <xf:output value="concat('Hello  ', first-name , '. We hope you like XForms!')">
+            <xf:label>Ouput: </xf:label>
+         </xf:output>
+         
+   </body>
+</html>

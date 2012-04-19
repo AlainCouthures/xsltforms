@@ -1,0 +1,78 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ev="http://www.w3.org/2001/xml-events"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+       <title>Insert with Origin</title>
+       <style type="text/css">
+          @namespace xf url("http://www.w3.org/2002/xforms");
+          body {font-family:Helvetica, sans-serif}
+       </style>
+       <xf:model>
+          <xf:instance xmlns="" id="persons">
+            <data>
+               <Person>
+                  <PersonGivenName>John</PersonGivenName>
+				  <PersonFamilyName>Doe</PersonFamilyName>
+				  <PersonGenderCode>unknown</PersonGenderCode>
+				  <XFormsAwareIndicator>false</XFormsAwareIndicator>
+               </Person>
+				<Person>
+                  <PersonGivenName>Sue</PersonGivenName>
+				  <PersonFamilyName>Smith</PersonFamilyName>
+				  <PersonGenderCode>unknown</PersonGenderCode>
+				  <XFormsAwareIndicator>false</XFormsAwareIndicator>
+               </Person>
+            </data>
+          </xf:instance>
+		  <xf:bind nodeset="XFormsAwareIndicator" type="xs:boolean"/>
+		   
+		   <!-- initial values for new Person records -->
+		   <xf:instance xmlns="" id="init">
+            <data>
+               <Person>
+                  <PersonGivenName></PersonGivenName>
+				  <PersonFamilyName></PersonFamilyName>
+				  <PersonGenderCode>unknown</PersonGenderCode>
+				  <XFormsAwareIndicator>false</XFormsAwareIndicator>
+               </Person>
+            </data>
+          </xf:instance>
+       </xf:model>
+    </head>
+    <body>
+       <h3>Insert with Origin</h3>
+		<xf:repeat nodeset="Person" id="person-repeat">
+         <xf:input ref="PersonGivenName">
+            <xf:label>First Name: </xf:label>
+         </xf:input>
+	     <xf:input ref="PersonFamilyName">
+            <xf:label>First Name: </xf:label>
+         </xf:input>
+		 <xf:select1 ref="PersonGenderCode">
+            <xf:label>Gender: </xf:label>
+			<xf:item>
+				<xf:label>Male</xf:label>
+				<xf:value>male</xf:value>
+			</xf:item>
+			 <xf:item>
+				<xf:label>Female</xf:label>
+				<xf:value>female</xf:value>
+			</xf:item>
+			 <xf:item>
+				<xf:label>Unknown</xf:label>
+				<xf:value>unknown</xf:value>
+			</xf:item>
+         </xf:select1>
+		 <xf:input ref="XFormsAwareIndicator">
+            <xf:label>First Name: </xf:label>
+         </xf:input>
+	    </xf:repeat>
+		<xf:trigger>
+			   <xf:label>Add</xf:label>
+			   <xf:insert ev:event="DOMActivate" nodeset="instance('persons')/Person" at="last()" position="after"
+				   origin="instance('init')/Person"/>
+		</xf:trigger>
+    </body>
+</html>

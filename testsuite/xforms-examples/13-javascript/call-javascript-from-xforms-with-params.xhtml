@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Call JavaScript Using Load Resource</title>
+      <xf:model>
+         <xf:instance xmlns="" id="default">
+            <data>
+               <messageID>1</messageID>
+            </data>
+         </xf:instance>
+         <xf:instance xmlns="" id="instance1">
+            <data message="Message 1"/>
+         </xf:instance>
+         <xf:instance xmlns="" id="instance2">
+            <data message="Message 2"/>
+         </xf:instance>
+         <xf:instance xmlns="" id="instance3">
+            <data message="Message 3"/>
+         </xf:instance>
+      </xf:model>
+    <script type="text/javascript">
+       var MyJavaScript=function(id){
+       // We get the instance element
+	    var message = document.getElementById(id).getAttribute('message');
+		if (instanceElement!=null) {   
+          alert(message);
+       }    
+    </script>
+
+   </head>
+   <body>
+      <xf:select1 ref="messageID">
+         <xf:label>Select Message: </xf:label>
+            <xf:item>
+               <xf:lable>Message 1</xf:lable>
+               <xf:value>instance1</xf:value>
+            </xf:item>
+            <xf:item>
+               <xf:lable>Message 2</xf:lable>
+               <xf:value>instance2</xf:value>
+            </xf:item>
+            <xf:item>
+               <xf:lable>Message 3</xf:lable>
+               <xf:value>instance3</xf:value>
+            </xf:item>
+      </xf:select1>
+      <xf:trigger>
+         <xf:label>Call JavaScript</xf:label>
+         <xf:action ev:event="DOMActivate">
+            <xf:load resource="javascript:MyJavaScript('default');"/>
+         </xf:action>
+      </xf:trigger>
+   </body>
+</html>

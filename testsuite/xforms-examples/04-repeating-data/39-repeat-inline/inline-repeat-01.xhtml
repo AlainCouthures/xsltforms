@@ -1,0 +1,24 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>Inline Repeat</title>
+      <link rel="stylesheet" type="text/css" href="inline-repeat-01.css" />
+      <xf:model>
+         <xf:instance xmlns="" id="grid">
+            <data>
+               <cell-label>Cell Label 1</cell-label>
+               <cell-label>A really long label here</cell-label>
+               <cell-label>Short</cell-label>
+               <cell-label>Last</cell-label>
+            </data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <h1>Inline Repeat</h1>
+      <xf:repeat nodeset="cell-label">
+         <div class="cell">
+            <xf:output ref="." />
+         </div>
+      </xf:repeat>
+   </body>
+</html>

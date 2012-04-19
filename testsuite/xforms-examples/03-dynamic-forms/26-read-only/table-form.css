@@ -1,0 +1,48 @@
+ /* a stylesheet for tabular XForms input field alignment */
+
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+/* give the input form labels and the fieldset legend a bold sans-serif font */
+label {
+   font-family: Arial, Helvetica, sans-serif;
+   font-weight: bold;
+   font-size: small;
+}
+
+xf|group {
+	border: black solid 2px;
+	padding: 5px;
+	width: 300px;
+}
+
+/* the labels are right-aligned in a 150px wide column */
+xf|input xf|label {
+   width: 150px;
+   margin: 3px;
+   text-align: right;
+}
+
+/* the input values are left aligned */
+xf|value {
+   text-align: left;
+}
+
+/* vertical area between input boxes */
+input {
+   margin: .2em;        
+}
+
+/* each input is a row in the group table */
+xf|input {
+   display: table-row;
+}
+
+/* each label within an input is a cell in the input row */
+xf|input xf|label {
+   display: table-cell; 
+}
+
+/* each value (pseudo-element) is also a cell in the input row */
+xf|input::value {
+   display: table-cell;
+}

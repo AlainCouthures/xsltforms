@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml/events" xmlns:h="http://www.w3.org/1999/xhtml" >
+    <head>
+        <title/>
+        <xf:model>
+            <xf:instance xmlns="">
+                <data>
+                    <price>12346.00</price>
+                    <price2>123456.00</price2>
+                </data>
+            </xf:instance>
+        </xf:model>
+        <style type="text/css"><![CDATA[
+output[appearance='currency'] {
+   -moz-binding:url('currency-bindings.xml#output-currency')
+   ;display:inline;
+}
+
+currency_input  {-moz-binding:url('currency-bindings.xml#input-currency');display:inline;}
+            ]]></style>
+    </head>
+    <body>
+        <xf:group ref=".">
+            <div>
+                <p>This shows the default price entry formats on input and output.</p>
+               
+                <currency_input ref="price">
+                dd</currency_input>
+
+                 <br/>
+                 <xf:currency_input ref="price2">
+                    <xf:label>Input price 2: </xf:label>
+                 </xf:currency_input>
+                  <br/>
+                <xf:output ref="price" appearance="currency">
+                   <xf:label>Enter a price 2: </xf:label>
+                </xf:output>
+                <br/>
+                <currency_input ref="price2"/> 
+                <p>Outputs:</p>
+                 <xf:output ref="/data/price" appearance="currency"/>
+                <xf:output ref="/data/price2" appearance="currency"/>
+            </div>            
+             
+        </xf:group>
+    </body>
+</html>

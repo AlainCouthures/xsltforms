@@ -1,0 +1,79 @@
+<?xml-stylesheet type="text/xsl" href="../../../../../../xsltforms.xsl"?>
+<html xmlns:my="http://commerce.example.com/payment" xmlns:txs="http://www.agencexml.com/txs" xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:req="http://www.agencexml.com/requests" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events">
+	<head>
+		<title>instance() function Unit Test</title>
+		<link rel="stylesheet" href="TestSuite11.css" type="text/css"/>
+    <link rel="stylesheet" href="http://jsunittest.com/jsunittest/assets/unittest.cssx" type="text/css" />
+		<xforms:model>
+			<xforms:instance id="wrongInstance">
+				<orderForm xmlns="">
+					<shipTo>
+
+						<firstName>George</firstName>
+					</shipTo>
+				</orderForm>
+			</xforms:instance>
+			<xforms:instance id="orderform">
+				<orderForm xmlns="">
+					<shipTo>
+						<firstName>John</firstName>
+
+					</shipTo>
+				</orderForm>
+			</xforms:instance>
+		</xforms:model>
+	</head>
+	<body onload="$('console').style.display = 'block';">
+      <div id="xformControl">
+         <span>
+            <input type="checkbox" onclick="$('console').style.display = this.checked? 'block' : 'none';"  checked="checked"/> Debug
+         </span>
+      </div>
+	    <xforms:group>
+		    <xforms:label class="title">
+			instance() function Unit Test
+		    </xforms:label>
+
+		</xforms:group>
+		<xforms:group>
+			<xforms:label>
+			  You must see the value "John" for the First Name output. 
+			  You must see the value "George" for the Second Name output. 
+			</xforms:label>
+		</xforms:group>
+		<xforms:group>
+		  <xforms:output id="firstName" ref="instance('orderform')/shipTo/firstName">
+			<xforms:label>First Name : </xforms:label>
+
+		  </xforms:output>
+		</xforms:group>
+		<xforms:group>
+		  <xforms:output id="secondName" ref="instance()/shipTo/firstName">
+			<xforms:label>Second Name : </xforms:label>
+		  </xforms:output>
+		</xforms:group>
+		
+      <div id="testlog"></div>
+      
+      <script src="http://jsunittest.com/jsunittest/assets/jsunittest.js" type="text/javascript"></script>
+      <script type="text/javascript">
+        
+           new Test.Unit.Runner({
+             setup: function() {
+           },
+         
+           teardown: function() {
+         
+           },
+         
+           "test Instance() function": function() { with(this) {
+						assertEqual("John", $('firstName').xfElement.getValue());
+						assertEqual("George", $('secondName').xfElement.getValue());
+           }},
+         
+         });
+         
+      </script>
+	</body>
+
+</html>

@@ -1,0 +1,76 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="LocationExpr.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== XsltForms_locationExpr Class ===
+XPath Expression Class for location expressions
+* constructor function : initializes absolute property and stacks successive steps</cm:wiki>
+		<![CDATA[
+function XsltForms_locationExpr(absolute) {
+	this.absolute = absolute;
+	this.steps = [];
+	for (var i = 1, len = arguments.length; i < len; i++) {
+		this.steps.push(arguments[i]);
+	}
+}
+
+]]>
+		<cm:wiki>
+* '''evaluate''' method : recursively evaluates the successive steps of this location expression object</cm:wiki>
+<![CDATA[
+XsltForms_locationExpr.prototype.evaluate = function(ctx) {
+	var start = (this.absolute && ctx.root )|| !ctx.node ? ctx.root : ctx.node;
+	var m = XsltForms_browser.getMeta((start.documentElement ? start.documentElement : start.ownerDocument.documentElement), "model");
+	if (m && m != "dummy") {
+		ctx.addDepElement(document.getElementById(m).xfElement);
+	}
+	var nodes = [];
+	if (this.steps[0]) {
+		this.xPathStep(nodes, this.steps, 0, start, ctx);
+	} else {
+		nodes[0] = start;
+	}
+	return nodes;
+};
+
+XsltForms_locationExpr.prototype.xPathStep = function(nodes, steps, step, input, ctx) {
+	var s = steps[step];
+	var nodelist = s.evaluate(ctx.clone(input));
+	for (var i = 0, len = nodelist.length; i < len; ++i) {
+		var node = nodelist[i];
+		if (step === steps.length - 1) {
+			if (!XsltForms_browser.inArray(node, nodes)) {
+				nodes.push(node);
+			}
+			ctx.addDepNode(node);
+		} else {
+			this.xPathStep(nodes, steps, step + 1, node, ctx);
+		}
+	}
+};
+    ]]>
+	</cm:source>
+</cm:component>

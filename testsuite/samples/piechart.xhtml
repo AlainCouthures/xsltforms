@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<title>SVG Pie Charts</title>
+		<xf:model>
+			<xf:instance>
+				<data xmlns="">
+					<code>1</code>
+					<period code="1" name="Chart #1">
+						 <item name="A">4034</item>
+						 <item name="B">960</item>
+						 <item name="C">575</item>
+						 <item name="D">264</item>
+					</period>
+					<period code="2" name="Chart #2">
+						 <item name="A">1014</item>
+						 <item name="B">835</item>
+						 <item name="C">620</item>
+						 <item name="D">212</item>
+						 <item name="E">144</item>
+					</period>
+				</data>
+			</xf:instance>
+		</xf:model>
+	</head>
+	<body>
+		<h1>SVG Pie Charts</h1>
+		<xf:select1 ref="code" appearance="full">
+			<xf:itemset nodeset="../period">
+				<xf:label ref="@name"/>
+				<xf:value ref="@code"/>
+			</xf:itemset>
+		</xf:select1>
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="500" height="500" viewBox="0 0 500 500">
+			<xf:repeat nodeset="period[@code=/data/code]/item">
+				<path style="fill:{substring('#0685C6#87C706#C7C706#C76606#772FBF#BF2F2F',(position() - 1) * 7 + 1, 7)};stroke:black;stroke-width:1;fillrule:evenodd;stroke-linejoin:bevel;" transform="translate(150,150) rotate({270 + 360 * (sum(preceding-sibling::item) div sum(../item))})" d="M 100 0 A 100 100 0 {choose((. * 2) &gt; sum(../item),1,0)} 1 {math:cos((. div sum(../item)) * 2 * math:constant('PI',4)) * 100} {math:sin((. div sum(../item)) * 2 * math:constant('PI',4)) * 100} L 0 0 Z"/>
+				<text font-size="12" font-weight="bold" style="text-anchor:middle" transform="translate(150,150)" x="{70 * math:cos(math:constant('PI',4) * (1.5 + ((2 * sum(preceding-sibling::item) + .) div sum(../item))))}" y="{70 * math:sin(math:constant('PI',4) * (1.5 + ((2 * sum(preceding-sibling::item) + .) div sum(../item))))}">
+					<xf:output value="concat(round(100 * (. div sum(../item))),'%')"/>
+				</text>
+				<text font-size="14" style="text-anchor:start" x="310" y="{90 + (position() * 20)}">
+					<xf:output value="concat(@name,' (',.,') ')"/>
+				</text>
+				<path style="stroke:black; stroke-width:1; fill:{substring('#0685C6#87C706#C7C706#C76606#772FBF#BF2F2F',(position() - 1) * 7 + 1, 7)}" d="M 290 {80 + (position() * 20)} L 290 {90 + (position() * 20)} L 300 {90 + (position() * 20)} L 300 {80 + (position() * 20)} Z"/>
+			</xf:repeat>
+		</svg>
+	</body>
+</html>

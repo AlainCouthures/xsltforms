@@ -1,0 +1,152 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFItemset.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_itemset" class ===
+ItemSet Element  Class
+* constructor function : initializes specific properties</cm:wiki>
+		<![CDATA[
+function XsltForms_itemset(subform, id, nodesetBinding, labelBinding, valueBinding) {
+	XsltForms_globals.counters.itemset++;
+	this.init(subform, id);
+	this.nodesetBinding = nodesetBinding;
+	this.labelBinding = labelBinding;
+	this.valueBinding = valueBinding;
+	this.hasBinding = true;
+}
+
+XsltForms_itemset.prototype = new XsltForms_element();
+
+]]>
+		<cm:wiki>
+* '''build_''' method : specific build method with the corresponding clones creation</cm:wiki>
+<![CDATA[
+XsltForms_itemset.prototype.build_ = function(ctx) {
+	if (this.element.getAttribute("cloned")) {
+		return;
+	}
+	this.nodes = this.evaluateBinding(this.nodesetBinding, ctx);
+	var next = this.element;
+	var parentNode = next.parentNode;
+	var length = this.nodes.length;
+	var oldNode = next;
+	var listeners = next.listeners;
+	for (var cont = 1; true;) {
+		next = next.nextSibling;
+		if (next && next.getAttribute("cloned")) {
+			if (cont >= length) {
+				next.listeners = null;
+				parentNode.removeChild(next);
+				next = oldNode;
+			} else {
+				next.node = this.nodes[cont];
+				this.refresh_(next, cont++);
+				oldNode = next;
+			}
+		} else {
+			for (var i = cont; i < length; i++) {
+				var node = this.element.cloneNode(true);
+				node.setAttribute("cloned", "true");
+				XsltForms_idManager.cloneId(node);
+				node.node = this.nodes[i];
+				parentNode.appendChild(node);
+				this.refresh_(node, i);
+				if (listeners && !XsltForms_browser.isIE) {
+					for (var j = 0, len = listeners.length; j < len; j++) {
+						listeners[j].clone(node);
+					}
+				}
+			}
+			break;
+		}
+	}
+	if (length > 0) {
+		this.element.node = this.nodes[0];
+		this.refresh_(this.element, 0);
+	} else {
+		this.element.value = "\xA0";
+		this.element.text = "\xA0";
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''refresh''' method : sets "xforms-disabled" CSS class</cm:wiki>
+<![CDATA[
+XsltForms_itemset.prototype.refresh = function() {
+	var parent = this.element.parentNode;
+	var i = 0;
+	while (parent.childNodes[i] !== this.element) {
+		i++;
+	}
+	for (var j = 0, len = this.nodes.length; j < len || j === 0; j++) {
+		XsltForms_browser.setClass(parent.childNodes[i+j], "xforms-disabled", this.nodes.length === 0);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new itemset control with the given id</cm:wiki>
+<![CDATA[
+XsltForms_itemset.prototype.clone = function(id) {
+	return new XsltForms_itemset(this.subform, id, this.nodesetBinding, this.labelBinding, this.valueBinding);
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : decrements the number of itemsets and calls the parent dispose() method</cm:wiki>
+<![CDATA[
+XsltForms_itemset.prototype.dispose = function() {
+	XsltForms_globals.counters.itemset--;
+	XsltForms_element.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''refresh_''' method : refreshes this ItemSet Control at a given position</cm:wiki>
+<![CDATA[
+XsltForms_itemset.prototype.refresh_ = function(element, cont) {
+	var ctx = this.nodes[cont];
+	var nodeLabel = this.evaluateBinding(this.labelBinding, ctx)[0];
+	var nodeValue = this.evaluateBinding(this.valueBinding, ctx)[0];
+	if (nodeLabel) {
+		this.depsNodesRefresh.push(nodeLabel);
+		try {
+			element.text = XsltForms_browser.getValue(nodeLabel, true);
+		} catch(e) {
+		}
+	}
+	if (nodeValue) {
+		this.depsNodesRefresh.push(nodeValue);
+		try {
+			element.value = XsltForms_browser.getValue(nodeValue);
+		} catch(e2) {
+		}
+	}
+};
+]]>
+	</cm:source>
+</cm:component>

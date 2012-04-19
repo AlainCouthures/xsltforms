@@ -1,0 +1,60 @@
+<html 
+   xmlns="http://www.w3.org/1999/xhtml" 
+   xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>XForms textarea</title>
+      <style type="text/css">
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+/* put each textarea on its own row */
+xf|textarea {
+ display: table-row;
+}
+
+xf|textarea > xf|label {
+   display: table-cell;
+   font-family: sans-serif;
+   font-weight: bold;
+   vertical-align: top;
+   text-align: right;
+   padding-right: 3px;
+}
+
+textarea {
+   font-family: Courier, sans-serif;
+   height: 4.4em; /* a bit less than four lines to demonstrate scrolling */
+   width: 300px;
+}
+
+xf|::value {
+   width: 400px;
+   text-align: left;
+}
+</style>
+      <xf:model>
+         <xf:instance xmlns="">
+            <Data>
+               <Definition>This is the initial definition text.</Definition>
+               <Usage>Note that the textarea control will automatically add a scroll-bar if the text exceeds the size of the textarea. </Usage>
+               <Source>This is the initial usage text.</Source>
+               <Note>This is the note initial text.</Note>
+            </Data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+         <xf:textarea ref="/Data/Definition">
+            <xf:label>Definition: </xf:label>
+         </xf:textarea>
+         <xf:textarea ref="/Data/Usage">
+            <xf:label>Usage: </xf:label>
+         </xf:textarea>
+         <xf:textarea ref="/Data/Source">
+            <xf:label>Source: </xf:label>
+         </xf:textarea>
+         <xf:textarea ref="/Data/Note">
+            <xf:label>Note: </xf:label>
+         </xf:textarea>
+   </body>
+</html>
+

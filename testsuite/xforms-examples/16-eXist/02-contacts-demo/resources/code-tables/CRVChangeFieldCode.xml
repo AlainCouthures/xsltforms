@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>CRVChangeFieldCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Address</Label>
+         <Value>address</Value>
+      </Item>
+      <Item>
+         <Label>Contact</Label>
+         <Value>contact</Value>
+      </Item>
+      <Item>
+         <Label>Date</Label>
+         <Value>date</Value>
+      </Item>
+      <Item>
+         <Label>Name</Label>
+         <Value>name</Value>
+      </Item>
+      <Item>
+         <Label>Net Price</Label>
+         <Value>net-price</Value>
+      </Item>
+      <Item>
+         <Label>Personal Property</Label>
+         <Value>personal-property</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

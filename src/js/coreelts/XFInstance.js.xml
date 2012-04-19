@@ -1,0 +1,368 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFInstance.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2010-06-05</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XFInstance" class ===
+Instance Class
+* constructor function : stores the properties of this instance and attaches it to a model</cm:wiki>
+		<![CDATA[
+function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML) {
+	this.init(subform, id, model, "xforms-instance");
+	this.readonly = readonly;
+	this.mediatype = mediatype;
+	this.src = XsltForms_browser.unescape(src);
+	switch(mediatype) {
+		case "application/xml":
+			this.srcXML = XsltForms_browser.unescape(srcXML);
+			if (this.srcXML.substring(0, 1) === "&") {
+				this.srcXML = XsltForms_browser.unescape(this.srcXML);
+			}
+			break;
+		case "application/json":
+			var json;
+			eval("json = " + XsltForms_browser.unescape(srcXML));
+			this.srcXML = XsltForms_browser.json2xml("", json, true, false);
+			break;
+		default:
+			alert("Unsupported mediatype '" + mediatype + "' for instance #" + id);
+			return;
+	}
+	this.model = model;
+	this.doc = XsltForms_browser.createXMLDocument("<dummy/>");
+	XsltForms_browser.setMeta(this.doc.documentElement, "instance", id);
+	XsltForms_browser.setMeta(this.doc.documentElement, "model", model.element.id);
+	model.addInstance(this);
+	subform.instances.push(this);
+}
+
+XsltForms_instance.prototype = new XsltForms_coreElement();
+ 
+]]>
+		<cm:wiki>
+* '''create''' method : checks if this instance has not already been created</cm:wiki>
+<![CDATA[
+XsltForms_instance.create = function(subform, id, model, readonly, mediatype, src, srcXML) {
+	var instelt = document.getElementById(id);
+	if (instelt && instelt.xfElement) {
+		instelt.xfElement.subforms[subform] = true;
+		instelt.xfElement.nbsubforms++;
+		subform.instances.push(instelt.xfElement);
+		return instelt.xfElement;
+	} else {
+		return new XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML);
+	}
+};
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears the properties and recycles the associated nodes</cm:wiki>
+<![CDATA[
+XsltForms_instance.prototype.dispose = function(subform) {
+	if (subform && this.nbsubforms !== 1) {
+		this.subforms[subform] = null;
+		this.nbsubforms--;
+		return;
+	}
+	XsltForms_coreElement.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''construct''' method : loads the source of this instance locally or remotely</cm:wiki>
+<![CDATA[
+XsltForms_instance.prototype.construct = function(subform) {
+	if (!XsltForms_globals.ready || (subform && !subform.ready && this.nbsubforms === 1)) {
+		if (this.src) {
+			if (this.src.substring(0, 8) === "local://") {
+				try {
+					if (typeof(localStorage) === 'undefined') {
+						throw { message: "local:// not supported" };
+					}
+					this.setDoc(window.localStorage.getItem(this.src.substr(8)));
+				} catch(e) {
+					XsltForms_globals.error(this.element, "xforms-link-exception", "Fatal error loading " + this.src, e.toString());
+				}
+			} else if (this.src.substr(0, 9) === "opener://") {
+				try {
+					var ser = window.opener.XsltForms_globals.xmlrequest('get', this.src.substr(9));
+					this.setDoc(ser);
+				} catch (e) {
+					XsltForms_globals.error(this.element, "xforms-link-exception", "Fatal error loading " + this.src, e.toString());
+				} 
+			} else {
+				if (this.src.substr(0, 11) === "javascript:") {
+					try {
+						var ser;
+						eval("ser = (" + this.src.substr(11) + ");");
+						this.setDoc(ser);
+					} catch (e) {
+						XsltForms_globals.error(this.element, "xforms-link-exception", "Error evaluating the following Javascript expression: "+this.src.substr(11));
+					}
+				} else {
+					var cross = false;
+					if (this.src.match(/^[a-zA-Z0-9+\.\-]+:\/\//)) {
+						var domain = /^([a-zA-Z0-9+\.\-]+:\/\/[^\/]*)/;
+						var sdom = domain.exec(this.src);
+						var ldom = domain.exec(document.location.href);
+						cross = sdom[0] !== ldom[0];
+					}
+					if (cross) {
+						this.setDoc('<dummy xmlns=""/>');
+						XsltForms_browser.jsoninstobj = this;
+						var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+						scriptelt.setAttribute("src", this.src+((this.src.indexOf("?") === -1) ? "?" : "&")+"callback=XsltForms_browser.jsoninst");
+						scriptelt.setAttribute("id", "jsoninst");
+						scriptelt.setAttribute("type", "text/javascript");
+						var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+						body.insertBefore(scriptelt, body.firstChild);
+					} else {
+						try {
+							var req = XsltForms_browser.openRequest("GET", this.src, false);
+							XsltForms_browser.debugConsole.write("Loading " + this.src);
+							req.send(null);
+							if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
+								throw { message: "Request error: " + req.status };
+							}
+							this.setDoc(req.responseText);
+						} catch(e) {
+							XsltForms_globals.error(this.element, "xforms-link-exception", "Fatal error loading " + this.src, e.toString());
+						}
+					}
+				}
+			}
+		} else {
+			this.setDoc(this.srcXML);
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''reset''' method : simply restores the initial copy of this instance</cm:wiki>
+<![CDATA[
+XsltForms_instance.prototype.reset = function() {
+	this.setDoc(this.oldXML, true);
+};
+ 
+]]>
+		<cm:wiki>
+* '''store''' method : clones the document of this instance</cm:wiki>
+<![CDATA[
+XsltForms_instance.prototype.store = function(isReset) {
+	if (this.oldXML && !isReset) {
+		this.oldXML = null;
+	}
+	this.oldXML = XsltForms_browser.saveXML(this.doc.documentElement);
+};
+
+]]>
+		<cm:wiki>
+* '''setDoc''' method : sets a document for this instance</cm:wiki>
+<![CDATA[
+XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
+	var instid = XsltForms_browser.getMeta(this.doc.documentElement, "instance");
+	var modid = XsltForms_browser.getMeta(this.doc.documentElement, "model");
+	XsltForms_browser.loadXML(this.doc.documentElement, xml);
+	XsltForms_browser.setMeta(this.doc.documentElement, "instance", instid);
+	XsltForms_browser.setMeta(this.doc.documentElement, "model", modid);
+	if (!preserveOld) {
+		this.store(isReset);
+	}
+	if (instid === XsltForms_browser.idPf + "instance-config") {
+		XsltForms_browser.config = this.doc.documentElement;
+	}
+};
+        
+]]>
+		<cm:wiki>
+* '''revalidate''' method : recursively revalidates each node of this instance according to readonly and relevant attributes</cm:wiki>
+<![CDATA[
+XsltForms_instance.prototype.revalidate = function() {
+	if (!this.readonly) {
+		this.validation_(this.doc.documentElement);
+	}
+};
+
+XsltForms_instance.prototype.validation_ = function(node, readonly, notrelevant) {
+	if (!readonly) {
+		readonly = false;
+	}
+	if (!notrelevant) {
+		notrelevant = false;
+	}
+	this.validate_(node, readonly, notrelevant);
+	readonly = XsltForms_browser.getBoolMeta(node, "readonly");
+	notrelevant = XsltForms_browser.getBoolMeta(node, "notrelevant");
+	var atts = node.attributes || [];
+	if (atts) {
+		var atts2 = [];
+		for (var i = 0, len = atts.length; i < len; i++) {
+			if (atts[i].nodeName.substr(0,10) !== "xsltforms_") {
+				atts2[atts2.length] = atts[i];
+			}
+		}
+		for (var i2 = 0, len2 = atts2.length; i2 < len2; i2++) {
+			this.validation_(atts2[i2], readonly, notrelevant);
+		}
+	}
+	for (var j = 0, len1 = node.childNodes.length; j < len1; j++) {
+		var child = node.childNodes[j];
+		if (child.nodeType === XsltForms_nodeType.ELEMENT) {
+			this.validation_(child, readonly, notrelevant);
+		}
+	}
+};
+
+XsltForms_instance.prototype.validate_ = function(node, readonly, notrelevant) {
+	var bindids = XsltForms_browser.getMeta(node, "bind");
+	var value = XsltForms_globals.xmlValue(node);
+	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
+	if (bindids) {
+		var binds = bindids.split(" ");
+		var relevantfound = false;
+		var readonlyfound = false;
+		for (var i = 0, len = binds.length; i < len; i++) {
+			var bind = document.getElementById(binds[i]).xfElement;
+			var nodes = bind.nodes;
+			var i2 = 0;
+			for (var len2 = nodes.length; i2 < len2; i2++) {
+				if (nodes[i2] === node) {
+					break;
+				}
+			}
+			for (var j = 0, len3 = bind.depsNodes.length; j < len3; j++) {
+				XsltForms_browser.rmValueMeta(bind.depsNodes[j], "depfor", bind.depsId);
+			}
+			bind.depsNodes.length = 0;
+			var ctx = new XsltForms_exprContext(node, i2, nodes, null, null, null, [], bind.depsId);
+			if (bind.required) {
+				this.setProperty_(node, "required", bind.required.evaluate(ctx, node));
+			}
+			if (notrelevant || !relevantfound || bind.relevant) {
+				this.setProperty_(node, "notrelevant", notrelevant || !(bind.relevant? bind.relevant.evaluate(ctx, node) : true));
+				relevantfound = relevantfound || bind.relevant;
+			}
+			if (readonly || !readonlyfound || bind.readonly) {
+				this.setProperty_(node, "readonly", readonly || (bind.readonly? bind.readonly.evaluate(ctx, node) : bind.calculate ? true : false));
+				readonlyfound = readonlyfound || bind.readonly;
+			}
+			this.setProperty_(node, "notvalid",
+				!XsltForms_browser.getBoolMeta(node, "notrelevant") && !(!(XsltForms_browser.getBoolMeta(node, "required") && (!value || value === "")) &&
+				(XsltForms_browser.getNil(node) ? value === "" : !schtyp || schtyp.validate(value)) &&
+				(!bind.constraint || bind.constraint.evaluate(ctx, node))));
+			XsltForms_browser.copyArray(ctx.depsNodes, bind.depsNodes);
+		}
+	} else {
+		this.setProperty_(node, "notrelevant", notrelevant);
+		this.setProperty_(node, "readonly", readonly);
+		this.setProperty_(node, "notvalid", schtyp && !schtyp.validate(value));
+	}
+};
+
+XsltForms_instance.prototype.setProperty_ = function (node, property, value) {
+	if (XsltForms_browser.getBoolMeta(node, property) !== value) {
+		XsltForms_browser.setBoolMeta(node, property, value);
+		this.model.addChange(node);   
+	}
+};
+]]>
+		<cm:wiki>
+* '''json2xml''' function : converts json to xml notation</cm:wiki>
+<![CDATA[
+XsltForms_browser.json2xml = function(name, json, root, inarray) {
+	var fullname = "";
+	if (name === "________") {
+		fullname = " exml:fullname=\"" + XsltForms_browser.escape(name) + "\"";
+		name = "________";
+	}
+	var ret = root ? "<exml:anonymous xmlns:exml=\"http://www.agencexml.com/exml\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:exsi=\"http://www.agencexml.com/exi\" xmlns=\"\">" : "";
+	if (json instanceof Array) {
+		if (inarray) {
+			ret += "<exml:anonymous exsi:maxOccurs=\"unbounded\">";
+		}
+		if (json.length === 0) {
+			ret += "<" + (name === "" ? "exml:anonymous" : name) + fullname + " exsi:maxOccurs=\"unbounded\" xsi:nil=\"true\"/>";
+		} else {
+			for (var i = 0, len = json.length; i < len; i++) {
+				ret += XsltForms_browser.json2xml(name === "" ? "exml:anonymous" : name, json[i], false, true);
+			}
+		}
+		if (inarray) {
+			ret += "</exml:anonymous>";
+		}
+	} else {
+		var xsdtype = "";
+		switch(typeof(json)) {
+			case "number":
+				xsdtype = " xsi:type=\"xsd:double\"";
+				break;
+			case "boolean":
+				xsdtype = " xsi:type=\"xsd:boolean\"";
+				break;
+			case "object":
+				if (json instanceof Date) {
+					xsdtype = " xsi:type=\"xsd:dateTime\"";
+				}
+				break;
+		}
+		ret += name === "" ? "" : "<"+name+fullname+(inarray?" exsi:maxOccurs=\"unbounded\"":"")+xsdtype+">";
+		if (typeof(json) === "object" && !(json instanceof Date)) {
+			for (var m in json) {
+				if (json.hasOwnProperty(m)) {
+					ret += XsltForms_browser.json2xml(m, json[m], false, false);
+				}
+			}
+		} else {
+			if (json instanceof Date) {
+				ret += json.getFullYear() + "-";
+				ret += (json.getMonth() < 9 ? "0" : "") + (json.getMonth()+1) + "-";
+				ret += (json.getDate() < 10 ? "0" : "") + json.getDate() + "T";
+				ret += (json.getHours() < 10 ? "0" : "") + json.getHours() + ":";
+				ret += (json.getMinutes() < 10 ? "0" : "") + json.getMinutes() + ":";
+				ret += (json.getSeconds() < 10 ? "0" : "") + json.getSeconds() + "Z";
+			} else {
+				ret += XsltForms_browser.escape(json);
+			}
+		}
+		ret += name === "" ? "" : "</"+name+">";
+	}
+	ret += root ? "</exml:anonymous>" : "";
+	return ret;
+};
+]]>
+		<cm:wiki>
+* '''jsoninst''' function : replaces instance data from json content</cm:wiki>
+<![CDATA[
+XsltForms_browser.jsoninst = function(json) {
+	//alert(json2xml("", json, true, false));
+	XsltForms_browser.jsoninstobj.setDoc(XsltForms_browser.json2xml("", json, true, false));
+	XsltForms_globals.addChange(XsltForms_browser.jsoninstobj.model);
+	XsltForms_xmlevents.dispatch(XsltForms_browser.jsoninstobj.model, "xforms-rebuild");
+	XsltForms_globals.refresh();
+	document.body.removeChild(document.getElementById("jsoninst"));
+};
+    ]]>
+	</cm:source>
+</cm:component>

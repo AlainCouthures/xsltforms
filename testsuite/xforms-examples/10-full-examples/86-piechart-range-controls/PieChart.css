@@ -1,0 +1,6 @@
+@namespace xf url("http://www.w3.org/2002/xforms");
+.chartlabel { font-family:verdana,arial,sans-serif;font-size:20px;fill:black;stroke:none }
+#chart { width:400px;height:400px }
+xf|range {margin-left: 100px;}
+
+

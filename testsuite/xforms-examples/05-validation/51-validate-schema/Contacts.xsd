@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:element name="Contacts">
+      <xs:annotation>
+         <xs:documentation>Sample XML Schema with at least one person with a first and last name</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence maxOccurs="unbounded">
+            <xs:element name="Person">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element name="FirstName"/>
+                     <xs:element name="MiddleName" minOccurs="0"/>
+                     <xs:element name="LastName"/>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

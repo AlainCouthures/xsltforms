@@ -1,0 +1,159 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>XForms Delete Example</title>
+      <style type="text/css">
+      @namespace xf url("http://www.w3.org/2002/xforms");
+      body {font-family:Arial, Helvetica, sans-serif; font-size:75%; margin:0; padding:0; width:570px;}
+     label {font-weight: bold;}
+      .header {
+        color: white;
+        background-color: gray;
+        font-weight: bold;
+        float:left;
+        width:570px;
+      }
+      .header .leftColumn, .header .rightColumn {
+        display:block;  width:11em;  float:left; margin:5px 10px;
+      }
+       .leftColumn, .rightColumn {
+         display: inline; margin-left: 10px; 
+      }
+      
+      /* This line puts a black border around all specified xforms groups and gives them both margin and padding */
+xf|group {border:1px solid #000; margin:15px 5px; padding:5px;}
+
+/* This marks the "selected" point within a set of repeated elements */
+xf|repeat {background:#eee;  float:left; width:570px;}
+xf|repeat .xf-value {margin:3px 0;}
+xf|repeat .xf-repeat-item {border:1px solid #eee;}
+xf|repeat .xf-repeat-index  {background:#999; border:1px dotted black; }
+xf|input .xf-value {width:10em;}
+
+/*  model delete confirmation box */
+#background {position:fixed; top:0; left:0; background:#888; width:100%; height:110%;}
+#delete-confirm-box {width:500px; height:250px; border:3px dotted #1c5180; background:#ddd; margin:auto; margin-top:200px;}
+#delete-option-triggers {text-align:center; width:100%; margin-top:-70px;}
+xf|trigger {margin-right:20px;}
+#content-for-deletion {float:left; width:340px; position:relative; top:0; left:0; padding:10px;}
+#content-for-deletion p {padding:0; margin-bottom:10px; font-weight:bold; font-size:1.2em;}
+#delete-confirm-box h2 {font-size:1.5em; margin:0; padding:5px; color:#fff; font-family:Century Gothic; text-align:center; background:#3e7c8f;}
+      </style>
+      <xf:model>
+         <xf:instance id="keyword-included" xmlns="">
+            <Keywords>
+               <!-- <Keyword>
+                  <Word>conservation-reserve-enhancement-program</Word>
+                  <Value>100</Value>
+               </Keyword>
+               <Keyword>
+                  <Word>native-prairie-program</Word>
+                  <Value>200</Value>
+               </Keyword>
+               <Keyword>
+                  <Word>us-fish-and-wildlife</Word>
+                  <Value>300</Value>
+               </Keyword>
+               <Keyword>
+                  <Word>wetlands-reserve-program</Word>
+                  <Value>300</Value>
+               </Keyword> -->
+               <Keyword>
+                  <Word></Word>
+                  <Value></Value>
+               </Keyword>
+            </Keywords>
+         </xf:instance>
+         <xf:instance id="new-keyword" xmlns="">
+            <Keywords>
+               <Keyword>
+                  <Word></Word>
+                  <Value></Value>
+               </Keyword>
+            </Keywords>
+         </xf:instance>
+         <xf:instance id="ParcelAgricultureProgramCode" src="ParcelAgricultureProgramCode.xml" xmlns="" />
+      </xf:model>
+   </head>
+   <body>
+   <h1>Agricultural Program Editor Example</h1>
+      <xf:group nodeset="/Keywords">
+         <div class="header">
+            <div class="leftColumn">Agricultural Program</div>
+            <div class="rightColumn">Acres</div>
+         </div>
+         <xf:repeat id="keyword-repeat" nodeset="Keyword">
+            <xf:select1 ref="Word">
+               <xf:itemset nodeset="instance('ParcelAgricultureProgramCode')/EnumeratedValues/Item">
+                  <xf:label ref="Label" />
+                  <xf:value ref="Value" />
+               </xf:itemset>
+            </xf:select1>
+            <xf:input ref="Value" class="rightColumn" />
+         </xf:repeat>
+         <br />
+         <br />
+
+         <xf:trigger>
+            <xf:label>Add Program</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:insert nodeset="/Keywords/Keyword" at="index('keyword-repeat')" position="after" />
+               <xf:setvalue ref="Keyword[index('keyword-repeat')]/Word" 
+                  value="" />
+               <xf:setvalue ref="Keyword[index('keyword-repeat')]/Value" 
+                  value="" />
+            </xf:action>
+         </xf:trigger>
+         <br />
+         
+         
+         <xf:switch>
+            <xf:case id="delete">
+               <!-- don't display the delete button unless we have at two or more records -->
+               <xf:trigger ref="instance('keyword-included')[count(//Keyword) > 1]">
+                  <xf:label>Delete Agricultural Program</xf:label>
+                  <xf:action ev:event="DOMActivate">
+                     <xf:toggle case="confirm" />
+                  </xf:action>
+               </xf:trigger>
+            </xf:case>
+            <xf:case id="confirm">
+               <div id="background">
+                  <div id="delete-confirm-box">
+                     <h2>Are you sure you want to delete the following:</h2>
+                     <div id="content-for-deletion">
+                        <p>Keyword: <xf:output ref="Keyword[index('keyword-repeat')]/Word" />
+                        </p>
+                        <p>Value: <xf:output ref="Keyword[index('keyword-repeat')]/Value" />
+                        </p>
+                     </div>
+                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <radialGradient id="alert-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                           <stop offset="0" style="stop-color:#f92500; stop-opacity:0.7" />
+                           <stop offset="1" style="stop-color:#f92500; stop-opacity:1" />
+                        </radialGradient>
+                        <!-- base triangle -->
+                        <polygon points="10,110 70,10 130,110" style="fill:url(#alert-gradient); stroke:#fff; stroke-width:3" />
+                        <!-- exclamation mark -->
+                        <rect x="65" y="40" width="10" height="40" style="fill:#000; stroke:#fff; stroke-width:2" />
+                        <rect x="65" y="90" width="10" height="10" style="fill:#000; stroke:#fff; stroke-width:2" />
+                     </svg>
+                     <div id="delete-option-triggers">
+                        <xf:trigger>
+                           <xf:label>Delete</xf:label>
+                           <xf:action ev:event="DOMActivate">
+                              <xf:delete nodeset="Keyword[index('keyword-repeat')]" at="index('keyword-repeat')" ev:event="DOMActivate" />
+                              <xf:toggle case="delete" />
+                           </xf:action>
+                        </xf:trigger>
+                        <xf:trigger>
+                           <xf:label>Cancel</xf:label>
+                           <xf:toggle case="delete" ev:event="DOMActivate" />
+                        </xf:trigger>
+                     </div>
+                  </div>
+               </div>
+            </xf:case>
+         </xf:switch>
+      </xf:group>
+   </body>
+</html>

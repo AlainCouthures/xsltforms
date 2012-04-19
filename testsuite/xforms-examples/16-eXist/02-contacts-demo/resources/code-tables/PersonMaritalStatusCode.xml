@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>PersonMaritalStatusCode PersonMaritalStatusText</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Divorced</Label>
+         <Value>divorced</Value>
+      </Item>
+      <Item>
+         <Label>Divorce Pending</Label>
+         <Value>divorce-pending</Value>
+      </Item>
+      <Item>
+         <Label>Legally Separated</Label>
+         <Value>legally-separated</Value>
+      </Item>
+      <Item>
+         <Label>Married</Label>
+         <Value>married</Value>
+      </Item>
+      <Item>
+         <Label>Other</Label>
+         <Value>other</Value>
+      </Item>
+      <Item>
+         <Label>Single</Label>
+         <Value>single</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

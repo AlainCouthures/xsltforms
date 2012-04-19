@@ -1,0 +1,32 @@
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+#tabbox xf|trigger {
+/* TODO solve width block and inline problem here */
+	width:106px;
+	float:left;
+	border:1px solid #ccc;
+	border-bottom:0;
+	font-weight: bold;
+	font-size: 1em;
+	margin:0 0 0 2px;
+	padding:7px;
+	-moz-border-radius: 1em 1em 0 0;}
+
+#buyers-tab, #buyers-div {background:pink; color:#000;}
+#sellers-tab, #sellers-div {background:coral; color:#000;}
+#property-tab, #property-div {background:khaki; color:#000;}
+#sales-agreement-tab, #sales-agreement-div {background:palegreen; color:#000;}
+#supplementary-tab, #supplementary-div {background:powderblue; color:#000;}
+#county-tab, #county-div {background:#8E62AF; color:#000;}
+#workflow-div, #workflow-tab {background:violet; color:#000;}
+#submit-div, #submit-tab {background:tan; color:#000;}
+
+#buyers-tab:hover {background:#ff2f55; color:#fff;}
+#sellers-tab:hover {background:#ff6e2f; color:#fff;}
+#property-tab:hover {background:#ffea3f;}
+#sales-agreement-tab:hover {background:#2def2c; color:#fff;}
+#supplementary-tab:hover {background:#1bccdf; color:#fff;}
+#submit-tab:hover {background:#5f3b0c; color:#fff;}
+#county-tab:hover {background:indigo; color:#fff;}
+#workflow-tab:hover {background:#EF2CEF;}
+.top-color-bar {border-top:30px solid #fff;	border-bottom:5px solid #fff; width:1000px;	height:25px;} 

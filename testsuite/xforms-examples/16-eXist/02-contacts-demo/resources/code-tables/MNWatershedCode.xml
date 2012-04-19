@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>MNWatershedCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Bear Valley</Label>
+         <Value>bear-valley</Value>
+      </Item>
+      <Item>
+         <Label>Belle Creek</Label>
+         <Value>belle-creek</Value>
+      </Item>
+      <Item>
+         <Label>Bois de Sioux</Label>
+         <Value>bois-de-sioux</Value>
+      </Item>
+      <Item>
+         <Label>Browns Creek</Label>
+         <Value>browns-creek</Value>
+      </Item>
+      <Item>
+         <Label>Buffalo Creek</Label>
+         <Value>buffalo-creek</Value>
+      </Item>
+      <Item>
+         <Label>Buffalo-Red River</Label>
+         <Value>buffalo-red-river</Value>
+      </Item>
+      <Item>
+         <Label>Capitol Regions</Label>
+         <Value>capitol-regions</Value>
+      </Item>
+      <Item>
+         <Label>Carnelian-Marine</Label>
+         <Value>carnelian-marine</Value>
+      </Item>
+      <Item>
+         <Label>Clearwater River</Label>
+         <Value>clearwater-river</Value>
+      </Item>
+      <Item>
+         <Label>Comfort Lake-Forest Lake</Label>
+         <Value>comfort-lake-forest-lake</Value>
+      </Item>
+      <Item>
+         <Label>Cooks Valley</Label>
+         <Value>cooks-valley</Value>
+      </Item>
+      <Item>
+         <Label>Coon Creek</Label>
+         <Value>coon-creek</Value>
+      </Item>
+      <Item>
+         <Label>Cormorant Lakes</Label>
+         <Value>cormorant-lakes</Value>
+      </Item>
+      <Item>
+         <Label>Crooked Creek</Label>
+         <Value>crooked-creek</Value>
+      </Item>
+      <Item>
+         <Label>Heron Lake</Label>
+         <Value>heron-lake</Value>
+      </Item>
+      <Item>
+         <Label>High Island</Label>
+         <Value>high-island</Value>
+      </Item>
+      <Item>
+         <Label>Joe River Watershed</Label>
+         <Value>joe-river-watershed</Value>
+      </Item>
+      <Item>
+         <Label>Kanaranzi-Little Rock</Label>
+         <Value>kanaranzi-little-rock</Value>
+      </Item>
+      <Item>
+         <Label>Lac Qui Parle-Yellow Bank</Label>
+         <Value>lac-qui-parle-yellow-bank</Value>
+      </Item>
+      <Item>
+         <Label>Lower MN River</Label>
+         <Value>lower-mn-river</Value>
+      </Item>
+      <Item>
+         <Label>Middlefork Crow River</Label>
+         <Value>middlefork-crow-river</Value>
+      </Item>
+      <Item>
+         <Label>Middle Mississippi Watershed</Label>
+         <Value>middle-mississippi-watershed</Value>
+      </Item>
+      <Item>
+         <Label>Middle River-Snake River</Label>
+         <Value>middle-river-snake-river</Value>
+      </Item>
+      <Item>
+         <Label>Minnehaha Creek</Label>
+         <Value>minnehaha-creek</Value>
+      </Item>
+      <Item>
+         <Label>Nine Mile Creek</Label>
+         <Value>nine-mile-creek</Value>
+      </Item>
+      <Item>
+         <Label>North Fork-Crow River</Label>
+         <Value>north-fork-crow-river</Value>
+      </Item>
+      <Item>
+         <Label>Okabena-Ocheda</Label>
+         <Value>okabena-ocheda</Value>
+      </Item>
+      <Item>
+         <Label>Pelican River</Label>
+         <Value>pelican-river</Value>
+      </Item>
+      <Item>
+         <Label>Prior Lake-Spring Lake</Label>
+         <Value>prior-lake-spring-lake</Value>
+      </Item>
+      <Item>
+         <Label>Ramsey-Washington Metro</Label>
+         <Value>ramsey-washington-metro</Value>
+      </Item>
+      <Item>
+         <Label>Red Lake</Label>
+         <Value>red-lake</Value>
+      </Item>
+      <Item>
+         <Label>Rice Creek</Label>
+         <Value>rice-creek</Value>
+      </Item>
+      <Item>
+         <Label>Riley-Purgatory</Label>
+         <Value>riley-purgatory</Value>
+      </Item>
+      <Item>
+         <Label>Roseau River</Label>
+         <Value>roseau-river</Value>
+      </Item>
+      <Item>
+         <Label>Sandhill</Label>
+         <Value>sandhill</Value>
+      </Item>
+      <Item>
+         <Label>Sauk River</Label>
+         <Value>sauk-river</Value>
+      </Item>
+      <Item>
+         <Label>Shell Rock</Label>
+         <Value>shell-rock</Value>
+      </Item>
+      <Item>
+         <Label>South Two River</Label>
+         <Value>south-two-river</Value>
+      </Item>
+      <Item>
+         <Label>South Washington</Label>
+         <Value>south-washington</Value>
+      </Item>
+      <Item>
+         <Label>Stockton-Rollingstone</Label>
+         <Value>stockton-rollingstone</Value>
+      </Item>
+      <Item>
+         <Label>Thirty Lakes</Label>
+         <Value>thirty-lakes</Value>
+      </Item>
+      <Item>
+         <Label>Turtle Creek</Label>
+         <Value>turtle-creek</Value>
+      </Item>
+      <Item>
+         <Label>Two River</Label>
+         <Value>two-river</Value>
+      </Item>
+      <Item>
+         <Label>Upper MN River</Label>
+         <Value>upper-mn-river</Value>
+      </Item>
+      <Item>
+         <Label>Valley Branch</Label>
+         <Value>valley-branch</Value>
+      </Item>
+      <Item>
+         <Label>Warroad</Label>
+         <Value>warroad</Value>
+      </Item>
+      <Item>
+         <Label>Wild Rice</Label>
+         <Value>wild-rice</Value>
+      </Item>
+      <Item>
+         <Label>Yellow Medicine River</Label>
+         <Value>yellow-medicine-river</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

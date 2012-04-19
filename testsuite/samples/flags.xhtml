@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<title>Colored Flags</title>
+		<xf:model>
+			<xf:instance>
+				<colors xmlns="">
+					<color name="Blue" code="#0000FF"/>
+					<color name="Green" code="#00FF00"/>
+					<color name="Olive" code="#808000"/>
+					<color name="Orange" code="#F87A17"/>
+					<color name="Pink" code="#FFC0CB"/>
+					<color name="Purple" code="#800080"/>
+					<color name="Red" code="#FF0000"/>
+					<color name="Yellow" code="#FFFF00"/>
+				</colors>
+			</xf:instance>
+		</xf:model>
+	</head>
+	<body>
+		<h1>Colored Flags</h1>
+		<xf:repeat nodeset="color">
+			<xf:output value="@name"/>:&#xA0;<xf:include src="flag.svg"/>
+		</xf:repeat>
+	</body>
+</html>

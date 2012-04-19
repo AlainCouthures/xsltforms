@@ -1,0 +1,10 @@
+http://maps.google.com/maps?f=q&hl=en&q=3007+Cavell+Ave+S,+Minneapolis,+MN+55426&ie=UTF8&z=15&om=1&iwloc=addr
+
+http://maps.google.com/maps?
+f=q&
+hl=en&
+q=3007+Cavell+Ave+S,+Minneapolis,+MN+55426&
+ie=UTF8&
+z=15&
+om=1&
+iwloc=addr

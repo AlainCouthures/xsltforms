@@ -1,0 +1,113 @@
+<html 
+xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:xf="http://www.w3.org/2002/xforms" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Select County</title>
+      <style type="text/css">
+         @namespace xf url("http://www.w3.org/2002/xforms");
+         body {
+			 font-family: Helvetica, sans-serif;
+			 font-size: 10pt;
+         }
+        .table-container {
+			display: table-row;
+         }
+         .table-cell {
+			display: table-cell;
+			vertical-align: top;
+         }
+         xf|label {
+			 font-weight: bold;
+         }
+      </style>
+      <xf:model>
+         <xf:instance xmlns="">
+             <data>
+                 <counties1>anoka carver</counties1>
+                 <counties2>dakota</counties2>
+                 <counties3>hennepin</counties3>
+                 <counties4>mower</counties4>
+                 <counties5>ramsey</counties5>
+                 <counties6>scott</counties6>
+                 <counties7>washington</counties7>
+                 <counties />
+              </data>
+          </xf:instance>
+      <xf:bind nodeset="counties"
+               calculate="concat(../counties1, ' ', ../counties2, ' ',
+               ../counties3, ' ', ../counties4,' ', ../counties5, ' ',
+               ../counties6, ' ',../counties7)" />
+      </xf:model>
+         <xf:model id="code-tables">
+             <xf:instance xmlns="" id="MNCountyCode" src="counties.xml" />
+		</xf:model>
+	</head>
+   <body>
+      <p>Select one or more counties:</p>
+         <div class="table-container ">
+            <div class="table-cell">
+               <xf:select ref="counties1" appearance="full">
+                  <xf:itemset model="code-tables"
+                          nodeset="instance('MNCountyCode')/EnumeratedValues/Item[boolean(position() &lt; 14)]">
+                     <xf:label ref="Label" />
+                     <xf:value ref="Value" />
+                  </xf:itemset>
+                </xf:select>
+             </div>
+             <div class="table-cell">
+                <xf:select ref="counties2" appearance="full">
+					<xf:itemset model="code-tables" nodeset="instance('MNCountyCode')/EnumeratedValues/Item[(position() &gt; 13) and (position() &lt; 27)]">
+						<xf:label ref="Label" />
+						<xf:value ref="Value" />
+					</xf:itemset>
+				</xf:select>
+			</div>
+			<div class="table-cell">
+				<xf:select ref="counties3" appearance="full">
+					<xf:itemset model="code-tables" nodeset="instance('MNCountyCode')/EnumeratedValues/Item[(position() &gt; 26) and (position() &lt; 40)]">
+						<xf:label ref="Label" />
+						<xf:value ref="Value" />
+					</xf:itemset>
+				</xf:select>
+			</div>
+			<div class="table-cell">
+				<xf:select ref="counties4" appearance="full">
+					<xf:itemset model="code-tables" nodeset="instance('MNCountyCode')/EnumeratedValues/Item[(position() &gt; 39) and (position() &lt; 53)]">
+						<xf:label ref="Label" />
+						<xf:value ref="Value" />
+					</xf:itemset>
+				</xf:select>
+			</div>
+			<div class="table-cell">
+				<xf:select ref="counties5" appearance="full">
+					<xf:itemset model="code-tables" nodeset="instance('MNCountyCode')/EnumeratedValues/Item[(position() &gt; 52) and (position() &lt; 66)]">
+						<xf:label ref="Label" />
+						<xf:value ref="Value" />
+					</xf:itemset>
+				</xf:select>
+			</div>
+			<div class="table-cell">
+				<xf:select ref="counties6" appearance="full">
+					<xf:itemset model="code-tables" nodeset="instance('MNCountyCode')/EnumeratedValues/Item[(position() &gt; 65) and (position() &lt; 79)]">
+						<xf:label ref="Label" />
+						<xf:value ref="Value" />
+					</xf:itemset>
+				</xf:select>
+			</div>
+			<div class="table-cell">
+				<xf:select ref="counties7" appearance="full">
+					<xf:itemset model="code-tables" nodeset="instance('MNCountyCode')/EnumeratedValues/Item[(position() &gt; 78)]">
+						<xf:label ref="Label" />
+						<xf:value ref="Value" />
+					</xf:itemset>
+				</xf:select>
+			</div>
+		</div>
+		<br/>
+		<xf:output ref="counties">
+			<xf:label>Counties selected: </xf:label>
+		</xf:output>
+	</body>
+</html>

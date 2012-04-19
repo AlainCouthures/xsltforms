@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:u="http://niem.gov/niem/universal/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:import namespace="http://niem.gov/niem/universal/1.0" schemaLocation="../niem/universal/1.0/universal.xsd"/>
+   <xs:element name="ContactsDocument">
+      <xs:annotation>
+         <xs:documentation>List of personal contacts.</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="Person" maxOccurs="unbounded">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element ref="u:PersonGivenName"/>
+                     <xs:element ref="u:PersonSurName"/>
+                     <xs:element ref="u:StreetFullText" minOccurs="0"/>
+                     <xs:element ref="u:LocationCityName" minOccurs="0"/>
+                     <xs:element ref="u:LocationStateName" minOccurs="0"/>
+                     <xs:element ref="u:LocationPostalCodeID" minOccurs="0"/>
+                     <xs:element ref="u:ContactEmailID" minOccurs="0"/>
+                     <xs:element ref="u:TelephoneNumberFullID" minOccurs="0"/>
+                     <xs:element ref="PersonBirthDate" minOccurs="0"/>
+                     <xs:element ref="PersonHealthyIndicator" minOccurs="0"/>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="PersonBirthDate" type="xs:date"/>
+   <xs:element name="PersonHealthyIndicator" type="xs:boolean"/>
+</xs:schema>

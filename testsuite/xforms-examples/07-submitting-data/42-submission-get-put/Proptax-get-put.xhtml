@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:xf="http://www.w3.org/2002/xforms" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:u="http://niem.gov/niem/universal/1.0"
+xmlns:c="http://niem.gov/niem/common/1.0"
+xmlns:mn="http://data.state.mn.us"
+xmlns:mnr="http://revenue.state.mn.us" 
+xmlns:mnr-ptx="http://propertytax.state.mn.us"
+>
+   <head>
+      <title>Submission with get and put</title>
+      <xf:model id="my-model">
+         <xf:instance id="county-data" src="county-data-3.xml" xmlns=""/>
+         <xf:submission id="read-from-file" method="get" action="county-data-3.xml" replace="instance" instance="data-instance"/>
+         <xf:submission id="save-to-file" method="put" action="county-data-3.xml" replace="instance" instance="data-instance"/>
+      </xf:model>
+   </head>
+   <body>
+      <p>Demonstration of using XForms to get and put data using the submission element.</p>
+      <xf:submit submission="read-from-file">
+         <xf:label>Refresh</xf:label>
+      </xf:submit>
+      <xf:submit submission="save-to-file">
+         <xf:label>Save</xf:label>
+      </xf:submit>
+      <xf:group model="my-model">
+      <xf:input ref="instance('data-instance')/CountyData/mnr:StructureBuiltYear">
+         <xf:label>Element 1:</xf:label>
+      </xf:input>
+      <br/>
+      <xf:input ref="instance('data-instance')/Element2">
+         <xf:label>Element 2:</xf:label>
+      </xf:input>
+      <br/>
+      <xf:input ref="instance('data-instance')/Element3">
+         <xf:label>Element 3:</xf:label>
+      </xf:input>
+      </xf:group>
+   </body>
+</html>

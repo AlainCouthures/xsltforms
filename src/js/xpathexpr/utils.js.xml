@@ -1,0 +1,160 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="utils.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== Miscalleanious Functions ===
+* '''stringValue''' function : string cast</cm:wiki>
+		<![CDATA[
+XsltForms_globals.stringValue = function(value) {
+	return typeof value !== "object"? "" + value : (!value || value.length === 0 ? "" : XsltForms_globals.xmlValue(value[0]));
+};
+
+]]>
+		<cm:wiki>
+* '''booleanValue''' function : boolean cast</cm:wiki>
+<![CDATA[
+XsltForms_globals.booleanValue = function(value) {
+	return typeof value === "undefined" || !value ? false : (typeof value.length !== "undefined"? value.length > 0 : !!value);
+};
+
+]]>
+		<cm:wiki>
+* '''numberValue''' function : number cast</cm:wiki>
+<![CDATA[
+var nbvalcount = 0;
+XsltForms_globals.numberValue = function(value) {
+	if (typeof value === "boolean") {
+		return 'A' - 0;
+	} else {
+		var v = typeof value === "object"?  XsltForms_globals.stringValue(value) : value;
+		return v === '' ? NaN : v - 0;
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''booleanValue''' function : number cast</cm:wiki>
+<![CDATA[
+XsltForms_globals.nodeSetValue = function(value) {
+	if (typeof value !== "object") {
+		throw {name: this, message: Error().stack};
+	}
+	return value;
+};
+
+]]>
+		<cm:wiki>
+* '''xmlValue''' function : get the text value for the given node according to its type</cm:wiki>
+<![CDATA[
+if (XsltForms_browser.isIE) {
+	XsltForms_globals.xmlValue = function(node) {
+		if (typeof node !== "object") {
+			return node;
+		}
+		var ret = node.text;
+		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
+		if (schtyp["eval"]) {
+			try {
+				ret = ret === "" ? 0 : eval(ret);
+			} catch (e) {}
+		}
+		return ret;
+	};
+} else {
+	XsltForms_globals.xmlValue = function(node) {
+		if (typeof node !== "object") {
+			return node;
+		}
+		var ret = typeof node.text !== "undefined" ? node.text : typeof node.textContent !== "undefined" ? node.textContent : typeof node.documentElement.text !== "undefined" ? node.documentElement.text : node.documentElement.textContent;
+		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
+		if (schtyp["eval"]) {
+			try {
+				ret = ret === "" ? 0 : eval(ret);
+			} catch (e) {}
+		}
+		return ret;
+	};
+}
+
+]]>
+		<cm:wiki>
+* '''xmlResolveEntities''' function : resolves every HTML entities in a given string into corresponding characters</cm:wiki>
+<![CDATA[
+XsltForms_globals.xmlResolveEntities = function(s) {
+	var parts = XsltForms_globals.stringSplit(s, '&');
+	var ret = parts[0];
+	for (var i = 1, len = parts.length; i < len; ++i) {
+		var p = parts[i];
+		var index = p.indexOf(";");
+		if (index === -1) {
+			ret += parts[i];
+			continue;
+		}
+		var rp = p.substring(0, index);
+		var ch;
+		switch (rp) {
+			case 'lt': ch = '<'; break;
+			case 'gt': ch = '>'; break;
+			case 'amp': ch = '&'; break;
+			case 'quot': ch = '"'; break;
+			case 'apos': ch = '\''; break;
+			case 'nbsp': ch = String.fromCharCode(160); break;
+			default:
+				var span = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", 'span') : document.createElement('span');
+				span.innerHTML = '&' + rp + '; ';
+				ch = span.childNodes[0].nodeValue.charAt(0);
+		}
+		ret += ch + p.substring(index + 1);
+	}
+	return ret;
+};
+
+]]>
+		<cm:wiki>
+* '''stringSplit''' function : splits a string according to a character</cm:wiki>
+<![CDATA[
+XsltForms_globals.stringSplit = function(s, c) {
+	var a = s.indexOf(c);
+	if (a === -1) {
+		return [s];
+	}
+	var cl = c.length;
+	var parts = [];
+	parts.push(s.substr(0,a));
+	while (a !== -1) {
+		var a1 = s.indexOf(c, a + cl);
+		if (a1 !== -1) {
+			parts.push(s.substr(a + cl, a1 - a - cl));
+		} else {
+			parts.push(s.substr(a + cl));
+		} 
+		a = a1;
+	}
+	return parts;
+};
+]]>
+	</cm:source>
+</cm:component>

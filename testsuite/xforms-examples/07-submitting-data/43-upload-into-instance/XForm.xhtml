@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
+   <head>
+       <title/>
+       <xf:model>
+           <xf:instance id="input" >
+               <Data xmlns="">
+                   <FileName xsi:type="xs:anyURI"/>
+               </Data>
+           </xf:instance>
+           <xf:bind id="fileName" nodeset="/Data/FileName"/>
+           <xf:bind id="fileName2" nodeset="instance('input')/Data/FileName"/>
+           <!-- this is where I want the upload to go into the src attribute -->
+           <xf:instance id="loadedFile" src="instance.xml"/>
+       </xf:model>
+   </head>
+   <body>
+       <xf:upload ref="/Data/FileName">
+           <xf:filename>file:///C:/dd/*.xml</xf:filename>
+           <xf:mediatype>text/xml</xf:mediatype>
+       </xf:upload>
+       <br/>
+       <xf:output ref="/Data/FileName">
+          <xf:label>File Name: </xf:label>
+       </xf:output>
+       <br/>
+       <xf:output bind="fileName">
+          <xf:label>File Name (bind to path): </xf:label>
+       </xf:output>
+        <br/>
+       <xf:output bind="fileName2">
+          <xf:label>File Name (bind to instance): </xf:label>
+       </xf:output>
+   </body>
+</html>

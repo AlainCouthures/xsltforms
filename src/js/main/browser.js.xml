@@ -1,0 +1,1713 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="browser.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2011-10-31</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2011 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "browser" class ===
+XsltForms_browser class for browsers compatibility</cm:wiki>
+<![CDATA[
+var XsltForms_browser = {
+	jsFileName : "xsltforms.js",
+]]>
+		<cm:wiki>
+* '''isOpera''', '''isIE''' and '''isMozilla''' methods : return browser family</cm:wiki>
+<![CDATA[
+	isOpera : navigator.userAgent.match(/\bOpera\b/),
+	isIE : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/),
+	isIE9 : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/) && window.addEventListener,
+	isIE6 : navigator.userAgent.match(/\bMSIE 6\.0/),
+    isMozilla : navigator.userAgent.match(/\bGecko\b/),
+	isFF2 : navigator.userAgent.match(/\bFirefox[\/\s]2\.\b/),
+	isXhtml : false, // document.documentElement.namespaceURI === "http://www.w3.org/1999/xhtml",
+	setClass : function(element, className, value) {
+		XsltForms_browser.assert(element && className);
+		if (value) {
+			if (!this.hasClass(element, className)) {
+				if (typeof element.className === "string") {
+					element.className += " " + className;
+				} else {
+					element.className.baseVal += " " + className;
+				}
+			}
+		} else if (element.className) {
+			if (typeof element.className === "string") {
+				element.className = element.className.replace(className, "");
+			} else {
+				element.className.baseVal = element.className.baseVal.replace(className, "");
+			}
+		}
+	},
+]]>
+		<cm:wiki>
+* '''hasClass''' method : tests if an element has a CSS class</cm:wiki>
+<![CDATA[
+	hasClass : function(element, className) {
+		var cn = element.className;
+		var cn2 = typeof cn === "string" ? cn : cn.baseVal;
+		return XsltForms_browser.inArray(className, (cn2 && cn2.split(" ")) || []);
+	},
+	initHover : function(element) {
+		XsltForms_browser.events.attach(element, "mouseover", function(event) {
+			XsltForms_browser.setClass(XsltForms_browser.events.getTarget(event), "hover", true);
+		} );
+		XsltForms_browser.events.attach(element, "mouseout", function(event) {
+			XsltForms_browser.setClass(XsltForms_browser.events.getTarget(event), "hover", false);
+		} );
+	},
+	getEventPos : function(ev) {
+		ev = ev || window.event;
+		return { x : ev.pageX || ev.clientX + window.document.body.scrollLeft || 0,
+			y : ev.pageY || ev.clientY + window.document.body.scrollTop || 0 };
+	},
+	getAbsolutePos : function(e) {
+		var r = XsltForms_browser.getPos(e);
+		if (e.offsetParent) {
+			var tmp = XsltForms_browser.getAbsolutePos(e.offsetParent);
+			r.x += tmp.x;
+			r.y += tmp.y;
+		}
+		return r;
+	},
+	getPos : function(e) {
+		var is_div = /^div$/i.test(e.tagName);
+		var r = {
+			x: e.offsetLeft - (is_div && e.scrollLeft? e.scrollLeft : 0),
+			y: e.offsetTop - (is_div && e.scrollTop? e.scrollTop : 0)
+		};
+		return r;
+	},
+	setPos : function(element, left, top) {
+		if (element.offsetParent) {
+			var tmp = XsltForms_browser.getAbsolutePos(element.offsetParent);
+			left -= tmp.x;
+			top -= tmp.y;
+		}
+		element.style.top = top + "px";
+		element.style.left = left + "px";
+	},
+]]>
+		<cm:wiki>
+* '''loadProperties''' method : AJAX method to get I18N properties</cm:wiki>
+<![CDATA[
+	loadProperties : function(name) {
+		var uri = this.ROOT + name;
+		var req = XsltForms_browser.openRequest("GET", uri, false);
+		if (req.overrideMimeType) {
+			req.overrideMimeType("application/xml");
+		}
+		try {        
+			req.send(null);
+		} catch(e) {
+			alert("File not found: " + uri);
+		}
+		if (req.status === 200 || req.status === 0) {
+			if (req.responseXML.xml === "") {
+				req.responseXML.loadXML(req.responseText);
+			}
+			XsltForms_browser.loadNode(XsltForms_browser.config, XsltForms_browser.selectSingleNode('//properties', req.responseXML));
+			var inst = document.getElementById(XsltForms_browser.idPf + "instance-config").xfElement;
+			XsltForms_browser.config = inst.doc.documentElement;
+			inst.srcXML = XsltForms_browser.saveXML(XsltForms_browser.config);
+			XsltForms_browser.setMeta(XsltForms_browser.config, "instance", XsltForms_browser.idPf + "instance-config");
+			XsltForms_browser.setMeta(XsltForms_browser.config, "model", XsltForms_browser.idPf + "model-config");
+			//XMLEvents.dispatch(properties.model, "xforms-rebuild");
+			//xforms.refresh();
+		}
+	},
+]]>
+		<cm:wiki>
+* '''constructURI''' method : construct URI according to current location</cm:wiki>
+<![CDATA[
+	constructURI : function(uri) {
+		if (uri.match(/^[a-zA-Z0-9+\.\-]+:\/\//)) {
+			return uri;
+		}
+		if (uri.charAt(0) === '/') {
+			return document.location.href.substr(0, document.location.href.replace(/:\/\//, ":\\\\").indexOf("/")) + uri;
+		}
+		var href = document.location.href;
+		var idx = href.indexOf("?");
+		href =  idx === -1 ? href : href.substr(0, idx);
+		idx = href.replace(/:\/\//, ":\\\\").lastIndexOf("/");
+		if (href.length > idx + 1) {
+			return (idx === -1 ? href : href.substr(0, idx)) + "/" + uri;
+		}
+		return href + uri;
+	},
+]]>
+		<cm:wiki>
+* '''createElement''' method : creates a DOM element and, optionnally, add a class, attach it to its parent and fill it with a text content</cm:wiki>
+<![CDATA[
+	createElement : function(type, parent, content, className) {
+		var el = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", type) : document.createElement(type);
+		if (className) {
+			el.className = className;
+		}
+		if (parent) {
+			parent.appendChild(el);
+		}
+		if (content) {
+			el.appendChild(document.createTextNode(content));
+		}
+		return el;
+	},
+]]>
+		<cm:wiki>
+* '''getWindowSize''' method : obtains window size for various browsers</cm:wiki>
+<![CDATA[
+	getWindowSize : function() {
+		var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
+		if( typeof( window.innerWidth ) === "number" ) {
+			//Non-IE
+			myWidth = document.documentElement.clientWidth;
+			myHeight = document.documentElement.clientHeight;
+			myOffsetX = document.body ? Math.max(document.documentElement.clientWidth, document.body.clientWidth) : document.documentElement.clientWidth; // body margins ?
+			myOffsetY = document.body ? Math.max(document.documentElement.clientHeight, document.body.clientHeight) : document.documentElement.clientHeight; // body margins ?
+			myScrollX = window.scrollX;
+			myScrollY = window.scrollY;
+		} else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+			//IE 6+ in 'standards compliant mode'
+			myWidth = document.documentElement.clientWidth;
+			myHeight = document.documentElement.clientHeight;
+			myOffsetX = Math.max(document.documentElement.clientWidth, document.body.clientWidth); // body margins ?
+			myOffsetY = Math.max(document.documentElement.clientHeight, document.body.clientHeight); // body margins ?
+			myScrollX = document.body.parentNode.scrollLeft;
+			myScrollY = document.body.parentNode.scrollTop;
+		}
+		return {
+			height : myHeight,
+			width : myWidth,
+			offsetX : myOffsetX,
+			offsetY : myOffsetY,
+			scrollX : myScrollX,
+			scrollY : myScrollY
+		};
+	}
+};
+]]>
+		<cm:wiki>
+* '''openRequest''' method : opens an XMLHttpRequest</cm:wiki>
+<![CDATA[
+if (XsltForms_browser.isIE) {
+	try {
+		var xmlDoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
+		xmlDoc = null;
+		XsltForms_browser.MSXMLver = "6.0";
+	} catch(e) {
+		XsltForms_browser.MSXMLver = "3.0";
+	}
+}
+if (!XsltForms_browser.isIE) {
+	XsltForms_browser.openRequest = function(method, uri, async) {
+		// netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
+		var req = new XMLHttpRequest();
+		try {
+			req.open(method, XsltForms_browser.constructURI(uri), async);
+		} catch (e) {
+			throw new Error("This browser does not support XHRs(Ajax)! \n Cause: " + (e.message || e.description || e) + " \n Enable Javascript or ActiveX controls (on IE) or lower security restrictions.");
+		}
+		if (XsltForms_browser.isMozilla) {
+			req.overrideMimeType("text/xml");
+		}
+		return req;
+	};
+} else if (window.ActiveXObject) {
+	XsltForms_browser.openRequest = function(method, uri, async) {
+		var req;
+		try {
+			req = new ActiveXObject("Msxml2.XMLHTTP." + XsltForms_browser.MSXMLver); 
+		} catch (e0) {
+			try {
+				req = new ActiveXObject("Msxml2.XMLHTTP");
+			} catch (e) {
+				throw new Error("This browser does not support XHRs(Ajax)! \n Cause: " + (e.message || e.description || e) + " \n Enable Javascript or ActiveX controls (on IE) or lower security restrictions.");
+			}
+		}
+		req.open(method, XsltForms_browser.constructURI(uri), async);
+		return req;
+	};
+} else {
+	throw new Error("This browser does not support XHRs(Ajax)! \n Enable Javascript or ActiveX controls (on IE) or lower security restrictions.");
+}
+]]>
+		<cm:wiki>
+* '''transformText''' method : transforms text into text with a text stylesheet</cm:wiki>
+<![CDATA[
+if (XsltForms_browser.isIE) {
+	XsltForms_browser.transformText = function(xml, xslt, inline) {
+		var xmlDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
+		xmlDoc.setProperty("AllowDocumentFunction", true);
+		xmlDoc.validateOnParse = false;
+		xmlDoc.loadXML(xml);
+		var xslDoc = new ActiveXObject("MSXML2.FreeThreadedDOMDocument." + XsltForms_browser.MSXMLver);
+		xslDoc.setProperty("AllowDocumentFunction", true);
+		xslDoc.validateOnParse = false;
+		if (inline) {
+			xslDoc.loadXML(xslt);
+		} else {
+			xslDoc.async = false;
+			xslDoc.load(xslt);
+		}
+		var xslTemplate = new ActiveXObject("MSXML2.XSLTemplate." + XsltForms_browser.MSXMLver);
+		xslTemplate.stylesheet = xslDoc;
+		var xslProc = xslTemplate.createProcessor();
+		xslProc.input = xmlDoc;
+		for (var i = 3, len = arguments.length-1; i < len ; i += 2) {
+			xslProc.addParameter(arguments[i], arguments[i+1], "");
+		}
+		xslProc.transform();
+		return xslProc.output;
+    };
+} else {
+    XsltForms_browser.transformText = function(xml, xslt, inline) {
+			var parser = new DOMParser();
+			var serializer = new XMLSerializer();
+			var xmlDoc = parser.parseFromString(xml, "text/xml");
+			var xsltDoc;
+			if (inline) {
+				xsltDoc = parser.parseFromString(xslt, "text/xml");
+			} else {
+				xsltDoc = document.implementation.createDocument("","",null);
+				if (xsltDoc.load) {
+					xsltDoc.async = false;
+					xsltDoc.load(xslt);
+				} else {
+					var xhttp = new XMLHttpRequest();
+					xhttp.open("GET", xslt, false);
+					xhttp.send("");
+					xslt = xhttp.responseText;
+					xsltDoc = parser.parseFromString(xslt, "text/xml");
+				}
+			}
+			var xsltProcessor = new XSLTProcessor();
+			if (!XsltForms_browser.isMozilla && !XsltForms_browser.isOpera) {
+				xsltProcessor.setParameter(null, "xsltforms_caller", "true");
+			}
+			xsltProcessor.setParameter(null, "xsltforms_config", document.getElementById(XsltForms_browser.idPf + "instance-config").xfElement.srcXML);
+			xsltProcessor.setParameter(null, "xsltforms_lang", XsltForms_globals.language);
+			for (var i = 3, len = arguments.length-1; i < len ; i += 2) {
+				xsltProcessor.setParameter(null, arguments[i], arguments[i+1]);
+			}
+			xsltProcessor.importStylesheet(xsltDoc);
+			try {
+				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
+				return serializer.serializeToString(resultDocument);
+			} catch (e) {
+				return "";
+			}
+	};
+}
+]]>
+		<cm:wiki>
+* '''loadapplet''' method : loads the Java applet</cm:wiki>
+<![CDATA[
+XsltForms_browser.scripts = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "script") : document.getElementsByTagName("script");
+for (var __i = 0, __len = XsltForms_browser.scripts.length; __i < __len; __i++) {
+	var __src = XsltForms_browser.scripts[__i].src;
+	if (__src.indexOf(XsltForms_browser.jsFileName) !== -1) {
+		XsltForms_browser.ROOT = __src.replace(XsltForms_browser.jsFileName, "");
+		break;
+	}
+}
+XsltForms_browser.loadapplet = function() {
+	var appelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "applet") : document.createElement("applet");
+	appelt.setAttribute("style", "position:absolute;left:-1px");
+	appelt.setAttribute("name", "xsltforms");
+	appelt.setAttribute("id", "xsltforms_applet");
+	appelt.setAttribute("code", "xsltforms.class");
+	appelt.setAttribute("archive", XsltForms_browser.ROOT + "xsltforms.jar");
+	appelt.setAttribute("width", "1");
+	appelt.setAttribute("height", "1");
+	var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+	body.insertBefore(appelt, body.firstChild);
+};
+]]>
+		<cm:wiki>
+* '''IEReadFile''' method : reads a local file using native IE features</cm:wiki>
+<![CDATA[
+XsltForms_browser.IEReadFile = function(fname, encoding, xsdtype, title) {
+	if (document.applets.xsltforms) {
+		return document.applets.xsltforms.readFile(fname, encoding, xsdtype, title) || "";
+	} else {
+		XsltForms_browser.loadapplet();
+		if (document.applets.xsltforms) {
+			return document.applets.xsltforms.readFile(fname, encoding, xsdtype, title) || "";
+		}
+	}
+	return "";
+};
+]]>
+		<cm:wiki>
+* '''javaReadFile''' method : reads a local file using a Java applet</cm:wiki>
+<![CDATA[
+XsltForms_browser.javaReadFile = function(fname, encoding, xsdtype, title) {
+	if (document.applets.xsltforms) {
+		return document.applets.xsltforms.readFile(fname, encoding, xsdtype, title) || "";
+	} else {
+		if( document.getElementById("xsltforms_applet") ) {
+			return document.getElementById("xsltforms_applet").readFile(fname, encoding, xsdtype, title) || "";
+		} else {
+			XsltForms_browser.loadapplet();
+			if (document.applets.xsltforms) {
+				return document.applets.xsltforms.readFile(fname, encoding, xsdtype, title) || "";
+			} else {
+				if( document.getElementById("xsltforms_applet") ) {
+					return document.getElementById("xsltforms_applet").readFile(fname, encoding, xsdtype, title) || "";
+				}
+			}
+		}
+	}
+	return "";
+};
+]]>
+		<cm:wiki>
+* '''javaWriteFile''' method : writes a local file using a Java applet</cm:wiki>
+<![CDATA[
+XsltForms_browser.javaWriteFile = function(fname, encoding, xsdtype, title, content) {
+	if (document.applets.xsltforms) {
+		if (fname === "") {
+			fname = document.applets.xsltforms.lastChosenFileName;
+		}
+		return document.applets.xsltforms.writeFile(fname, encoding, xsdtype, title, content) === 1;
+	} else {
+		if( document.getElementById("xsltforms_applet") ) {
+			if (fname === "") {
+				fname = document.getElementById("xsltforms_applet").xsltforms.lastChosenFileName;
+			}
+			return document.getElementById("xsltforms_applet").writeFile(fname, encoding, xsdtype, title, content) === 1;
+		} else {
+			XsltForms_browser.loadapplet();
+			if (document.applets.xsltforms) {
+				if (fname === "") {
+					fname = document.applets.xsltforms.lastChosenFileName;
+				}
+				return document.applets.xsltforms.writeFile(fname, encoding, xsdtype, title, content) === 1;
+			} else {
+				if( document.getElementById("xsltforms_applet") ) {
+					if (fname === "") {
+						fname = document.getElementById("xsltforms_applet").xsltforms.lastChosenFileName;
+					}
+					return document.getElementById("xsltforms_applet").writeFile(fname, encoding, xsdtype, title, content) === 1;
+				}
+			}
+		}
+	}
+	return false;
+};
+]]>
+		<cm:wiki>
+* '''readFile''' method : reads a local file</cm:wiki>
+<![CDATA[
+XsltForms_browser.readFile = function(fname, encoding, xsdtype, title) {
+	return XsltForms_browser.javaReadFile(fname, encoding, xsdtype, title);
+};
+]]>
+		<cm:wiki>
+* '''writeFile''' method : writes a local file</cm:wiki>
+<![CDATA[
+XsltForms_browser.writeFile = function(fname, encoding, xsdtype, title, content) {
+	return XsltForms_browser.javaWriteFile(fname, encoding, xsdtype, title, content);
+};
+
+XsltForms_browser.xsltsrc = '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">';
+XsltForms_browser.xsltsrc += '	<xsl:output method="xml" omit-xml-declaration="yes"/>';
+XsltForms_browser.xsltsrc += '	<xsl:template match="@*[starts-with(translate(name(),\'ABCDEFGHIJKLMNOPQRSTUVWXYZ\',\'abcdefghijklmnopqrstuvwxyz\'),\'xsltforms_\')]" priority="1"/>';
+XsltForms_browser.xsltsrc += '	<xsl:template match="@*|node()" priority="0">';
+XsltForms_browser.xsltsrc += '		<xsl:copy>';
+XsltForms_browser.xsltsrc += '			<xsl:apply-templates select="@*|node()"/>';
+XsltForms_browser.xsltsrc += '		</xsl:copy>';
+XsltForms_browser.xsltsrc += '	</xsl:template>';
+XsltForms_browser.xsltsrc += '</xsl:stylesheet>';
+
+XsltForms_browser.xsltsrcindent = '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">';
+XsltForms_browser.xsltsrcindent += '	<xsl:output method="xml" omit-xml-declaration="yes"/>';
+XsltForms_browser.xsltsrcindent += '	<xsl:template match="@*[starts-with(translate(name(),\'ABCDEFGHIJKLMNOPQRSTUVWXYZ\',\'abcdefghijklmnopqrstuvwxyz\'),\'xsltforms_\')]" priority="1"/>';
+XsltForms_browser.xsltsrcindent += '	<xsl:template match="@*" priority="0">';
+XsltForms_browser.xsltsrcindent += '		<xsl:copy/>';
+XsltForms_browser.xsltsrcindent += '	</xsl:template>';
+XsltForms_browser.xsltsrcindent += '	<xsl:template match="text()" priority="0">';
+XsltForms_browser.xsltsrcindent += '		<xsl:value-of select="normalize-space(.)"/>';
+XsltForms_browser.xsltsrcindent += '	</xsl:template>';
+XsltForms_browser.xsltsrcindent += '	<xsl:template match="*" priority="0">';
+XsltForms_browser.xsltsrcindent += '		<xsl:param name="offset"/>';
+XsltForms_browser.xsltsrcindent += '		<xsl:text>&#10;</xsl:text>';
+XsltForms_browser.xsltsrcindent += '		<xsl:value-of select="$offset"/>';
+XsltForms_browser.xsltsrcindent += '		<xsl:copy>';
+XsltForms_browser.xsltsrcindent += '			<xsl:apply-templates select="@*|node()">';
+XsltForms_browser.xsltsrcindent += '				<xsl:with-param name="offset" select="concat($offset,\'    \')"/>';
+XsltForms_browser.xsltsrcindent += '			</xsl:apply-templates>';
+XsltForms_browser.xsltsrcindent += '		</xsl:copy>';
+XsltForms_browser.xsltsrcindent += '		<xsl:if test="not(following-sibling::*)">';
+XsltForms_browser.xsltsrcindent += '			<xsl:text>&#10;</xsl:text>';
+XsltForms_browser.xsltsrcindent += '			<xsl:value-of select="substring($offset,5)"/>';
+XsltForms_browser.xsltsrcindent += '		</xsl:if>';
+XsltForms_browser.xsltsrcindent += '	</xsl:template>';
+XsltForms_browser.xsltsrcindent += '</xsl:stylesheet>';
+
+XsltForms_browser.xsltsrcrelevant = '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">';
+XsltForms_browser.xsltsrcrelevant += '	<xsl:output method="xml" omit-xml-declaration="yes"/>';
+XsltForms_browser.xsltsrcrelevant += '	<xsl:template match="*[@xsltforms_notrelevant = \'true\']" priority="1"/>';
+XsltForms_browser.xsltsrcrelevant += '	<xsl:template match="@*[starts-with(translate(name(),\'ABCDEFGHIJKLMNOPQRSTUVWXYZ\',\'abcdefghijklmnopqrstuvwxyz\'),\'xsltforms_\')]" priority="1"/>';
+XsltForms_browser.xsltsrcrelevant += '	<xsl:template match="@*" priority="0">';
+XsltForms_browser.xsltsrcrelevant += '		<xsl:choose>';
+XsltForms_browser.xsltsrcrelevant += '			<xsl:when test="parent::*/attribute::*[local-name() = concat(\'xsltforms_\',local-name(current()),\'_notrelevant\')] = \'true\'"/>';
+XsltForms_browser.xsltsrcrelevant += '			<xsl:otherwise>';
+XsltForms_browser.xsltsrcrelevant += '				<xsl:copy>';
+XsltForms_browser.xsltsrcrelevant += '					<xsl:apply-templates select="node()"/>';
+XsltForms_browser.xsltsrcrelevant += '				</xsl:copy>';
+XsltForms_browser.xsltsrcrelevant += '			</xsl:otherwise>';
+XsltForms_browser.xsltsrcrelevant += '		</xsl:choose>';
+XsltForms_browser.xsltsrcrelevant += '	</xsl:template>';
+XsltForms_browser.xsltsrcrelevant += '	<xsl:template match="node()" priority="0">';
+XsltForms_browser.xsltsrcrelevant += '		<xsl:copy>';
+XsltForms_browser.xsltsrcrelevant += '			<xsl:apply-templates select="@*|node()"/>';
+XsltForms_browser.xsltsrcrelevant += '		</xsl:copy>';
+XsltForms_browser.xsltsrcrelevant += '	</xsl:template>';
+XsltForms_browser.xsltsrcrelevant += '</xsl:stylesheet>';
+
+if (XsltForms_browser.isIE) {
+	XsltForms_browser.createXMLDocument = function(xml) {
+		var d = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
+		d.setProperty("SelectionLanguage", "XPath");
+		d.validateOnParse = false;
+		//d.setProperty("SelectionNamespaces", "xmlns:xml='http://www.w3.org/XML/1998/namespace'");
+		d.loadXML(xml);
+		return d;
+	};
+	XsltForms_browser.setAttributeNS = function(node, ns, name, value) {
+		node.setAttributeNode(node.ownerDocument.createNode(XsltForms_nodeType.ATTRIBUTE, name, ns));
+		node.setAttribute(name, value);
+	};
+	XsltForms_browser.selectSingleNode = function(xpath, node) {
+		try {
+			return node.selectSingleNode(xpath);
+		} catch (e) {
+			return null;
+		}
+	};
+	XsltForms_browser.selectSingleNodeText = function(xpath, node) {
+		try {
+			return node.selectSingleNode(xpath).text;
+		} catch (e) {
+			return "";
+		}
+	};
+	XsltForms_browser.selectNodesLength = function(xpath, node) {
+		try {
+			return node.selectNodes(xpath).length;
+		} catch (e) {
+			return 0;
+		}
+	};
+	XsltForms_browser.xsltDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
+	XsltForms_browser.xsltDoc.loadXML(XsltForms_browser.xsltsrc);
+	XsltForms_browser.xsltDocRelevant = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
+	XsltForms_browser.xsltDocRelevant.loadXML(XsltForms_browser.xsltsrcrelevant);
+	XsltForms_browser.xsltDocIndent = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
+	XsltForms_browser.xsltDocIndent.loadXML(XsltForms_browser.xsltsrcindent);
+	XsltForms_browser.loadNode = function(dest, src) {
+		var r = src.cloneNode(true);
+		dest.parentNode.replaceChild(r, dest);
+	};
+	XsltForms_browser.loadTextNode = function(dest, txt) {
+		if (dest.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+			dest.value = txt;
+		} else {
+			while (dest.firstChild) {
+				dest.removeChild(dest.firstChild);
+			}
+			dest.appendChild(dest.ownerDocument.createTextNode(txt));
+		}
+	};
+	XsltForms_browser.loadXML = function(dest, xml) {
+		var result = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
+		result.setProperty("SelectionLanguage", "XPath");
+		result.validateOnParse = false;
+		result.loadXML(xml);
+		var r = result.documentElement.cloneNode(true);
+		dest.parentNode.replaceChild(r, dest);
+	};
+	XsltForms_browser.saveXML = function(node, relevant, indent) {
+		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
+			return node.nodeValue;
+		} else {
+			if (node.nodeType === XsltForms_nodeType.TEXT) {
+				var s = "";
+				while (node && node.nodeType === XsltForms_nodeType.TEXT) {
+					s += node.nodeValue;
+					node = node.nextSibling;
+				}
+				return s;
+			} else {
+				var xmlDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
+				xmlDoc.setProperty("SelectionLanguage", "XPath"); 
+				xmlDoc.appendChild(node.documentElement ? node.documentElement.cloneNode(true) : node.cloneNode(true));
+				return indent ? xmlDoc.transformNode(XsltForms_browser.xsltDocIndent) : relevant ? xmlDoc.transformNode(XsltForms_browser.xsltDocRelevant) : xmlDoc.transformNode(XsltForms_browser.xsltDoc);
+			}
+		}
+	};
+} else {
+	XsltForms_browser.createXMLDocument = function(xml) {
+		return XsltForms_browser.parser.parseFromString(xml, "text/xml");
+	};
+	XsltForms_browser.setAttributeNS = function(node, ns, name, value) {
+		node.setAttributeNS(ns, name, value);
+	};
+	XsltForms_browser.selectSingleNode = function(xpath, node) {
+		try {
+			var nsResolver = document.createNSResolver(node);
+			if (node.evaluate) {
+				return node.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext();
+			} else {
+				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext();
+			}
+		} catch (e) {
+			return null;
+		}
+	};
+	XsltForms_browser.selectSingleNodeText = function(xpath, node) {
+		try {
+			var nsResolver = document.createNSResolver(node);
+			if (node.evaluate) {
+				return node.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+			} else {
+				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+			}
+		} catch (e) {
+			return "";
+		}
+	};
+	XsltForms_browser.selectNodesLength = function(xpath, node) {
+		try {
+			var nsResolver = document.createNSResolver(node);
+			if (node.evaluate) {
+				return node.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
+			} else {
+				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
+			}
+		} catch (e) {
+			return 0;
+		}
+	};
+	XsltForms_browser.selectNodes = function(xpath, node) {
+		try {
+			var nsResolver = document.createNSResolver(node);
+			if (node.evaluate) {
+				return node.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+			} else {
+				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+			}
+		} catch (e) {
+			return null;
+		}
+	};
+	try {
+		XsltForms_browser.parser = new DOMParser();
+		XsltForms_browser.xsltDoc = XsltForms_browser.parser.parseFromString(XsltForms_browser.xsltsrc, "text/xml");
+		XsltForms_browser.xsltProcessor = new XSLTProcessor();
+		XsltForms_browser.xsltProcessor.importStylesheet(XsltForms_browser.xsltDoc);
+		XsltForms_browser.xsltDocRelevant = XsltForms_browser.parser.parseFromString(XsltForms_browser.xsltsrcrelevant, "text/xml");
+		XsltForms_browser.xsltProcessorRelevant = new XSLTProcessor();
+		XsltForms_browser.xsltProcessorRelevant.importStylesheet(XsltForms_browser.xsltDocRelevant);
+		XsltForms_browser.xsltDocIndent = XsltForms_browser.parser.parseFromString(XsltForms_browser.xsltsrcindent, "text/xml");
+		XsltForms_browser.xsltProcessorIndent = new XSLTProcessor();
+		XsltForms_browser.xsltProcessorIndent.importStylesheet(XsltForms_browser.xsltDocIndent);
+	} catch (xsltforms_e) {
+	}
+	XsltForms_browser.serializer = new XMLSerializer();
+	XsltForms_browser.loadNode = function(dest, src) {
+		var r = src.cloneNode(true);
+		dest.parentNode.replaceChild(r, dest);
+	};
+	XsltForms_browser.loadTextNode = function(dest, txt) {
+		if (dest.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+			dest.value = txt;
+		} else {
+			while (dest.firstChild) {
+				dest.removeChild(dest.firstChild);
+			}
+			dest.appendChild(dest.ownerDocument.createTextNode(txt));
+		}
+	};
+	XsltForms_browser.loadXML = function(dest, xml) {
+		var result = XsltForms_browser.parser.parseFromString(xml, "text/xml");
+		var r = result.documentElement.cloneNode(true);
+		dest.parentNode.replaceChild(r, dest);
+	};
+	XsltForms_browser.saveXML = function(node, relevant, indent) {
+		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
+			return node.nodeValue;
+		} else {
+			if (node.nodeType === XsltForms_nodeType.TEXT) {
+				var s = "";
+				while (node && node.nodeType === XsltForms_nodeType.TEXT) {
+					s += node.nodeValue;
+					node = node.nextSibling;
+				}
+				return s;
+			} else {
+				var resultDocument;
+				if (XsltForms_browser.xsltProcessor) {
+					resultDocument = indent ? XsltForms_browser.xsltProcessorIndent.transformToDocument(node) : relevant ? XsltForms_browser.xsltProcessorRelevant.transformToDocument(node) : XsltForms_browser.xsltProcessor.transformToDocument(node);
+				} else {
+					resultDocument = XsltForms_browser.createXMLDocument(XsltForms_browser.serializer.serializeToString(node));
+					if (relevant) {
+						var ns = resultDocument.selectNodes("*[@xsltforms_notrelevant = 'true']", false, resultDocument.documentElement);
+						for( var i = 0, l = ns.length; i < l ; i++) {
+							var n = ns[i];
+							try {
+								n.parentNode.removeChild(n);
+							} catch (e) {
+							}
+						}
+					}
+					var ns2 = resultDocument.selectNodes("descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]", false, resultDocument.documentElement);
+					for( var j = 0, l2 = ns2.length; j < l2 ; j++) {
+						var n2 = ns2[j];
+						var k = 0;
+						while (k < n2.attributes.length) {
+							if (n2.attributes[k].name.substring(0, 10) === "xsltforms_") {
+								n2.removeAttribute(n2.attributes[k].name);
+							} else {
+								k++;
+							}
+						}
+					}
+				}
+				return XsltForms_browser.serializer.serializeToString(resultDocument);
+			}
+		}
+	};
+}
+XsltForms_browser.unescape = function(xml) {
+	if (!xml) {
+		return "";
+	}
+	var regex_escapepb = /^\s*</;
+	if (!xml.match(regex_escapepb)) {
+		xml = xml.replace(/&lt;/g, "<");
+		xml = xml.replace(/&gt;/g, ">");
+		xml = xml.replace(/&amp;/g, "&");
+	}
+	return xml;
+};
+XsltForms_browser.escape = function(text) {
+	if (!text) {
+		return "";
+	}
+	if (typeof(text) === "string") {
+		text = text.replace(/&/g, "&amp;");
+		text = text.replace(/</g, "&lt;");
+		text = text.replace(/>/g, "&gt;");
+	}
+	return text;
+};
+
+XsltForms_browser.getMeta = function(node, meta) {
+	return node.nodeType ? node.nodeType === XsltForms_nodeType.ELEMENT ? node.getAttribute("xsltforms_"+meta) : node.ownerElement ? node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : null;
+};
+
+XsltForms_browser.getBoolMeta = function(node, meta) {
+	return Boolean(node.nodeType === XsltForms_nodeType.ELEMENT ? node.getAttribute("xsltforms_"+meta) : node.nodeType === XsltForms_nodeType.ATTRIBUTE ? node.ownerElement ? node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) :  node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : false);
+};
+
+XsltForms_browser.getType = function(node) {
+	if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+		var t = node.getAttribute("xsltforms_type");
+		if (t && t !== "") {
+			return t;
+		}
+		if (node.getAttributeNS) {
+			return node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type");
+		} else {
+			var att = node.selectSingleNode("@*[local-name()='type' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
+			if (att && att.value !== "") {
+				return att.value;
+			} else {
+				return null;
+			}
+		}
+	} else if (!node.nodeType || node.nodeType === XsltForms_nodeType.DOCUMENT) {
+		return null;
+	} else {
+		if (node.ownerElement) {
+			return node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
+		} else {
+			return node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
+		}
+	}
+};
+
+XsltForms_browser.getNil = function(node) {
+	if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+		if (node.getAttributeNS) {
+			return XsltForms_globals.booleanValue(node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "nil"));
+		} else {
+			var att = node.selectSingleNode("@*[local-name()='nil' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
+			if (att && att.value !== "") {
+				return XsltForms_globals.booleanValue(att.value);
+			} else {
+				return false;
+			}
+		}
+	} else {
+		return false;
+	}
+};
+
+XsltForms_browser.setMeta = function(node, meta, value) {
+	if (node && node.nodeType) {
+		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+			node.setAttribute("xsltforms_"+meta, value);
+		} else {
+			if (node.ownerElement) {
+				node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
+			} else {
+				node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
+			}
+		}
+	}
+};
+
+XsltForms_browser.setBoolMeta = function(node, meta, value) {
+	if (node) {
+		if (value) {
+			if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+				node.setAttribute("xsltforms_"+meta, value);
+			} else {
+				if (node.ownerElement) {
+					node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
+				} else {
+					node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
+				}
+			}
+		} else {
+			if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+				node.removeAttribute("xsltforms_"+meta);
+			} else {
+				if (node.ownerElement) {
+					node.ownerElement.removeAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta);
+				} else {
+					node.selectSingleNode("..").removeAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta);
+				}
+			}
+		}
+	}
+};
+
+XsltForms_browser.setTrueBoolMeta = function(node, meta) {
+	if (node) {
+		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+			node.setAttribute("xsltforms_"+meta, true);
+		} else {
+			if (node.ownerElement) {
+				node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, true);
+			} else {
+				node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, true);
+			}
+		}
+	}
+};
+
+XsltForms_browser.setFalseBoolMeta = function(node, meta) {
+	if (node) {
+		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+			node.removeAttribute("xsltforms_"+meta);
+		} else {
+			if (node.ownerElement) {
+				node.ownerElement.removeAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta);
+			} else {
+				node.selectSingleNode("..").removeAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta);
+			}
+		}
+	}
+};
+
+XsltForms_browser.rmValueMeta = function(node, meta, value) {
+	if (node) {
+		var prev = XsltForms_browser.getMeta(node, meta);
+		if (!prev) {
+			prev = "";
+		}
+		var v = " " + value + " ";
+		var pos = prev.indexOf(v);
+		if (pos !== -1) {
+			XsltForms_browser.setMeta(node, meta, prev.substring(0, pos) + prev.substring(pos + v.length));
+		}
+	}
+};
+
+XsltForms_browser.addValueMeta = function(node, meta, value) {
+	if (node) {
+		var prev = XsltForms_browser.getMeta(node, meta);
+		if (!prev) {
+			prev = "";
+		}
+		var v = " " + value + " ";
+		var pos = prev.indexOf(v);
+		if (pos === -1) {
+			XsltForms_browser.setMeta(node, meta, prev + v);
+		}
+	}
+};
+
+XsltForms_browser.inValueMeta = function(node, meta, value) {
+	if (node) {
+		var prev = XsltForms_browser.getMeta(node, meta) + "";
+		var v = " " + value + " ";
+		var pos = prev.indexOf(v);
+		return pos !== -1;
+	}
+};
+
+XsltForms_browser.setType = function(node, value) {
+	if (node) {
+		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+			node.setAttribute("xsltforms_type", value);
+		} else {
+			if (node.ownerElement) {
+				node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type", value);
+			} else {
+				node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type", value);
+			}
+		}
+	}
+};
+
+if (!XsltForms_browser.isIE) {
+	if (typeof XMLDocument === "undefined") {
+		var XMLDocument = Document;
+	}
+	XMLDocument.prototype.selectNodes = function(path, single, node) {
+		var r = this.evaluate(path, (node ? node : this), this.createNSResolver(this.documentElement), (single ? XPathResult.FIRST_ORDERED_NODE_TYPE : XPathResult.ORDERED_NODE_SNAPSHOT_TYPE), null);
+		if (single) {
+			return r.singleNodeValue ? r.singleNodeValue : null;
+		}
+		for (var i = 0, len = r.snapshotLength, r2 = []; i < len; i++) {
+			r2.push(r.snapshotItem(i));
+		}
+		return r2;
+	};
+	XMLDocument.prototype.selectSingleNode = function(path) {
+		return this.selectNodes(path, true);
+	};
+	XMLDocument.prototype.createNode = function(t, name, ns) {
+		switch(t) {
+			case XsltForms_nodeType.ELEMENT:
+				return this.createElementNS(ns, name);
+			case XsltForms_nodeType.ATTRIBUTE:
+				return this.createAttributeNS(ns, name);
+			default:
+				return null;
+		}
+	};
+	Element.prototype.selectNodes = function(path) {
+		return this.ownerDocument.selectNodes(path, false, this);
+	};
+	Element.prototype.selectSingleNode = function(path) {	
+		return this.ownerDocument.selectNodes(path, true, this);
+	};
+}
+]]>
+		<cm:wiki>
+=== "debugConsole" class ===
+Debug Console Management</cm:wiki>
+<![CDATA[
+XsltForms_browser.debugConsole = {
+	element_ : null,
+	doc_ : null,
+	isInit_ : false,
+	time_ : 0,
+	init_ : function() {
+		this.element_ = document.getElementById("xsltforms_console");
+		this.isInit_ = true;
+		this.time_ = new Date().getTime();
+    },
+]]>
+		<cm:wiki>
+* '''write''' method : adds a text to the Debug Console</cm:wiki>
+<![CDATA[
+    write : function(text) {
+		try {
+			if (this.isOpen()) {
+				var time = new Date().getTime();
+				this.element_.appendChild(document.createTextNode(time - this.time_ + " -> " + text));
+				XsltForms_browser.createElement("br", this.element_);
+				this.time_ = time;
+			}
+			if (XsltForms_globals.debugMode) {
+				if (!this.doc_) {
+					this.doc_ = XsltForms_browser.createXMLDocument('<tracelog xmlns=""/>');
+				}
+				var elt = this.doc_.createElement("event");
+				elt.appendChild(this.doc_.createTextNode(XsltForms_browser.i18n.format(new Date(), "yyyy-MM-ddThh:mm:ssz", false) + " -> " + text));
+				this.doc_.documentElement.appendChild(elt);
+			}
+		} catch(e) {
+		}
+    },
+]]>
+		<cm:wiki>
+* '''clear''' method : clears the Debug Console</cm:wiki>
+<![CDATA[
+	clear : function() {
+		if (this.isOpen()) {
+			while (this.element_.firstChild) {
+				this.element_.removeChild(this.element_.firstChild);
+			}
+			this.time_ = new Date().getTime();
+		}
+	},
+]]>
+		<cm:wiki>
+* '''isOpen''' method : checks if the Debug Console is opened</cm:wiki>
+<![CDATA[
+	isOpen : function() {
+		if (!this.isInit_) {
+			this.init_();
+		}
+		return this.element_;
+	}
+};
+
+]]>
+		<cm:wiki>
+=== "Dialog" class ===
+Dialog Panel Management</cm:wiki>
+<![CDATA[
+XsltForms_browser.dialog = {
+	openPosition: {},
+	dialogs : [],
+	init : false,
+	initzindex : 50,
+	zindex: 0,
+	selectstack : [],
+]]>
+		<cm:wiki>
+* '''dialogDiv''' method: a utility that fetches the Dialog Panel's page-element</cm:wiki>
+<![CDATA[
+	dialogDiv : function(id) {
+		var div = null;
+		if (typeof id !== "string") {
+			var divid = id.getAttribute("id");
+			if (divid && divid !== "") {
+				div = XsltForms_idManager.find(divid);
+			} else {
+				div = id;
+			}
+		} else {
+			div = XsltForms_idManager.find(id);
+		}
+		if (!div) {
+			XsltForms_browser.debugConsole.write("Unknown dialog("+id+")!");
+		}
+		return div;
+		},
+]]>
+		<cm:wiki>
+* '''show''' method : displays the Dialog Panel</cm:wiki>
+<![CDATA[
+	show : function(div, parent, modal) {
+			if (!(div = this.dialogDiv(div))) {
+				return;
+			}
+			// Don't reopen the top-dialog.
+			if (this.dialogs[this.dialogs.length - 1] === div) {
+				return;
+			}
+			// Maintain dialogs-array ordered.
+			this.dialogs = XsltForms_browser.removeArrayItem(this.dialogs, div);
+			this.dialogs.push(div);
+			var size;
+			if (modal) {
+				var surround = document.getElementById("xforms-dialog-surround");
+				surround.style.display = "block";
+				surround.style.zIndex = (this.zindex + this.initzindex)*2;
+				this.zindex++;
+				size = XsltForms_browser.getWindowSize();
+				surround.style.height = size.height+"px";
+				surround.style.width = size.width+"px";
+				surround.style.top = size.scrollY+"px";
+				surround.style.left = size.scrollX+"px";
+				var surroundresize = function () {
+					var surround = document.getElementById("xforms-dialog-surround");
+					var size = XsltForms_browser.getWindowSize();
+					surround.style.height = size.height+"px";
+					surround.style.width = size.width+"px";
+					surround.style.top = size.scrollY+"px";
+					surround.style.left = size.scrollX+"px";
+				};
+				window.onscroll = surroundresize;
+				window.onresize = surroundresize;
+			}
+			div.style.display = "block";
+			div.style.zIndex = (this.zindex + this.initzindex)*2-1;
+			this.showSelects(div, false, modal);
+			if (parent) {
+				var absPos = XsltForms_browser.getAbsolutePos(parent);
+				XsltForms_browser.setPos(div, absPos.x, (absPos.y + parent.offsetHeight));
+			} else {
+				size = XsltForms_browser.getWindowSize();
+				var h = size.scrollY + (size.height - div.offsetHeight) / 2;
+				XsltForms_browser.setPos(div, (size.width - div.offsetWidth) / 2, h > 0 ? h : 100);
+			}
+		},
+]]>
+		<cm:wiki>
+* '''hide''' method : hides the Dialog Panel</cm:wiki>
+<![CDATA[
+	hide : function(div, modal) {
+		if (!(div = this.dialogDiv(div))) {
+			return;
+		}
+		var oldlen = this.dialogs.length;
+		this.dialogs = XsltForms_browser.removeArrayItem(this.dialogs, div);
+		if (this.dialogs.length === oldlen) {
+			return;
+		}
+		this.showSelects(div, true, modal);
+		div.style.display = "none";
+		if (modal) {
+			if (!this.dialogs.length) {
+				this.zindex = 0;
+				document.getElementById('xforms-dialog-surround').style.display = "none";
+				window.onscroll = null;
+				window.onresize = null;
+			} else {
+				this.zindex--;
+				document.getElementById('xforms-dialog-surround').style.zIndex = (this.zindex + this.initzindex)*2-2;
+				// Ensure new top-dialog over modal-surround.
+				if (this.dialogs.length) {
+					this.dialogs[this.dialogs.length - 1].style.zIndex = (this.zindex + this.initzindex)*2-1;
+				}
+			}
+		}
+	},
+]]>
+		<cm:wiki>
+* '''knownSelect''' method : determines whether a select control is already known by Dialog management (IE6 workaround)</cm:wiki>
+<![CDATA[
+	knownSelect : function(s) {
+		if (XsltForms_browser.isIE6) {
+			for (var i = 0, len = this.zindex; i < len; i++) {
+				for (var j = 0, len1 = this.selectstack[i].length; j < len1; j++) {
+					if (this.selectstack[i][j].select === s) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	},
+]]>
+		<cm:wiki>
+* '''showSelects''' method : shows/hides the selects controls under the Dialog Panel (IE6 workaround)</cm:wiki>
+<![CDATA[
+	showSelects : function(div, value, modal) {
+		if (XsltForms_browser.isIE6) {
+			var selects = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "select") : document.getElementsByTagName("select");
+			var pos = XsltForms_browser.getAbsolutePos(div);
+			var w = div.offsetWidth;
+			var h = div.offsetHeight;
+			var dis = [];
+			for (var i = 0, len = selects.length; i < len; i++) {
+				var s = selects[i];
+				var p = s.parentNode;
+				while (p && p !== div) {
+					p = p.parentNode;
+				}
+				if (p !== div) {
+					var ps = XsltForms_browser.getAbsolutePos(s);
+					var ws = s.offsetWidth;
+					var hs = s.offsetHeight;
+					var under = ps.x + ws > pos.x && ps.x < pos.x + w && ps.y + hs > pos.y && ps.y < pos.y + h;
+					if (modal) {
+						if (value) {
+							dis = this.selectstack[this.zindex];
+							for (var j = 0, len1 = dis.length; j < len1; j++) {
+								if (dis[j].select === s) {
+									s.disabled = dis[j].disabled;
+									s.style.visibility = dis[j].visibility;
+									break;
+								}
+							}
+						} else {
+							var d = {"select": s, "disabled": s.disabled, "visibility": s.style.visibility};
+							dis[dis.length] = d;
+							if (under) {
+								s.style.visibility = "hidden";
+							} else {
+								s.disabled = true;
+							}
+						}
+					} else {
+							if (under) {
+								s.style.visibility = value? "" : "hidden";
+							}
+					}
+				}
+			}
+			if (modal && !value) {
+				this.selectstack[this.zindex - 1] = dis;
+			}
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+=== "Event" class ===
+Event Management</cm:wiki>
+<![CDATA[
+XsltForms_browser.events = {
+	cache :null,
+	add_ : function() {
+		if (!XsltForms_browser.events.cache) {
+			XsltForms_browser.events.cache = [];
+			XsltForms_browser.events.attach(window, "unload", XsltForms_browser.events.flush_);
+		}
+		XsltForms_browser.events.cache.push(arguments);
+	},
+	flush_ : function() {
+		if (!XsltForms_browser.events.cache) {
+			return;
+		}
+		for (var i = XsltForms_browser.events.cache.length - 1; i >= 0; i--) {
+			var item = XsltForms_browser.events.cache[i];
+			XsltForms_browser.events.detach(item[0], item[1], item[2], item[3]);
+		}
+		if (XsltForms_browser.events.onunload) {
+			XsltForms_browser.events.onunload();
+		}
+		XsltForms_browser.events.onunload = null;
+	},
+	onunload : null
+};
+
+if (XsltForms_browser.isIE && !XsltForms_browser.isIE9) {
+	XsltForms_browser.events.attach = function(target, name, handler, phase) {
+		var func = function(evt) { 
+			handler.call(window.event.srcElement, evt);
+		};
+		target.attachEvent("on" + name, func);
+		this.add_(target, name, func, phase);
+	};
+
+	XsltForms_browser.events.detach = function(target, name, handler, phase) {
+		target.detachEvent("on" + name, handler);
+	};
+
+	XsltForms_browser.events.getTarget = function() {
+		return window.event.srcElement;
+	};
+    
+	XsltForms_browser.events.dispatch = function(target, name) {
+		target.fireEvent("on" + name, document.createEventObject());
+	};
+} else {
+	XsltForms_browser.events.attach = function(target, name, handler, phase) {
+		if (target === window && !window.addEventListener) {
+			target = document;
+		}
+		target.addEventListener(name, handler, phase);
+		this.add_(target, name, handler, phase);
+	};
+    
+	XsltForms_browser.events.detach = function(target, name, handler, phase) {
+		if (target === window && !window.addEventListener) {
+			target = document;
+		}
+		target.removeEventListener(name, handler, phase);
+	};
+
+	XsltForms_browser.events.getTarget = function(ev) {
+		return ev.target;
+	};
+    
+	XsltForms_browser.events.dispatch = function(target, name) {
+		var event = document.createEvent("Event");
+		event.initEvent(name, true, true);
+		target.dispatchEvent(event);
+	};
+}
+
+]]>
+		<cm:wiki>
+=== "I18N" class ===
+Internationalization Management</cm:wiki>
+<![CDATA[
+XsltForms_browser.i18n = {
+	messages : null,
+	lang : null,
+	langs : ["cz", "de", "el", "en", "en_us", "es", "fr" , "gl", "ko", "it", "ja", "nb_no", "nl", "nn_no", "pt", "ro", "ru", "si", "sk", "zh", "zh_cn", "zh_tw"],
+]]>
+		<cm:wiki>
+* '''get''' method : get a property value for the current language</cm:wiki>
+<![CDATA[
+	get : function(key) {
+		if (!XsltForms_browser.config) {
+			return "Initializing";
+		}
+		if (XsltForms_globals.language === "navigator" || XsltForms_globals.language !== XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config)) {
+			var lan = XsltForms_globals.language === "navigator" ? (navigator.language || navigator.userLanguage) : XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
+			lan = lan.replace("-", "_").toLowerCase();
+			var found = XsltForms_browser.inArray(lan, XsltForms_browser.i18n.langs);
+			if (!found) {
+				var ind = lan.indexOf("_");
+				if (ind !== -1) {
+					lan = lan.substring(0, ind);
+				}
+				found = XsltForms_browser.inArray(lan, XsltForms_browser.i18n.langs);
+			}
+			if (found) {
+				XsltForms_browser.loadProperties("config_" + lan + ".xsl");
+				XsltForms_globals.language = XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
+			} else {
+				XsltForms_globals.language = "default";
+			}
+		}
+		return XsltForms_browser.selectSingleNodeText(key, XsltForms_browser.config);
+    },
+]]>
+		<cm:wiki>
+* '''parse''' method : data parsing according to a pattern and the current language</cm:wiki>
+<![CDATA[
+	parse : function(str, pattern) {
+		if (!str || str.match("^\\s*$")) {
+			return null;
+		}
+		if (!pattern) {
+			pattern = XsltForms_browser.i18n.get("format.datetime");
+		}
+		var d = new Date(2000, 0, 1);
+		XsltForms_browser.i18n._parse(d, "Year", str, pattern, "yyyy");
+		XsltForms_browser.i18n._parse(d, "Month", str, pattern, "MM");
+		XsltForms_browser.i18n._parse(d, "Date", str, pattern, "dd");
+		XsltForms_browser.i18n._parse(d, "Hours", str, pattern, "hh");
+		XsltForms_browser.i18n._parse(d, "Minutes", str, pattern, "mm");
+		XsltForms_browser.i18n._parse(d, "Seconds", str, pattern, "ss");
+		return d;
+	},
+]]>
+		<cm:wiki>
+* '''format''' method : data formatting according to a pattern and the current language</cm:wiki>
+<![CDATA[
+	format : function(date, pattern, loc) {
+		if (!date) {
+			return "";
+		}
+		if (!pattern) {
+			pattern = XsltForms_browser.i18n.get("format.datetime");
+		}
+		var str = XsltForms_browser.i18n._format(pattern, (loc ? date.getDate() : date.getUTCDate()), "dd");
+		str = XsltForms_browser.i18n._format(str, (loc ? date.getMonth() : date.getUTCMonth()) + 1, "MM");
+		var y = (loc ? date.getFullYear() : date.getUTCFullYear());
+		str = XsltForms_browser.i18n._format(str, y < 1000? 1900 + y : y, "yyyy");
+		str = XsltForms_browser.i18n._format(str, (loc ? date.getSeconds() : date.getUTCSeconds()), "ss");
+		str = XsltForms_browser.i18n._format(str, (loc ? date.getMinutes() : date.getUTCMinutes()), "mm");
+		str = XsltForms_browser.i18n._format(str, (loc ? date.getHours() : date.getUTCHours()), "hh");
+		var o = date.getTimezoneOffset();
+		str = XsltForms_browser.i18n._format(str, (loc ? (o < 0 ? "+" : "-") + XsltForms_browser.zeros(Math.floor(Math.abs(o)/60),2) + ":" + XsltForms_browser.zeros(Math.abs(o) % 60,2) : "Z"), "z");
+		return str;
+	},
+]]>
+		<cm:wiki>
+* '''parseDate''' method : direct method for date parsing</cm:wiki>
+<![CDATA[
+	parseDate : function(str) {
+		return XsltForms_browser.i18n.parse(str, XsltForms_browser.i18n.get("format.date"));
+	},
+]]>
+		<cm:wiki>
+* '''formatDate''' method : direct method for date formatting</cm:wiki>
+<![CDATA[
+	formatDate : function(str) {
+		return XsltForms_browser.i18n.format(str, XsltForms_browser.i18n.get("format.date"), true);
+	},
+ ]]>
+		<cm:wiki>
+* '''formatNumber''' method : direct method for number formatting</cm:wiki>
+<![CDATA[
+	formatNumber : function(number, decimals) {
+		if (isNaN(number)) {
+			return number;
+		}
+		var value = "" + Math.abs(number);
+		var index = value.indexOf(".");
+		var integer = parseInt(index !== -1? value.substring(0, index) : value, 10);
+		var decimal = index !== -1? value.substring(index + 1) : "";
+		var decsep = XsltForms_browser.i18n.get("format.decimal");
+		return (number < 0 ? "-":"") + integer + (decimals > 0? decsep + XsltForms_browser.zeros(decimal, decimals, true) : (decimal? decsep + decimal : ""));
+	},
+]]>
+		<cm:wiki>
+* '''parseNumber''' method : direct method for number parsing</cm:wiki>
+<![CDATA[
+	parseNumber : function(value) {
+		var decsep = XsltForms_browser.i18n.get("format.decimal");
+		if(!value.match("^[\\-+]?([0-9]+(\\" + decsep + "[0-9]*)?|\\" + decsep + "[0-9]+)$")) {
+			throw "Invalid number " + value;
+		}
+		var index = value.indexOf(decsep);
+		var integer = Math.abs(parseInt(index !== -1? value.substring(0, index) : value, 10));
+		var decimal = index !== -1? value.substring(index + 1) : null;
+		return (value.substring(0,1) === "-" ? "-":"") + integer + (decimal? "." + decimal : "");
+	},
+	_format : function(returnValue, value, el) {
+		return returnValue.replace(el, XsltForms_browser.zeros(value, el.length));
+	},
+	_parse : function(date, prop, str, format, el) {
+		var index = format.indexOf(el);
+		if (index !== -1) {
+			format = format.replace(new RegExp("\\.", "g"), "\\.");
+			format = format.replace(new RegExp("\\(", "g"), "\\(");
+			format = format.replace(new RegExp("\\)", "g"), "\\)");
+			format = format.replace(new RegExp(el), "(.*)");
+			format = format.replace(new RegExp("yyyy"), ".*");
+			format = format.replace(new RegExp("MM"), ".*");
+			format = format.replace(new RegExp("dd"), ".*");
+			format = format.replace(new RegExp("hh"), ".*");
+			format = format.replace(new RegExp("mm"), ".*");
+			format = format.replace(new RegExp("ss"), ".*");
+			var val = str.replace(new RegExp(format), "$1");
+			if (val.charAt(0) === '0') {
+				val = val.substring(1);
+			}
+			val = parseInt(val, 10);
+			if (isNaN(val)) {
+				throw "Error parsing date " + str + " with pattern " + format;
+			}
+			var n = new Date();
+			n = n.getFullYear() - 2000;
+			date["set" + prop](prop === "Month"? val - 1 : (prop === "Year" && val <= n+10 ? val+2000 : val));
+		}
+	}
+};
+
+XsltForms_numberList = function(parent, className, input, min, max, minlengh) {
+	this.element = XsltForms_browser.createElement("ul", parent, null, className);
+	this.move = 0;
+	this.input = input;
+	this.min = min;
+	this.max = max;
+	this.minlength = minlengh || 1;
+	var list = this;
+	this.createChild("+", function() { list.start(1); }, function() { list.stop(); } );
+	for (var i = 0; i < 7; i++) {
+		this.createChild(" ", function(event) {
+			list.input.value = XsltForms_browser.events.getTarget(event).childNodes[0].nodeValue;
+			list.close();
+			XsltForms_browser.events.dispatch(list.input, "change");
+		} );
+	}
+	this.createChild("-", function() { list.start(-1); }, function() { list.stop(); } );
+};
+
+XsltForms_numberList.prototype.show = function() {
+	var input = this.input;
+	this.current = parseInt(input.value, 10);
+	this.refresh();
+	XsltForms_browser.dialog.show(this.element, input, false);
+};
+
+XsltForms_numberList.prototype.close = function() {
+	XsltForms_browser.dialog.hide(this.element, false);
+}; 
+
+XsltForms_numberList.prototype.createChild = function(content, handler, handler2) {
+	var child = XsltForms_browser.createElement("li", this.element, content);
+	XsltForms_browser.initHover(child);
+	if (handler2) {
+		XsltForms_browser.events.attach(child, "mousedown", handler);
+		XsltForms_browser.events.attach(child, "mouseup", handler2);
+	} else {
+		XsltForms_browser.events.attach(child, "click", handler);
+	}
+};
+
+XsltForms_numberList.prototype.refresh = function()  {
+	var childs = this.element.childNodes;
+	var cur = this.current;
+	if (cur >= this.max - 3) {
+		cur = this.max - 3;
+	} else if (cur <= this.min + 3) {
+		cur = this.min + 3;
+	}
+	var top = cur + 4;
+	for (var i = 1; i < 8; i++) {
+		XsltForms_browser.setClass(childs[i], "hover", false);
+		var str = (top - i) + "";
+		while (str.length < this.minlength) {
+			str = '0' + str;
+		}
+		childs[i].firstChild.nodeValue = str;
+	}
+};
+
+XsltForms_numberList.prototype.start = function(value) {
+	this.move = value;
+	XsltForms_numberList.current = this;
+	this.run();
+};
+    
+XsltForms_numberList.prototype.stop = function() {
+	this.move = 0;
+};
+
+XsltForms_numberList.prototype.run = function() {
+	if ((this.move > 0 && this.current + 3 < this.max) || (this.move < 0 && this.current - 3> this.min)) {
+		this.current += this.move;
+		this.refresh();
+		var list = this;
+		setTimeout(XsltForms_numberList.current.run, 60);
+	}
+};
+
+XsltForms_numberList.current = null;
+
+]]>
+		<cm:wiki>
+=== Miscalleanous functions ===
+* '''forEach''' function : Convenient way to the same method with the same arguments to a collect of objects</cm:wiki>
+<![CDATA[
+XsltForms_browser.forEach = function(object, block) {
+	var args = [];
+	for (var i = 0, len = arguments.length - 2; i < len; i++) {
+		args[i] = arguments[i + 2];
+	}
+	if (object) {
+		if (typeof object.length === "number") {
+			for (var j = 0, len1 = object.length; j < len1; j++) {
+				var obj = object[j];
+				var func = typeof block === "string" ? obj[block] : block;
+				func.apply(obj, args);
+			}
+		} else {
+			for (var key in object) {
+				if (object.hasOwnProperty(key)) {
+					var obj2 = object[key];
+					var func2 = typeof block === "string" ? obj2[block] : block;
+					func2.apply(obj2, args);
+				}
+			}   
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''assert''' function : Conditional Debug Console message adding</cm:wiki>
+<![CDATA[
+XsltForms_browser.assert = function(condition, message) {
+	if (!condition && XsltForms_browser.debugConsole.isOpen()) {
+		if (!XsltForms_globals.debugMode) {
+			XsltForms_globals.debugMode = true;
+			XsltForms_globals.debugging();
+		}
+		XsltForms_browser.debugConsole.write("Assertion failed: " + message);
+		var callstack = null;
+		if (arguments.caller) { // Internet Explorer
+			this.callstack = [];
+			for (var caller = arguments.caller; caller; caller = caller.caller) {
+				this.callstack.push(caller.name ? caller.name : "<anonymous>");
+			}
+		} else {
+			try {
+				var x; x.y;
+			} catch (exception) {
+				this.callstack = exception.stack.split("\n");
+			}
+		}
+		if (this.callstack) {
+			for (var i = 0, len = this.callstack.length; i < len; i++) {
+				XsltForms_browser.debugConsole.write("> " + this.callstack[i]);
+			}
+		}
+		throw message;
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''inArray''' function : Tests if a value is present in an array</cm:wiki>
+<![CDATA[
+XsltForms_browser.inArray = function(value, array) {
+	for (var i = 0, len = array.length; i < len; i++) {
+		if (value === array[i]) {
+			return true;
+		}
+	}
+	return false;
+};
+
+]]>
+		<cm:wiki>
+* '''zeros''' function : left or right zero-padding</cm:wiki>
+<![CDATA[
+XsltForms_browser.zeros = function(value, length, right) {
+	var res = "" + value;
+	if (right) {
+		while (res.length < length) {
+			res = res + "0";
+		}
+	} else {
+		while (res.length < length) {
+			res = "0" + res;
+		}
+	}
+	return res;
+};
+]]>
+		<cm:wiki>
+* '''getValue''' function : gets a node value</cm:wiki>
+		<![CDATA[
+XsltForms_browser.getValue = function(node, format, serialize) {
+	XsltForms_browser.assert(node);
+	if (serialize) {
+		return node.nodeType === XsltForms_nodeType.ATTRIBUTE ? node.nodeValue : XsltForms_browser.saveXML(node);
+	}
+	var value = node.text !== undefined ? node.text : node.textContent;
+	if (value && format) {
+		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
+		if (schtyp.format) {
+			try { value = schtyp.format(value); } catch(e) { }
+		}
+	}
+	return value;
+};
+
+]]>
+		<cm:wiki>
+* '''setValue''' function : sets the value of a node</cm:wiki>
+<![CDATA[
+XsltForms_browser.setValue = function(node, value) {
+	XsltForms_browser.assert(node);
+	if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+		node.nodeValue = value;
+	} else if (XsltForms_browser.isIE && node.innerHTML) {
+		node.innerHTML = XsltForms_browser.escape(value);
+	} else {
+		while (node.firstChild) {
+			node.removeChild(node.firstChild);
+		}
+		if (value) {
+			for (var i = 0, l = value.length; i < l; i += 4096) {
+				node.appendChild(node.ownerDocument.createTextNode(value.substr(i, 4096)));
+			}
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''run''' function : executes an action (called by generated Javascript instructions)</cm:wiki>
+<![CDATA[
+XsltForms_browser.run = function(action, element, evt, synch, propagate) {
+	if (synch) {
+		XsltForms_browser.dialog.show("statusPanel", null, false);
+		setTimeout(function() { 
+			XsltForms_globals.openAction();
+			action.execute(XsltForms_idManager.find(element), null, evt);
+			XsltForms_browser.dialog.hide("statusPanel", false);
+			if (!propagate) {
+				evt.stopPropagation();
+			}
+			XsltForms_globals.closeAction();
+		}, 1 );
+	} else {
+		XsltForms_globals.openAction();
+		action.execute(XsltForms_idManager.find(element), null, evt);
+		if (!propagate) {
+			evt.stopPropagation();
+		}
+		XsltForms_globals.closeAction();
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''getId''' function : gets the id of the xf element concerned by an event (FF2 compatibility problem)</cm:wiki>
+<![CDATA[
+XsltForms_browser.getId = function(element) {
+	if(element.id) {
+		return element.id;
+	} else {
+		return element.parentNode.parentNode.parentNode.parentNode.id;
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''show''' function : show/hide an element (called by generated Javascript instructions, typically used for hints or input errors)</cm:wiki>
+<![CDATA[
+XsltForms_browser.show = function(el, type, value) {
+	el.parentNode.lastChild.style.display = value? 'inline' : 'none';
+};
+
+]]>
+		<cm:wiki>
+* '''copyArray''' function : copy every element in a source array into a dest array</cm:wiki>
+<![CDATA[
+XsltForms_browser.copyArray = function(source, dest) {
+	if( dest ) {
+		for (var i = 0, len = source.length; i < len; i++) {
+			dest[i] = source[i];
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''removeArrayItem''' function : returns a new array without the specified item</cm:wiki>
+<![CDATA[
+XsltForms_browser.removeArrayItem = function(array, item) {
+	var narr = [];
+	for (var i = 0, len = array.length; i < len; i++) {
+		if (array[i] !== item ) {
+			narr.push(array[i]);
+		}
+	}
+	return narr;
+};
+
+]]>
+		<cm:wiki>
+* '''trim''' method : left and right trim method for String class</cm:wiki>
+<![CDATA[
+String.prototype.trim = function() {
+	return this.replace(/^\s+|\s+$/, '');
+};
+
+]]>
+		<cm:wiki>
+* '''addslashes''' method : Javascript escape method for String class</cm:wiki>
+<![CDATA[
+String.prototype.addslashes = function() {
+	return this.replace(/\\/g,"\\\\").replace(/\'/g,"\\'").replace(/\"/g,"\\\"");
+};
+
+]]>
+	</cm:source>
+</cm:component>

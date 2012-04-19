@@ -1,0 +1,13 @@
+body {
+	font-family: Ariel, Helvetica, sans-serif;
+}
+
+.keybind {
+	font-weight: bold;
+	font-decoration: underline;
+}
+
+lh {
+	font-weight: bold;
+	font-size: 12pt;
+}

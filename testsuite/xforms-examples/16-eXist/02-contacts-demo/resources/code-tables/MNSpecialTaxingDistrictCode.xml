@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>MNSpecialTaxingDistrictCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Ambulance Districts</Label>
+         <Value>ambulance</Value>
+      </Item>
+      <Item>
+         <Label>Economic Development Authorities</Label>
+         <Value>economic-development</Value>
+      </Item>
+      <Item>
+         <Label>Fire Districts</Label>
+         <Value>fire</Value>
+      </Item>
+      <Item>
+         <Label>Housing and Redevelopment Authorities</Label>
+         <Value>housing-and-redevelopment</Value>
+      </Item>
+      <Item>
+         <Label>Library Districts</Label>
+         <Value>library</Value>
+      </Item>
+      <Item>
+         <Label>Metropolitan Airports Commission</Label>
+         <Value>metro-airport</Value>
+      </Item>
+      <Item>
+         <Label>Metropolitan Council</Label>
+         <Value>met-council</Value>
+      </Item>
+      <Item>
+         <Label>Metropolitan Mosquito Control</Label>
+         <Value>metro-mosquito-control</Value>
+      </Item>
+      <Item>
+         <Label>Park Districts</Label>
+         <Value>park</Value>
+      </Item>
+      <Item>
+         <Label>Port Authorities</Label>
+         <Value>port</Value>
+      </Item>
+      <Item>
+         <Label>Transit Districts</Label>
+         <Value>transit</Value>
+      </Item>
+      <Item>
+         <Label>Water and Sewer Districts</Label>
+         <Value>water-sewer</Value>
+      </Item>
+      <Item>
+         <Label>Watersheds</Label>
+         <Value>watersheds</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

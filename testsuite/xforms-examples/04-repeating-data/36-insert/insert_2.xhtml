@@ -1,0 +1,63 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Phone List</title>
+      <xf:model>
+         <xf:instance>
+            <PhoneList xmlns="">
+               <Person>
+                  <Name>Peggy</Name>
+                  <Phone>123</Phone>
+               </Person>
+               <Person>
+                  <Name>Dan</Name>
+                  <Phone>456</Phone>
+               </Person>
+               <Person>
+                  <Name>John</Name>
+                  <Phone>789</Phone>
+               </Person>
+               <Person>
+                  <Name>Sue</Name>
+                  <Phone>234</Phone>
+               </Person>
+               <NewPerson>
+                  <Name/>
+                  <Phone/>
+               </NewPerson>
+            </PhoneList>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <fieldset>
+         <legend>Company Phone List</legend>
+         <p>
+            <b>Name, Phone</b>
+            <xf:repeat id="list" nodeset="/PhoneList/Person">
+               <xf:output ref="Name"/>
+               <xf:output ref="Phone"/>
+            </xf:repeat>
+         </p>
+      </fieldset>
+      <fieldset>
+         <legend>Add New Person</legend>
+         <p>
+            <xf:input ref="/PhoneList/NewPerson/Name" a0:type="http://www.w3.org/2001/XMLSchema#string" xmlns:a0="http://www.mozilla.org/projects/xforms/2005/type">
+               <xf:label>Name:</xf:label>
+            </xf:input>
+            <br/>
+            <xf:input ref="/PhoneList/NewPerson/Phone" a1:type="http://www.w3.org/2001/XMLSchema#string" xmlns:a1="http://www.mozilla.org/projects/xforms/2005/type">
+               <xf:label>Phone:</xf:label>
+            </xf:input>
+            <xf:trigger>
+               <xf:label>Insert After Selected Row</xf:label>
+               <xf:action ev:event="DOMActivate">
+                  <xf:insert nodeset="/PhoneList/Person" at="index('list')" position="after"/>
+                  <xf:setvalue ref="/PhoneList/Person[index('list')]/Name" value="/PhoneList/NewPerson/Name"/>
+                  <xf:setvalue ref="/PhoneList/Person[index('list')]/Phone" value="/PhoneList/NewPerson/Phone"/>
+               </xf:action>
+            </xf:trigger>
+         </p>
+      </fieldset>
+   </body>
+</html>

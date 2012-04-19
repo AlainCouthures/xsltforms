@@ -1,0 +1,139 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFItem.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_item" class ===
+Item Element  Class
+* constructor function : initializes specific properties and initializes focus and blur event management</cm:wiki>
+		<![CDATA[
+function XsltForms_item(subform, id, bindingL, bindingV) {
+	XsltForms_globals.counters.item++;
+	this.init(subform, id);
+	if (bindingL || bindingV) {
+		this.hasBinding = true;
+		this.bindingL = bindingL;
+		this.bindingV = bindingV;
+	} else {
+		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
+	}
+	var element = this.element;
+	if (element.nodeName.toLowerCase() !== "option") {
+		this.input = XsltForms_browser.isXhtml ? element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input")[0] : element.getElementsByTagName("input")[0];
+		this.input.name = XsltForms_control.getXFElement(this.element).element.id;
+		XsltForms_browser.events.attach(this.input, "focus", XsltForms_control.focusHandler);
+		XsltForms_browser.events.attach(this.input, "blur", XsltForms_control.blurHandler);
+		this.label = XsltForms_browser.isXhtml ? element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "span")[0] : element.getElementsByTagName("span")[0];
+	}
+}
+
+XsltForms_item.prototype = new XsltForms_element();
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new item control with the given id</cm:wiki>
+<![CDATA[
+XsltForms_item.prototype.clone = function(id) { 
+	return new XsltForms_item(this.subform, id, this.bindingL, this.bindingV);
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears properties of this element and calls the parent dispose() method</cm:wiki>
+<![CDATA[
+XsltForms_item.prototype.dispose = function() {
+	this.input = null;
+	this.label = null;
+	XsltForms_globals.counters.item--;
+	XsltForms_element.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''build_''' method : specific build method according to label and value bindings</cm:wiki>
+<![CDATA[
+XsltForms_item.prototype.build_ = function(ctx) {
+	var element = this.element;
+	var xf = element.parentNode.xfElement;
+	if (xf && xf.isRepeat) {
+		ctx = element.node;
+	} else {
+		element.node = ctx;
+	}
+	if (this.bindingL) {
+		element.nodeL = this.evaluateBinding(this.bindingL, ctx)[0];
+		this.depsNodesRefresh.push(element.nodeL);
+	}
+	if (this.bindingV) {
+		element.nodeV = this.evaluateBinding(this.bindingV, ctx)[0];
+		this.depsNodesRefresh.push(element.nodeV);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''refresh''' method : refreshes the label and the value for this item control depending whether it has a rendering as option or not</cm:wiki>
+<![CDATA[
+XsltForms_item.prototype.refresh = function() {
+	var element = this.element;
+	if (element.nodeName.toLowerCase() === "option") {
+		if (element.nodeL) {
+			try { 
+				element.text = XsltForms_browser.getValue(element.nodeL, true);
+			} catch(e) {
+			}
+		}
+		if (element.nodeV) {
+			try {
+				element.value = XsltForms_browser.getValue(element.nodeV);
+			} catch(e2) {
+			}
+		}
+	} else {
+		if (element.nodeL) {
+			XsltForms_browser.setValue(this.label, XsltForms_browser.getValue(element.nodeL, true));
+		}
+		if (element.nodeV) {
+			this.input.value = XsltForms_browser.getValue(element.nodeV);
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''click''' method : manages the click event according to the item control type</cm:wiki>
+<![CDATA[
+XsltForms_item.prototype.click = function (target) {
+	var input = this.input;
+	if (input) {
+		var xf = XsltForms_control.getXFElement(this.element);
+		if (!xf.element.node.readonly && target === input) {
+			xf.itemClick(input.value);
+		}
+	}
+};
+    ]]>
+	</cm:source>
+</cm:component>

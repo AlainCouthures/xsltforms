@@ -1,0 +1,275 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFModel.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_model" class ===
+* constructor function : specifically gets the associated schemas</cm:wiki>
+		<![CDATA[
+function XsltForms_model(subform, id, schemas) {
+	if (subform.id !== "xsltforms-mainform") {
+		XsltForms_globals.addChange(this);
+	}
+	this.init(subform, id, null, "xforms-model");
+	this.instances = {};
+	this.binds = [];
+	this.nodesChanged = [];
+	this.newNodesChanged = [];
+	this.schemas = [];
+	this.defaultInstance = null;
+	this.defaultSubmission = null;
+	XsltForms_globals.models.push(this);
+	subform.models.push(this);
+	var elt = document.getElementById(id);
+	XsltForms_globals.defaultModel = XsltForms_globals.defaultModel || this;
+	if (elt) {
+		elt.getInstanceDocument = function(modid) {
+			return this.xfElement.getInstanceDocument(modid);
+		};
+		elt.rebuild = function() {
+			return this.xfElement.rebuild();
+		};
+		elt.recalculate = function() {
+			return this.xfElement.recalculate();
+		};
+		elt.revalidate = function() {
+			return this.xfElement.revalidate();
+		};
+		elt.refresh = function() {
+			return this.xfElement.refresh();
+		};
+		elt.reset = function() {
+			return this.xfElement.reset();
+		};
+	}
+	if (schemas) {
+		schemas = schemas.split(" ");
+		for (var i = 0, len = schemas.length; i < len; i++) {
+			var found = false;
+			for (var sid in XsltForms_schema.all) {
+				if (XsltForms_schema.all.hasOwnProperty(sid)) {
+					var schema = XsltForms_schema.all[sid];
+					if (schema.name === schemas[i]) {
+						this.schemas.push(schema);
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found) {
+				XsltForms_globals.error(this, "xforms-link-exception", "Schema " + schemas[i] + " not found");
+			}
+		}
+	}
+}
+
+XsltForms_model.prototype = new XsltForms_coreElement();
+
+]]>
+		<cm:wiki>
+* '''create''' method : adds an instance to this model</cm:wiki>
+<![CDATA[
+XsltForms_model.create = function(subform, id, schemas) {
+	var elt = document.getElementById(id);
+	if (elt) {
+		elt.xfElement.subforms[subform] = true;
+		elt.xfElement.nbsubforms++;
+		subform.models.push(elt.xfElement);
+		XsltForms_globals.addChange(elt.xfElement);
+		return elt.xfElement;
+	} else {
+		return new XsltForms_model(subform, id, schemas);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''addInstance''' method : adds an instance to this model</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.addInstance = function(instance) {
+	this.instances[instance.element.id] = instance;
+	this.defaultInstance = this.defaultInstance || instance;
+};
+]]>
+		<cm:wiki>
+* '''addBind''' method : adds a binding to this model</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.addBind = function(bind) {
+	this.binds.push(bind);
+};
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears the properties of this object</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.dispose = function(subform) {
+	if (subform && this.nbsubforms !== 1) {
+		this.subforms[subform] = null;
+		this.nbsubforms--;
+		return;
+	}
+	this.instances = null;
+	this.binds = null;
+	this.itext = null;
+	this.defaultInstance = null;
+	XsltForms_coreElement.prototype.dispose.call(this);
+};
+]]>
+		<cm:wiki>
+* '''getInstance''' method : gets an instance of this model by its id</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.getInstance = function(id) {
+	return id ? this.instances[id] : this.defaultInstance;
+};
+]]>
+		<cm:wiki>
+* '''getInstanceDocument''' method : gets the document of an instance of this model by the instance id</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.getInstanceDocument = function(id) {
+	var instance = this.getInstance(id);
+	return instance? instance.doc : null;
+};
+]]>
+		<cm:wiki>
+* '''findInstance''' method : finds the corresponding instance of a node in this model</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.findInstance = function(node) {
+	var doc = node.nodeType === XsltForms_nodeType.DOCUMENT ? node : node.ownerDocument;
+	for (var id in this.instances) {
+		if (this.instances.hasOwnProperty(id)) {
+			var inst = this.instances[id];
+			if (doc === inst.doc) {
+				return inst;
+			}
+		}
+	}
+	return null;
+};
+
+]]>
+		<cm:wiki>
+* '''construct''' method : construct step is forwarded to instances and corresponding XForms events are dispatched</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.construct = function() {
+	if (!XsltForms_globals.ready) {
+		XsltForms_browser.forEach(this.instances, "construct");
+	}
+	XsltForms_xmlevents.dispatch(this, "xforms-rebuild");
+	XsltForms_xmlevents.dispatch(this, "xforms-model-construct-done");
+	if (this === XsltForms_globals.models[XsltForms_globals.models.length - 1]) {
+		window.setTimeout("XsltForms_xmlevents.dispatchList(XsltForms_globals.models, \"xforms-ready\")", 1);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''reset''' method : reset action is forwarded to instances and this model is tagged as rebuilded</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.reset = function() {
+	XsltForms_browser.forEach(this.instances, "reset");
+	this.setRebuilded(true);
+	XsltForms_globals.addChange(this);
+};
+
+]]>
+		<cm:wiki>
+* '''rebuild''' method : refresh action is forwarded to instances and the "xforms-recalculate" event is dispatched</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.rebuild = function() {
+	if (XsltForms_globals.ready) {
+		this.setRebuilded(true);
+	}
+	XsltForms_browser.forEach(this.binds, "refresh");
+	XsltForms_xmlevents.dispatch(this, "xforms-recalculate");
+};
+
+]]>
+		<cm:wiki>
+* '''recalculate''' method : recalculate action is forwarded to instances and the "xforms-revalidate" event is dispatched</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.recalculate = function() { 
+	XsltForms_browser.forEach(this.binds, "recalculate");
+	XsltForms_xmlevents.dispatch(this, "xforms-revalidate");
+};
+
+]]>
+		<cm:wiki>
+* '''revalidate''' method : revalidate action is forwarded to instances and the "xforms-refresh" event is dispatched</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.revalidate = function() {
+	XsltForms_browser.forEach(this.instances, "revalidate");
+	if (XsltForms_globals.ready) {
+		XsltForms_xmlevents.dispatch(this, "xforms-refresh");
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''refresh''' method : no action</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.refresh = function() {
+	// Nada?
+};
+
+]]>
+		<cm:wiki>
+* '''addChange''' method : stacks this model as changed according to current step</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.addChange = function(node) {
+	var list = XsltForms_globals.building? this.newNodesChanged : this.nodesChanged;
+	if (!XsltForms_browser.inArray(node, list)) {
+		XsltForms_globals.addChange(this);
+	}
+	if (node.nodeType === XsltForms_nodeType.ATTRIBUTE && !XsltForms_browser.inArray(node, list)) {
+		list.push(node);
+		node = node.ownerElement ? node.ownerElement : node.selectSingleNode("..");
+	}
+	while (node.nodeType === XsltForms_nodeType.ELEMENT && !XsltForms_browser.inArray(node, list)) {
+		list.push(node);
+		node = node.parentNode;
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''setRebuilded''' method : stores the rebuilded state according to current step</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.setRebuilded = function(value) {
+	if (XsltForms_globals.building) {
+		this.newRebuilded = value;
+	} else {
+		this.rebuilded = value;
+	}
+};
+]]>
+		<cm:wiki>
+* '''itext''' method : stores the iText attached to this model</cm:wiki>
+<![CDATA[
+XsltForms_model.prototype.additext = function(itext) {
+	this.itext = itext;
+	return this;
+};
+]]>
+	</cm:source>
+</cm:component>

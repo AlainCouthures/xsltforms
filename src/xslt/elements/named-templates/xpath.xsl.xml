@@ -1,0 +1,105 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="xpath.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+	  <xsl:template name="xpath" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="xp"/>
+			<xsl:param name="main"/>
+			<xsl:variable name="xp2jsres"><xsl:call-template name="xp2js"><xsl:with-param name="xp" select="$xp"/></xsl:call-template></xsl:variable>
+			<xsl:variable name="xp2jsres2">
+				<xsl:choose>
+					<xsl:when test="contains($xp2jsres,'~~~~')">"<xsl:value-of select="substring-after(translate(substring-before(concat($xp2jsres,'~#~#'),'~#~#'),'&quot;',''),'~~~~')"/> in '<xsl:value-of select="$xp"/>'"</xsl:when>
+					<xsl:when test="$xp2jsres != ''"><xsl:value-of select="$xp2jsres"/></xsl:when>
+					<xsl:otherwise>"Unrecognized expression '<xsl:value-of select="$xp"/>'"</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="result">XsltForms_xpath.create(<xsl:value-of select="$vn_subform"/>,"<xsl:call-template name="toXPathExpr"><xsl:with-param name="p" select="$xp"/></xsl:call-template>",<xsl:call-template name="unordered"><xsl:with-param name="js" select="$xp2jsres"/></xsl:call-template>,<xsl:value-of select="$xp2jsres2"/><xsl:call-template name="js2ns"><xsl:with-param name="js" select="$xp2jsres"/></xsl:call-template>);</xsl:variable>
+			<xsl:value-of select="$result"/><xsl:text>
+</xsl:text>
+	  </xsl:template>
+	</cm:source>
+	<cm:unit-test-group>
+		<cm:import-components path="../../../js/main/jsCore.js.xml"/>
+		<cm:import-components path="../../../js/main/utils.js.xml"/>
+		<cm:import-components path="../../../js/types/types.js.xml"/>
+		<cm:import-components path="../../../js/xpathexpr/constants.js.xml"/>
+		<cm:import-components path="../../../js/xpathexpr/utils.js.xml"/>
+		<cm:import-components path="../../../js/xpathexpr/DOM/DOM.js.xml"/>
+		<cm:import-components path="xp2js.xsl.xml"/>
+		<cm:import-components path="js2ns.xsl.xml"/>
+		<cm:import-components path="calc.xsl.xml"/>
+		<cm:import-components path="closepar.xsl.xml"/>
+		<cm:import-components path="getLocationPath.xsl.xml"/>
+		<cm:import-components path="getName.xsl.xml"/>
+		<cm:import-components path="getNumber.xsl.xml"/>
+		<cm:input-transform>
+			<cm:output method="text" indent="no"/>
+			<xsl:template match="/" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+				<xsl:variable name="res">
+					<xsl:call-template name="xpath"><xsl:with-param name="xp" select="/*"/></xsl:call-template>
+				</xsl:variable>
+				<xsl:value-of select="normalize-space($res)"/>
+			</xsl:template>
+		</cm:input-transform>
+		<cm:unit-test name="XPath parser">
+			<cm:assertion>
+				<cm:input>
+					<xpath xmlns="">1</xpath>
+				</cm:input>
+				<cm:expected-output>new XPath("1",new CteExpr(1));</cm:expected-output>
+			</cm:assertion>
+			<cm:assertion>
+				<cm:input>
+					<xpath xmlns="">'hello'</xpath>
+				</cm:input>
+				<cm:expected-output>new XPath("'hello'",new CteExpr('hello'));</cm:expected-output>
+			</cm:assertion>
+			<cm:assertion>
+				<cm:input>
+					<xpath xmlns="">.</xpath>
+				</cm:input>
+				<cm:expected-output>new XPath(".",new LocationExpr(false,new StepExpr('self',new NodeTestAny())));</cm:expected-output>
+			</cm:assertion>
+			<cm:assertion>
+				<cm:input>
+					<xpath xmlns="">^a/b</xpath>
+				</cm:input>
+				<cm:expected-output>new XPath("^a/b","Unexpected char at '^a/b' in '^a/b'");</cm:expected-output>
+			</cm:assertion>
+			<cm:assertion>
+				<cm:input>
+					<xpath xmlns="">a/@@b</xpath>
+				</cm:input>
+				<cm:expected-output>new XPath("a/@@b","Name expected at '@b' in 'a/@@b'");</cm:expected-output>
+			</cm:assertion>
+			<cm:assertion>
+				<cm:input>
+					<xpath xmlns="">a[b ^= 'false']</xpath>
+				</cm:input>
+				<cm:expected-output>new XPath("a[b ^= 'false']","Unknown operator at ' ^= 'false']' in 'b ^= 'false']' in 'a[b ^= 'false']'");</cm:expected-output>
+			</cm:assertion>
+		</cm:unit-test>
+	</cm:unit-test-group>
+</cm:component>

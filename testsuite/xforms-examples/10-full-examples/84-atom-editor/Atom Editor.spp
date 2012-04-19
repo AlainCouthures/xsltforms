@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XML Files" ExtStr="xml;cml;math;mtx;rdf;smil;svg;wml" ValidFileSet="Yes" ValidFile="atom.xsd">
+		<File FilePath="feed1.xml" HomeFolder="Yes"/>
+		<File FilePath="feed.xml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="XQuery Files" ExtStr="xq;xql;xquery"/>
+	<Folder FolderName="HTML Files" ExtStr="html;htm;xhtml;asp"/>
+	<Folder FolderName="XML Schemas" ExtStr="xsd">
+		<File FilePath="atom.xsd" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="XForms">
+		<File FilePath="atom-editor.xhtml" HomeFolder="Yes"/>
+	</Folder>
+</Project>

@@ -1,0 +1,16 @@
+<AddressList xmlns="">
+				<Address>
+					<LocationStreetFullText>123 Main Street SE</LocationStreetFullText>
+					<LocationStreetFullText2>Apartment 123</LocationStreetFullText2>
+					<LocationCityName>Anytown</LocationCityName>
+					<LocationStateName>Minnesota</LocationStateName>
+					<LocationPostalID>55123</LocationPostalID>
+				</Address>
+				<Address>
+					<LocationStreetFullText>123 Main Street SE</LocationStreetFullText>
+					<LocationStreetFullText2>Apartment 123</LocationStreetFullText2>
+					<LocationCityName>Anytown</LocationCityName>
+					<LocationStateName>Minnesota</LocationStateName>
+					<LocationPostalID>55123</LocationPostalID>
+				</Address>
+				</AddressList>

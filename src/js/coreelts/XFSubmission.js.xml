@@ -1,0 +1,554 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFSubmission.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2010-06-11</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_submission" class ===
+Submission Class
+* constructor function : store the properties of this submission and attaches it to a model</cm:wiki>
+		<![CDATA[
+function XsltForms_submission(subform, id, model, ref, bind, action, method, version, indent,
+			mediatype, encoding, omitXmlDeclaration, cdataSectionElements,
+			replace, targetref, instance, separator, includenamespaceprefixes, validate, relevant,
+			synchr, show, serialization) {
+	if (document.getElementById(id)) {
+		return;
+	}
+	this.init(subform, id, model, "xforms-submission");
+	this.model = model;
+	if (!model.defaultSubmission) {
+		model.defaultSubmission = this;
+	}
+	this.action = action;
+	if (action.substr && action.substr(0,7) === "file://" && !(document.applets.xsltforms || document.getElementById("xsltforms_applet")) ) {
+		XsltForms_browser.loadapplet();
+	}
+	this.method = method;
+	this.replace = replace;
+	this.targetref = targetref;
+	this.version = version;
+	this.indent = indent;
+	this.validate = validate;
+	this.relevant = relevant;
+	this.synchr = synchr;
+	this.show = show;
+	this.serialization = serialization;
+	if (mediatype) {
+		var lines = mediatype.split(";");
+		this.mediatype = lines[0];
+		for (var i = 1, len = lines.length; i < len; i++) {
+			var vals = lines[i].split("=");
+			switch (vals[0].replace(/^\s+/g,'').replace(/\s+$/g,'')) {
+				case "action":
+					this.soapAction = vals[1].replace(/^\s+/g,'').replace(/\s+$/g,'');
+					break;
+				case "charset":
+					this.charset = vals[1].replace(/^\s+/g,'').replace(/\s+$/g,'');
+					break;
+			}
+		}
+	}
+	this.encoding = encoding || "UTF-8";
+	this.omitXmlDeclaration = omitXmlDeclaration;
+	this.cdataSectionElements = cdataSectionElements;
+	this.instance = instance;
+	this.separator = separator === "&amp;"? "&" : separator;
+	this.includenamespaceprefixes = includenamespaceprefixes;
+	this.headers = [];
+	if (ref || bind) {
+		this.binding = new XsltForms_binding(null, ref, model.element, bind);
+		this.eval_ = function() {
+			return this.binding.evaluate()[0];
+		};
+	} else {
+		this.eval_ = function() {
+			return this.model.getInstanceDocument();
+		};
+	}
+}
+
+XsltForms_submission.prototype = new XsltForms_coreElement();
+
+]]>
+		<cm:wiki>
+* '''header''' method : declares a header</cm:wiki>
+<![CDATA[
+XsltForms_submission.prototype.header = function(nodeset, combine, name, values) {
+	this.headers.push({nodeset: nodeset, combine: combine, name: name, values: values});
+	return this;
+};
+]]>
+		<cm:wiki>
+* '''submit''' method : submits serialized data according to choosen method</cm:wiki>
+<![CDATA[
+XsltForms_submission.prototype.submit = function() {
+	XsltForms_globals.openAction();
+	var node = this.eval_();
+	var action = "error";
+	if(this.action.evaluate) {
+		action = XsltForms_globals.stringValue(this.action.evaluate());
+	} else {
+		action = this.action;
+	}
+	if (action.subst && action.subst(0, 8) === "local://" && (typeof(localStorage) === 'undefined')) {
+		evcontext["error-type"] = "validation-error";
+		this.issueSubmitException_(evcontext, null, {message: "local:// submission not supported"});
+		XsltForms_globals.closeAction();
+		return;
+	}
+	var method = "post";
+	var subm = this;
+	if(this.method.evaluate) {
+		method = XsltForms_globals.stringValue(this.method.evaluate());
+	} else {
+		method = this.method;
+	}
+	var evcontext = {"method": method, "resource-uri": action};
+	if (node) {
+		if (this.validate && !XsltForms_globals.validate_(node)) {
+			evcontext["error-type"] = "validation-error";
+			this.issueSubmitException_(evcontext, null, null);
+			XsltForms_globals.closeAction();
+			return;
+		}
+		if ((method === "get" || method === "delete") && this.serialization !== "none" && action.substr(0, 9) !== "opener://" && action.substr(0, 8) !== "local://") {
+			var tourl = XsltForms_submission.toUrl_(node, this.separator);
+			action += (action.indexOf('?') === -1? '?' : this.separator) +
+				tourl.substr(0, tourl.length - this.separator.length);
+		}
+	}
+	XsltForms_xmlevents.dispatch(this, "xforms-submit-serialize");
+	var ser = node ? XsltForms_browser.saveXML(node, this.relevant) : "";
+	var instance = this.instance;
+	if (action.substr(0, 7) === "file://" || action.substr(0, 9) === "opener://" || action.substr(0, 8) === "local://") {
+		if (action.substr(0, 7) === "file://" && method === "put") {
+			if (!XsltForms_browser.writeFile(action.substr(7), subm.encoding, "string", "XSLTForms Java Saver", ser)) {
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+			}
+			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+		} else if (action.substr(0, 9) === "opener://" && method === "put") {
+			try {
+				window.opener.XsltForms_globals.xmlrequest('put', action.substr(9), ser);
+			} catch (e) {
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+				XsltForms_globals.closeAction();
+				return;
+			}
+			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+		} else if (action.substr(0, 8) === "local://" && method === "put") {
+			try {
+				window.localStorage.setItem(action.substr(8), ser);
+			} catch (e) {
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+				XsltForms_globals.closeAction();
+				return;
+			}
+			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+		} else if (action.substr(0, 8) === "local://" && method === "delete") {
+			try {
+				window.localStorage.removeItem(action.substr(8));
+			} catch (e) {
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+				XsltForms_globals.closeAction();
+				return;
+			}
+			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+		} else if (method === "get") {
+			if (action.substr(0, 7) === "file://") {
+				ser =  XsltForms_browser.readFile(action.substr(7), subm.encoding, "string", "XSLTForms Java Loader");
+			} else if (action.substr(0, 8) === "local://") {
+				try {
+					ser = window.localStorage.getItem(action.substr(8));
+				} catch (e) {
+					XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+					XsltForms_globals.closeAction();
+					return;
+				} 
+			} else if (action.substr(0, 9) === "opener://") {
+				try {
+					ser = window.opener.XsltForms_globals.xmlrequest('get', action.substr(9));
+				} catch (e) {
+					XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+					XsltForms_globals.closeAction();
+					return;
+				} 
+			} else {
+				eval("ser = (" + action.substr(11) + ");");
+			}
+			if (ser !== "" && (subm.replace === "instance" || (subm.targetref && subm.replace === "text"))) {
+				var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
+				if (subm.targetref) {
+					var targetnode = subm.targetref.evaluate(ctxnode);
+					if (targetnode && targetnode[0]) {
+						if (subm.replace === "instance") {
+							XsltForms_browser.loadXML(targetnode[0], ser);
+						} else {
+							XsltForms_browser.loadTextNode(targetnode[0], ser);
+						}
+					}
+				} else {
+					var inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
+					inst.setDoc(ser, false, true);
+				}
+				XsltForms_globals.addChange(subm.model);
+				XsltForms_xmlevents.dispatch(subm.model, "xforms-rebuild");
+				XsltForms_globals.refresh();
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+			} else {
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+			}
+		}
+		XsltForms_globals.closeAction();
+		return;
+	}
+	if (action.substr(0,11) === "javascript:") {
+		if (method === "get") {
+			eval("ser = (" + action.substr(11) + ");");
+			if (ser !== "" && (subm.replace === "instance" || (subm.targetref && subm.replace === "text"))) {
+				var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
+				if (subm.targetref) {
+					var targetnode = subm.targetref.evaluate(ctxnode);
+					if (targetnode && targetnode[0]) {
+						if (subm.replace === "instance") {
+							XsltForms_browser.loadXML(targetnode[0], ser);
+						} else {
+							XsltForms_browser.loadTextNode(targetnode[0], ser);
+						}
+					}
+				} else {
+					var inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
+					inst.setDoc(ser, false, true);
+				}
+				XsltForms_globals.addChange(subm.model);
+				XsltForms_xmlevents.dispatch(subm.model, "xforms-rebuild");
+				XsltForms_globals.refresh();
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+			} else {
+				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
+			}
+		}
+		XsltForms_globals.closeAction();
+		return;
+	}
+	var synchr = this.synchr;
+	var body;
+	if(method === "xml-urlencoded-post") {
+		var outForm = document.getElementById("xsltforms_form");
+		if(outForm) {
+			outForm.firstChild.value = ser;
+		} else {
+			outForm = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "form") : document.createElement("form");
+			outForm.setAttribute("method", "post");
+			outForm.setAttribute("action", action);
+			outForm.setAttribute("id", "xsltforms_form");
+			var txt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "input") : document.createElement("input");
+			txt.setAttribute("type", "hidden");
+			txt.setAttribute("name", "postdata");
+			txt.setAttribute("value", ser);
+			outForm.appendChild(txt);
+			body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+			body.insertBefore(outForm, body.firstChild);
+		}
+		outForm.submit();
+		XsltForms_globals.closeAction();
+	} else {
+		/*
+		var cross = false;
+		if (action.match(/^[a-zA-Z0-9+\.\-]+:\/\//)) {
+			var domain = /^([a-zA-Z0-9+\.\-]+:\/\/[^\/]*)/;
+			var sdom = domain.exec(action);
+			var ldom = domain.exec(document.location.href);
+			cross = sdom[0] !== ldom[0];
+		}
+		*/
+		if (this.mediatype === "text/jsonp") {
+			XsltForms_browser.jsoninstobj = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : this.model.getInstance()) : document.getElementById(instance).xfElement;
+			var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+			scriptelt.setAttribute("src", action.replace(/&amp;/g, "&")+((action.indexOf("?") === -1) ? "?" : "&")+"callback=jsoninst");
+			scriptelt.setAttribute("id", "jsoninst");
+			scriptelt.setAttribute("type", "text/javascript");
+			body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+			body.insertBefore(scriptelt, body.firstChild);
+			XsltForms_xmlevents.dispatch(this, "xforms-submit-done");
+			XsltForms_globals.closeAction();
+		} else {
+			// TODO: Validate binding target is not empty
+			if (!node && (method !== "get" || method !== "delete")) {
+				evcontext["error-type"] = "no-data";
+				this.issueSubmitException_(evcontext, null, null);
+				return;
+			}
+			var req = null;
+			try {
+				evcontext["resource-uri"] = action;
+				req = XsltForms_browser.openRequest(method, action, !synchr);
+				var func = function() {
+					if (!synchr && req.readyState !== 4) {
+						return;
+					}
+					try {
+						if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
+							evcontext["error-type"] = "resource-error";
+							subm.issueSubmitException_(evcontext, req, null);
+							XsltForms_globals.closeAction();
+							return;
+						}
+						if (subm.replace === "instance" || (subm.targetref && subm.replace === "text")) {
+							if (subm.targetref) {
+								var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
+								var targetnode = subm.targetref.evaluate(ctxnode);
+								if (targetnode && targetnode[0]) {
+									if (subm.replace === "instance") {
+										XsltForms_browser.loadXML(targetnode[0], req.responseText);
+									} else {
+										XsltForms_browser.loadTextNode(targetnode[0], req.responseText);
+									}
+								}
+							} else {
+								var inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
+								inst.setDoc(req.responseText, false, true);
+							}
+							XsltForms_globals.addChange(subm.model);
+							XsltForms_xmlevents.dispatch(subm.model, "xforms-rebuild");
+							XsltForms_globals.refresh();
+						}
+						XsltForms_submission.requesteventlog(evcontext, req);
+						XsltForms_xmlevents.dispatch(subm, "xforms-submit-done", null, null, null, null, evcontext);
+						XsltForms_globals.closeAction();
+						if (subm.replace === "all") {
+							var resp = req.responseText;
+							var piindex = resp.indexOf("<?xml-stylesheet", 0);
+							while ( piindex !== -1) {
+								var xslhref = resp.substr(piindex, resp.substr(piindex).indexOf("?>")).replace(/^.*href=\"([^\"]*)\".*$/, "$1");
+								resp = XsltForms_browser.transformText(resp, xslhref, false);
+								piindex = resp.indexOf("<?xml-stylesheet", 0);
+							}
+							if( subm.show === "new" ) {
+								var w = window.open("about:blank","_blank");
+								w.document.write(resp);
+								w.document.close();
+							} else {
+								XsltForms_browser.dialog.hide("statusPanel", false);
+								XsltForms_globals.close();
+								if(document.write) {
+									document.write(resp);
+									document.close();
+								} else {
+									//document.documentElement.parentNode.replaceChild(req.responseXML.documentElement,document.documentElement);
+									if (resp.indexOf("<?", 0) === 0) {
+										resp = resp.substr(resp.indexOf("?>")+2);
+									}                       
+									//alert(resp);
+									document.documentElement.innerHTML = resp;
+								}
+							}
+						}
+					} catch(e) {
+						XsltForms_browser.debugConsole.write(e || e.message);
+						evcontext["error-type"] = "parse-error";
+						subm.issueSubmitException_(evcontext, req, e);
+						XsltForms_globals.closeAction();
+					}
+				};
+				if (!synchr) {
+					req.onreadystatechange = func;
+				}
+				var media = this.mediatype;
+				var mt = (media || "application/xml") + (this.charset? ";charset=" + this.charset : "");
+				XsltForms_browser.debugConsole.write("Submit " + this.method + " - " + mt + " - " + action + " - " + synchr);
+				var len = this.headers.length;
+				if (len !== 0) {
+					var headers = [];
+					for (var i = 0, len0 = this.headers.length; i < len0; i++) {
+						var nodes = [];
+						if (this.headers[i].nodeset) {
+							nodes = this.headers[i].nodeset.evaluate();
+						} else {
+							nodes = [subm.model.getInstanceDocument().documentElement];
+						}
+						var hname;
+						for (var n = 0, lenn = nodes.length; n < lenn; n++) {
+							if (this.headers[i].name.evaluate) {
+								hname = XsltForms_globals.stringValue(this.headers[i].name.evaluate(nodes[n]));
+							} else {
+								hname = this.headers[i].name;
+							}
+							if (hname !== "") {
+								var hvalue = "";
+								var j;
+								var len2;
+								for (j = 0, len2 = this.headers[i].values.length; j < len2; j++) {
+									var hv = this.headers[i].values[j];
+									var hv2;
+									if (hv.evaluate) {
+										hv2 = XsltForms_globals.stringValue(hv.evaluate(nodes[n]));
+									} else {
+										hv2 = hv;
+									}
+									hvalue += hv2;
+									if (j < len2 - 1) {
+										hvalue += ",";
+									}
+								}
+								var len3;
+								for (j = 0, len3 = headers.length; j < len3; j++) {
+									if (headers[j].name === hname) {
+										switch (this.headers[i].combine) {
+											case "prepend":
+												headers[j].value = hvalue + "," + headers[j].value;
+												break;
+											case "replace":
+												headers[j].value = hvalue;
+												break;
+											default:
+												headers[j].value += "," + hvalue;
+												break;
+										}
+										break;
+									}
+								}
+								if (j === len3) {
+									headers.push({name: hname, value: hvalue});
+								}
+							}
+						}
+					}
+					for (var k = 0, len4 = headers.length; k < len4; k++) {
+						req.setRequestHeader(headers[k].name, headers[k].value);
+					}
+				}
+				if (method === "get" || method === "delete") {
+					if (media === XsltForms_submission.SOAP_) {
+						req.setRequestHeader("Accept", mt);
+					} else {
+						if (subm.replace === "instance") {
+							req.setRequestHeader("Accept", "application/xml,text/xml");
+						}
+					}
+					req.send(null);
+				} else {
+					req.setRequestHeader("Content-Type", mt);
+					if (media === XsltForms_submission.SOAP_) {
+						req.setRequestHeader("SOAPAction", this.soapAction);
+					} else {
+						if (subm.replace === "instance") {
+							req.setRequestHeader("Accept", "application/xml,text/xml");
+						}
+					}
+					req.send(ser);
+				}
+				if (synchr) {
+					func();
+				}
+			} catch(e) {
+				XsltForms_browser.debugConsole.write(e.message || e);
+				evcontext["error-type"] = "resource-error";
+				subm.issueSubmitException_(evcontext, req, e);
+				XsltForms_globals.closeAction();
+			}
+		}
+	}
+};
+
+XsltForms_submission.SOAP_ = "application/soap+xml";
+
+]]>
+		<cm:wiki>
+* '''requesteventlog''' method : Prepares the event-context for a request.</cm:wiki>
+<![CDATA[
+XsltForms_submission.requesteventlog = function(evcontext, req) {
+	evcontext["response-status-code"] = req.status;
+	evcontext["response-reason-phrase"] = req.statusText;
+	evcontext["response-headers"] = [];
+	var rheads = req.getAllResponseHeaders();
+	var rheaderselts = "";
+	if (rheads) {
+		rheads = rheads.replace(/\r/, "").split("\n");
+		for (var i = 0, len = rheads.length; i < len; i++) {
+			var colon = rheads[i].indexOf(":");
+			if (colon !== -1) {
+				var name = rheads[i].substring(0, colon).replace(/^\s+|\s+$/, "");
+				var value = rheads[i].substring(colon+1).replace(/^\s+|\s+$/, "");
+				rheaderselts += "<header><name>"+XsltForms_browser.escape(name)+"</name><value>"+XsltForms_browser.escape(value)+"</value></header>";
+			}
+		}
+	}
+	evcontext.rheadsdoc = XsltForms_browser.createXMLDocument("<data>"+rheaderselts+"</data>");
+	if (evcontext.rheadsdoc.documentElement.firstChild) {
+		var rh = evcontext.rheadsdoc.documentElement.firstChild;
+		evcontext["response-headers"] = [rh];
+		while (rh.nextSibling) {
+			rh = rh.nextSibling;
+			evcontext["response-headers"].push(rh);
+		}
+	}
+	if (req.responseXML) {
+		evcontext["response-body"] = [XsltForms_browser.createXMLDocument(req.responseText)];
+	} else {
+		evcontext["response-body"] = req.responseText || "";
+	}
+};
+]]>
+		<cm:wiki>
+* '''issueSubmitException_''' method : Prepares the event-context and issues a 'xforms-submit-error' event.</cm:wiki>
+<![CDATA[
+XsltForms_submission.prototype.issueSubmitException_ = function(evcontext, req, ex) {
+	if (ex) {
+		evcontext.message = ex.message || ex;
+		evcontext["stack-trace"] = ex.stack;
+	}
+	if (req) {
+		XsltForms_submission.requesteventlog(evcontext, req);
+	}
+	XsltForms_xmlevents.dispatch(this, "xforms-submit-error", null, null, null, null, evcontext);
+};
+]]>
+		<cm:wiki>
+* '''toUrl_''' method : recursively collects node values to add them to an URL</cm:wiki>
+<![CDATA[
+XsltForms_submission.toUrl_ = function(node, separator) {
+	var url = "";
+	var val = "";
+	var hasChilds = false;
+	for(var i = 0, len = node.childNodes.length; i < len; i++) {
+		var child = node.childNodes[i];
+		switch (child.nodeType) {
+			case XsltForms_nodeType.ELEMENT:
+				hasChilds = true;
+				url += this.toUrl_(child, separator);
+				break;
+			case XsltForms_nodeType.TEXT:
+				val += child.nodeValue;
+				break;
+		}
+	}
+	if (!hasChilds && val.length > 0) {
+		url += node.nodeName + '=' + encodeURIComponent(val) + separator;
+	}
+	return url;
+};
+]]>
+	</cm:source>
+</cm:component>

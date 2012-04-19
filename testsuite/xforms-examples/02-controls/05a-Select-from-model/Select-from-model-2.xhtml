@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Getting Selection List Data From the XForms Model</title>
+      <xf:model>
+         <xf:instance xmlns="">
+            <MyModel>
+               <MyCode type="xs:string" />
+               <MyCodeList>
+                  <Item>
+                     <Label>Red</Label>
+                     <Value>red</Value>
+                  </Item>
+                  <Item>
+                     <Label>Orange</Label>
+                     <Value>orange</Value>
+                  </Item>
+                  <Item>
+                     <Label>Yellow</Label>
+                     <Value>yellow</Value>
+                  </Item>
+                  <Item>
+                     <Label>Green</Label>
+                     <Value>green</Value>
+                  </Item>
+                  <Item>
+                     <Label>Blue</Label>
+                     <Value>blue</Value>
+                  </Item>
+               </MyCodeList>
+            </MyModel>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <p>Getting Selection List Data From the XForms Model</p>
+      <xf:select ref="/MyModel/MyCode" appearance="full">
+         <xf:itemset nodeset="/MyModel/MyCodeList/Item">
+            <xf:label ref="Label" />
+            <xf:value ref="Value" />
+         </xf:itemset>
+      </xf:select>
+      <br />
+       Output: <xf:output ref="/MyModel/MyCode" />
+   </body>
+</html>

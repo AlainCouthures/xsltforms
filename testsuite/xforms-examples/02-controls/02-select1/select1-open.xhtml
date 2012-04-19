@@ -1,0 +1,43 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+        <title>XForms Radio Button Using Open Selection</title>
+       <style type="text/css">body {font-family: Helvetica, sans-serif;}</style>
+        <xf:model>
+            <xf:instance xmlns="">
+                <data>
+                    <CountryCode/>
+                </data>
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <p>XForms Drop-Down List Usng Select1 selection="open"</p>
+        <xf:select1 ref="CountryCode" selection="open">
+            <xf:label>Country:</xf:label>
+            <xf:item>
+                <xf:label>USA</xf:label>
+                <xf:value>usa</xf:value>
+            </xf:item>
+            <xf:item>
+                <xf:label>Canada</xf:label>
+                <xf:value>can</xf:value>
+            </xf:item>
+            <xf:item>
+                <xf:label>Japan</xf:label>
+                <xf:value>jpn</xf:value>
+            </xf:item>
+            <xf:item>
+                <xf:label>Mexico</xf:label>
+                <xf:value>mex</xf:value>
+            </xf:item>
+            <xf:item>
+                <xf:label>Other</xf:label>
+                <xf:value>other</xf:value>
+            </xf:item>
+        </xf:select1>
+        <br/>
+        Output: <xf:output ref="CountryCode"/>
+    </body>
+</html>

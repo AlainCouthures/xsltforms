@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <EnumeratedValues>
+      <Item>
+         <Label>Apartments (4 to 10 Units)</Label>
+         <Value>apartments-small</Value>
+      </Item>
+      <Item>
+         <Label>Apartments (Over 10 Units)</Label>
+         <Value>apartments-large</Value>
+      </Item>
+      <Item>
+         <Label>Apartments - Subsidized (4 to 10 Units)</Label>
+         <Value>apartments-subsidized-small</Value>
+      </Item>
+      <Item>
+         <Label>Apartments - Subsidized (Over 10 Units)</Label>
+         <Value>apartments-subsidized-large</Value>
+      </Item>
+      <Item>
+         <Label>Apartments Bare Land</Label>
+         <Value>apartments-bare-land</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

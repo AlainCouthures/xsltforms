@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms"
+xmlns:foobar="http://www.example.com">
+   <head>
+      <title>Binds to Multiple Instances in Multiple Models</title>
+      <style type="text/css">
+         @namespace xf url("http://www.w3.org/2002/xforms");
+         body {font-family: Helvetica,sans-serif}
+         xf|label {font-weight: bold}
+      </style>
+      
+      <xf:model id="model-1">
+      
+         <xf:instance id="instance-1-1" xmlns="">
+            <Data>
+               <Message>Hello World Model 1 Instance 1!</Message>
+            </Data>
+         </xf:instance>
+         <xf:bind id="bind-1-1" nodeset="instance('instance-1-1')/Message" />
+         
+         <xf:instance id="instance-1-2" xmlns="">
+            <Data>
+               <Message>Hello World Model 1 Instance 2!</Message>
+            </Data>
+         </xf:instance>
+         <xf:bind id="bind-1-2" nodeset="instance('instance-1-2')/Message" />
+         
+      </xf:model>
+      
+      <xf:model id="model-2">
+      
+         <xf:instance id="instance-2-1" xmlns="">
+            <Data>
+               <Message>Hello World Model 2 Instance 1!</Message>
+            </Data>
+         </xf:instance>
+         <xf:bind id="bind-2-1" nodeset="instance('instance-2-1')/Message" />
+         
+         <xf:instance id="instance-2-2" xmlns="">
+            <Data>
+               <Message>Hello World Model 2 Instance 2!</Message>
+            </Data>
+         </xf:instance>
+         <xf:bind id="bind-2-2" nodeset="instance('instance-2-2')/Message" />
+         
+      </xf:model>
+      
+   </head>
+   
+   <body>
+   <h1>Model 1</h1>
+      <xf:group model="model-1">
+         <xf:output ref="instance('instance-1-1')/Message">
+            <xf:label>ref="instance('instance-1-1')/Message":</xf:label>
+         </xf:output>
+         <br/>
+         <xf:output bind="bind-1-1">
+            <xf:label>bind="bind-1-1":</xf:label>
+         </xf:output>
+         <br/>
+         <xf:output ref="instance('instance-1-2')/Message">
+            <xf:label>ref="instance('instance-1-2')/Message":</xf:label>
+         </xf:output>
+         <br/>
+         <xf:output bind="bind-1-2">
+            <xf:label>bind="bind-1-2":</xf:label>
+         </xf:output>
+      </xf:group>
+      <h1>Model 2</h1>
+      <xf:group model="model-2">
+         <xf:output ref="instance('instance-2-1')/Message">
+            <xf:label>ref="instance('instance-2-1')/Message":</xf:label>
+         </xf:output>
+         <br/>
+         <xf:output bind="bind-2-1">
+            <xf:label>bind="bind-2-1":</xf:label>
+         </xf:output>
+         <br/>
+         <xf:output ref="instance('instance-2-2')/Message">
+            <xf:label>ref="instance('instance-2-2')/Message":</xf:label>
+         </xf:output>
+         <br/>
+         <xf:output bind="bind-2-2">
+            <xf:label>bind="bind-2-2":</xf:label>
+         </xf:output>
+      </xf:group>
+   </body>
+</html>

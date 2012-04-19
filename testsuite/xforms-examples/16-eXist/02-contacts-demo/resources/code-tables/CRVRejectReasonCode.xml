@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>CRVRejectReasonCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Ag Preserve</Label>
+         <Value>ag-preserve</Value>
+      </Item>
+      <Item>
+         <Label>Allocated Sale Price</Label>
+         <Value>allocated-sale-price</Value>
+      </Item>
+      <Item>
+         <Label>Assemblage</Label>
+         <Value>assemblage</Value>
+      </Item>
+      <Item>
+         <Label>Assessor Restricted Value</Label>
+         <Value>assessor-restricted-value</Value>
+      </Item>
+      <Item>
+         <Label>Bank Sale</Label>
+         <Value>bank-sale</Value>
+      </Item>
+      <Item>
+         <Label>Below Min Down Payment</Label>
+         <Value>below-min-down-payment</Value>
+      </Item>
+      <Item>
+         <Label>Correction Deed</Label>
+         <Value>correction-deed</Value>
+      </Item>
+      <Item>
+         <Label>Court Ordered Value</Label>
+         <Value>court-ordered-value</Value>
+      </Item>
+      <Item>
+         <Label>DOR Code 1</Label>
+         <Value>auditor-id-skipped</Value>
+      </Item>
+      <Item>
+         <Label>Duplicate CRV</Label>
+         <Value>duplicate-crv</Value>
+      </Item>
+      <Item>
+         <Label>Excessive Non-Real Property</Label>
+         <Value>excessive-non-real-property</Value>
+      </Item>
+      <Item>
+         <Label>Forced Sale</Label>
+         <Value>forced-sale</Value>
+      </Item>
+      <Item>
+         <Label>Government or Exempt</Label>
+         <Value>government-or-exempt-party</Value>
+      </Item>
+      <Item>
+         <Label>Leaseback</Label>
+         <Value>leaseback</Value>
+      </Item>
+      <Item>
+         <Label>Multi County Sale</Label>
+         <Value>multi-county-sale</Value>
+      </Item>
+      <Item>
+         <Label>Not Available Or Split</Label>
+         <Value>not-available-or-split</Value>
+      </Item>
+      <Item>
+         <Label>Not Typical Market</Label>
+         <Value>not-typical-market </Value>
+      </Item>
+      <Item>
+         <Label>Nursing or Mfg. Home</Label>
+         <Value>nursing-home-mfg-home-park</Value>
+      </Item>
+      <Item>
+         <Label>Old Sale</Label>
+         <Value>old-sale</Value>
+      </Item>
+      <Item>
+         <Label>Partial Interest Sale</Label>
+         <Value>partial-interest-sale</Value>
+      </Item>
+      <Item>
+         <Label>Physical Change</Label>
+         <Value>physical-change</Value>
+      </Item>
+      <Item>
+         <Label>Prior Interest Sale</Label>
+         <Value>prior-interest-sale</Value>
+      </Item>
+      <Item>
+         <Label>Regional Rep Reject See Note</Label>
+         <Value>regional-rep-reject</Value>
+      </Item>
+      <Item>
+         <Label>Relative Sale</Label>
+         <Value>relative-sale</Value>
+      </Item>
+      <Item>
+         <Label>Relocation</Label>
+         <Value>relocation</Value>
+      </Item>
+      <Item>
+         <Label>Rewrite of Terms</Label>
+         <Value>rewrite-of-terms</Value>
+      </Item>
+      <Item>
+         <Label>Sale Contract or Mortgage</Label>
+         <Value>sale-contract-or-mortgage</Value>
+      </Item>
+      <Item>
+         <Label>Sale Under Minimum</Label>
+         <Value>sale-under-minimum</Value>
+      </Item>
+      <Item>
+         <Label>Trade or Gift</Label>
+         <Value>trade-or-gift</Value>
+      </Item>
+      <Item>
+         <Label>Unusual Financing</Label>
+         <Value>unusual-financing</Value>
+      </Item>
+      <Item>
+         <Label>Use Change</Label>
+         <Value>use-change</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

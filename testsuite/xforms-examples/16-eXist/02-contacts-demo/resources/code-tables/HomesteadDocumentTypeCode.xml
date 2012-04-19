@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>HomesteadDocumentTypeCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Duplicate Homestead</Label>
+         <Value>duplicate-homestead</Value>
+      </Item>
+      <Item>
+         <Label>Property Tax Refund</Label>
+         <Value>property-tax-refund</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

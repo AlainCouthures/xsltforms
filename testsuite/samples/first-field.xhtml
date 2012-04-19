@@ -1,0 +1,27 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:ev="http://www.w3.org/2001/xml-events"
+	 >
+   <head>
+      <title>Initial Cursor Positioning</title>
+      <xf:model>
+          <xf:instance>
+              <data xmlns="">
+                  <element1/>
+              </data>
+          </xf:instance>
+ 
+      <xf:action ev:event="xforms-ready">
+         <xf:setfocus control="first-field" />
+      </xf:action>
+      </xf:model>
+   </head>
+   <body>
+      <h3>Initial Cursor Positioning</h3>
+      <xf:input ref="element1" id="first-field">
+         <xf:label>Element One:</xf:label>
+      </xf:input>
+   </body>
+</html>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:atom="http://www.w3.org/2005/Atom">
+	<head>
+		<title>Atom Editor</title>
+		<xf:model>
+			<style type="text/css">
+				body {
+					font-family: sans-serif;
+				}
+				group {
+					border: solid 1px black;
+				}
+			</style>
+			<xf:instance xmlns="" src="feed.xml" />
+		</xf:model>
+	</head>
+	<body>
+		<h1>Atom Editor v0.1</h1>
+		<xf:group>
+			<xf:label class="group-label">Author</xf:label>
+			<br />
+			<xf:input ref="/atom:feed/atom:entry/atom:author/atom:name" incremental="true">
+				<xf:label>Author Name:</xf:label>
+			</xf:input>
+			<br />
+			<xf:input ref="/atom:feed/atom:entry/atom:author/atom:uri" incremental="true">
+				<xf:label>URI:</xf:label>
+			</xf:input>
+			<br />
+			<xf:input ref="/atom:feed/atom:entry/atom:author/atom:email" incremental="true">
+				<xf:label>E-mail:</xf:label>
+			</xf:input>
+			<br />
+			<xf:trigger>
+				<xf:label>Add</xf:label>
+			</xf:trigger>
+			<xf:trigger>
+				<xf:label>Delete</xf:label>
+			</xf:trigger>
+			<br />
+		</xf:group>
+		<xf:group>
+			<xf:label class="group-label">Category Term</xf:label>
+			<br />
+			<xf:input ref="/atom:feed/atom:entry/atom:category/@term" incremental="true">
+				<xf:label>Category Term:</xf:label>
+			</xf:input>
+			<br />
+			<xf:trigger>
+				<xf:label>Add</xf:label>
+			</xf:trigger>
+			<xf:trigger>
+				<xf:label>Delete</xf:label>
+			</xf:trigger>
+			<br />
+		</xf:group>
+		<xf:group>
+			<xf:label class="group-label">Contributor</xf:label>
+			<br />
+			<xf:input ref="/atom:feed/atom:entry/atom:contributor/atom:name" incremental="true">
+				<xf:label>Contributor Name:</xf:label>
+			</xf:input>
+			<br />
+			<xf:input ref="/atom:feed/atom:entry/atom:contributor/atom:uri" incremental="true">
+				<xf:label>URI:</xf:label>
+			</xf:input>
+			<br />
+			<xf:input ref="/atom:feed/atom:entry/atom:contributor/atom:email" incremental="true">
+				<xf:label>E-mail:</xf:label>
+			</xf:input>
+			<xf:trigger>
+				<xf:label>Add</xf:label>
+			</xf:trigger>
+			<xf:trigger>
+				<xf:label>Delete</xf:label>
+			</xf:trigger>
+			<br />
+		</xf:group>
+	</body>
+</html>

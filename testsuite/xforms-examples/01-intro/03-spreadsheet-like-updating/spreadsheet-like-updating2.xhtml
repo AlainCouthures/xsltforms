@@ -1,0 +1,44 @@
+<html
+xmlns="http://www.w3.org/1999/xhtml"
+xmlns:xf="http://www.w3.org/2002/xforms"
+xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <head>
+      <title>Demonstration of spreadsheet like update of XForms</title>
+      <xf:model>
+      	<xf:instance xmlns="">
+            <MySpreadsheet>
+            	<Data>
+               		<v>10.0</v>
+				</Data>
+				<Data>
+			   		<v>20.0</v>
+				</Data>
+				<Data>
+			   		<v>30.0</v>
+				</Data>
+			 	<sum/>
+			 	<avg/>
+			 	<min/>
+				<max/>
+            </MySpreadsheet>
+        </xf:instance>
+		<xf:bind nodeset="/MySpreadsheet/sum" calculate="sum(/MySpreadsheet/Data/v)" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/avg" calculate="avg(/MySpreadsheet/Data/v)" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/min" calculate="min(/MySpreadsheet/Data/v)" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/max" calculate="max(/MySpreadsheet/Data/v)" type="xs:decimal"/>
+      </xf:model>
+   </head>
+   <body>
+       <p>Demonstration of Spreadsheet-like updates.</p>
+        <xf:group nodeset="/MySpreadsheet">  
+		<xf:repeat nodeset="/MySpreadsheet/Data">
+			<xf:input ref="v"/>
+		</xf:repeat>
+			Sum= <xf:output ref="sum"/><br/>
+			Avg= <xf:output ref="avg"/><br/>
+			Min= <xf:output ref="min"/><br/>
+			Max= <xf:output ref="max"/>
+		</xf:group>
+	</body>
+</html>

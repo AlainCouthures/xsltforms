@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <head>
+      <title>Controlling Input Field Width</title>
+      <style type="text/css">
+   @namespace xf {"http://www.w3.org/2002/xforms"};
+   body {
+      font-family: Helvetica;sans-serif;
+   }
+   
+label, legend {
+      font-weight: bold;
+   }
+
+   /* The default field width */
+   .xf-value { width: 100px}
+
+   /* custom field width overrides relative to current font size */
+   / * ex is the height of the lowecase 'x' character in the current font */
+   /* em is the current font size in pixels */
+   .PersonGivenName .xf-value {width:20ex}
+   .PersonMiddleName .xf-value {width:15ex}
+   .PersonSurName .xf-value {width:25ex}
+   .LocationCityName .xf-value {width:20ex}
+   .LocationStateCode .xf-value {width:2em}
+   .LocationPostalID .xf-value {width:10ex}
+   </style>
+      <xf:model>
+         <xf:instance xmlns="">
+            <Data>
+               <PersonGivenName>John</PersonGivenName>
+               <PersonMiddleName>George</PersonMiddleName>
+               <PersonSurName>Doe</PersonSurName>
+               <LocationCityName>Anytown</LocationCityName>
+               <LocationStateCode>MM</LocationStateCode>
+                <LocationPostalID>55123-1234</LocationPostalID>
+            </Data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <fieldset>
+      <legend>Name and Address</legend>
+       <xf:input class="PersonGivenName" ref="/Data/PersonGivenName" incremental="true">
+         <xf:label>First:</xf:label>
+       </xf:input>
+       <xf:input class="PersonMiddleName"  ref="/Data/PersonMiddleName" incremental="true">
+         <xf:label>Middle:</xf:label>
+       </xf:input>
+       <xf:input class="PersonSurName" ref="/Data/PersonSurName" incremental="true">
+         <xf:label>Last:</xf:label>
+       </xf:input>
+       <br/>
+       <xf:input class="LocationCityName" ref="/Data/LocationCityName" incremental="true">
+         <xf:label>City:</xf:label>
+       </xf:input>
+       <xf:input class="LocationStateCode" ref="/Data/LocationStateCode" incremental="true">
+         <xf:label>Last Name:</xf:label>
+       </xf:input>
+       <xf:input class="LocationPostalID" ref="/Data/LocationPostalID" incremental="true">
+         <xf:label>Postal:</xf:label>
+       </xf:input>
+       </fieldset>
+
+       <xf:output ref="/Data/PersonGivenName">
+         <xf:label>First Name:</xf:label>
+       </xf:output>
+       <br/>
+       <xf:output ref="/Data/PersonMiddleName">
+         <xf:label>Middle Name:</xf:label>
+       </xf:output>
+       <br/>
+       <xf:output ref="/Data/PersonSurName">
+         <xf:label>Last Name:</xf:label>
+       </xf:output>
+        <br/>
+        <xf:output ref="/Data/LocationCityName">
+         <xf:label>City Name:</xf:label>
+       </xf:output>
+        <br/>
+       <xf:output ref="/Data/LocationStateCode">
+         <xf:label>State Code:</xf:label>
+       </xf:output>
+       <br/>
+       <xf:output ref="/Data/LocationPostalID">
+         <xf:label>Postal Code:</xf:label>
+       </xf:output>
+        <br/>
+   </body>
+</html>

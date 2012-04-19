@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE bindings>
+<bindings xmlns="http://www.mozilla.org/xbl">
+   <binding id="square">
+      <resources>
+         <stylesheet src="bind6.css"/>
+      </resources>
+      <content xmlns="http://www.w3.org/1999/xhtml">
+         <div anonid="square"/>
+         <button anonid="button" type="button">
+            <xbl:children/>
+         </button>
+      </content>
+      <implementation>
+         <field name="square"><![CDATA[
+      document.getAnonymousElementByAttribute(this, "anonid", "square")
+      ]]></field>
+         <field name="button"><![CDATA[
+      document.getAnonymousElementByAttribute(this, "anonid", "button")
+      ]]></field>
+         <method name="doDemo">
+            <body><![CDATA[
+        this.square.style.backgroundColor = "#cf4"
+        this.square.style.marginLeft = "20em"
+        this.button.setAttribute("disabled", "true")
+        setTimeout(this.clearDemo, 2000, this)
+        ]]></body>
+         </method>
+         <method name="clearDemo">
+            <parameter name="me"/>
+            <body><![CDATA[
+        me.square.style.backgroundColor = "transparent"
+        me.square.style.marginLeft = "0"
+        me.button.removeAttribute("disabled")
+        ]]></body>
+         </method>
+      </implementation>
+      <handlers>
+         <handler event="click" button="0"><![CDATA[
+     if (event.originalTarget == this.button) this.doDemo()
+     ]]></handler>
+      </handlers>
+   </binding>
+</bindings>

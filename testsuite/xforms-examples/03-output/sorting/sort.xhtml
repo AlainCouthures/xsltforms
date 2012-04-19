@@ -1,0 +1,92 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Sort in XForms</title>
+      <xf:model>
+         <xf:instance id="default-instance">
+            <data xmlns="">
+               <item>
+                  <name>B-item</name>
+                  <date>2001-05-03</date>
+               </item>
+               <item>
+                  <name>A-item</name>
+                  <date>2005-05-03</date>
+               </item>
+               <item>
+                  <name>Z-item</name>
+                  <date>2003-05-03</date>
+               </item>
+               <item>
+                  <name>D-item</name>
+                  <date>2002-05-03</date>
+               </item>
+            </data>
+         </xf:instance>
+         <xf:instance id="stylesheet">
+            <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns="">
+               <xsl:template match="/">
+                  <data>
+                     <xsl:apply-templates select="data/item">
+                        <xsl:sort type="string" select="name"/>
+                     </xsl:apply-templates>
+                  </data>
+               </xsl:template>
+               <!-- the identity template -->
+               <xsl:template match="*|@*|text()">
+                  <xsl:copy>
+                     <xsl:apply-templates select="*|text()|@*"/>
+                  </xsl:copy>
+               </xsl:template>
+            </xsl:stylesheet>
+         </xf:instance>
+      </xf:model>
+      <script type="text/javascript"><![CDATA[
+	  function sort_instance(id) {
+	    // We get the instance element
+	    var instanceElement = document.getElementById(id);
+		if (instanceElement!=null) {
+		  // XForms exposes the retrival of the instance document from the model element which *should*
+		  // be the parent for the instance element.
+		  var instance = instanceElement.parentNode.getInstanceDocument(id);
+		  if (instance!=null) {
+		    // Now creating the stylesheet, for this example the stylesheet document is also an instance
+			// by it can be loaded from many difference sources
+			var xslDom = instanceElement.parentNode.getInstanceDocument('stylesheet');
+			
+			// create an XSLTProcessor and attach the stylesheet
+		    var processor = new XSLTProcessor()
+			processor.importStylesheet(xslDom);
+			
+			// now we do the sorting transformation
+			var resultDom = processor.transformToDocument(instance, instance);
+			
+			// we then move the result info the instance dom
+			instance.removeChild(instance.documentElement);
+			instance.appendChild(resultDom.documentElement);
+			
+			// and performs the updates for XForms
+			instanceElement.parentNode.rebuild();
+			instanceElement.parentNode.recalculate();
+			instanceElement.parentNode.revalidate();
+			instanceElement.parentNode.refresh();
+		  }
+		}
+	  }
+	]]></script>
+   </head>
+   <body>
+      <xf:repeat nodeset="item">
+         <div>
+            <xf:input ref="name">
+               <xf:label>Name:</xf:label>
+            </xf:input>
+            <xf:input ref="date">
+               <xf:label>Date:</xf:label>
+            </xf:input>
+         </div>
+      </xf:repeat>
+      <div onclick="javascript:sort_instance('default-instance');">Sort</div>
+   </body>
+</html>

@@ -1,0 +1,1374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>MNSchoolDistrictCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>A C G C</Label>
+         <Value>2396</Value>
+      </Item>
+      <Item>
+         <Label>Ada Borup</Label>
+         <Value>2854</Value>
+      </Item>
+      <Item>
+         <Label>Adrian</Label>
+         <Value>511</Value>
+      </Item>
+      <Item>
+         <Label>Aitkin</Label>
+         <Value>1</Value>
+      </Item>
+      <Item>
+         <Label>Albany</Label>
+         <Value>745</Value>
+      </Item>
+      <Item>
+         <Label>Albert Lea</Label>
+         <Value>241</Value>
+      </Item>
+      <Item>
+         <Label>Alden</Label>
+         <Value>242</Value>
+      </Item>
+      <Item>
+         <Label>Alexandria</Label>
+         <Value>206</Value>
+      </Item>
+      <Item>
+         <Label>Annandale</Label>
+         <Value>876</Value>
+      </Item>
+      <Item>
+         <Label>Anoka</Label>
+         <Value>11</Value>
+      </Item>
+      <Item>
+         <Label>Ashby</Label>
+         <Value>261</Value>
+      </Item>
+      <Item>
+         <Label>Austin</Label>
+         <Value>492</Value>
+      </Item>
+      <Item>
+         <Label>Badger</Label>
+         <Value>676</Value>
+      </Item>
+      <Item>
+         <Label>Bagley</Label>
+         <Value>162</Value>
+      </Item>
+      <Item>
+         <Label>Balaton</Label>
+         <Value>411</Value>
+      </Item>
+      <Item>
+         <Label>Barnesville</Label>
+         <Value>146</Value>
+      </Item>
+      <Item>
+         <Label>Barnum</Label>
+         <Value>91</Value>
+      </Item>
+      <Item>
+         <Label>Battle Lake</Label>
+         <Value>542</Value>
+      </Item>
+      <Item>
+         <Label>Becker</Label>
+         <Value>726</Value>
+      </Item>
+      <Item>
+         <Label>Belgrade Brooten Elrosa</Label>
+         <Value>2364</Value>
+      </Item>
+      <Item>
+         <Label>Belle Plaine</Label>
+         <Value>716</Value>
+      </Item>
+      <Item>
+         <Label>Bellingham</Label>
+         <Value>371</Value>
+      </Item>
+      <Item>
+         <Label>Bemidji</Label>
+         <Value>31</Value>
+      </Item>
+      <Item>
+         <Label>Benson</Label>
+         <Value>777</Value>
+      </Item>
+      <Item>
+         <Label>Bertha Hewitt</Label>
+         <Value>786</Value>
+      </Item>
+      <Item>
+         <Label>Big Lake</Label>
+         <Value>727</Value>
+      </Item>
+      <Item>
+         <Label>Bird Island Olivia</Label>
+         <Value>2534</Value>
+      </Item>
+      <Item>
+         <Label>Blackduck</Label>
+         <Value>32</Value>
+      </Item>
+      <Item>
+         <Label>Blooming Prairie</Label>
+         <Value>756</Value>
+      </Item>
+      <Item>
+         <Label>Bloomington</Label>
+         <Value>271</Value>
+      </Item>
+      <Item>
+         <Label>Blue Earth Area</Label>
+         <Value>2860</Value>
+      </Item>
+      <Item>
+         <Label>Braham</Label>
+         <Value>314</Value>
+      </Item>
+      <Item>
+         <Label>Brainerd</Label>
+         <Value>181</Value>
+      </Item>
+      <Item>
+         <Label>Brandon</Label>
+         <Value>207</Value>
+      </Item>
+      <Item>
+         <Label>Breckenridge</Label>
+         <Value>846</Value>
+      </Item>
+      <Item>
+         <Label>Brewster</Label>
+         <Value>513</Value>
+      </Item>
+      <Item>
+         <Label>Brooklyn Center</Label>
+         <Value>286</Value>
+      </Item>
+      <Item>
+         <Label>Browerville</Label>
+         <Value>787</Value>
+      </Item>
+      <Item>
+         <Label>Browns Valley</Label>
+         <Value>801</Value>
+      </Item>
+      <Item>
+         <Label>Brownton Stewart</Label>
+         <Value>2887</Value>
+      </Item>
+      <Item>
+         <Label>Buffalo</Label>
+         <Value>877</Value>
+      </Item>
+      <Item>
+         <Label>Buffalo Lake Hector</Label>
+         <Value>2159</Value>
+      </Item>
+      <Item>
+         <Label>Burnsville</Label>
+         <Value>191</Value>
+      </Item>
+      <Item>
+         <Label>Butterfield</Label>
+         <Value>836</Value>
+      </Item>
+      <Item>
+         <Label>Byron</Label>
+         <Value>531</Value>
+      </Item>
+      <Item>
+         <Label>Caledonia</Label>
+         <Value>299</Value>
+      </Item>
+      <Item>
+         <Label>Cambridge</Label>
+         <Value>911</Value>
+      </Item>
+      <Item>
+         <Label>Campbell</Label>
+         <Value>852</Value>
+      </Item>
+      <Item>
+         <Label>Canby</Label>
+         <Value>891</Value>
+      </Item>
+      <Item>
+         <Label>Cannon Falls</Label>
+         <Value>252</Value>
+      </Item>
+      <Item>
+         <Label>Carlton</Label>
+         <Value>93</Value>
+      </Item>
+      <Item>
+         <Label>Cass Lake</Label>
+         <Value>115</Value>
+      </Item>
+      <Item>
+         <Label>Cedar Mountain</Label>
+         <Value>2754</Value>
+      </Item>
+      <Item>
+         <Label>Centennial</Label>
+         <Value>12</Value>
+      </Item>
+      <Item>
+         <Label>Chaska</Label>
+         <Value>112</Value>
+      </Item>
+      <Item>
+         <Label>Chatfield</Label>
+         <Value>227</Value>
+      </Item>
+      <Item>
+         <Label>Chisago Lakes Area</Label>
+         <Value>2144</Value>
+      </Item>
+      <Item>
+         <Label>Chisholm</Label>
+         <Value>695</Value>
+      </Item>
+      <Item>
+         <Label>Chokio Alberta</Label>
+         <Value>771</Value>
+      </Item>
+      <Item>
+         <Label>Clearbrook Gonvick</Label>
+         <Value>2311</Value>
+      </Item>
+      <Item>
+         <Label>Cleveland</Label>
+         <Value>391</Value>
+      </Item>
+      <Item>
+         <Label>Climax</Label>
+         <Value>592</Value>
+      </Item>
+      <Item>
+         <Label>Clinton Graceville Beards</Label>
+         <Value>2888</Value>
+      </Item>
+      <Item>
+         <Label>Cloquet</Label>
+         <Value>94</Value>
+      </Item>
+      <Item>
+         <Label>Cold Spring</Label>
+         <Value>750</Value>
+      </Item>
+      <Item>
+         <Label>Coleraine</Label>
+         <Value>316</Value>
+      </Item>
+      <Item>
+         <Label>Columbia Heights</Label>
+         <Value>13</Value>
+      </Item>
+      <Item>
+         <Label>Comfrey</Label>
+         <Value>81</Value>
+      </Item>
+      <Item>
+         <Label>Cook County</Label>
+         <Value>166</Value>
+      </Item>
+      <Item>
+         <Label>Cromwell</Label>
+         <Value>95</Value>
+      </Item>
+      <Item>
+         <Label>Crookston</Label>
+         <Value>593</Value>
+      </Item>
+      <Item>
+         <Label>Crosby Ironton</Label>
+         <Value>182</Value>
+      </Item>
+      <Item>
+         <Label>Cyrus</Label>
+         <Value>611</Value>
+      </Item>
+      <Item>
+         <Label>Danube Renville Sacred H</Label>
+         <Value>2890</Value>
+      </Item>
+      <Item>
+         <Label>Dassel Cokato</Label>
+         <Value>466</Value>
+      </Item>
+      <Item>
+         <Label>Dawson Boyd</Label>
+         <Value>378</Value>
+      </Item>
+      <Item>
+         <Label>Deer River</Label>
+         <Value>317</Value>
+      </Item>
+      <Item>
+         <Label>Delano</Label>
+         <Value>879</Value>
+      </Item>
+      <Item>
+         <Label>Detroit Lakes</Label>
+         <Value>22</Value>
+      </Item>
+      <Item>
+         <Label>Dilworth Glyndon Felton</Label>
+         <Value>2164</Value>
+      </Item>
+      <Item>
+         <Label>Dover Eyota</Label>
+         <Value>533</Value>
+      </Item>
+      <Item>
+         <Label>Duluth</Label>
+         <Value>709</Value>
+      </Item>
+      <Item>
+         <Label>Eagle Valley</Label>
+         <Value>2759</Value>
+      </Item>
+      <Item>
+         <Label>East Central</Label>
+         <Value>2580</Value>
+      </Item>
+      <Item>
+         <Label>East Grand Forks</Label>
+         <Value>595</Value>
+      </Item>
+      <Item>
+         <Label>Eden Prairie</Label>
+         <Value>272</Value>
+      </Item>
+      <Item>
+         <Label>Eden Valley Watkins</Label>
+         <Value>463</Value>
+      </Item>
+      <Item>
+         <Label>Edgerton</Label>
+         <Value>581</Value>
+      </Item>
+      <Item>
+         <Label>Edina</Label>
+         <Value>273</Value>
+      </Item>
+      <Item>
+         <Label>Elgin Millville</Label>
+         <Value>806</Value>
+      </Item>
+      <Item>
+         <Label>Elk River</Label>
+         <Value>728</Value>
+      </Item>
+      <Item>
+         <Label>Ellsworth</Label>
+         <Value>514</Value>
+      </Item>
+      <Item>
+         <Label>Ely</Label>
+         <Value>696</Value>
+      </Item>
+      <Item>
+         <Label>Esko</Label>
+         <Value>99</Value>
+      </Item>
+      <Item>
+         <Label>Evansville</Label>
+         <Value>208</Value>
+      </Item>
+      <Item>
+         <Label>Eveleth Gilbert</Label>
+         <Value>2154</Value>
+      </Item>
+      <Item>
+         <Label>Fairmont Area</Label>
+         <Value>2752</Value>
+      </Item>
+      <Item>
+         <Label>Faribault</Label>
+         <Value>656</Value>
+      </Item>
+      <Item>
+         <Label>Farmington</Label>
+         <Value>192</Value>
+      </Item>
+      <Item>
+         <Label>Fergus Falls</Label>
+         <Value>544</Value>
+      </Item>
+      <Item>
+         <Label>Fertile</Label>
+         <Value>599</Value>
+      </Item>
+      <Item>
+         <Label>Fillmore Central</Label>
+         <Value>2198</Value>
+      </Item>
+      <Item>
+         <Label>Fisher</Label>
+         <Value>600</Value>
+      </Item>
+      <Item>
+         <Label>Floodwood</Label>
+         <Value>698</Value>
+      </Item>
+      <Item>
+         <Label>Foley</Label>
+         <Value>51</Value>
+      </Item>
+      <Item>
+         <Label>Forest Lake</Label>
+         <Value>831</Value>
+      </Item>
+      <Item>
+         <Label>Fosston</Label>
+         <Value>601</Value>
+      </Item>
+      <Item>
+         <Label>Franconia</Label>
+         <Value>993</Value>
+      </Item>
+      <Item>
+         <Label>Frazee Vergas</Label>
+         <Value>23</Value>
+      </Item>
+      <Item>
+         <Label>Fridley</Label>
+         <Value>14</Value>
+      </Item>
+      <Item>
+         <Label>Fulda</Label>
+         <Value>505</Value>
+      </Item>
+      <Item>
+         <Label>Gibbon Fairfax Winthrop</Label>
+         <Value>2365</Value>
+      </Item>
+      <Item>
+         <Label>Glencoe Silver Lake</Label>
+         <Value>2859</Value>
+      </Item>
+      <Item>
+         <Label>Glenvillen Emmons</Label>
+         <Value>2886</Value>
+      </Item>
+      <Item>
+         <Label>Goodhue</Label>
+         <Value>253</Value>
+      </Item>
+      <Item>
+         <Label>Goodridge</Label>
+         <Value>561</Value>
+      </Item>
+      <Item>
+         <Label>Granada Hunt E Chain</Label>
+         <Value>2536</Value>
+      </Item>
+      <Item>
+         <Label>Grand Meadow</Label>
+         <Value>495</Value>
+      </Item>
+      <Item>
+         <Label>Grand Rapids</Label>
+         <Value>318</Value>
+      </Item>
+      <Item>
+         <Label>Greenbush Middle River</Label>
+         <Value>2683</Value>
+      </Item>
+      <Item>
+         <Label>Grygla Gatzke</Label>
+         <Value>447</Value>
+      </Item>
+      <Item>
+         <Label>Halstad Hendrum</Label>
+         <Value>2527</Value>
+      </Item>
+      <Item>
+         <Label>Hancock</Label>
+         <Value>768</Value>
+      </Item>
+      <Item>
+         <Label>Hastings</Label>
+         <Value>200</Value>
+      </Item>
+      <Item>
+         <Label>Hawley</Label>
+         <Value>150</Value>
+      </Item>
+      <Item>
+         <Label>Hayfield</Label>
+         <Value>203</Value>
+      </Item>
+      <Item>
+         <Label>Hendricks</Label>
+         <Value>402</Value>
+      </Item>
+      <Item>
+         <Label>Henning</Label>
+         <Value>545</Value>
+      </Item>
+      <Item>
+         <Label>Herman</Label>
+         <Value>264</Value>
+      </Item>
+      <Item>
+         <Label>Hermantown</Label>
+         <Value>700</Value>
+      </Item>
+      <Item>
+         <Label>Heron Lake Okabena</Label>
+         <Value>330</Value>
+      </Item>
+      <Item>
+         <Label>Hibbing</Label>
+         <Value>701</Value>
+      </Item>
+      <Item>
+         <Label>Hill City</Label>
+         <Value>2</Value>
+      </Item>
+      <Item>
+         <Label>Hills Beaver Creek</Label>
+         <Value>671</Value>
+      </Item>
+      <Item>
+         <Label>Hinckley Finlayson</Label>
+         <Value>2165</Value>
+      </Item>
+      <Item>
+         <Label>Holdingford</Label>
+         <Value>738</Value>
+      </Item>
+      <Item>
+         <Label>Hopkins</Label>
+         <Value>270</Value>
+      </Item>
+      <Item>
+         <Label>Houston</Label>
+         <Value>294</Value>
+      </Item>
+      <Item>
+         <Label>Howard Lk Waverly Winst</Label>
+         <Value>2687</Value>
+      </Item>
+      <Item>
+         <Label>Hutchinson</Label>
+         <Value>423</Value>
+      </Item>
+      <Item>
+         <Label>International Falls</Label>
+         <Value>361</Value>
+      </Item>
+      <Item>
+         <Label>Inver Grove</Label>
+         <Value>199</Value>
+      </Item>
+      <Item>
+         <Label>Isle</Label>
+         <Value>473</Value>
+      </Item>
+      <Item>
+         <Label>Ivanhoe</Label>
+         <Value>403</Value>
+      </Item>
+      <Item>
+         <Label>Jackson County Central</Label>
+         <Value>2895</Value>
+      </Item>
+      <Item>
+         <Label>Janesville Wald Pember</Label>
+         <Value>2835</Value>
+      </Item>
+      <Item>
+         <Label>Jordan</Label>
+         <Value>717</Value>
+      </Item>
+      <Item>
+         <Label>Karlstad Strandquist</Label>
+         <Value>2358</Value>
+      </Item>
+      <Item>
+         <Label>Kasson Mantorville</Label>
+         <Value>204</Value>
+      </Item>
+      <Item>
+         <Label>Kelliher</Label>
+         <Value>36</Value>
+      </Item>
+      <Item>
+         <Label>Kenyon Wanamingo</Label>
+         <Value>2172</Value>
+      </Item>
+      <Item>
+         <Label>Kerkhoven Murdoch</Label>
+         <Value>775</Value>
+      </Item>
+      <Item>
+         <Label>Kimball</Label>
+         <Value>739</Value>
+      </Item>
+      <Item>
+         <Label>Kingsland</Label>
+         <Value>2137</Value>
+      </Item>
+      <Item>
+         <Label>Kittson Central</Label>
+         <Value>2171</Value>
+      </Item>
+      <Item>
+         <Label>Lac Qui Parle Valley</Label>
+         <Value>2853</Value>
+      </Item>
+      <Item>
+         <Label>La Crescent</Label>
+         <Value>300</Value>
+      </Item>
+      <Item>
+         <Label>Lake Benton</Label>
+         <Value>404</Value>
+      </Item>
+      <Item>
+         <Label>Lake City</Label>
+         <Value>813</Value>
+      </Item>
+      <Item>
+         <Label>Lake Crystal Welcome</Label>
+         <Value>2071</Value>
+      </Item>
+      <Item>
+         <Label>Lake Of The Woods</Label>
+         <Value>390</Value>
+      </Item>
+      <Item>
+         <Label>Lake Park Audubon</Label>
+         <Value>2889</Value>
+      </Item>
+      <Item>
+         <Label>Lake Superior</Label>
+         <Value>381</Value>
+      </Item>
+      <Item>
+         <Label>Lakeview</Label>
+         <Value>2167</Value>
+      </Item>
+      <Item>
+         <Label>Lakeville</Label>
+         <Value>194</Value>
+      </Item>
+      <Item>
+         <Label>Lancaster</Label>
+         <Value>356</Value>
+      </Item>
+      <Item>
+         <Label>Lanesboro</Label>
+         <Value>229</Value>
+      </Item>
+      <Item>
+         <Label>Laporte</Label>
+         <Value>306</Value>
+      </Item>
+      <Item>
+         <Label>Le Center</Label>
+         <Value>392</Value>
+      </Item>
+      <Item>
+         <Label>Le Roy Ostrander</Label>
+         <Value>499</Value>
+      </Item>
+      <Item>
+         <Label>Lester Prairie</Label>
+         <Value>424</Value>
+      </Item>
+      <Item>
+         <Label>Le Sueur Henderson</Label>
+         <Value>2397</Value>
+      </Item>
+      <Item>
+         <Label>Lewiston</Label>
+         <Value>857</Value>
+      </Item>
+      <Item>
+         <Label>Litchfield</Label>
+         <Value>465</Value>
+      </Item>
+      <Item>
+         <Label>Little Falls</Label>
+         <Value>482</Value>
+      </Item>
+      <Item>
+         <Label>Little Fork Big Falls</Label>
+         <Value>362</Value>
+      </Item>
+      <Item>
+         <Label>Long Prairie Grey Eagle</Label>
+         <Value>2753</Value>
+      </Item>
+      <Item>
+         <Label>Luverne Magnolia</Label>
+         <Value>2184</Value>
+      </Item>
+      <Item>
+         <Label>Lyle</Label>
+         <Value>497</Value>
+      </Item>
+      <Item>
+         <Label>Lynd</Label>
+         <Value>415</Value>
+      </Item>
+      <Item>
+         <Label>Mabel Canton</Label>
+         <Value>238</Value>
+      </Item>
+      <Item>
+         <Label>Maccray</Label>
+         <Value>2180</Value>
+      </Item>
+      <Item>
+         <Label>Madelia</Label>
+         <Value>837</Value>
+      </Item>
+      <Item>
+         <Label>Mahnomen</Label>
+         <Value>432</Value>
+      </Item>
+      <Item>
+         <Label>Mahtomedi</Label>
+         <Value>832</Value>
+      </Item>
+      <Item>
+         <Label>Mankato</Label>
+         <Value>77</Value>
+      </Item>
+      <Item>
+         <Label>Maple Lake</Label>
+         <Value>881</Value>
+      </Item>
+      <Item>
+         <Label>Maple River</Label>
+         <Value>2135</Value>
+      </Item>
+      <Item>
+         <Label>Marshall</Label>
+         <Value>413</Value>
+      </Item>
+      <Item>
+         <Label>Martin County West</Label>
+         <Value>2448</Value>
+      </Item>
+      <Item>
+         <Label>Mc Gregor</Label>
+         <Value>4</Value>
+      </Item>
+      <Item>
+         <Label>Medford</Label>
+         <Value>763</Value>
+      </Item>
+      <Item>
+         <Label>Melrose</Label>
+         <Value>740</Value>
+      </Item>
+      <Item>
+         <Label>Menahga</Label>
+         <Value>821</Value>
+      </Item>
+      <Item>
+         <Label>Mesabi East</Label>
+         <Value>2711</Value>
+      </Item>
+      <Item>
+         <Label>Milaca</Label>
+         <Value>912</Value>
+      </Item>
+      <Item>
+         <Label>Milroy</Label>
+         <Value>635</Value>
+      </Item>
+      <Item>
+         <Label>Minneapolis</Label>
+         <Value>991</Value>
+      </Item>
+      <Item>
+         <Label>Minneota</Label>
+         <Value>414</Value>
+      </Item>
+      <Item>
+         <Label>Minnetonka</Label>
+         <Value>276</Value>
+      </Item>
+      <Item>
+         <Label>Minnewaska</Label>
+         <Value>2149</Value>
+      </Item>
+      <Item>
+         <Label>Montevideo</Label>
+         <Value>129</Value>
+      </Item>
+      <Item>
+         <Label>Montgomery</Label>
+         <Value>394</Value>
+      </Item>
+      <Item>
+         <Label>Monticello</Label>
+         <Value>882</Value>
+      </Item>
+      <Item>
+         <Label>Moorhead</Label>
+         <Value>152</Value>
+      </Item>
+      <Item>
+         <Label>Moose Lake</Label>
+         <Value>97</Value>
+      </Item>
+      <Item>
+         <Label>Mora</Label>
+         <Value>332</Value>
+      </Item>
+      <Item>
+         <Label>Morris</Label>
+         <Value>769</Value>
+      </Item>
+      <Item>
+         <Label>Mounds View</Label>
+         <Value>621</Value>
+      </Item>
+      <Item>
+         <Label>Mountain Iron Buhl</Label>
+         <Value>712</Value>
+      </Item>
+      <Item>
+         <Label>Mountain Lake</Label>
+         <Value>173</Value>
+      </Item>
+      <Item>
+         <Label>Murray County</Label>
+         <Value>2169</Value>
+      </Item>
+      <Item>
+         <Label>Nashwauk Keewatin</Label>
+         <Value>319</Value>
+      </Item>
+      <Item>
+         <Label>Nett Lake</Label>
+         <Value>707</Value>
+      </Item>
+      <Item>
+         <Label>Nevis</Label>
+         <Value>308</Value>
+      </Item>
+      <Item>
+         <Label>Newfolden</Label>
+         <Value>441</Value>
+      </Item>
+      <Item>
+         <Label>New London Spicer</Label>
+         <Value>345</Value>
+      </Item>
+      <Item>
+         <Label>New Prague</Label>
+         <Value>721</Value>
+      </Item>
+      <Item>
+         <Label>New Ulm Hanska</Label>
+         <Value>88</Value>
+      </Item>
+      <Item>
+         <Label>New York Mills</Label>
+         <Value>553</Value>
+      </Item>
+      <Item>
+         <Label>Nicollet</Label>
+         <Value>507</Value>
+      </Item>
+      <Item>
+         <Label>Norman County East</Label>
+         <Value>2215</Value>
+      </Item>
+      <Item>
+         <Label>North Branch</Label>
+         <Value>138</Value>
+      </Item>
+      <Item>
+         <Label>Northfield</Label>
+         <Value>659</Value>
+      </Item>
+      <Item>
+         <Label>Norwood</Label>
+         <Value>108</Value>
+      </Item>
+      <Item>
+         <Label>No St Paul Maplewood</Label>
+         <Value>622</Value>
+      </Item>
+      <Item>
+         <Label>Nrheg</Label>
+         <Value>2168</Value>
+      </Item>
+      <Item>
+         <Label>Ogilvie</Label>
+         <Value>333</Value>
+      </Item>
+      <Item>
+         <Label>Oklee</Label>
+         <Value>627</Value>
+      </Item>
+      <Item>
+         <Label>Onamia</Label>
+         <Value>480</Value>
+      </Item>
+      <Item>
+         <Label>Orono</Label>
+         <Value>278</Value>
+      </Item>
+      <Item>
+         <Label>Ortonville</Label>
+         <Value>62</Value>
+      </Item>
+      <Item>
+         <Label>Osakis</Label>
+         <Value>213</Value>
+      </Item>
+      <Item>
+         <Label>Osseo</Label>
+         <Value>279</Value>
+      </Item>
+      <Item>
+         <Label>Owatonna</Label>
+         <Value>761</Value>
+      </Item>
+      <Item>
+         <Label>Parkers Prairie</Label>
+         <Value>547</Value>
+      </Item>
+      <Item>
+         <Label>Park Rapids</Label>
+         <Value>309</Value>
+      </Item>
+      <Item>
+         <Label>Paynesville</Label>
+         <Value>741</Value>
+      </Item>
+      <Item>
+         <Label>Pelican Rapids</Label>
+         <Value>548</Value>
+      </Item>
+      <Item>
+         <Label>Pequot Lakes</Label>
+         <Value>186</Value>
+      </Item>
+      <Item>
+         <Label>Perham</Label>
+         <Value>549</Value>
+      </Item>
+      <Item>
+         <Label>Pierz</Label>
+         <Value>484</Value>
+      </Item>
+      <Item>
+         <Label>Pillager</Label>
+         <Value>116</Value>
+      </Item>
+      <Item>
+         <Label>Pine City</Label>
+         <Value>578</Value>
+      </Item>
+      <Item>
+         <Label>Pine Island</Label>
+         <Value>255</Value>
+      </Item>
+      <Item>
+         <Label>Pine River Backus</Label>
+         <Value>2174</Value>
+      </Item>
+      <Item>
+         <Label>Pipestone Jasper</Label>
+         <Value>2689</Value>
+      </Item>
+      <Item>
+         <Label>Plainview</Label>
+         <Value>810</Value>
+      </Item>
+      <Item>
+         <Label>Plummer</Label>
+         <Value>628</Value>
+      </Item>
+      <Item>
+         <Label>Princeton</Label>
+         <Value>477</Value>
+      </Item>
+      <Item>
+         <Label>Prinsburg</Label>
+         <Value>998</Value>
+      </Item>
+      <Item>
+         <Label>Prior Lake</Label>
+         <Value>719</Value>
+      </Item>
+      <Item>
+         <Label>Proctor</Label>
+         <Value>704</Value>
+      </Item>
+      <Item>
+         <Label>Randolph</Label>
+         <Value>195</Value>
+      </Item>
+      <Item>
+         <Label>Red Lake</Label>
+         <Value>38</Value>
+      </Item>
+      <Item>
+         <Label>Red Lake Falls</Label>
+         <Value>630</Value>
+      </Item>
+      <Item>
+         <Label>Red Wing</Label>
+         <Value>256</Value>
+      </Item>
+      <Item>
+         <Label>Redwood Falls Area</Label>
+         <Value>2897</Value>
+      </Item>
+      <Item>
+         <Label>Remer</Label>
+         <Value>118</Value>
+      </Item>
+      <Item>
+         <Label>Richfield</Label>
+         <Value>280</Value>
+      </Item>
+      <Item>
+         <Label>Robbinsdale</Label>
+         <Value>281</Value>
+      </Item>
+      <Item>
+         <Label>Rochester</Label>
+         <Value>535</Value>
+      </Item>
+      <Item>
+         <Label>Rockford</Label>
+         <Value>883</Value>
+      </Item>
+      <Item>
+         <Label>Roseau</Label>
+         <Value>682</Value>
+      </Item>
+      <Item>
+         <Label>Rosemount</Label>
+         <Value>196</Value>
+      </Item>
+      <Item>
+         <Label>Roseville</Label>
+         <Value>623</Value>
+      </Item>
+      <Item>
+         <Label>Rothsay</Label>
+         <Value>850</Value>
+      </Item>
+      <Item>
+         <Label>Round Lake</Label>
+         <Value>516</Value>
+      </Item>
+      <Item>
+         <Label>Royalton</Label>
+         <Value>485</Value>
+      </Item>
+      <Item>
+         <Label>Rush City</Label>
+         <Value>139</Value>
+      </Item>
+      <Item>
+         <Label>Rushford Peterson</Label>
+         <Value>239</Value>
+      </Item>
+      <Item>
+         <Label>Russell</Label>
+         <Value>418</Value>
+      </Item>
+      <Item>
+         <Label>Ruthton</Label>
+         <Value>584</Value>
+      </Item>
+      <Item>
+         <Label>Sartell</Label>
+         <Value>748</Value>
+      </Item>
+      <Item>
+         <Label>Sauk Centre</Label>
+         <Value>743</Value>
+      </Item>
+      <Item>
+         <Label>Sauk Rapids</Label>
+         <Value>47</Value>
+      </Item>
+      <Item>
+         <Label>Sebeka</Label>
+         <Value>820</Value>
+      </Item>
+      <Item>
+         <Label>Shakopee</Label>
+         <Value>720</Value>
+      </Item>
+      <Item>
+         <Label>Sibley East</Label>
+         <Value>2310</Value>
+      </Item>
+      <Item>
+         <Label>Sleepy Eye</Label>
+         <Value>84</Value>
+      </Item>
+      <Item>
+         <Label>South Koochiching</Label>
+         <Value>363</Value>
+      </Item>
+      <Item>
+         <Label>Southland</Label>
+         <Value>500</Value>
+      </Item>
+      <Item>
+         <Label>South St Paul</Label>
+         <Value>996</Value>
+      </Item>
+      <Item>
+         <Label>So Washington County</Label>
+         <Value>833</Value>
+      </Item>
+      <Item>
+         <Label>Springfield</Label>
+         <Value>85</Value>
+      </Item>
+      <Item>
+         <Label>Spring Grove</Label>
+         <Value>297</Value>
+      </Item>
+      <Item>
+         <Label>Spring Lake Park</Label>
+         <Value>16</Value>
+      </Item>
+      <Item>
+         <Label>St Anthony Village</Label>
+         <Value>282</Value>
+      </Item>
+      <Item>
+         <Label>Staples Motley</Label>
+         <Value>2170</Value>
+      </Item>
+      <Item>
+         <Label>St Charles</Label>
+         <Value>858</Value>
+      </Item>
+      <Item>
+         <Label>St Clair</Label>
+         <Value>75</Value>
+      </Item>
+      <Item>
+         <Label>St Cloud</Label>
+         <Value>742</Value>
+      </Item>
+      <Item>
+         <Label>Stephen Argyle Central</Label>
+         <Value>2856</Value>
+      </Item>
+      <Item>
+         <Label>Stewartville</Label>
+         <Value>534</Value>
+      </Item>
+      <Item>
+         <Label>St Francis</Label>
+         <Value>15</Value>
+      </Item>
+      <Item>
+         <Label>Stillwater</Label>
+         <Value>834</Value>
+      </Item>
+      <Item>
+         <Label>St James</Label>
+         <Value>840</Value>
+      </Item>
+      <Item>
+         <Label>St Louis County</Label>
+         <Value>2142</Value>
+      </Item>
+      <Item>
+         <Label>St Louis Park</Label>
+         <Value>283</Value>
+      </Item>
+      <Item>
+         <Label>St Michael Albertville</Label>
+         <Value>885</Value>
+      </Item>
+      <Item>
+         <Label>Storden Jeffers</Label>
+         <Value>2884</Value>
+      </Item>
+      <Item>
+         <Label>St Paul</Label>
+         <Value>625</Value>
+      </Item>
+      <Item>
+         <Label>St Peter</Label>
+         <Value>508</Value>
+      </Item>
+      <Item>
+         <Label>Swanville</Label>
+         <Value>486</Value>
+      </Item>
+      <Item>
+         <Label>Thief River Falls</Label>
+         <Value>564</Value>
+      </Item>
+      <Item>
+         <Label>Tracy</Label>
+         <Value>417</Value>
+      </Item>
+      <Item>
+         <Label>Triton</Label>
+         <Value>2125</Value>
+      </Item>
+      <Item>
+         <Label>Truman</Label>
+         <Value>458</Value>
+      </Item>
+      <Item>
+         <Label>Tyler</Label>
+         <Value>409</Value>
+      </Item>
+      <Item>
+         <Label>Ulen Hitterdal</Label>
+         <Value>914</Value>
+      </Item>
+      <Item>
+         <Label>Underwood</Label>
+         <Value>550</Value>
+      </Item>
+      <Item>
+         <Label>United South Central</Label>
+         <Value>2134</Value>
+      </Item>
+      <Item>
+         <Label>Upsala</Label>
+         <Value>487</Value>
+      </Item>
+      <Item>
+         <Label>Verndale</Label>
+         <Value>818</Value>
+      </Item>
+      <Item>
+         <Label>Virginia</Label>
+         <Value>706</Value>
+      </Item>
+      <Item>
+         <Label>Wabasha</Label>
+         <Value>811</Value>
+      </Item>
+      <Item>
+         <Label>Wabasso</Label>
+         <Value>640</Value>
+      </Item>
+      <Item>
+         <Label>Waconia</Label>
+         <Value>110</Value>
+      </Item>
+      <Item>
+         <Label>Wadena Deer Creek</Label>
+         <Value>2155</Value>
+      </Item>
+      <Item>
+         <Label>Walker Akeley</Label>
+         <Value>113</Value>
+      </Item>
+      <Item>
+         <Label>Warren Alvarado Olso</Label>
+         <Value>2176</Value>
+      </Item>
+      <Item>
+         <Label>Warroad</Label>
+         <Value>690</Value>
+      </Item>
+      <Item>
+         <Label>Waseca</Label>
+         <Value>829</Value>
+      </Item>
+      <Item>
+         <Label>Watertown Mayer</Label>
+         <Value>111</Value>
+      </Item>
+      <Item>
+         <Label>Waterville Elys Morris</Label>
+         <Value>2143</Value>
+      </Item>
+      <Item>
+         <Label>Waubun</Label>
+         <Value>435</Value>
+      </Item>
+      <Item>
+         <Label>Wayzata</Label>
+         <Value>284</Value>
+      </Item>
+      <Item>
+         <Label>Westbrook Walnut Grove</Label>
+         <Value>2898</Value>
+      </Item>
+      <Item>
+         <Label>West Central Area</Label>
+         <Value>2342</Value>
+      </Item>
+      <Item>
+         <Label>Westonka</Label>
+         <Value>277</Value>
+      </Item>
+      <Item>
+         <Label>West St Paul</Label>
+         <Value>197</Value>
+      </Item>
+      <Item>
+         <Label>Wheaton</Label>
+         <Value>803</Value>
+      </Item>
+      <Item>
+         <Label>White Bear Lake</Label>
+         <Value>624</Value>
+      </Item>
+      <Item>
+         <Label>Willmar</Label>
+         <Value>347</Value>
+      </Item>
+      <Item>
+         <Label>Willow River</Label>
+         <Value>577</Value>
+      </Item>
+      <Item>
+         <Label>Windom</Label>
+         <Value>177</Value>
+      </Item>
+      <Item>
+         <Label>Win E Mac</Label>
+         <Value>2609</Value>
+      </Item>
+      <Item>
+         <Label>Winona</Label>
+         <Value>861</Value>
+      </Item>
+      <Item>
+         <Label>Worthington</Label>
+         <Value>518</Value>
+      </Item>
+      <Item>
+         <Label>Wrenshall</Label>
+         <Value>100</Value>
+      </Item>
+      <Item>
+         <Label>Yellow Medicine East</Label>
+         <Value>2190</Value>
+      </Item>
+      <Item>
+         <Label>Zumbrota Mazeppa</Label>
+         <Value>2805</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

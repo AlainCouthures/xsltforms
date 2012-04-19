@@ -1,0 +1,83 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:sample="http://www.agencexml.com/sample">
+   <head>
+      <meta http-equiv="Content-Type" content="text/xml" />
+      <link rel="stylesheet" href="http://jsunittest.com/jsunittest/assets/unittest.cssx" type="text/css" />
+      <title>Conditional actions (@if) (If you get an unformatted page, run this from an App Server)</title>
+      <xf:model>
+         <xf:instance>
+            <sample:data>
+               <sample:condition>false</sample:condition>
+               <sample:a></sample:a>
+               <sample:b></sample:b>
+               <sample:c></sample:c>
+               <sample:d></sample:d>
+            </sample:data>
+         </xf:instance>
+         <xf:setvalue ev:event="xforms-ready" ref="sample:a" if="boolean-from-string(sample:a)">Twisty passages</xf:setvalue>
+         <xf:setvalue ev:event="xforms-ready" ref="sample:b" if="false()">all alike</xf:setvalue>
+         <xf:setvalue ev:event="xforms-ready" ref="sample:c" if="true()">XYZZY</xf:setvalue>
+         <xf:setvalue ev:event="xforms-ready" ref="sample:d">PLUGH</xf:setvalue>
+      </xf:model>
+   </head>
+   <body onload="$('console').style.display = 'block';">
+      <div id="xformControl">
+         <span>
+            <input type="checkbox" onclick="$('console').style.display = this.checked? 'block' : 'none';"  checked="checked"/> Debug
+         </span>
+      </div>
+      <p>This test contains four setvalue actions, 3 with @if. The first two eval to false(), the third to true()<br />
+         Correct behavior is for the first two inputs to be empty after loading completes, for the last two to contain values.
+      </p>   
+      <xf:input id="a" ref="sample:a" incremental="true">
+         <xf:label>Conditionally set (based on instance): </xf:label>
+      </xf:input>
+      <xf:input id="b" ref="sample:b" incremental="true">
+         <xf:label>Conditionally set (based on false()): </xf:label>
+      </xf:input>
+      <xf:input id="c" ref="sample:c" incremental="true">
+         <xf:label>Conditionally set (based on true()): </xf:label>
+      </xf:input>
+      <xf:input id="d" ref="sample:d" incremental="true">
+         <xf:label>Unconditionally set: </xf:label>
+      </xf:input>
+      
+      <br />
+      
+      <div id="testlog"></div>
+      
+      <script src="http://jsunittest.com/jsunittest/assets/jsunittest.js" type="text/javascript"></script>
+      <script type="text/javascript">
+         
+           
+           var gv = function(node) {
+             var result = "";
+             if (node.firstChild) {
+                result = node.firstChild.nodeValue;
+             }
+             return result;
+             
+           }
+        
+           new Test.Unit.Runner({
+             setup: function() {
+           },
+         
+           teardown: function() {
+         
+           },
+         
+           testConditionalActions: function() { with(this) {
+                              // is there a better way to do this?
+             assertEqual( "", gv(xforms.defaultModel.instances["xf-instance-0"].doc.childNodes[0].childNodes[1]) );
+             assertEqual( "", gv(xforms.defaultModel.instances["xf-instance-0"].doc.childNodes[0].childNodes[2]) );
+             assertEqual( "XYZZY", gv(xforms.defaultModel.instances["xf-instance-0"].doc.childNodes[0].childNodes[3]) );
+             assertEqual( "PLUGH", gv(xforms.defaultModel.instances["xf-instance-0"].doc.childNodes[0].childNodes[4]) );
+           }},
+         
+         });
+         
+      </script>
+      
+   </body>
+</html>
+

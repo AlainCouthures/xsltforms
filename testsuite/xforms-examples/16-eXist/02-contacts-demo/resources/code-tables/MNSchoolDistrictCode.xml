@@ -1,0 +1,1374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>MNSchoolDistrictCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>A C G C</Label>
+         <Value>acgc</Value>
+      </Item>
+      <Item>
+         <Label>Ada Borup</Label>
+         <Value>ada-borup</Value>
+      </Item>
+      <Item>
+         <Label>Adrian</Label>
+         <Value>adrian</Value>
+      </Item>
+      <Item>
+         <Label>Aitkin</Label>
+         <Value>aitkin</Value>
+      </Item>
+      <Item>
+         <Label>Albany</Label>
+         <Value>albany</Value>
+      </Item>
+      <Item>
+         <Label>Albert Lea</Label>
+         <Value>albert-lea</Value>
+      </Item>
+      <Item>
+         <Label>Alden</Label>
+         <Value>alden</Value>
+      </Item>
+      <Item>
+         <Label>Alexandria</Label>
+         <Value>alexandria</Value>
+      </Item>
+      <Item>
+         <Label>Annandale</Label>
+         <Value>annandale</Value>
+      </Item>
+      <Item>
+         <Label>Anoka</Label>
+         <Value>anoka</Value>
+      </Item>
+      <Item>
+         <Label>Ashby</Label>
+         <Value>ashby</Value>
+      </Item>
+      <Item>
+         <Label>Austin</Label>
+         <Value>austin</Value>
+      </Item>
+      <Item>
+         <Label>Badger</Label>
+         <Value>badger</Value>
+      </Item>
+      <Item>
+         <Label>Bagley</Label>
+         <Value>bagley</Value>
+      </Item>
+      <Item>
+         <Label>Balaton</Label>
+         <Value>balaton</Value>
+      </Item>
+      <Item>
+         <Label>Barnesville</Label>
+         <Value>barnesville</Value>
+      </Item>
+      <Item>
+         <Label>Barnum</Label>
+         <Value>barnum</Value>
+      </Item>
+      <Item>
+         <Label>Battle Lake</Label>
+         <Value>battle-lake</Value>
+      </Item>
+      <Item>
+         <Label>Becker</Label>
+         <Value>becker</Value>
+      </Item>
+      <Item>
+         <Label>Belgrade Brooten Elrosa</Label>
+         <Value>belgrade-brooten-elrosa</Value>
+      </Item>
+      <Item>
+         <Label>Belle Plaine</Label>
+         <Value>belle-plaine</Value>
+      </Item>
+      <Item>
+         <Label>Bellingham</Label>
+         <Value>bellingham</Value>
+      </Item>
+      <Item>
+         <Label>Bemidji</Label>
+         <Value>bemidji</Value>
+      </Item>
+      <Item>
+         <Label>Benson</Label>
+         <Value>benson</Value>
+      </Item>
+      <Item>
+         <Label>Bertha Hewitt</Label>
+         <Value>bertha-hewitt</Value>
+      </Item>
+      <Item>
+         <Label>Big Lake</Label>
+         <Value>big-lake</Value>
+      </Item>
+      <Item>
+         <Label>Bird Island Olivia</Label>
+         <Value>bird-island-olivia</Value>
+      </Item>
+      <Item>
+         <Label>Blackduck</Label>
+         <Value>blackduck</Value>
+      </Item>
+      <Item>
+         <Label>Blooming Prairie</Label>
+         <Value>blooming-prairie</Value>
+      </Item>
+      <Item>
+         <Label>Bloomington</Label>
+         <Value>bloomington</Value>
+      </Item>
+      <Item>
+         <Label>Blue Earth Area</Label>
+         <Value>blue-earth-area</Value>
+      </Item>
+      <Item>
+         <Label>Braham</Label>
+         <Value>braham</Value>
+      </Item>
+      <Item>
+         <Label>Brainerd</Label>
+         <Value>brainerd</Value>
+      </Item>
+      <Item>
+         <Label>Brandon</Label>
+         <Value>brandon</Value>
+      </Item>
+      <Item>
+         <Label>Breckenridge</Label>
+         <Value>breckenridge</Value>
+      </Item>
+      <Item>
+         <Label>Brewster</Label>
+         <Value>brewster</Value>
+      </Item>
+      <Item>
+         <Label>Brooklyn Center</Label>
+         <Value>brooklyn-center</Value>
+      </Item>
+      <Item>
+         <Label>Browerville</Label>
+         <Value>browerville</Value>
+      </Item>
+      <Item>
+         <Label>Browns Valley</Label>
+         <Value>browns-valley</Value>
+      </Item>
+      <Item>
+         <Label>Brownton Stewart</Label>
+         <Value>brownton-stewart</Value>
+      </Item>
+      <Item>
+         <Label>Buffalo</Label>
+         <Value>buffalo</Value>
+      </Item>
+      <Item>
+         <Label>Buffalo Lake Hector</Label>
+         <Value>buffalo-lake-hector</Value>
+      </Item>
+      <Item>
+         <Label>Burnsville</Label>
+         <Value>burnsville</Value>
+      </Item>
+      <Item>
+         <Label>Butterfield</Label>
+         <Value>butterfield</Value>
+      </Item>
+      <Item>
+         <Label>Byron</Label>
+         <Value>byron</Value>
+      </Item>
+      <Item>
+         <Label>Caledonia</Label>
+         <Value>caledonia</Value>
+      </Item>
+      <Item>
+         <Label>Cambridge</Label>
+         <Value>cambridge</Value>
+      </Item>
+      <Item>
+         <Label>Campbell</Label>
+         <Value>campbell</Value>
+      </Item>
+      <Item>
+         <Label>Canby</Label>
+         <Value>canby</Value>
+      </Item>
+      <Item>
+         <Label>Cannon Falls</Label>
+         <Value>cannon-falls</Value>
+      </Item>
+      <Item>
+         <Label>Carlton</Label>
+         <Value>carlton</Value>
+      </Item>
+      <Item>
+         <Label>Cass Lake</Label>
+         <Value>cass-lake</Value>
+      </Item>
+      <Item>
+         <Label>Cedar Mountain</Label>
+         <Value>cedar-mountain</Value>
+      </Item>
+      <Item>
+         <Label>Centennial</Label>
+         <Value>centennial</Value>
+      </Item>
+      <Item>
+         <Label>Chaska</Label>
+         <Value>chaska</Value>
+      </Item>
+      <Item>
+         <Label>Chatfield</Label>
+         <Value>chatfield</Value>
+      </Item>
+      <Item>
+         <Label>Chisago Lakes Area</Label>
+         <Value>chisago-lakes-area</Value>
+      </Item>
+      <Item>
+         <Label>Chisholm</Label>
+         <Value>chisholm</Value>
+      </Item>
+      <Item>
+         <Label>Chokio Alberta</Label>
+         <Value>chokio-alberta</Value>
+      </Item>
+      <Item>
+         <Label>Clearbrook Gonvick</Label>
+         <Value>clearbrook-gonvick</Value>
+      </Item>
+      <Item>
+         <Label>Cleveland</Label>
+         <Value>cleveland</Value>
+      </Item>
+      <Item>
+         <Label>Climax</Label>
+         <Value>climax</Value>
+      </Item>
+      <Item>
+         <Label>Clinton Graceville Beards</Label>
+         <Value>clinton-graceville-beards</Value>
+      </Item>
+      <Item>
+         <Label>Cloquet</Label>
+         <Value>cloquet</Value>
+      </Item>
+      <Item>
+         <Label>Cold Spring</Label>
+         <Value>cold-spring</Value>
+      </Item>
+      <Item>
+         <Label>Coleraine</Label>
+         <Value>coleraine</Value>
+      </Item>
+      <Item>
+         <Label>Columbia Heights</Label>
+         <Value>columbia-heights</Value>
+      </Item>
+      <Item>
+         <Label>Comfrey</Label>
+         <Value>comfrey</Value>
+      </Item>
+      <Item>
+         <Label>Cook County</Label>
+         <Value>cook-county</Value>
+      </Item>
+      <Item>
+         <Label>Cromwell</Label>
+         <Value>cromwell</Value>
+      </Item>
+      <Item>
+         <Label>Crookston</Label>
+         <Value>crookston</Value>
+      </Item>
+      <Item>
+         <Label>Crosby Ironton</Label>
+         <Value>crosby-ironton</Value>
+      </Item>
+      <Item>
+         <Label>Cyrus</Label>
+         <Value>cyrus</Value>
+      </Item>
+      <Item>
+         <Label>Danube Renville Sacred H</Label>
+         <Value>danube-renville-sacred-h</Value>
+      </Item>
+      <Item>
+         <Label>Dassel Cokato</Label>
+         <Value>dassel-cokato</Value>
+      </Item>
+      <Item>
+         <Label>Dawson Boyd</Label>
+         <Value>dawson-boyd</Value>
+      </Item>
+      <Item>
+         <Label>Deer River</Label>
+         <Value>deer-river</Value>
+      </Item>
+      <Item>
+         <Label>Delano</Label>
+         <Value>delano</Value>
+      </Item>
+      <Item>
+         <Label>Detroit Lakes</Label>
+         <Value>detroit-lakes</Value>
+      </Item>
+      <Item>
+         <Label>Dilworth Glyndon Felton</Label>
+         <Value>dilworth-glyndon-felton</Value>
+      </Item>
+      <Item>
+         <Label>Dover Eyota</Label>
+         <Value>dover-eyota</Value>
+      </Item>
+      <Item>
+         <Label>Duluth</Label>
+         <Value>duluth</Value>
+      </Item>
+      <Item>
+         <Label>Eagle Valley</Label>
+         <Value>eagle-valley</Value>
+      </Item>
+      <Item>
+         <Label>East Central</Label>
+         <Value>east-central</Value>
+      </Item>
+      <Item>
+         <Label>East Grand Forks</Label>
+         <Value>east-grand-forks</Value>
+      </Item>
+      <Item>
+         <Label>Eden Prairie</Label>
+         <Value>eden-prairie</Value>
+      </Item>
+      <Item>
+         <Label>Eden Valley Watkins</Label>
+         <Value>eden-valley-watkins</Value>
+      </Item>
+      <Item>
+         <Label>Edgerton</Label>
+         <Value>edgerton</Value>
+      </Item>
+      <Item>
+         <Label>Edina</Label>
+         <Value>edina</Value>
+      </Item>
+      <Item>
+         <Label>Elgin Millville</Label>
+         <Value>elgin-millville</Value>
+      </Item>
+      <Item>
+         <Label>Elk River</Label>
+         <Value>elk-river</Value>
+      </Item>
+      <Item>
+         <Label>Ellsworth</Label>
+         <Value>ellsworth</Value>
+      </Item>
+      <Item>
+         <Label>Ely</Label>
+         <Value>ely</Value>
+      </Item>
+      <Item>
+         <Label>Esko</Label>
+         <Value>esko</Value>
+      </Item>
+      <Item>
+         <Label>Evansville</Label>
+         <Value>evansville</Value>
+      </Item>
+      <Item>
+         <Label>Eveleth Gilbert</Label>
+         <Value>eveleth-gilbert</Value>
+      </Item>
+      <Item>
+         <Label>Fairmont Area</Label>
+         <Value>fairmont-area</Value>
+      </Item>
+      <Item>
+         <Label>Faribault</Label>
+         <Value>faribault</Value>
+      </Item>
+      <Item>
+         <Label>Farmington</Label>
+         <Value>farmington</Value>
+      </Item>
+      <Item>
+         <Label>Fergus Falls</Label>
+         <Value>fergus-falls</Value>
+      </Item>
+      <Item>
+         <Label>Fertile</Label>
+         <Value>fertile</Value>
+      </Item>
+      <Item>
+         <Label>Fillmore Central</Label>
+         <Value>fillmore-central</Value>
+      </Item>
+      <Item>
+         <Label>Fisher</Label>
+         <Value>fisher</Value>
+      </Item>
+      <Item>
+         <Label>Floodwood</Label>
+         <Value>floodwood</Value>
+      </Item>
+      <Item>
+         <Label>Foley</Label>
+         <Value>foley</Value>
+      </Item>
+      <Item>
+         <Label>Forest Lake</Label>
+         <Value>forest-lake</Value>
+      </Item>
+      <Item>
+         <Label>Fosston</Label>
+         <Value>fosston</Value>
+      </Item>
+      <Item>
+         <Label>Franconia</Label>
+         <Value>franconia</Value>
+      </Item>
+      <Item>
+         <Label>Frazee Vergas</Label>
+         <Value>frazee-vergas</Value>
+      </Item>
+      <Item>
+         <Label>Fridley</Label>
+         <Value>fridley</Value>
+      </Item>
+      <Item>
+         <Label>Fulda</Label>
+         <Value>fulda</Value>
+      </Item>
+      <Item>
+         <Label>Gibbon Fairfax Winthrop</Label>
+         <Value>gibbon-fairfax-winthrop</Value>
+      </Item>
+      <Item>
+         <Label>Glencoe Silver Lake</Label>
+         <Value>glencoe-silver-lake</Value>
+      </Item>
+      <Item>
+         <Label>Glenvillen Emmons</Label>
+         <Value>glenvillen-emmons</Value>
+      </Item>
+      <Item>
+         <Label>Goodhue</Label>
+         <Value>goodhue</Value>
+      </Item>
+      <Item>
+         <Label>Goodridge</Label>
+         <Value>goodridge</Value>
+      </Item>
+      <Item>
+         <Label>Granada Hunt E Chain</Label>
+         <Value>granada-hunt-e-chain</Value>
+      </Item>
+      <Item>
+         <Label>Grand Meadow</Label>
+         <Value>grand-meadow</Value>
+      </Item>
+      <Item>
+         <Label>Grand Rapids</Label>
+         <Value>grand-rapids</Value>
+      </Item>
+      <Item>
+         <Label>Greenbush Middle River</Label>
+         <Value>greenbush-middle-river</Value>
+      </Item>
+      <Item>
+         <Label>Grygla Gatzke</Label>
+         <Value>grygla-gatzke</Value>
+      </Item>
+      <Item>
+         <Label>Halstad Hendrum</Label>
+         <Value>halstad-hendrum</Value>
+      </Item>
+      <Item>
+         <Label>Hancock</Label>
+         <Value>hancock</Value>
+      </Item>
+      <Item>
+         <Label>Hastings</Label>
+         <Value>hastings</Value>
+      </Item>
+      <Item>
+         <Label>Hawley</Label>
+         <Value>hawley</Value>
+      </Item>
+      <Item>
+         <Label>Hayfield</Label>
+         <Value>hayfield</Value>
+      </Item>
+      <Item>
+         <Label>Hendricks</Label>
+         <Value>hendricks</Value>
+      </Item>
+      <Item>
+         <Label>Henning</Label>
+         <Value>henning</Value>
+      </Item>
+      <Item>
+         <Label>Herman</Label>
+         <Value>herman</Value>
+      </Item>
+      <Item>
+         <Label>Hermantown</Label>
+         <Value>hermantown</Value>
+      </Item>
+      <Item>
+         <Label>Heron Lake Okabena</Label>
+         <Value>heron-lake-okabena</Value>
+      </Item>
+      <Item>
+         <Label>Hibbing</Label>
+         <Value>hibbing</Value>
+      </Item>
+      <Item>
+         <Label>Hill City</Label>
+         <Value>hill-city</Value>
+      </Item>
+      <Item>
+         <Label>Hills Beaver Creek</Label>
+         <Value>hills-beaver-creek</Value>
+      </Item>
+      <Item>
+         <Label>Hinckley Finlayson</Label>
+         <Value>hinckley-finlayson</Value>
+      </Item>
+      <Item>
+         <Label>Holdingford</Label>
+         <Value>holdingford</Value>
+      </Item>
+      <Item>
+         <Label>Hopkins</Label>
+         <Value>hopkins</Value>
+      </Item>
+      <Item>
+         <Label>Houston</Label>
+         <Value>houston</Value>
+      </Item>
+      <Item>
+         <Label>Howard Lk Waverly Winst</Label>
+         <Value>howard-lk-waverly-winst</Value>
+      </Item>
+      <Item>
+         <Label>Hutchinson</Label>
+         <Value>hutchinson</Value>
+      </Item>
+      <Item>
+         <Label>International Falls</Label>
+         <Value>international-falls</Value>
+      </Item>
+      <Item>
+         <Label>Inver Grove</Label>
+         <Value>inver-grove</Value>
+      </Item>
+      <Item>
+         <Label>Isle</Label>
+         <Value>isle</Value>
+      </Item>
+      <Item>
+         <Label>Ivanhoe</Label>
+         <Value>ivanhoe</Value>
+      </Item>
+      <Item>
+         <Label>Jackson County Central</Label>
+         <Value>jackson-county-central</Value>
+      </Item>
+      <Item>
+         <Label>Janesville Wald Pember</Label>
+         <Value>janesville-wald-pember</Value>
+      </Item>
+      <Item>
+         <Label>Jordan</Label>
+         <Value>jordan</Value>
+      </Item>
+      <Item>
+         <Label>Karlstad Strandquist</Label>
+         <Value>karlstad-strandquist</Value>
+      </Item>
+      <Item>
+         <Label>Kasson Mantorville</Label>
+         <Value>kasson-mantorville</Value>
+      </Item>
+      <Item>
+         <Label>Kelliher</Label>
+         <Value>kelliher</Value>
+      </Item>
+      <Item>
+         <Label>Kenyon Wanamingo</Label>
+         <Value>kenyon-wanamingo</Value>
+      </Item>
+      <Item>
+         <Label>Kerkhoven Murdoch</Label>
+         <Value>kerkhoven-murdoch</Value>
+      </Item>
+      <Item>
+         <Label>Kimball</Label>
+         <Value>kimball</Value>
+      </Item>
+      <Item>
+         <Label>Kingsland</Label>
+         <Value>kingsland</Value>
+      </Item>
+      <Item>
+         <Label>Kittson Central</Label>
+         <Value>kittson-central</Value>
+      </Item>
+      <Item>
+         <Label>Lac Qui Parle Valley</Label>
+         <Value>lac-qui-parle-valley</Value>
+      </Item>
+      <Item>
+         <Label>La Crescent</Label>
+         <Value>la-crescent</Value>
+      </Item>
+      <Item>
+         <Label>Lake Benton</Label>
+         <Value>lake-benton</Value>
+      </Item>
+      <Item>
+         <Label>Lake City</Label>
+         <Value>lake-city</Value>
+      </Item>
+      <Item>
+         <Label>Lake Crystal Welcome</Label>
+         <Value>lake-crystal-welcome</Value>
+      </Item>
+      <Item>
+         <Label>Lake Of The Woods</Label>
+         <Value>lake-of-the-woods</Value>
+      </Item>
+      <Item>
+         <Label>Lake Park Audubon</Label>
+         <Value>lake-park-audubon</Value>
+      </Item>
+      <Item>
+         <Label>Lake Superior</Label>
+         <Value>lake-superior</Value>
+      </Item>
+      <Item>
+         <Label>Lakeview</Label>
+         <Value>lakeview</Value>
+      </Item>
+      <Item>
+         <Label>Lakeville</Label>
+         <Value>lakeville</Value>
+      </Item>
+      <Item>
+         <Label>Lancaster</Label>
+         <Value>lancaster</Value>
+      </Item>
+      <Item>
+         <Label>Lanesboro</Label>
+         <Value>lanesboro</Value>
+      </Item>
+      <Item>
+         <Label>Laporte</Label>
+         <Value>laporte</Value>
+      </Item>
+      <Item>
+         <Label>Le Center</Label>
+         <Value>le-center</Value>
+      </Item>
+      <Item>
+         <Label>Le Roy Ostrander</Label>
+         <Value>le-roy-ostrander</Value>
+      </Item>
+      <Item>
+         <Label>Lester Prairie</Label>
+         <Value>lester-prairie</Value>
+      </Item>
+      <Item>
+         <Label>Le Sueur Henderson</Label>
+         <Value>le-sueur-henderson</Value>
+      </Item>
+      <Item>
+         <Label>Lewiston</Label>
+         <Value>lewiston</Value>
+      </Item>
+      <Item>
+         <Label>Litchfield</Label>
+         <Value>litchfield</Value>
+      </Item>
+      <Item>
+         <Label>Little Falls</Label>
+         <Value>little-falls</Value>
+      </Item>
+      <Item>
+         <Label>Little Fork Big Falls</Label>
+         <Value>little-fork-big-falls</Value>
+      </Item>
+      <Item>
+         <Label>Long Prairie Grey Eagle</Label>
+         <Value>long-prairie-grey-eagle</Value>
+      </Item>
+      <Item>
+         <Label>Luverne Magnolia</Label>
+         <Value>luverne-magnolia</Value>
+      </Item>
+      <Item>
+         <Label>Lyle</Label>
+         <Value>lyle</Value>
+      </Item>
+      <Item>
+         <Label>Lynd</Label>
+         <Value>lynd</Value>
+      </Item>
+      <Item>
+         <Label>Mabel Canton</Label>
+         <Value>mabel-canton</Value>
+      </Item>
+      <Item>
+         <Label>Maccray</Label>
+         <Value>maccray</Value>
+      </Item>
+      <Item>
+         <Label>Madelia</Label>
+         <Value>madelia</Value>
+      </Item>
+      <Item>
+         <Label>Mahnomen</Label>
+         <Value>mahnomen</Value>
+      </Item>
+      <Item>
+         <Label>Mahtomedi</Label>
+         <Value>mahtomedi</Value>
+      </Item>
+      <Item>
+         <Label>Mankato</Label>
+         <Value>mankato</Value>
+      </Item>
+      <Item>
+         <Label>Maple Lake</Label>
+         <Value>maple-lake</Value>
+      </Item>
+      <Item>
+         <Label>Maple River</Label>
+         <Value>maple-river</Value>
+      </Item>
+      <Item>
+         <Label>Marshall</Label>
+         <Value>marshall</Value>
+      </Item>
+      <Item>
+         <Label>Martin County West</Label>
+         <Value>martin-county-west</Value>
+      </Item>
+      <Item>
+         <Label>Mc Gregor</Label>
+         <Value>mc-gregor</Value>
+      </Item>
+      <Item>
+         <Label>Medford</Label>
+         <Value>medford</Value>
+      </Item>
+      <Item>
+         <Label>Melrose</Label>
+         <Value>melrose</Value>
+      </Item>
+      <Item>
+         <Label>Menahga</Label>
+         <Value>menahga</Value>
+      </Item>
+      <Item>
+         <Label>Mesabi East</Label>
+         <Value>mesabi-east</Value>
+      </Item>
+      <Item>
+         <Label>Milaca</Label>
+         <Value>milaca</Value>
+      </Item>
+      <Item>
+         <Label>Milroy</Label>
+         <Value>milroy</Value>
+      </Item>
+      <Item>
+         <Label>Minneapolis</Label>
+         <Value>minneapolis</Value>
+      </Item>
+      <Item>
+         <Label>Minneota</Label>
+         <Value>minneota</Value>
+      </Item>
+      <Item>
+         <Label>Minnetonka</Label>
+         <Value>minnetonka</Value>
+      </Item>
+      <Item>
+         <Label>Minnewaska</Label>
+         <Value>minnewaska</Value>
+      </Item>
+      <Item>
+         <Label>Montevideo</Label>
+         <Value>montevideo</Value>
+      </Item>
+      <Item>
+         <Label>Montgomery</Label>
+         <Value>montgomery</Value>
+      </Item>
+      <Item>
+         <Label>Monticello</Label>
+         <Value>monticello</Value>
+      </Item>
+      <Item>
+         <Label>Moorhead</Label>
+         <Value>moorhead</Value>
+      </Item>
+      <Item>
+         <Label>Moose Lake</Label>
+         <Value>moose-lake</Value>
+      </Item>
+      <Item>
+         <Label>Mora</Label>
+         <Value>mora</Value>
+      </Item>
+      <Item>
+         <Label>Morris</Label>
+         <Value>morris</Value>
+      </Item>
+      <Item>
+         <Label>Mounds View</Label>
+         <Value>mounds-view</Value>
+      </Item>
+      <Item>
+         <Label>Mountain Iron Buhl</Label>
+         <Value>mountain-iron-buhl</Value>
+      </Item>
+      <Item>
+         <Label>Mountain Lake</Label>
+         <Value>mountain-lake</Value>
+      </Item>
+      <Item>
+         <Label>Murray County</Label>
+         <Value>murray-county</Value>
+      </Item>
+      <Item>
+         <Label>Nashwauk Keewatin</Label>
+         <Value>nashwauk-keewatin</Value>
+      </Item>
+      <Item>
+         <Label>Nett Lake</Label>
+         <Value>nett-lake</Value>
+      </Item>
+      <Item>
+         <Label>Nevis</Label>
+         <Value>nevis</Value>
+      </Item>
+      <Item>
+         <Label>Newfolden</Label>
+         <Value>newfolden</Value>
+      </Item>
+      <Item>
+         <Label>New London Spicer</Label>
+         <Value>new-london-spicer</Value>
+      </Item>
+      <Item>
+         <Label>New Prague</Label>
+         <Value>new-prague</Value>
+      </Item>
+      <Item>
+         <Label>New Ulm Hanska</Label>
+         <Value>new-ulm-hanska</Value>
+      </Item>
+      <Item>
+         <Label>New York Mills</Label>
+         <Value>new-york-mills</Value>
+      </Item>
+      <Item>
+         <Label>Nicollet</Label>
+         <Value>nicollet</Value>
+      </Item>
+      <Item>
+         <Label>Norman County East</Label>
+         <Value>norman-county-east</Value>
+      </Item>
+      <Item>
+         <Label>North Branch</Label>
+         <Value>north-branch</Value>
+      </Item>
+      <Item>
+         <Label>Northfield</Label>
+         <Value>northfield</Value>
+      </Item>
+      <Item>
+         <Label>Norwood</Label>
+         <Value>norwood</Value>
+      </Item>
+      <Item>
+         <Label>No St Paul Maplewood</Label>
+         <Value>no-st-paul-maplewood</Value>
+      </Item>
+      <Item>
+         <Label>Nrheg</Label>
+         <Value>nrheg</Value>
+      </Item>
+      <Item>
+         <Label>Ogilvie</Label>
+         <Value>ogilvie</Value>
+      </Item>
+      <Item>
+         <Label>Oklee</Label>
+         <Value>oklee</Value>
+      </Item>
+      <Item>
+         <Label>Onamia</Label>
+         <Value>onamia</Value>
+      </Item>
+      <Item>
+         <Label>Orono</Label>
+         <Value>orono</Value>
+      </Item>
+      <Item>
+         <Label>Ortonville</Label>
+         <Value>ortonville</Value>
+      </Item>
+      <Item>
+         <Label>Osakis</Label>
+         <Value>osakis</Value>
+      </Item>
+      <Item>
+         <Label>Osseo</Label>
+         <Value>osseo</Value>
+      </Item>
+      <Item>
+         <Label>Owatonna</Label>
+         <Value>owatonna</Value>
+      </Item>
+      <Item>
+         <Label>Parkers Prairie</Label>
+         <Value>parkers-prairie</Value>
+      </Item>
+      <Item>
+         <Label>Park Rapids</Label>
+         <Value>park-rapids</Value>
+      </Item>
+      <Item>
+         <Label>Paynesville</Label>
+         <Value>paynesville</Value>
+      </Item>
+      <Item>
+         <Label>Pelican Rapids</Label>
+         <Value>pelican-rapids</Value>
+      </Item>
+      <Item>
+         <Label>Pequot Lakes</Label>
+         <Value>pequot-lakes</Value>
+      </Item>
+      <Item>
+         <Label>Perham</Label>
+         <Value>perham</Value>
+      </Item>
+      <Item>
+         <Label>Pierz</Label>
+         <Value>pierz</Value>
+      </Item>
+      <Item>
+         <Label>Pillager</Label>
+         <Value>pillager</Value>
+      </Item>
+      <Item>
+         <Label>Pine City</Label>
+         <Value>pine-city</Value>
+      </Item>
+      <Item>
+         <Label>Pine Island</Label>
+         <Value>pine-island</Value>
+      </Item>
+      <Item>
+         <Label>Pine River Backus</Label>
+         <Value>pine-river-backus</Value>
+      </Item>
+      <Item>
+         <Label>Pipestone Jasper</Label>
+         <Value>pipestone-jasper</Value>
+      </Item>
+      <Item>
+         <Label>Plainview</Label>
+         <Value>plainview</Value>
+      </Item>
+      <Item>
+         <Label>Plummer</Label>
+         <Value>plummer</Value>
+      </Item>
+      <Item>
+         <Label>Princeton</Label>
+         <Value>princeton</Value>
+      </Item>
+      <Item>
+         <Label>Prinsburg</Label>
+         <Value>prinsburg</Value>
+      </Item>
+      <Item>
+         <Label>Prior Lake</Label>
+         <Value>prior-lake</Value>
+      </Item>
+      <Item>
+         <Label>Proctor</Label>
+         <Value>proctor</Value>
+      </Item>
+      <Item>
+         <Label>Randolph</Label>
+         <Value>randolph</Value>
+      </Item>
+      <Item>
+         <Label>Red Lake</Label>
+         <Value>red-lake</Value>
+      </Item>
+      <Item>
+         <Label>Red Lake Falls</Label>
+         <Value>red-lake-falls</Value>
+      </Item>
+      <Item>
+         <Label>Red Wing</Label>
+         <Value>red-wing</Value>
+      </Item>
+      <Item>
+         <Label>Redwood Falls Area</Label>
+         <Value>redwood-falls-area</Value>
+      </Item>
+      <Item>
+         <Label>Remer</Label>
+         <Value>remer</Value>
+      </Item>
+      <Item>
+         <Label>Richfield</Label>
+         <Value>richfield</Value>
+      </Item>
+      <Item>
+         <Label>Robbinsdale</Label>
+         <Value>robbinsdale</Value>
+      </Item>
+      <Item>
+         <Label>Rochester</Label>
+         <Value>rochester</Value>
+      </Item>
+      <Item>
+         <Label>Rockford</Label>
+         <Value>rockford</Value>
+      </Item>
+      <Item>
+         <Label>Roseau</Label>
+         <Value>roseau</Value>
+      </Item>
+      <Item>
+         <Label>Rosemount</Label>
+         <Value>rosemount</Value>
+      </Item>
+      <Item>
+         <Label>Roseville</Label>
+         <Value>roseville</Value>
+      </Item>
+      <Item>
+         <Label>Rothsay</Label>
+         <Value>rothsay</Value>
+      </Item>
+      <Item>
+         <Label>Round Lake</Label>
+         <Value>round-lake</Value>
+      </Item>
+      <Item>
+         <Label>Royalton</Label>
+         <Value>royalton</Value>
+      </Item>
+      <Item>
+         <Label>Rush City</Label>
+         <Value>rush-city</Value>
+      </Item>
+      <Item>
+         <Label>Rushford Peterson</Label>
+         <Value>rushford-peterson</Value>
+      </Item>
+      <Item>
+         <Label>Russell</Label>
+         <Value>russell</Value>
+      </Item>
+      <Item>
+         <Label>Ruthton</Label>
+         <Value>ruthton</Value>
+      </Item>
+      <Item>
+         <Label>Sartell</Label>
+         <Value>sartell</Value>
+      </Item>
+      <Item>
+         <Label>Sauk Centre</Label>
+         <Value>sauk-centre</Value>
+      </Item>
+      <Item>
+         <Label>Sauk Rapids</Label>
+         <Value>sauk-rapids</Value>
+      </Item>
+      <Item>
+         <Label>Sebeka</Label>
+         <Value>sebeka</Value>
+      </Item>
+      <Item>
+         <Label>Shakopee</Label>
+         <Value>shakopee</Value>
+      </Item>
+      <Item>
+         <Label>Sibley East</Label>
+         <Value>sibley-east</Value>
+      </Item>
+      <Item>
+         <Label>Sleepy Eye</Label>
+         <Value>sleepy-eye</Value>
+      </Item>
+      <Item>
+         <Label>South Koochiching</Label>
+         <Value>south-koochiching</Value>
+      </Item>
+      <Item>
+         <Label>Southland</Label>
+         <Value>southland</Value>
+      </Item>
+      <Item>
+         <Label>South St Paul</Label>
+         <Value>south-st-paul</Value>
+      </Item>
+      <Item>
+         <Label>So Washington County</Label>
+         <Value>south-washington-county</Value>
+      </Item>
+      <Item>
+         <Label>Springfield</Label>
+         <Value>springfield</Value>
+      </Item>
+      <Item>
+         <Label>Spring Grove</Label>
+         <Value>spring-grove</Value>
+      </Item>
+      <Item>
+         <Label>Spring Lake Park</Label>
+         <Value>spring-lake-park</Value>
+      </Item>
+      <Item>
+         <Label>St Anthony Village</Label>
+         <Value>st-anthony-village</Value>
+      </Item>
+      <Item>
+         <Label>Staples Motley</Label>
+         <Value>staples-motley</Value>
+      </Item>
+      <Item>
+         <Label>St Charles</Label>
+         <Value>st-charles</Value>
+      </Item>
+      <Item>
+         <Label>St Clair</Label>
+         <Value>st-clair</Value>
+      </Item>
+      <Item>
+         <Label>St Cloud</Label>
+         <Value>st-cloud</Value>
+      </Item>
+      <Item>
+         <Label>Stephen Argyle Central</Label>
+         <Value>stephen-argyle-central</Value>
+      </Item>
+      <Item>
+         <Label>Stewartville</Label>
+         <Value>stewartville</Value>
+      </Item>
+      <Item>
+         <Label>St Francis</Label>
+         <Value>st-francis</Value>
+      </Item>
+      <Item>
+         <Label>Stillwater</Label>
+         <Value>stillwater</Value>
+      </Item>
+      <Item>
+         <Label>St James</Label>
+         <Value>st-james</Value>
+      </Item>
+      <Item>
+         <Label>St Louis County</Label>
+         <Value>st-louis-county</Value>
+      </Item>
+      <Item>
+         <Label>St Louis Park</Label>
+         <Value>st-louis-park</Value>
+      </Item>
+      <Item>
+         <Label>St Michael Albertville</Label>
+         <Value>st-michael-albertville</Value>
+      </Item>
+      <Item>
+         <Label>Storden Jeffers</Label>
+         <Value>storden-jeffers</Value>
+      </Item>
+      <Item>
+         <Label>St Paul</Label>
+         <Value>st-paul</Value>
+      </Item>
+      <Item>
+         <Label>St Peter</Label>
+         <Value>st-peter</Value>
+      </Item>
+      <Item>
+         <Label>Swanville</Label>
+         <Value>swanville</Value>
+      </Item>
+      <Item>
+         <Label>Thief River Falls</Label>
+         <Value>thief-river-falls</Value>
+      </Item>
+      <Item>
+         <Label>Tracy</Label>
+         <Value>tracy</Value>
+      </Item>
+      <Item>
+         <Label>Triton</Label>
+         <Value>triton</Value>
+      </Item>
+      <Item>
+         <Label>Truman</Label>
+         <Value>truman</Value>
+      </Item>
+      <Item>
+         <Label>Tyler</Label>
+         <Value>tyler</Value>
+      </Item>
+      <Item>
+         <Label>Ulen Hitterdal</Label>
+         <Value>ulen-hitterdal</Value>
+      </Item>
+      <Item>
+         <Label>Underwood</Label>
+         <Value>underwood</Value>
+      </Item>
+      <Item>
+         <Label>United South Central</Label>
+         <Value>united-south-central</Value>
+      </Item>
+      <Item>
+         <Label>Upsala</Label>
+         <Value>upsala</Value>
+      </Item>
+      <Item>
+         <Label>Verndale</Label>
+         <Value>verndale</Value>
+      </Item>
+      <Item>
+         <Label>Virginia</Label>
+         <Value>virginia</Value>
+      </Item>
+      <Item>
+         <Label>Wabasha</Label>
+         <Value>wabasha</Value>
+      </Item>
+      <Item>
+         <Label>Wabasso</Label>
+         <Value>wabasso</Value>
+      </Item>
+      <Item>
+         <Label>Waconia</Label>
+         <Value>waconia</Value>
+      </Item>
+      <Item>
+         <Label>Wadena Deer Creek</Label>
+         <Value>wadena-deer-creek</Value>
+      </Item>
+      <Item>
+         <Label>Walker Akeley</Label>
+         <Value>walker-akeley</Value>
+      </Item>
+      <Item>
+         <Label>Warren Alvarado Olso</Label>
+         <Value>warren-alvarado-olso</Value>
+      </Item>
+      <Item>
+         <Label>Warroad</Label>
+         <Value>warroad</Value>
+      </Item>
+      <Item>
+         <Label>Waseca</Label>
+         <Value>waseca</Value>
+      </Item>
+      <Item>
+         <Label>Watertown Mayer</Label>
+         <Value>watertown-mayer</Value>
+      </Item>
+      <Item>
+         <Label>Waterville Elys Morris</Label>
+         <Value>waterville-elys-morris</Value>
+      </Item>
+      <Item>
+         <Label>Waubun</Label>
+         <Value>waubun</Value>
+      </Item>
+      <Item>
+         <Label>Wayzata</Label>
+         <Value>wayzata</Value>
+      </Item>
+      <Item>
+         <Label>Westbrook Walnut Grove</Label>
+         <Value>westbrook-walnut-grove</Value>
+      </Item>
+      <Item>
+         <Label>West Central Area</Label>
+         <Value>west-central-area</Value>
+      </Item>
+      <Item>
+         <Label>Westonka</Label>
+         <Value>westonka</Value>
+      </Item>
+      <Item>
+         <Label>West St Paul</Label>
+         <Value>west-st-paul</Value>
+      </Item>
+      <Item>
+         <Label>Wheaton</Label>
+         <Value>wheaton</Value>
+      </Item>
+      <Item>
+         <Label>White Bear Lake</Label>
+         <Value>white-bear-lake</Value>
+      </Item>
+      <Item>
+         <Label>Willmar</Label>
+         <Value>willmar</Value>
+      </Item>
+      <Item>
+         <Label>Willow River</Label>
+         <Value>willow-river</Value>
+      </Item>
+      <Item>
+         <Label>Windom</Label>
+         <Value>windom</Value>
+      </Item>
+      <Item>
+         <Label>Win E Mac</Label>
+         <Value>win-e-mac</Value>
+      </Item>
+      <Item>
+         <Label>Winona</Label>
+         <Value>winona</Value>
+      </Item>
+      <Item>
+         <Label>Worthington</Label>
+         <Value>worthington</Value>
+      </Item>
+      <Item>
+         <Label>Wrenshall</Label>
+         <Value>wrenshall</Value>
+      </Item>
+      <Item>
+         <Label>Yellow Medicine East</Label>
+         <Value>yellow-medicine-east</Value>
+      </Item>
+      <Item>
+         <Label>Zumbrota Mazeppa</Label>
+         <Value>zumbrota-mazeppa</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

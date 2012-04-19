@@ -1,0 +1,47 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="status.css">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/css">
+div#statusPanel {
+	display				: none;
+	position			: absolute;
+	white-space		: pre;
+	width				: 300px;
+	height				: 120px;
+	min-width				: 300px;
+	min-height				: 120px;
+	padding			: 40px;
+	text-align			: center;
+	background-color	: #eeeeee;
+	opacity				: 0.85;
+	filter				: alpha(opacity=85);
+	border				: 1px solid black;
+	font				: bold 20px Arial, Verdana;
+	z-index				: 11;
+	-moz-box-sizing		: border-box;
+	box-sizing			: border-box;
+}
+	</cm:source>
+</cm:component>

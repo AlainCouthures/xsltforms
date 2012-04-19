@@ -1,0 +1,162 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="field.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template name="field" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:param name="appearance" select="false()"/>
+			<xsl:param name="body"/>
+			<xsl:choose>
+				<xsl:when test="namespace-uri(parent::*) = 'http://www.w3.org/2000/svg'">
+					<xsl:element name="tspan" namespace="http://www.w3.org/2000/svg">
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="style">
+							<xsl:with-param name="class">xforms-control xforms-<xsl:value-of select="local-name()"/><xsl:choose><xsl:when test="local-name()='trigger' or local-name()='submit' or string(xforms:label)=''"> xforms-appearance-minimal</xsl:when><xsl:when test="@appearance"> xforms-appearance-<xsl:value-of select="@appearance"/></xsl:when><xsl:otherwise> xforms-appearance</xsl:otherwise></xsl:choose></xsl:with-param>
+						</xsl:call-template>
+						<xsl:if test="local-name() != 'trigger' and local-name() != 'submit' and local-name() != 'reset' and xforms:label/node() and string($appearance) != 'none'">
+							<xsl:choose>
+								<xsl:when test="$appearance = 'minimal'">
+									<xsl:apply-templates select="xforms:label">
+										<xsl:with-param name="appearance">field-minimal</xsl:with-param>
+									</xsl:apply-templates>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:apply-templates select="xforms:label"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:if>
+						<xsl:element name="tspan" namespace="http://www.w3.org/2000/svg">
+							<xsl:attribute name="class">value</xsl:attribute>
+							<xsl:copy-of select="$body"/>
+						</xsl:element>
+					</xsl:element>
+				</xsl:when>
+				<xsl:otherwise>
+					<span>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="style">
+							<xsl:with-param name="class">xforms-control xforms-<xsl:value-of select="local-name()"/><xsl:choose><xsl:when test="local-name()='trigger' or local-name()='submit' or string(xforms:label)=''"> xforms-appearance-minimal</xsl:when><xsl:when test="@appearance"> xforms-appearance-<xsl:value-of select="@appearance"/></xsl:when><xsl:otherwise> xforms-appearance</xsl:otherwise></xsl:choose></xsl:with-param>
+						</xsl:call-template>
+						<xsl:if test="local-name() != 'trigger' and local-name() != 'submit' and local-name() != 'reset' and local-name() != 'output' and xforms:label/node() and string($appearance) != 'none'">
+							<span class="focus">&#160;<xsl:text/></span>
+						</xsl:if>
+						<xsl:if test="local-name() != 'trigger' and local-name() != 'submit' and local-name() != 'reset' and xforms:label/node() and string($appearance) != 'none'">
+							<xsl:choose>
+								<xsl:when test="$appearance = 'minimal'">
+									<xsl:apply-templates select="xforms:label">
+										<xsl:with-param name="appearance">field-minimal</xsl:with-param>
+									</xsl:apply-templates>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:apply-templates select="xforms:label"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:if>
+						<span class="value">
+							<xsl:copy-of select="$body"/>
+						</span>
+						<xsl:if test="@ajx:aid-button = 'true'">
+							<button type="button" class="aid-button">...</button>
+						</xsl:if>
+						<xsl:if test="local-name() != 'output'">
+							<span class="xforms-required-icon">*</span>
+						</xsl:if>
+						<span class="xforms-alert">
+							<span class="xforms-alert-icon">
+								<xsl:if test="xforms:alert">
+									<xsl:attribute name="onmouseover">XsltForms_browser.show(this, null, true)</xsl:attribute>
+									<xsl:attribute name="onmouseout">XsltForms_browser.show(this, null, false)</xsl:attribute>
+								</xsl:if>
+								<xsl:text>&#160;</xsl:text>
+							</span>
+							<xsl:if test="xforms:alert">
+								<xsl:variable name="aid">
+									<xsl:choose>
+										<xsl:when test="xforms:alert/@id"><xsl:value-of select="xforms:alert/@id"/></xsl:when>
+										<xsl:otherwise>
+											<xsl:for-each select="xforms:alert[1]">
+												<xsl:variable name="lname" select="local-name()"/>
+												<xsl:value-of select="$id_pf"/>
+												<xsl:value-of select="$lname"/>
+												<xsl:text>-</xsl:text>
+												<xsl:value-of select="count(preceding::*[local-name()=$lname]|ancestor::*[local-name()=$lname])"/>
+											</xsl:for-each>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:variable>
+								<span class="xforms-alert-value" id="{$aid}">
+									<xsl:apply-templates select="xforms:alert/node()"/>
+								</span>
+							</xsl:if>
+						</span>
+						<xsl:if test="xforms:hint">
+							<span class="xforms-hint">
+								<span class="xforms-hint-icon" onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)">&#160;<xsl:text/></span>
+								<xsl:variable name="hid">
+									<xsl:choose>
+										<xsl:when test="xforms:hint/@id"><xsl:value-of select="xforms:hint/@id"/></xsl:when>
+										<xsl:otherwise>
+											<xsl:for-each select="xforms:hint[1]">
+												<xsl:variable name="lname" select="local-name()"/>
+												<xsl:value-of select="$id_pf"/>
+												<xsl:value-of select="$lname"/>
+												<xsl:text>-</xsl:text>
+												<xsl:value-of select="count(preceding::*[local-name()=$lname]|ancestor::*[local-name()=$lname])"/>
+											</xsl:for-each>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:variable>
+								<span class="xforms-hint-value" id="{$hid}">
+									<xsl:apply-templates select="xforms:hint/node()"/>
+								</span>
+							</span>
+						</xsl:if>
+						<xsl:if test="xforms:help[not(@appearance='minimal')]">
+							<span class="xforms-help">
+								<span class="xforms-help-icon" onmouseover="XsltForms_browser.show(this, 'help', true)" onmouseout="XsltForms_browser.show(this, 'help', false)">&#160;<xsl:text/></span>
+								<xsl:variable name="hid">
+									<xsl:choose>
+										<xsl:when test="xforms:help/@id"><xsl:value-of select="xforms:help/@id"/></xsl:when>
+										<xsl:otherwise>
+											<xsl:for-each select="xforms:help[1]">
+												<xsl:variable name="lname" select="local-name()"/>
+												<xsl:value-of select="$id_pf"/>
+												<xsl:value-of select="$lname"/>
+												<xsl:text>-</xsl:text>
+												<xsl:value-of select="count(preceding::*[local-name()=$lname]|ancestor::*[local-name()=$lname])"/>
+											</xsl:for-each>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:variable>
+								<span class="xforms-help-value" id="{$hid}">
+									<xsl:apply-templates select="xforms:help/node()"/>
+								</span>
+							</span>
+						</xsl:if>
+					</span>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</cm:source>
+</cm:component>

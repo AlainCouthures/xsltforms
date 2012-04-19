@@ -1,0 +1,36 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    >
+    <head>
+        <title>XForms Message</title>
+        <xf:model id="myModel">
+            <xf:instance>
+                <MyMessage xmlns="">This is a modeless message stored directly in the model.
+                    Note you can drag me to the side and still proceed to the next task.
+                </MyMessage>
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <p>Put your cursor in the first input.  A message will appear for just a moment.</p>
+        <xf:input>
+            <xf:label>Ephemeral message: </xf:label>
+            <xf:message level="ephemeral" ev:event="DOMFocusIn">This is an ephemeral message.
+                Don't worry I go away after a few seconds.</xf:message>
+        </xf:input>
+        <br/>
+        <p>Press enter in the input field to get a modeless message:</p>
+        <xf:input>
+            <xf:label>Modeless message input: </xf:label>
+            <xf:message level="modeless" model="myModel" ref="/MyMessage" ev:event="DOMActivate"/>
+        </xf:input>
+        <br/>
+        <p>A standard and intrusive modal message that must be dismissed:</p>
+        <xf:trigger>
+            <xf:label>Press for a modal message</xf:label>
+            <xf:message level="modal" ev:event="DOMActivate">This is a modal message.</xf:message>
+        </xf:trigger>
+    </body>
+</html>

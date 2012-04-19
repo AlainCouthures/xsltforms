@@ -1,0 +1,19 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsltforms="http://www.agencexml.com/xsltforms" xmlns:ev="http://www.w3.org/2001/xml-events" xsltforms:dummy="dummy">
+	<head>
+		<title>XSLTForms Trace Log</title>
+		<xf:model>
+			<xf:instance id="tracelog" src="opener://xsltforms-tracelog"/>
+		</xf:model>
+	</head>
+	<body>
+		<xf:group ref=".[not(*)]">
+			<p>Trace Log is accessible when pressing F1 key then activating the corresponding trigger.</p>
+		</xf:group>
+		<xf:group ref=".[*]">
+			<h2>XSLTForms Trace Log</h2>
+			<xf:repeat nodeset="event">
+				<xf:output value="."/>
+			</xf:repeat>
+		</xf:group>
+	</body>
+</html>

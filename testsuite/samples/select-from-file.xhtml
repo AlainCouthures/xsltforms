@@ -1,0 +1,37 @@
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:xf="http://www.w3.org/2002/xforms" 
+	>
+   <head>
+      <title>Select List From File</title>
+      
+      /* the default model */
+      <xf:model>
+         <xf:instance>
+            <Data xmlns="">
+                  <MyXMLSchemaTypeCode/>
+            </Data>
+         </xf:instance>
+      </xf:model>
+      
+      <!-- read the codes from an external file into this model -->
+      <xf:model id="XMLSchemaTypeCode">
+         <xf:instance src="XMLSchemaTypeCode.xml"/>
+      </xf:model>
+      
+   </head>
+   <body>
+      <p>This selection list was read from a file.</p>
+      <xf:select1  ref="/Data/MyXMLSchemaTypeCode" appearance="minimal" incremental="true">
+         <xf:label>Select XML Schema data type: </xf:label>
+         <xf:itemset model="XMLSchemaTypeCode" nodeset="/XMLSchemaTypeCode/item">
+            <xf:label ref="label"/>
+            <xf:value ref="value"/>
+         </xf:itemset>
+      </xf:select1>
+      <br/>
+      <xf:output ref="/Data/MyXMLSchemaTypeCode">
+         <xf:label>Value of MyXMLSchemaTypeCode: </xf:label>
+      </xf:output>
+   </body>
+</html>

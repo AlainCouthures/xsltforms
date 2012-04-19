@@ -1,0 +1,88 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>XForms Colored Horizontal Tab Menu</title>
+   </head>
+   <style>
+        @namespace xf url("http://www.w3.org/2002/xforms");
+        /* all the attributes of each tab, except the background color */
+        #horiz-tab-menu xf|trigger {
+                border-left: black solid 1px;
+                border-top: black solid 1px;
+                border-right: black solid 1px;
+                border-bottom: 0px;
+                font-weight: bold;
+                font-family: Helvetica, sans-serif;
+                font-size: .9em;
+                margin-right: 5px;
+                padding: 3px;
+                /* only works under FireFox */
+                -moz-border-radius: .5em .5em 0em 0em;
+                border-radius-topright: .5em;
+                border-radius-topleft: .5em;
+        }
+        /* the attributes of each div inside of a case */
+        xf|switch xf|case div {
+                border-left: solid black 1px;
+                border-top: solid black 0px;
+                border-right: solid black 1px;
+                border-bottom: solid black 1px;
+        }
+        #tab-1, #div-1  {
+                background-color: pink;
+        }
+        #tab-2, #div-2  {
+                background-color: salmon;
+        }
+        #tab-3, #div-3  {
+                background-color: khaki;
+        }
+        </style>
+   <body>
+      <div id="horiz-tab-menu">
+         <xf:trigger id="tab-1" appearance="minimal">
+            <xf:label>Tab 1 Title</xf:label>
+            <xf:toggle case="case-1" ev:event="DOMActivate" />
+         </xf:trigger>
+         <xf:trigger id="tab-2" appearance="minimal">
+            <xf:label>Tab 2 Title</xf:label>
+            <xf:toggle case="case-2" ev:event="DOMActivate" />
+         </xf:trigger>
+         <xf:trigger id="tab-3" appearance="minimal">
+            <xf:label>Tab 3 Title</xf:label>
+            <xf:toggle case="case-3" ev:event="DOMActivate" />
+         </xf:trigger>
+      </div>
+      <xf:switch>
+         <xf:case id="case-1" selected="true()">
+            <div id="div-1">
+            menu 1 content menu 1 content menu 1 content menu 1 content
+            menu 1 content menu 1 content menu 1 content menu 1 content
+            menu 1 content menu 1 content menu 1 content menu 1 content
+            menu 1 content menu 1 content menu 1 content menu 1 content
+            menu 1 content menu 1 content menu 1 content menu 1 content
+            menu 1 content menu 1 content menu 1 content menu 1 content
+                                </div>
+         </xf:case>
+         <xf:case id="case-2">
+            <div id="div-2">
+            menu 2 content menu 2 content menu 2 content menu 2 content
+            menu 2 content menu 2 content menu 2 content menu 2 content
+            menu 2 content menu 2 content menu 2 content menu 2 content
+            menu 2 content menu 2 content menu 2 content menu 2 content
+            menu 2 content menu 2 content menu 2 content menu 2 content
+            menu 2 content menu 2 content menu 2 content menu 2 content
+                                </div>
+         </xf:case>
+         <xf:case id="case-3">
+            <div id="div-3">
+            menu 3 content menu 3 content menu 3 content menu 3 content
+            menu 3 content menu 3 content menu 3 content menu 3 content
+            menu 3 content menu 3 content menu 3 content menu 3 content
+            menu 3 content menu 3 content menu 3 content menu 3 content
+            menu 3 content menu 3 content menu 3 content menu 3 content
+            menu 3 content menu 3 content menu 3 content menu 3 content
+                                </div>
+         </xf:case>
+      </xf:switch>
+   </body>
+</html>

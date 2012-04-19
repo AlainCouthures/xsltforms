@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
+   <head>
+       <title/>
+       <xf:model>
+           <xf:instance xmlns="">
+               <Data>
+                   <File xsi:type="xs:anyURI"/>
+               </Data>
+           </xf:instance>
+       </xf:model>
+   </head>
+   <body>
+       <xf:upload ref="/Data/File">
+           <xf:filename>file:///C:/dd/*.xml</xf:filename>
+           <xf:mediatype>text/xml</xf:mediatype>
+       </xf:upload>
+       <br/>
+       <xf:output ref="/Data/File">
+          <xf:label>File: </xf:label>
+       </xf:output>
+   </body>
+</html>

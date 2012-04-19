@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <EnumeratedValues>
+      <Item>
+         <Label>Cemetery</Label>
+         <Value>cemetery</Value>
+      </Item>
+      <Item>
+         <Label>Church</Label>
+         <Value>church</Value>
+      </Item>
+      <Item>
+         <Label>Educational/Religious - Other</Label>
+         <Value>educational-religious-other</Value>
+      </Item>
+      <Item>
+         <Label>Preschool - Day Care Center</Label>
+         <Value>preschool-day-care</Value>
+      </Item>
+      <Item>
+         <Label>Private School</Label>
+         <Value>private-school</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

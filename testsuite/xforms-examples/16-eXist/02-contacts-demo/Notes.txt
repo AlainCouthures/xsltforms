@@ -1,0 +1,8 @@
+Notes:
+
+replace
+u:IDType
+with
+niem-xsd:string
+
+in niem/universal/1.0/universal.xsd

@@ -1,0 +1,171 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFElement.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_element" class ===
+Element  Class
+* constructor function : empty</cm:wiki>
+		<![CDATA[
+function XsltForms_element() {
+}
+
+]]>
+		<cm:wiki>
+* '''init''' method : initializes properties </cm:wiki>
+<![CDATA[
+XsltForms_element.depsId = 0;
+
+XsltForms_element.prototype.init = function(subform, id) {
+	this.subform = subform;
+	this.element = document.getElementById(id);
+	if (this.element.xfElement) {
+		if (!(this.element.xfElement instanceof Array)) {
+			this.element.xfElement = [this.element.xfElement];
+		}
+		this.element.xfElement.push(this);
+	} else {
+		this.element.xfElement = this;
+	}
+	this.depsElements = [];
+	this.depsNodesBuild = [];
+	this.depsNodesRefresh = [];
+	this.depsIdB = XsltForms_element.depsId++;
+	this.depsIdR = XsltForms_element.depsId++;
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears properties of this element</cm:wiki>
+<![CDATA[
+XsltForms_element.prototype.dispose = function() {
+	if(this.element) {
+		this.element.xfElement = null;
+		this.element.hasXFElement = null;
+		this.element = null;
+	}
+	this.depsElements = null;
+	if (this.depsNodesBuild) {
+		for (var i = 0, len = this.depsNodesBuild.length; i < len; i++) {
+			XsltForms_browser.rmValueMeta(this.depsNodesBuild[i], "depfor", this.depsIdB);
+		}
+	}
+	this.depsNodesBuild = null;
+	if (this.depsNodesRefresh) {
+		for (var i2 = 0, len2 = this.depsNodesRefresh.length; i2 < len2; i2++) {
+			XsltForms_browser.rmValueMeta(this.depsNodesRefresh[i2], "depfor", this.depsIdR);
+		}
+	}
+	this.depsNodesRefresh = null;
+};
+
+]]>
+		<cm:wiki>
+* '''build''' method : abstractly builds this element from dependencies</cm:wiki>
+<![CDATA[
+XsltForms_element.prototype.build = function(ctx) {
+	if (this.hasBinding) {
+		var deps = this.depsElements;
+		var depsN = this.depsNodesBuild;
+		var depsR = this.depsNodesRefresh;
+		var build = !XsltForms_globals.ready || (deps.length === 0) || ctx !== this.ctx;
+		var refresh = false;
+		var changes = XsltForms_globals.changes;
+		for (var i0 = 0, len0 = depsN.length; !build && i0 < len0; i0++) {
+			build = depsN[i0].nodeName === "";
+		}
+		for (var i = 0, len = deps.length; !build && i < len; i++) {
+			var el = deps[i];
+			for (var j = 0, len1 = changes.length; !build && j < len1; j++) {
+				if (el === changes[j]) {
+					if (el.instances) { //model
+						if (el.rebuilded || el.newRebuilded) {
+							build = true;
+						} else {
+							for (var k = 0, len2 = depsN.length; !build && k < len2; k++) {
+								build = XsltForms_browser.inArray(depsN[k], el.nodesChanged);
+							}
+							if (!build) {
+								for (var n = 0, len3 = depsR.length; n < len3; n++) {
+									refresh = XsltForms_browser.inArray(depsR[n], el.nodesChanged);
+								}
+							}
+						}
+					} else {
+						build = true;
+					}
+				}
+			}
+		}
+		this.changed = build || refresh;
+		if (build) {
+			for (var i4 = 0, len4 = depsN.length; i4 < len4; i4++) {
+				XsltForms_browser.rmValueMeta(depsN[i4], "depfor", this.depsIdB);
+			}
+			depsN.length = 0;
+			for (var i5 = 0, len5 = depsR.length; i5 < len5; i5++) {
+				XsltForms_browser.rmValueMeta(depsR[i5], "depfor", this.depsIdR);
+			}
+			depsR.length = 0;
+			deps.length = 0;
+			this.ctx = ctx;
+			this.build_(ctx);
+		}
+	} else {
+		this.element.node = ctx;
+	}
+};
+]]>
+		<cm:wiki>
+* '''evaluateBinding''' method : evaluates the spec'ed binding and gathers any errors</cm:wiki>
+<![CDATA[
+XsltForms_element.prototype.evaluateBinding = function(binding, ctx) {
+	var nodes = null;
+	var errmsg = null;
+	if (binding) {
+		nodes = binding.evaluate(ctx, this.depsNodesBuild, this.depsIdB, this.depsElements);
+		if (nodes || nodes === "") {
+			return nodes;
+		}
+		// A 'null' binding means bind-ID was not found.
+		errmsg = "non-existent bind-ID("+ binding.bind + ") on element(" + this.element.id + ")!";
+	} else {
+		errmsg = "no binding defined for element("+ this.element.id + ")!";
+	}
+	XsltForms_browser.assert(errmsg);
+	if (XsltForms_globals.building && XsltForms_globals.debugMode) {
+		//
+		// Do not fail here, to keep on searching for more errors.
+		XsltForms_globals.bindErrMsgs.push(errmsg);
+		XsltForms_xmlevents.dispatch(this.element, "xforms-binding-exception");
+		nodes = [];
+	} else {
+		XsltForms_globals.error(this.element, "xforms-binding-exception", errmsg);
+	}
+	return nodes;
+};
+]]>
+	</cm:source>
+</cm:component>

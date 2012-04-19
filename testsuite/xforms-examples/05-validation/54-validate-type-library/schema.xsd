@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ftype="http://www.example.com/my-file-types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:import namespace="http://www.example.com/my-file-types" schemaLocation="my-simple-types.xsd"/>
+   <xs:element name="data">
+      <xs:annotation>
+         <xs:documentation>Test XML Schema</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="zip5" type="ftype:zip5Type"/>
+            <xs:element name="zip9" type="ftype:zip9Type"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

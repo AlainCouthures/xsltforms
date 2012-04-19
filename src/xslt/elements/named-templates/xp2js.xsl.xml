@@ -1,0 +1,198 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="xp2js.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:variable name="precedence" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">./.;0.|.;1.div.mod.*.;2.+.-.;3.&lt;.&gt;.&lt;=.&gt;=.;4.=.!=.;5.and.;6.or.;7.,.;8.</xsl:variable>
+		<xsl:template name="xp2js" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="xp"/>
+			<xsl:param name="args"/>
+			<xsl:param name="ops"/>
+			<xsl:variable name="c" select="substring(normalize-space($xp),1,1)"/>
+			<xsl:variable name="d" select="substring-after($xp,$c)"/>
+			<xsl:variable name="r">
+				<xsl:choose>
+					<xsl:when test="contains('./@*',$c)">
+						<xsl:variable name="t"><xsl:call-template name="getLocationPath"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>
+						<xsl:value-of select="substring-before($t,'.')"/>
+						<xsl:text>.new XsltForms_locationExpr(</xsl:text>
+						<xsl:choose>
+							<xsl:when test="$c = '/' and not(starts-with($ops,'3.0./'))">true</xsl:when>
+							<xsl:otherwise>false</xsl:otherwise>
+						</xsl:choose>
+						<xsl:value-of select="substring-after($t,'.')"/><xsl:text>)</xsl:text>
+					</xsl:when>
+					<xsl:when test="$c = &quot;'&quot;">
+						<xsl:variable name="t">'<xsl:value-of select="substring-before($d,&quot;'&quot;)"/>'</xsl:variable>
+						<xsl:value-of select="concat(string-length($t),'.new XsltForms_cteExpr(',$t,')')"/>
+					</xsl:when>
+					<xsl:when test="$c = '&quot;'">
+						<xsl:variable name="t">"<xsl:value-of select="substring-before($d,'&quot;')"/>"</xsl:variable>
+						<xsl:value-of select="concat(string-length($t),'.new XsltForms_cteExpr(',$t,')')"/>
+					</xsl:when>
+					<xsl:when test="$c = '('">
+						<xsl:text>(</xsl:text>
+						<xsl:call-template name="xp2js">
+							<xsl:with-param name="xp" select="$d"/>
+							<xsl:with-param name="args" select="$args"/>
+							<xsl:with-param name="ops" select="concat('5.999.(',$ops)"/>
+						</xsl:call-template>
+					</xsl:when>
+					<xsl:when test="$c = '-'">
+						<xsl:choose>
+							<xsl:when test="contains('0123456789',substring($d,1,1))">
+								<xsl:variable name="t"><xsl:call-template name="getNumber"><xsl:with-param name="s" select="$d"/><xsl:with-param name="r" select="'-'"/></xsl:call-template></xsl:variable>
+								<xsl:value-of select="concat(string-length($t),'.new XsltForms_cteExpr(',$t,')')"/>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:when>
+					<xsl:when test="contains('0123456789',$c)">
+						<xsl:variable name="t"><xsl:call-template name="getNumber"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>
+						<xsl:value-of select="concat(string-length($t),'.new XsltForms_cteExpr(',$t,')')"/>
+					</xsl:when>
+					<xsl:when test="contains('_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',$c)">
+						<xsl:variable name="after" select="translate($d,'_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-:','')"/>
+						<xsl:choose>
+							<xsl:when test="substring($after,1,1)='(' and substring(substring-after($d,'('),1,1) = ')' and not(contains(concat('::',$c,substring-before($d,'('),'('),'::node('))">
+								<xsl:variable name="t"><xsl:call-template name="getName"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>
+								<xsl:value-of select="string-length($t)+2"/>
+								<xsl:text>.new XsltForms_functionCallExpr('</xsl:text>
+								<xsl:call-template name="fctfullname">
+									<xsl:with-param name="fctname" select="$t"/>
+								</xsl:call-template>
+								<xsl:text>')</xsl:text>
+							</xsl:when>
+							<xsl:when test="substring($after,1,1)='(' and substring(substring-after($d,'('),1,1) != ')'">
+								<xsl:variable name="t"><xsl:call-template name="getName"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>
+								<xsl:text>(</xsl:text>
+								<xsl:call-template name="xp2js">
+									<xsl:with-param name="xp" select="substring($d,string-length($t)+1)"/>
+									<xsl:with-param name="args" select="$args"/>
+									<xsl:with-param name="ops" select="concat(string-length($t)+4,'.999.',$t,$ops)"/>
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:variable name="t"><xsl:call-template name="getLocationPath"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>
+								<xsl:value-of select="substring-before($t,'.')"/>
+								<xsl:text>.new XsltForms_locationExpr(false</xsl:text>
+								<xsl:value-of select="substring-after($t,'.')"/><xsl:text>)</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:when>
+					<xsl:otherwise>~~~~Unexpected char at '<xsl:value-of select="concat($c,$d)"/>'~#~#</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="contains($r,'~~~~')"><xsl:value-of select="$r"/></xsl:when>
+				<xsl:when test="substring($r,1,1) = '('"><xsl:value-of select="substring($r,2)"/></xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="rlen" select="number(substring-before($r,'.'))"/>
+					<xsl:variable name="rval" select="substring-after($r,'.')"/>
+					<xsl:variable name="e">
+						<xsl:call-template name="closepar">
+							<xsl:with-param name="s" select="substring($d,$rlen)"/>
+							<xsl:with-param name="args" select="concat(string-length($rval),'.',$rval,$args)"/>
+							<xsl:with-param name="ops" select="$ops"/>
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:variable name="flen" select="substring-before($e,'.')"/>
+					<xsl:variable name="f" select="substring(substring-after($e,'.'),1,number($flen))"/>
+					<xsl:variable name="e2" select="substring($e,string-length($flen)+2+number($flen))"/>
+					<xsl:variable name="args2len" select="substring-before($e2,'.')"/>
+					<xsl:variable name="args2" select="substring(substring-after($e2,'.'),1,number($args2len))"/>
+					<xsl:variable name="ops2" select="substring-after(substring($e2,string-length($args2len)+2+number($args2len)),'.')"/>
+					<xsl:choose>
+						<xsl:when test="normalize-space($f)=''">
+							<xsl:variable name="stacks">
+								<xsl:call-template name="calc">
+									<xsl:with-param name="args" select="$args2"/>
+									<xsl:with-param name="ops" select="$ops2"/>
+									<xsl:with-param name="opprec" select="9999999"/>
+								</xsl:call-template>
+							</xsl:variable>
+							<xsl:variable name="reslen" select="substring-before(substring-after($stacks,'.'),'.')"/>
+							<xsl:value-of select="substring(substring-after(substring-after($stacks,'.'),'.'),1,number($reslen))"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:variable name="o" select="substring(normalize-space($f),1,1)"/>
+							<xsl:choose>
+								<xsl:when test="$o = ']'">
+									<xsl:variable name="stacks">
+										<xsl:call-template name="calc">
+											<xsl:with-param name="args" select="$args2"/>
+											<xsl:with-param name="ops" select="$ops2"/>
+											<xsl:with-param name="opprec" select="9999999"/>
+										</xsl:call-template>
+									</xsl:variable>
+									<xsl:variable name="reslen" select="substring-before(substring-after($stacks,'.'),'.')"/>
+									<xsl:value-of select="concat(string-length(substring-after($f,$o)),'.',substring(substring-after(substring-after($stacks,'.'),'.'),1,number($reslen)))"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:variable name="p" select="concat($o,substring-after($f,$o))"/>
+									<xsl:variable name="op">
+										<xsl:choose>
+											<xsl:when test="starts-with($p,'div') or starts-with($p,'and') or starts-with($p,'mod')"><xsl:value-of select="substring($p,1,3)"/></xsl:when>
+											<xsl:when test="starts-with($p,'or') or starts-with($p,'!=') or starts-with($p,'&lt;=') or starts-with($p,'&gt;=')"><xsl:value-of select="substring($p,1,2)"/></xsl:when>
+											<xsl:when test="contains('+-*=|,&lt;&gt;/',$o)"><xsl:value-of select="$o"/></xsl:when>
+											<xsl:otherwise>null</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:choose>
+										<xsl:when test="$op!='null'">
+											<xsl:variable name="opprec" select="number(substring-before(substring-after(substring-after($precedence,concat('.',$op,'.')),';'),'.'))"/>
+											<xsl:variable name="stacks">
+												<xsl:call-template name="calc">
+													<xsl:with-param name="args" select="$args2"/>
+													<xsl:with-param name="ops" select="$ops2"/>
+													<xsl:with-param name="opprec" select="$opprec"/>
+												</xsl:call-template>
+											</xsl:variable>
+											<xsl:variable name="args3len" select="substring-before($stacks,'.')"/>
+											<xsl:variable name="args3" select="substring(substring-after($stacks,'.'),1,number($args3len))"/>
+											<xsl:variable name="nextstack" select="substring($stacks,string-length($args3len)+2+number($args3len))"/>
+											<xsl:variable name="ops3len" select="substring-before($nextstack,'.')"/>
+											<xsl:variable name="ops3" select="substring(substring-after($nextstack,'.'),1,number($ops3len))"/>
+											<xsl:variable name="xp3">
+												<xsl:choose>
+													<xsl:when test="$op = '/'"><xsl:value-of select="$p"/></xsl:when>
+													<xsl:otherwise><xsl:value-of select="substring($p,string-length($op)+1)"/></xsl:otherwise>
+												</xsl:choose>
+											</xsl:variable>
+											<xsl:call-template name="xp2js">
+												<xsl:with-param name="xp" select="$xp3"/>
+												<xsl:with-param name="args" select="$args3"/>
+												<xsl:with-param name="ops" select="concat(string-length($opprec)+1+string-length($op),'.',$opprec,'.',$op,$ops3)"/>
+											</xsl:call-template>
+										</xsl:when>
+										<xsl:otherwise>~~~~Unknown operator at '<xsl:value-of select="$f"/>'~#~#</xsl:otherwise>
+									</xsl:choose>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</cm:source>
+</cm:component>

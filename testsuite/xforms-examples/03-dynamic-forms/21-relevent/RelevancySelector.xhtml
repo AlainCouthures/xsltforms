@@ -1,0 +1,55 @@
+<html 
+xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:xf="http://www.w3.org/2002/xforms" 
+xmlns:ev="http://www.w3.org/2001/xml-events" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Enter the title of your XHTML document here</title>
+      <xf:model>
+         <instance xmlns="">
+               <MyCode>person</MyCode>
+               <Person>
+                  <PersonGivenName/>
+                   <PersonSurName/>
+               </Person>
+               <Organization>
+                   <OrganizationName/>
+               </Organization>
+         </instance>
+         <xf:bind nodeset="Person">
+            <!-- value="strcmp(MyCode, 'person') -->
+            <xf:bind nodeset="PersonGivenName" relevant="true()"/>
+            <xf:bind nodeset="PersonSurName" relevant="true()"/>
+         </xf:bind>  
+         <!-- strcmp(MyCode, 'organization') -->
+          <xf:bind nodeset="Organization" relevant="false()"/>
+      </xf:model>
+   </head>
+   <body>
+      <p>Example of using the date selector by binding an instance to an XML Schema date type:
+		<br />
+		<xf:select1 nodeset="MyCode">
+         <xf:item select="true()">
+            <xf:label>Person</xf:label>
+            <xf:value>person</xf:value>
+         </xf:item>
+         <xf:item>
+            <xf:label>Organization</xf:label>
+             <xf:value>organization</xf:value>
+         </xf:item>
+		</xf:select1>
+		<br />
+         <xf:input nodeset="/Person/PersonGivenName">
+            <xf:label>First Name:</xf:label>
+         </xf:input>
+         <br />
+         <xf:input nodeset="/Person/PersonSurName">
+            <xf:label>Last Name:</xf:label>
+         </xf:input>
+         <br />
+         <xf:input nodeset="/Organization/OrganizationName">
+            <xf:label>Organization Name:</xf:label>
+         </xf:input>
+      </p>
+   </body>
+</html>

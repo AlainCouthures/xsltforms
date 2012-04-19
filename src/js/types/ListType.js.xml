@@ -1,0 +1,87 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="ListType.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_listType" class ===
+ListType Class
+* constructor function : white space management as "collapse"</cm:wiki>
+		<![CDATA[
+function XsltForms_listType() {
+	this.whiteSpace = "collapse";
+}
+
+XsltForms_listType.prototype = new XsltForms_type();
+
+]]>
+		<cm:wiki>
+* '''setItemType''' method : associates a Type object for each item in this ListType object</cm:wiki>
+<![CDATA[
+XsltForms_listType.prototype.setItemType = function(itemType) {
+	this.itemType = typeof itemType === "string"? this.schema.getType(itemType) : itemType;
+	return this;
+};
+
+]]>
+		<cm:wiki>
+* '''validate''' method : validates a value against this ListType object</cm:wiki>
+<![CDATA[
+XsltForms_listType.prototype.validate = function (value) {
+	var items = this.baseType.canonicalValue.call(this, value).split(" ");
+	value = "";
+	if (items.length === 1 && items[0] === "") {
+		items = [];
+	}
+	for (var i = 0, len = items.length; i < len; i++) {
+		var item = XsltForms_itemType.validate(items[i]);
+		if (!item) {
+			return null;
+		}
+		value += value.length === 0? item : " " + item;
+	}
+	if ( (this.length && this.length !== 1) ||
+		(this.minLength && 1 < this.minLength) ||
+		(this.maxLength && 1 > this.maxLength)) {
+		return null;
+	}
+	return null;
+};
+
+]]>
+		<cm:wiki>
+* '''canonicalValue''' method : computes the canonical value of a list value</cm:wiki>
+<![CDATA[
+XsltForms_listType.prototype.canonicalValue = function(value) {
+	var items = this.baseType.canonicalValue(value).split(" ");
+	var cvalue = "";
+	for (var i = 0, len = items.length; i < len; i++) {
+		var item = this.itemType.canonicalValue(items[i]);
+		cvalue += (cvalue.length === 0 ? "" : " ") + item;
+	}
+	return cvalue;
+};
+]]>
+	</cm:source>
+</cm:component>

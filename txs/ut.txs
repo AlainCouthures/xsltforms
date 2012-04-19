@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<txs:scriptsheet xmlns="http://www.w3.org/1999/xhtml" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cm="http://www.agencexml.com/cm" version="0.4">
+	<xsl:stylesheet version="1.0" txs:name="main" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:template match="/">
+			<txs:transform stylesheet="#build">
+				<txs:with-param name="filename" value="{/req:params/req:file}"/>
+				<txs:input>
+					<txs:load filename="{/req:params/req:file}.xml" format="xml"/>
+				</txs:input>
+			</txs:transform>
+		</xsl:template>
+	</xsl:stylesheet>
+	<xsl:stylesheet txs:name="build" version="1.0" xmlns:cm="http://www.agencexml.com/cm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:param name="filename"/>
+		<xsl:template match="/">
+			<xsl:choose>
+				<xsl:when test="string(/cm:component/cm:source/@type)=''">
+					<txs:return contenttype="text/html" format="text">
+						<xsl:value-of select="substring-after($filename,'../')"/> not found
+					</txs:return>
+				</xsl:when>
+				<xsl:otherwise>
+					<txs:return contenttype="application/xhtml+xml" format="xhtml">
+						<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+							<head>
+							  <title>XSLTForms unit test file</title>
+							  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+							  <script src="{substring('../../../../../../../../../../../../../../../../../../../../../../../../',1,string-length(translate($filename,'/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. +','/'))*3-3)}jsunittest/assets/jsunittest.js" type="text/javascript">&#160;</script>
+								<xsl:variable name="loc">
+										<xsl:call-template name="locationextract">
+											<xsl:with-param name="path" select="$filename"/>
+										</xsl:call-template>
+								</xsl:variable>
+							  <script src="{substring-after($filename,$loc)}?jsdep" type="text/javascript">&#160;</script>
+							  <link rel="stylesheet" href="{substring('../../../../../../../../../../../../../../../../../../../../../../../../',1,string-length(translate($filename,'/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. +','/'))*3-3)}jsunittest/assets/unittest.css" type="text/css" />
+							</head>
+							<body>
+								<div id="content">
+								  <div id="header">
+								    <h1>JavaScript unit test file</h1>
+								    <p>
+								      This file tests <strong><xsl:value-of select="substring-after($filename,'../')"/></strong>.
+								    </p>
+								  </div>
+								  <!-- Log output (one per Runner, via {testLog: "testlog"} option)-->
+								  <div id="testlog"></div>
+								  <!-- Put sample/test html here -->
+								  <div id="sample">
+								  </div>
+								</div>
+								<script type="text/javascript">
+								  new Test.Unit.Runner({
+								    setup: function() {
+								    },
+										<xsl:variable name="newloc">
+											<xsl:call-template name="locationextract">
+												<xsl:with-param name="path" select="$filename"/>
+											</xsl:call-template>
+										</xsl:variable>
+										<xsl:apply-templates select="/cm:component/cm:unit-test-group/cm:unit-test">
+											<xsl:with-param name="fn" select="substring-after($filename,'../')"/>
+											<xsl:with-param name="loc" select="$newloc"/>
+											<xsl:with-param name="mainloc" select="$newloc"/>
+										</xsl:apply-templates>
+										<xsl:apply-templates select="/cm:component/cm:source/node()">
+											<xsl:with-param name="fn" select="substring-after($filename,'../')"/>
+											<xsl:with-param name="loc" select="$newloc"/>
+											<xsl:with-param name="mainloc" select="$newloc"/>
+										</xsl:apply-templates>
+								    teardown: function() {
+								    }
+									}); 
+								</script>
+							</body>
+						</html>
+					</txs:return>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+		<xsl:template match="cm:unit-test">
+			<xsl:param name="fn"/>
+			<xsl:param name="loc"/>
+			<xsl:param name="mainloc"/>
+			"test <xsl:value-of select="concat(@name,' (',$fn,')')"/>" : function() { with(this) {
+			<xsl:choose>
+				<xsl:when test="/cm:component/cm:source/@type = 'text/javascript'">
+					<xsl:value-of select="."/>
+				</xsl:when>
+				<xsl:when test="/cm:component/cm:source/@type = 'application/xml'">
+					var n = 1;
+					var xsltDoc = XDocument.load('<xsl:value-of select="concat(substring-after($fn,substring-after($mainloc,'../')),'?dep')"/>');
+					var xmlDoc;
+					<xsl:for-each select="cm:assertion">
+						xmlDoc = XDocument.parse('<xsl:apply-templates select="cm:input/*" mode="xml2string"><xsl:with-param name="root" select="true()"/></xsl:apply-templates>');
+						<xsl:choose>
+							<xsl:when test="ancestor::cm:unit-test-group/cm:input-transform/cm:output[@method='text']">
+								var result = xmlDoc.transformToText(xsltDoc);
+								assert(result == '<xsl:call-template name="escapeNl"><xsl:with-param name="text"><xsl:call-template name="escapeApos"><xsl:with-param name="text" select="cm:expected-output"/></xsl:call-template></xsl:with-param></xsl:call-template>', n++);
+							</xsl:when>
+							<xsl:otherwise>
+							</xsl:otherwise>
+						</xsl:choose>
+						xmlDoc = null;
+					</xsl:for-each>
+					xsltDoc = null;
+				</xsl:when>
+			</xsl:choose>
+	    }},
+		</xsl:template>
+		<xsl:template match="cm:import-components" priority="1">
+			<xsl:param name="fn"/>
+			<xsl:param name="loc"/>
+			<xsl:param name="mainloc"/>
+			<xsl:variable name="newloc">
+				<xsl:call-template name="locationextract">
+					<xsl:with-param name="path" select="concat($loc,@path)"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:apply-templates select="document(concat($loc,@path))/cm:component/cm:unit-test-group/cm:unit-test">
+				<xsl:with-param name="fn" select="substring-before(substring-after(concat($loc,@path),'../'),'.xml')"/>
+				<xsl:with-param name="loc" select="$newloc"/>
+				<xsl:with-param name="mainloc" select="$mainloc"/>
+			</xsl:apply-templates>
+			<xsl:apply-templates select="document(concat($loc,@path))/cm:component/cm:source/node()">
+				<xsl:with-param name="fn" select="substring-before(substring-after(concat($loc,@path),'../'),'.xml')"/>
+				<xsl:with-param name="loc" select="$newloc"/>
+				<xsl:with-param name="mainloc" select="$mainloc"/>
+			</xsl:apply-templates>
+		</xsl:template>
+		<xsl:template match="@* | node() | text()" priority="0"/>
+		<xsl:template name="locationextract">
+			<xsl:param name="path"/>
+			<xsl:if test="contains($path,'/')"><xsl:value-of select="substring-before($path,'/')"/>/<xsl:call-template name="locationextract"><xsl:with-param name="path" select="substring-after($path,'/')"/></xsl:call-template></xsl:if>
+		</xsl:template>
+		<xsl:template match="*" mode="xml2string" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="root"/>
+			<xsl:text>&lt;</xsl:text>
+			<xsl:value-of select="name()"/>
+			<xsl:variable name="parent" select=".."/>
+			<xsl:variable name="element" select="."/>
+			<xsl:choose>
+				<xsl:when test="namespace::*">
+					<xsl:for-each select="(namespace::* | @*/namespace::*)[name()!='xml']">
+						<xsl:variable name="prefix" select="name()"/>
+						<xsl:variable name="uri" select="."/>
+						<xsl:if test="(not($parent/namespace::*[name()=$prefix and . = $uri]) or $root) and (($element|$element//*|$element//@*)[namespace-uri()=$uri])"> xmlns<xsl:if test="$prefix">:<xsl:value-of select="$prefix"/></xsl:if>="<xsl:value-of select="$uri"/>"</xsl:if>
+					</xsl:for-each>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:for-each select="(. | @*)[name() != local-name()]"> xmlns:<xsl:value-of select="substring-before(name(),':')"/>="<xsl:value-of select="namespace-uri()"/>"</xsl:for-each>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:apply-templates select="@*" mode="xml2string"/>
+			<xsl:choose>
+				<xsl:when test="node()">&gt;<xsl:apply-templates select="node()" mode="xml2string"><xsl:with-param name="root" select="false()"/></xsl:apply-templates>&lt;/<xsl:value-of select="name()"/>&gt;</xsl:when>
+				<xsl:otherwise>/&gt;</xsl:otherwise>
+			</xsl:choose>
+			<xsl:text></xsl:text>
+		</xsl:template>
+		<xsl:template match="@*" mode="xml2string" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:text> </xsl:text>
+			<xsl:value-of select="name()"/>
+			<xsl:text>="</xsl:text>
+			<xsl:call-template name="escapeApos"><xsl:with-param name="text" select="."/></xsl:call-template>
+			<xsl:text>"</xsl:text>
+		</xsl:template>
+		<xsl:template match="text()" mode="xml2string" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:if test="normalize-space(.)!=''"><xsl:call-template name="escapeApos"><xsl:with-param name="text" select="normalize-space(.)"/></xsl:call-template></xsl:if>
+		</xsl:template>
+		<xsl:template name="escapeApos" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="text"/>
+			<xsl:variable name="apos" select='"&apos;"' />
+			<xsl:choose>
+				<xsl:when test="contains($text, $apos)">
+					<xsl:variable name="bufferBefore" select="substring-before($text,$apos)"/>
+					<xsl:variable name="newBuffer" select="substring-after($text,$apos)"/>
+					<xsl:value-of select="$bufferBefore"/><xsl:text>\'</xsl:text>
+					<xsl:call-template name="escapeApos">
+						<xsl:with-param name="text" select="$newBuffer"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$text"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+		<xsl:template name="escapeNl" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="text"/>
+			<xsl:variable name="nl" select='"&#xA;"' />
+			<xsl:choose>
+				<xsl:when test="contains($text, $nl)">
+					<xsl:variable name="bufferBefore" select="substring-before($text,$nl)"/>
+					<xsl:variable name="newBuffer" select="substring-after($text,$nl)"/>
+					<xsl:value-of select="$bufferBefore"/><xsl:text>\n</xsl:text>
+					<xsl:call-template name="escapeNl">
+						<xsl:with-param name="text" select="$newBuffer"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$text"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</xsl:stylesheet>
+</txs:scriptsheet>

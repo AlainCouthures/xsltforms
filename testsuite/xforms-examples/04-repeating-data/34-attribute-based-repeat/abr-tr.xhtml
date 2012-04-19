@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Repeat Into Table Using xf:repeat-nodeset</title>
+<!-- remove this line for non-formfaces implementations -->
+      <script type="text/javascript" src="formfaces.js"></script>
+      <xf:model>
+         <xf:instance xmlns="">
+            <Data xmlns="">
+               <Person>
+                  <PersonFullName>John Doe</PersonFullName>
+                  <ContactTelephoneID>(555) 123-4567</ContactTelephoneID>
+               </Person>
+               <Person>
+                  <PersonFullName>Jane Smith</PersonFullName>
+                  <ContactTelephoneID>(555) 123-4567</ContactTelephoneID>
+               </Person>
+               <Person>
+                  <PersonFullName>Jack Jones</PersonFullName>
+                  <ContactTelephoneID>(555) 123-4567</ContactTelephoneID>
+               </Person>
+               <Person>
+                  <PersonFullName>Alexander Middleton Wojohowski</PersonFullName>
+                  <ContactTelephoneID>(555) 123-4567</ContactTelephoneID>
+               </Person>
+            </Data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <table border="1">
+      <tbody>
+         <tr xf:repeat-nodeset="Person">
+            <td>
+               <xf:output ref="PersonFullName" />
+            </td>
+            <td>
+               <xf:output ref="ContactTelephoneID" />
+            </td>
+         </tr>
+         </tbody>
+      </table>
+   </body>
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <EnumeratedValues>
+      <Item>
+         <Label>Timber bare land.</Label>
+         <Value>timber-bare-land</Value>
+      </Item>
+      <Item>
+         <Label>Timber land under 40 acres.</Label>
+         <Value>timber-small</Value>
+      </Item>
+      <Item>
+         <Label>Timber land of 40 to 80 acres.</Label>
+         <Value>timber-medium</Value>
+      </Item>
+      <Item>
+         <Label>Timber land of over 80 acres.</Label>
+         <Value>timber-large</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

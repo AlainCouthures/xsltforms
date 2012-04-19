@@ -1,0 +1,137 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="Binding.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2011-09-14</cm:creationdate>
+	<cm:lastupdate>2011-09-14</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2011 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "Binding" class ===
+XForms Binding Management
+* constructor function : "xpath", "model" and "bind" properties are resolved</cm:wiki>
+		<![CDATA[
+function XsltForms_mipbinding(type, xpath, model) {
+	this.binding = new XsltForms_binding(type, xpath, model, null);
+	this.nodes = [];
+	this.depsElements = [];
+	this.depsNodes = [];
+}
+
+]]>
+		<cm:wiki>
+* '''evaluate''' method : evaluates the binding</cm:wiki>
+<![CDATA[
+XsltForms_mipbinding.prototype.evaluate = function(ctx, node) {
+	var deps = null;
+	var depsN = null;
+	var curn = this.nodes.length;
+	for (var i0 = 0, len0 = this.nodes.length; i0 < len0; i0++ ) {
+		if (node === this.nodes[i0].node) {
+			deps = this.nodes[i0].deps;
+			depsN = this.nodes[i0].depsN;
+			curn = i0;
+			break;
+		}
+	}
+	if (!deps && !depsN) {
+		this.nodes.push({node: node, deps: [], depsN: []});
+		deps = depsN = [];
+	}
+	var build = !XsltForms_globals.ready || (deps.length === 0);
+	var changes = XsltForms_globals.changes;
+	for (var i1 = 0, len1 = depsN.length; !build && i1 < len1; i1++) {
+		build = depsN[i1].nodeName === "";
+	}
+	for (var i = 0, len = deps.length; !build && i < len; i++) {
+		var el = deps[i];
+		for (var j = 0, len2 = changes.length; !build && j < len2; j++) {
+			if (el === changes[j]) {
+				if (el.instances) { //model
+					if (el.rebuilded || el.newRebuilded) {
+						build = true;
+					} else {
+						for (var k = 0, len3 = depsN.length; !build && k < len3; k++) {
+							build = XsltForms_browser.inArray(depsN[k], el.nodesChanged);
+						}
+					}
+				} else {
+					build = true;
+				}
+			}
+		}
+	}
+	if (build) {
+		// alert("Evaluate \"" + this.binding.xpath.expression + "\"");
+		depsN.length = 0;
+		deps.length = 0;
+		this.nodes[curn].result = this.binding.evaluate(ctx.node, this.nodes[curn].depsN, null, this.nodes[curn].deps);
+		return this.nodes[curn].result;
+	} else {
+		return this.nodes[curn].result;
+	}
+};
+]]>
+		<cm:wiki>
+* '''nodedispose''' method : disposes of a node meta data</cm:wiki>
+<![CDATA[
+XsltForms_mipbinding.prototype.nodedispose_ = function(node) {
+	for (var i = 0, len = this.nodes.length; i < len; i++ ) {
+		if (node === this.nodes[i].node) {
+			this.nodes[i] = this.nodes[len-1];
+			this.nodes.pop();
+			break;
+		}
+	}
+};
+
+XsltForms_mipbinding.nodedispose = function(node) {
+	var bindids = XsltForms_browser.getMeta(node, "bind");
+	if (bindids) {
+		var binds = bindids.split(" ");
+		for (var j = 0, len2 = binds.length; j < len2; j++) {
+			var bind = document.getElementById(binds[j]).xfElement;
+			if (bind.required) {
+				bind.required.nodedispose_(node);
+			}
+			if (bind.relevant) {
+				bind.relevant.nodedispose_(node);
+			}
+			if (bind.readonly) {
+				bind.readonly.nodedispose_(node);
+			}
+			if (bind.constraint) {
+				bind.constraint.nodedispose_(node);
+			}
+			if (bind.calculate) {
+				bind.calculate.nodedispose_(node);
+			}
+		}
+	}
+	for (var n = node.firstChild; n; n = n.nextSibling) {
+		if (n.nodeType === XsltForms_nodeType.ELEMENT) {
+			XsltForms_mipbinding.nodedispose(n);
+		}
+	}
+};
+]]>
+	</cm:source>
+</cm:component>

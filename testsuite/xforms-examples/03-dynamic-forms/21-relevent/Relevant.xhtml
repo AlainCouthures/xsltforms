@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xf="http://www.w3.org/2002/xforms"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <title>Testing the RELEVANT attribute</title>
+ <xf:model>
+  <xf:instance>
+   <test xmlns="">
+    <first>0.00</first>
+    <second>0.00</second>
+   </test>
+
+  </xf:instance>
+  <xf:bind nodeset="/test/first" type="xsd:decimal"/>
+  <xf:bind nodeset="/test/second" type="xsd:decimal" relevant="/test/first &gt; 2.03"/>
+ </xf:model>
+ <body>
+  <p>Theoretically you should only be able to enter something in the second field when the value of the first field is greater than 2.03.</p>
+  <xf:input ref="/test/first"><xf:label>First value </xf:label></xf:input><br/>
+  <xf:input ref="/test/second"><xf:label>Second value </xf:label></xf:input>
+
+ </body>
+</html>

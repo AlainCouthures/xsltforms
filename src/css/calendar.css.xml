@@ -1,0 +1,149 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="calendar.css">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/css">
+.calendar, .calendarList {
+	border-top			: 1px solid black;
+	border-right		: 2px solid black;
+	border-bottom		: 2px solid black;
+	border-left			: 1px solid black;
+	padding				: 1px 0px 0px 1px;
+	font-family			: tahoma, verdana, sans-serif;
+	font-size			: 12px;
+	color				: black;
+	background			: #f8f8f8;
+	display				: none;
+	position			: absolute;
+	z-index				: 9;
+}
+ 
+.calendar .button {
+	text-align			: center;
+	padding				: 1px;
+	border				: 1px solid;
+	border-color		: #fff #000 #000 #fff;
+}
+
+.calendar thead .hover {
+	border				: 2px solid;
+	border-color		: #fff #000 #000 #fff;
+	padding				: 0px;
+	background-color	: #d8e0e4;
+}
+
+.calendar .title, .calendar .title input, .calendar .title select, .calendar tfoot {
+	font-weight			: bold;
+	padding				: 1px;
+	border				: 1px solid #000;
+	color				: #000;
+	text-align			: center;
+	background-color	: #f8f8f8;
+	background-image	: url(titleBackground.png);
+}
+
+.calendar .title input {
+	width				: 4em;
+	-moz-box-sizing		: border-box;
+	box-sizing			: border-box;
+	background			: #f8f8f8;
+}
+
+.date tfoot {
+	display				: none;
+}
+
+.calendar tfoot input {
+	width				: 2em;
+	-moz-box-sizing		: border-box;
+	box-sizing			: border-box;
+	text-align			: center;
+	background			: #f0f0f0;
+}
+
+.calendar .names {
+	background-image	: url(thBackground.png);
+}
+
+.calendar .name {
+	border-bottom		: 1px solid #000;
+	padding				: 2px;
+	text-align			: center;
+}
+
+.calendar .day {
+	width				: 2em;
+	-moz-box-sizing		: border-box;
+	box-sizing			: border-box;
+	text-align			: right;
+	padding				: 2px 4px 2px 2px;
+}
+
+.calendar tbody .hover {
+	padding				: 1px 3px 1px 1px;
+	border				: 1px solid;
+	border-color		: #fff #000 #000 #fff;
+	background-color	: #dddddd;
+}
+
+.calendar .today {
+	font-weight			: bold;
+	color				: #00f;
+}
+
+.calendar .selected {
+	font-weight			: bold;
+	padding				: 2px 2px 0px 2px;
+	border				: 1px solid;
+	border-color		: #000 #fff #fff #000;
+	background			: #cccccc;
+}
+
+.calendar .weekend {
+	color				: #f00;
+}
+
+.calendarList {
+	padding				: 0;
+	margin				: 0;
+	width				: 55px;
+	-moz-box-sizing		: border-box;
+	box-sizing			: border-box;
+}
+
+.calendarList li {
+	list-style-type		: none;
+	text-align			: center;
+	padding				: 1px;
+}
+
+.calendarList li.hover {
+	border				: 1px solid;
+	border-color		: #fff #000 #000 #fff;
+	padding				: 0px;
+	background-color	: #dddddd;
+	width				: 100%;
+}
+	</cm:source>
+</cm:component>

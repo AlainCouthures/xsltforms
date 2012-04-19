@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <EnumeratedValues>
+      <Item>
+         <Label>Single Family Dwelling</Label>
+         <Value>single-family-dwelling</Value>
+      </Item>
+      <Item>
+         <Label>Townhouse</Label>
+         <Value>townhouse</Value>
+      </Item>
+      <Item>
+         <Label>Condominium</Label>
+         <Value>condominium</Value>
+      </Item>
+      <Item>
+         <Label>Residential Bare Land</Label>
+         <Value>single-family-dwelling-bare-land</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

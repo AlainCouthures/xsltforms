@@ -1,0 +1,83 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFDispatch.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_dispatch" class ===
+Dispatch Action Class
+* constructor function : stores specific properties</cm:wiki>
+		<![CDATA[
+function XsltForms_dispatch(subform, name, target, ifexpr, whileexpr, iterateexpr, delay) {
+	this.subform = subform;
+	this.name = name;
+	this.target = target;
+	this.init(ifexpr, whileexpr, iterateexpr);
+	this.delay = delay;
+}
+
+XsltForms_dispatch.prototype = new XsltForms_abstractAction();
+
+]]>
+		<cm:wiki>
+* '''run''' method : dispatches an XForms event</cm:wiki>
+<![CDATA[
+XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
+	var name = this.name;
+	if (name.evaluate) {
+		name = XsltForms_globals.stringValue(name.evaluate());
+	}
+	var target = this.target;
+	if (target && target.evaluate) {
+		target = XsltForms_globals.stringValue(target.evaluate());
+	}
+	if (!target) {
+		switch (name) {
+			case "xforms-submit":
+				target = document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement.defaultSubmission;
+				break;
+			case "xforms-reset":
+				target = document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement;
+				break;
+		}
+	} else {
+		target = typeof target === "string"? document.getElementById(target) : target;
+	}
+	var delay = 0;
+	if (this.delay) {
+		if (this.delay.evaluate) {
+			delay = XsltForms_globals.numberValue(this.delay.evaluate());
+		} else {
+			delay = XsltForms_globals.numberValue(this.delay);
+		}
+	}
+	if (delay > 0 ) {
+		window.setTimeout("XsltForms_xmlevents.dispatch(document.getElementById('"+target.id+"'),'"+name+"')", delay);
+	} else {
+		XsltForms_xmlevents.dispatch(target, name);
+	}
+};
+    ]]>
+	</cm:source>
+</cm:component>

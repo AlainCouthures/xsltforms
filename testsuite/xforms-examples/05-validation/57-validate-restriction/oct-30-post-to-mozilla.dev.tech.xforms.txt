@@ -1,0 +1,35 @@
+From:	 	jdeisenberg - view profile
+Date:		Mon, Oct 30 2006 12:16 am
+Email: 		"jdeisenberg" <jdavid.eisenb...@gmail.com>
+Groups: 		mozilla.dev.tech.xforms
+Not yet rated
+Rating:	 
+show options
+Reply | Reply to Author | Forward | Print | Individual Message | Show original | Report Abuse | Find messages by this author
+
+According to the XML Schema spec,
+http://www.w3.org/TR/xmlschema-2/#regexs,
+"Unlike some popular regular expression languages (including those
+defined by Perl and standard Unix utilities), the regular expression
+language defined here implicitly anchors all regular expressions at the
+head and tail, as the most common use of regular expressions in
+·pattern· is to match entire literals."
+
+Given this datatype, binding, and input:
+
+<xsd:simpleType name="zipCode">
+   <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d{5}"/>
+   </xsd:restriction>
+</xsd:simpleType>
+
+<xforms:bind id="zip" required="true()"
+   type="ftype:zipCode" nodeset="/data/zip" />
+
+<xforms:input bind="street">
+  <xforms:label>Zip Code: </xforms:label>
+</xforms:input>
+
+If I enter "abc90210def" into the field (without the quotemarks), the
+form is accepted as valid, but it shouldn't be.  I can add ^ and $ to
+the pattern to make it work, but that's not in the spec. 

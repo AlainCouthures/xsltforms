@@ -1,0 +1,143 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFBind.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_bind" class ===
+Model Binding Class
+* constructor function : resolve all the properties and attach this object to the model</cm:wiki>
+		<![CDATA[
+function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, relevant, calculate, constraint) {
+	if (document.getElementById(id)) {
+		return;
+	}
+	var model = parent.model || parent;
+	if (type === "xsd:ID") {
+		XsltForms_globals.IDstr = nodeset;
+		return;
+	}
+	this.init(subform, id, parent, "xforms-bind");
+	this.model = model;
+	this.type = type ? XsltForms_schema.getType(type) : null;
+	this.nodeset = nodeset;
+	this.readonly = readonly;
+	this.required = required;
+	this.relevant = relevant;
+	this.calculate = calculate;
+	this.constraint = constraint;
+	this.depsNodes = [];
+	this.depsElements = [];
+	this.nodes = [];
+	this.binds = [];
+	this.binding = new XsltForms_binding(null, this.nodeset);
+	parent.addBind(this);
+	subform.binds.push(this);
+	this.depsId = XsltForms_element.depsId++;
+}
+
+XsltForms_bind.prototype = new XsltForms_coreElement();
+
+XsltForms_bind.prototype.addBind = function(bind) {
+	this.binds.push(bind);
+};
+
+XsltForms_bind.prototype.clear = function(bind) {
+	this.depsNodes.length = 0;
+	this.depsElements.length = 0;
+	this.nodes.length = 0;
+	XsltForms_browser.forEach(this.binds, "clear");
+};
+]]>
+		<cm:wiki>
+* '''refresh''' method : completely evaluates and refreshes this binding</cm:wiki>
+<![CDATA[
+XsltForms_bind.prototype.refresh = function(ctx, index) {
+	if (!index) {
+		for (var i = 0, len = this.depsNodes.length; i < len; i++) {
+			XsltForms_browser.rmValueMeta(this.depsNodes[i], "depfor", this.depsId);
+		}
+		this.clear();
+	}
+	ctx = ctx || (this.model ? this.model.getInstanceDocument() ? this.model.getInstanceDocument().documentElement : null : null);
+	XsltForms_browser.copyArray(this.binding.evaluate(ctx, this.depsNodes, this.depsId, this.depsElements), this.nodes);
+	var el = this.element;
+	for (var i2 = 0, len2 = this.nodes.length; i2 < len2; i2++) {
+		var node = this.nodes[i2];
+		var bindids = XsltForms_browser.getMeta(node, "bind");
+		if (!bindids) {
+			XsltForms_browser.setMeta(node, "bind", this.element.id);
+		} else {
+			var bindids2 = " "+bindids+" ";
+			if (bindids.indexOf(" "+this.element.id+" ") === -1) {
+				XsltForms_browser.setMeta(node, "bind", bindids+" "+this.element.id);
+			}
+		}
+		if (this.type) {
+			if (XsltForms_browser.getMeta(node, "schemaType")) {
+				XsltForms_globals.error(el, "xforms-binding-exception", "Type especified in xsi:type attribute");
+			} else {
+				var name = this.type.name;
+				var ns = this.type.nsuri;
+				for (var key in XsltForms_schema.prefixes) {
+					if (XsltForms_schema.prefixes.hasOwnProperty(key)) {
+						if (XsltForms_schema.prefixes[key] === ns) {
+							name = key + ":" + name;
+							break;
+						}
+					}
+				}
+				XsltForms_browser.setType(node, name);
+			}
+		}
+		for (var j = 0, len1 = el.childNodes.length; j < len1; j++) {
+			el.childNodes[j].xfElement.refresh(node, i2);
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''recalculate''' method : just recalculates this binding</cm:wiki>
+<![CDATA[
+XsltForms_bind.prototype.recalculate = function() {
+	var el = this.element;
+	if (this.calculate) {
+		for (var i = 0, len = this.nodes.length; i < len; i++) {
+			var node = this.nodes[i];
+			var ctx = new XsltForms_exprContext(node, i + 1, this.nodes);
+			var value = XsltForms_globals.stringValue(this.calculate.evaluate(ctx, node));
+			value = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").normalize(value);
+			XsltForms_browser.setValue(node, value);
+			this.model.addChange(node);
+			XsltForms_browser.debugConsole.write("Calculate " + node.nodeName + " " + value);
+		}
+	}
+	for (var j = 0, len1 = el.childNodes.length; j < len1; j++) {
+		el.childNodes[j].xfElement.recalculate();
+	}
+};
+]]>
+	</cm:source>
+</cm:component>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>ParcelWaterValueInfluenceCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Lake</Label>
+         <Value>lake</Value>
+      </Item>
+      <Item>
+         <Label>None</Label>
+         <Value>none</Value>
+      </Item>
+      <Item>
+         <Label>Ponds, Creeks or Others</Label>
+         <Value>ponds-creek-other</Value>
+      </Item>
+      <Item>
+         <Label>River</Label>
+         <Value>river</Value>
+      </Item>
+      <Item>
+         <Label>Swamp or Slough.</Label>
+         <Value>swamp</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

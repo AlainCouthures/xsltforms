@@ -1,0 +1,74 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+        <title>Many to one</title>
+        <xf:model>
+            <xf:instance xmlns="">
+                <DataElement>
+                    <ObjectClassName />
+                    <PropertyName />
+                    <RepresentationTerm />
+                </DataElement>
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <xf:group nodeset="/DataElement">
+            <fieldset>
+                <legend>Data Element Name</legend>
+                <xf:label>DataElementName: </xf:label>
+                <xf:output value="concat(ObjectClassName, PropertyName, RepresentationTerm)" />
+                <p>
+                    <xf:input ref="ObjectClassName" incremental="true">
+                        <xf:label>Object Name:</xf:label>
+                    </xf:input>
+                </p>
+                <p>
+                    <xf:input ref="PropertyName" incremental="true">
+                        <xf:label>Property Name:</xf:label>
+                    </xf:input>
+                </p>
+                <p>
+                    <xf:select1 ref="RepresentationTerm" incremental="true">
+                        <xf:label>Representation Term:</xf:label>
+                        <xf:item>
+                            <xf:label>Amount</xf:label>
+                            <xf:value>Amount</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>Code</xf:label>
+                            <xf:value>Code</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>Count</xf:label>
+                            <xf:value>Count</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>Date</xf:label>
+                            <xf:value>Date</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>ID</xf:label>
+                            <xf:value>ID</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>Indicator</xf:label>
+                            <xf:value>Indicator</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>Name</xf:label>
+                            <xf:value>Name</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>Percent</xf:label>
+                            <xf:value>Percent</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>Text</xf:label>
+                            <xf:value>Text</xf:value>
+                        </xf:item>
+                    </xf:select1>
+                </p>
+            </fieldset>
+        </xf:group>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html 
+xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:xf="http://www.w3.org/2002/xforms" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <head>
+      <title>Validate Postal Codes</title>
+      <style type="text/css">
+ @namespace xf url("http://www.w3.org/2002/xforms");
+         xf|input {
+            display: table-row;
+            line-height: 2em;
+         }
+         
+         xf|label {
+            display: table-cell;
+            text-align: right;
+            font-family: Ariel, Helvetica, sans-serif;
+            font-weight: bold;
+            font-size: small;
+            padding-right: 5px;
+            width: 150px;
+         }
+         
+         *:required {
+             background-color: yellow;
+         }
+         
+         *:invalid  {
+            background-color: pink;
+         }
+      </style>
+      <xf:model  id="test" schema="postal-code.xsd">
+         <xf:instance src="postal-codes.xml"/>
+      </xf:model>
+   </head>
+   <body>
+   
+   <xf:input ref="/Data/Min1Char" incremental="true">
+            <xf:label>Min 1 Char:</xf:label>
+         </xf:input>
+         
+       <xf:input ref="/Data/String" incremental="true">
+            <xf:label>String:</xf:label>
+         </xf:input>
+         
+         <xf:input ref="/Data/Byte" incremental="true">
+            <xf:label>Byte:</xf:label>
+         </xf:input>
+         
+      <xf:group  model="test" ref="/Data">
+      <xf:repeat nodeset="LocationPostalID">
+         <xf:input ref=".">
+            <xf:label>Postal Code:</xf:label>
+         </xf:input>
+         </xf:repeat>
+      </xf:group>
+   </body>
+</html>

@@ -1,0 +1,202 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Kitchen Sink in a Single File</title>
+      <style type="text/css">
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+body {
+   font-family: Ariel, Helvetica, sans-serif;
+}
+/* tab box be on the left */
+div.content div.tab-box {
+   position: absolute;
+   width: 108px;
+}
+
+div.tab-box div {
+  display: block;
+}               
+
+/* style each individual tab */
+div.tab-box div a {
+   display: block;
+    color: black;
+    border: 0.1em outset #BBB;  /* Make it look like a button */
+    border-right: 0.1em solid #CCC; /* gray */
+    font-weight: bold;
+    text-decoration: none;
+    text-align: right;
+    padding: 0.2em;
+    /* round the left corners - works only under FireFox */
+    -moz-border-radius: .7em  0em 0em .7em;
+    width: 100%;
+    line-height: 1.4em;
+ }
+
+/* Make non-selected tabs appear in the background */
+div.tab-box div:not(:target) a {
+   border-bottom: none;         /* Make the right border disappear */
+   background: #999;
+}               
+
+/* Make the selected (targeted) item or default selection to appear on top */
+div.tab-box div:target  a {
+   border-bottom: 0.1em solid #CCC;   /* Visually connect tab and tab body */
+   background: #CCC;                          /* Set active tab to light gray */
+}
+
+/* set non-selected tabs to dark gray */
+div.tab-box div:not(:target) a {
+   border-bottom: none; /* Make the bottom border disappear */
+   background: #999;           /* Set inactive tabs are dark gray */
+}
+
+/* style the swapped area */
+div.case {
+  position: absolute;
+  margin-left: 115px;
+  background: #CCC;             /* Light gray */
+  padding: 0.3em;               /* Looks better */
+  width: 600px;
+  height: 500px;
+}
+
+.group-box {
+   border: solid black 1px;
+   margin: 5px;
+   padding: 5px;
+}
+
+.group-box-label {
+   font-weight: bold;
+}
+</style>
+      <xf:model>
+         <xf:instance xmlns="">
+            <Data>
+               <PersonGivenName />
+               <PersonSurName />
+               <MyFavoriteColor>yellow</MyFavoriteColor>
+            </Data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <div class="content">
+         <div class="tab-box">
+            <div id="tab1">
+               <a href="#tab1">Basic Controls
+                 <xf:toggle case="case-1" ev:event="DOMActivate" />
+               </a>
+            </div>
+            <div id="tab2">
+               <a href="#tab2">Dynamic Controls
+                 <xf:toggle case="case-2" ev:event="DOMActivate" />
+               </a>
+            </div>
+            <div id="tab3">
+               <a href="#tab3">Formatting
+                 <xf:toggle case="case-3" ev:event="DOMActivate" />
+               </a>
+            </div>
+            <div id="tab4">
+               <a href="#tab4">Web Services
+                 <xf:toggle case="case-4" ev:event="DOMActivate" />
+               </a>
+            </div>
+            <div id="tab5">
+               <a href="#tab5">Confirmation: 
+                 <xf:toggle case="case-5" ev:event="DOMActivate" />
+               </a>
+            </div>
+         </div>
+         <!-- tabbox -->
+         <xf:switch>
+            <xf:case id="case-1" selected="true()">
+               <div class="case">
+                  <xf:group class="group-box">
+                     <xf:label class="group-box-label">Input text</xf:label>
+                     <br />
+                     <xf:input ref="/Data/PersonGivenName" incremental="true">
+                        <xf:label>First Name:</xf:label>
+                     </xf:input>
+                     <br />
+                     <xf:input ref="/Data/PersonSurName" incremental="true">
+                        <xf:label>Last Name:</xf:label>
+                     </xf:input>
+                     <br />
+                     <xf:output ref="/Data/PersonGivenName">
+                        <xf:label>First Name:</xf:label>
+                     </xf:output>
+                     <br />
+                     <xf:output ref="/Data/PersonSurName">
+                        <xf:label>Last Name:</xf:label>
+                     </xf:output>
+                  </xf:group>
+                  <xf:group class="group-box">
+                     <xf:label class="group-box-label">Select1</xf:label>
+                     <xf:select1 ref="/Data/MyFavoriteColor" selection="closed" appearance="full">
+                        <xf:item>
+                           <xf:label>Red</xf:label>
+                           <xf:value>red</xf:value>
+                        </xf:item>
+                        <xf:item>
+                           <xf:label>Orange</xf:label>
+                           <xf:value>orange</xf:value>
+                        </xf:item>
+                        <xf:item>
+                           <xf:label>Yellow</xf:label>
+                           <xf:value>yellow</xf:value>
+                        </xf:item>
+                        <xf:item>
+                           <xf:label>Green</xf:label>
+                           <xf:value>green</xf:value>
+                        </xf:item>
+                        <xf:item>
+                           <xf:label>Blue</xf:label>
+                           <xf:value>blue</xf:value>
+                        </xf:item>
+                     </xf:select1>
+                     <xf:output ref="/Data/MyFavoriteColor">
+                        <xf:label>Model Value: </xf:label>
+                     </xf:output>
+                  </xf:group>
+               </div>
+            </xf:case>
+            <xf:case id="case-2">
+               <div class="case">
+            2222222222 2222222222 2222222222
+            2222222222 2222222222 2222222222
+            2222222222 2222222222 2222222222
+            2222222222 2222222222 2222222222
+            </div>
+            </xf:case>
+            <xf:case id="case-3">
+               <div class="case">
+            3333333333 3333333333 3333333333
+            3333333333 3333333333 3333333333
+            3333333333 3333333333 3333333333
+            3333333333 3333333333 3333333333
+            </div>
+            </xf:case>
+            <xf:case id="case-4">
+               <div class="case">
+            4444444444 4444444444 4444444444
+            4444444444 4444444444 4444444444
+            4444444444 4444444444 4444444444
+            4444444444 4444444444 4444444444
+            </div>
+            </xf:case>
+            <xf:case id="case-5">
+               <div class="case">
+            5555555555 5555555555 5555555555
+            5555555555 5555555555 5555555555
+            5555555555 5555555555 5555555555
+            5555555555 5555555555 5555555555
+            </div>
+            </xf:case>
+         </xf:switch>
+      </div>
+      <!-- content -->
+   </body>
+</html>

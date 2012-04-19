@@ -1,0 +1,18 @@
+Kitchen Sink Demo
+Tab1 - Basic Controls
+ Input - incremental
+ Output - instant update
+ Select1 - select from an external file
+ Select select - multiple values
+Tab2 - Dynamic Relevence
+ Boolean - checkbox
+ Only relevent fields displayed
+ Range - multiply values
+Tab3 - Switch
+ Tab view - switch-case
+ Insert new rows in tables
+Tab4 - Insert Tables
+ Insert new records
+ Table - automatically update totals
+Tab 5
+ Call a web service

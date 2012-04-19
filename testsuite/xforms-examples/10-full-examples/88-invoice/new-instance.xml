@@ -1,0 +1,31 @@
+<Invoice>
+   <InvoiceID>123</InvoiceID>
+   <InvoiceDate>2008-10-10</InvoiceDate>
+   <From>
+      <OrganizationName>Acme Services</OrganizationName>
+      <OrganizationAddress>123 Main St.
+Anytown, MN 12345</OrganizationAddress>
+   </From>
+   <To>
+      <OrganizationName>Acme Consumer</OrganizationName>
+      <OrganizationAddress>123 Main St.
+Anytown, MN 12345</OrganizationAddress>
+   </To>
+   <LineItems>
+      <Item>
+         <Description>Widget 123</Description>
+         <Amount>100.00</Amount>
+      </Item>
+      <Item>
+         <Description>Widget 456</Description>
+         <Amount>200.00</Amount>
+      </Item>
+      <Item>
+         <Description>Widget 789</Description>
+         <Amount>300.00</Amount>
+      </Item>
+   </LineItems>
+   <TotalAmount></TotalAmount>
+   <InvoiceTermsCode>net-30</InvoiceTermsCode>
+   <PaidIndicator>false</PaidIndicator>
+</Invoice>

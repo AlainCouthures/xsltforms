@@ -1,0 +1,44 @@
+<html xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <head>
+    <title>Uploads and types</title>
+    <xforms:model>
+       <xforms:instance xmlns="">       
+          <data>
+			<attachment1 xsi:type="xsd:anyURI"/>
+			<attachment2 xsi:type="xsd:hexBinary"/>
+			<attachment3 xsi:type="xsd:base64Binary"/>
+          </data>
+       </xforms:instance>
+    </xforms:model>
+  </head>
+  <body>
+	<h1>Uploads and types</h1>
+	<p>
+		<xforms:upload ref="attachment1" incremental="true">
+			<xforms:label>Upload for anyURI: </xforms:label>
+		</xforms:upload>
+		<br/>
+		<xforms:output value="attachment1">
+			<xforms:label>Value:&#160;</xforms:label>
+		</xforms:output>
+	</p>
+	<p>
+		<xforms:upload ref="attachment2" incremental="true">
+			<xforms:label>Upload for hexBinary: </xforms:label>
+		</xforms:upload>
+		<br/>
+		<xforms:output value="attachment2">
+			<xforms:label>Value:&#160;</xforms:label>
+		</xforms:output>
+	</p>
+	<p>
+		<xforms:upload ref="attachment3" incremental="true">
+			<xforms:label>Upload for base64Binary: </xforms:label>
+		</xforms:upload>
+		<br/>
+		<xforms:output value="attachment3">
+			<xforms:label>Value:&#160;</xforms:label>
+		</xforms:output>
+	</p>
+  </body>
+</html>

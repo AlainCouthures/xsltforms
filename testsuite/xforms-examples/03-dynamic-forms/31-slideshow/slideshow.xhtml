@@ -1,0 +1,49 @@
+<html 
+   xmlns="http://www.w3.org/1999/xhtml" 
+   xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+       <title>Slide Show</title>
+       <xf:model id="data-model">
+            <xf:instance id="data" xmlns="">
+                <links>
+                    <link href="http://www.bav-astro.de/sterne/monv838/monv838-hubble-20040304.jpg">Image 1</link>
+                    <link href="http://aether.lbl.gov/Images/resizenowmap.jpg">Image 2</link>
+
+                    <link href="http://www.nasa.gov/images/content/143744main_hubble_spiral_2006.jpg">Image 3</link>
+                    <link href="http://www.space.gc.ca/asc/img/sci_core-hubble.jpg">Image 4</link>
+                </links>
+            </xf:instance>
+            <xf:bind nodeset="instance('data')/link/@href" type="xs:anyURI"/>
+            <xf:instance id="state" xmlns="">
+                <state>
+                    <activelink/>
+                    <cycle>0</cycle>
+                </state>
+            </xf:instance>
+            <xf:action ev:event="cycle-next">
+                <xf:setvalue ref="instance('state')/cycle" value="(. + 1) mod 4"/>
+                <xf:dispatch name="update-model" target="data-model"/>
+            </xf:action>
+            <xf:action ev:event="update-model">
+                <xf:rebuild/>
+                <xf:recalculate/>
+                <xf:revalidate/>
+                <xf:refresh/>
+            </xf:action>
+        </xf:model>
+    </head>
+    <body>
+        <xf:trigger>
+            <xf:label>Next</xf:label>
+            <xf:action ev:event="DOMActivate">
+                <xf:dispatch name="cycle-next" target="data-model"/>
+            </xf:action>
+        </xf:trigger>
+        <xf:output ref="instance('state')/cycle"/>) <xf:output ref="instance('data')/link[1 + instance('state')/cycle]"/>
+        <br/>
+        <xf:output ref="instance('data')/link[1 + instance('state')/cycle]/@href" mediatype="image/*"/>
+
+    </body>
+</html>

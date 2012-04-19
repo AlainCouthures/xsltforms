@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="HTML" ExtStr="HTML">
+		<File FilePath="doc6.html" HomeFolder="Yes"/>
+		<File FilePath="hello.htm" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="CSS" ExtStr="css">
+		<File FilePath="style6.css" HomeFolder="Yes"/>
+		<File FilePath="bind6.css" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Links" ExtStr="txt">
+		<File FilePath="links.txt" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Bindings" ExtStr="xbl">
+		<File FilePath="square.xbl" HomeFolder="Yes"/>
+		<File FilePath="hello.xml" HomeFolder="Yes"/>
+	</Folder>
+</Project>

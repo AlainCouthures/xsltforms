@@ -1,0 +1,34 @@
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:xf="http://www.w3.org/2002/xforms"
+ >
+   <head>
+      <title>XForms inputs with labels</title>
+      <xf:model>
+         <xf:instance>
+            <data xmlns="">
+               <PersonGivenName/>
+               <PersonSurName/>
+            </data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <p>Enter your first name, and last name.</p>
+         <xf:input ref="PersonGivenName" incremental="true">
+            <xf:label>Input First-Name:</xf:label>
+            <xf:hint>Also known as given name.</xf:hint>
+         </xf:input>
+         <br/>
+         <xf:input ref="PersonSurName" incremental="true">
+            <xf:label>Input Last Name:</xf:label>
+            <xf:hint>Also known as sur name or family name.</xf:hint>
+         </xf:input>
+         <br/>
+         <br/>
+         Output First Name: <b><xf:output ref="PersonGivenName"/></b>
+         <br/>
+         Output Last Name: <b><xf:output ref="PersonSurName"/></b>
+      <p>Note that as you type the model output will be updated.</p>
+   </body>
+</html>

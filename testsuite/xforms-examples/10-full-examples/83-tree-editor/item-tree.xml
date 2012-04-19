@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container>
+   <data>
+      <items>
+         <item level="1">Books</item>
+         <item level="2">Fiction</item>
+         <item level="3">Fantasy</item>
+         <item level="3">Mystery</item>
+         <item level="3">Religion</item>
+         <item level="3">Romance</item>
+         <item level="3">Science Fiction</item>
+         <item level="2">Non-Fiction</item>
+         <item level="3">Cooking</item>
+         <item level="3">History</item>
+         <item level="3">Biographies</item>
+         <item level="3">Computers</item>
+         <item level="4">Software</item>
+         <item level="5">XForms Tutorial and Cookbook</item>
+         <item level="3">Internet</item>
+         <item level="3">Nature</item>
+         <item level="3">Science</item>
+         <item level="1">Electronics</item>
+         <item level="1">Music</item>
+      </items>
+   </data>
+</container>

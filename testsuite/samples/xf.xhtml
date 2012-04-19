@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xf="http://www.w3.org/2002/xforms"
+      xmlns:ev="http://www.w3.org/2001/xml-events"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<head>
+		<title>Template</title>
+		<xf:model>
+			<xf:instance>
+<person xmlns="">
+    <name>Javier</name>
+    <birthdate>1979-08-31</birthdate>
+    <gender>M</gender>
+    <telephones>
+        <telephone type="mobile">666005000</telephone>
+        <telephone type="home">986888888</telephone>
+    </telephones>
+</person>
+			</xf:instance>
+			<xf:bind nodeset="name" required="true()" type="xsd:Name"/>
+			<xf:bind nodeset="birthdate" type="xsd:date"/>
+			<xf:submission id="s01" method="xml-urlencoded-post" replace="all" action="http://www.agencexml.com/xsltforms/dump.php">
+				<xf:message level="modeless" ev:event="xforms-submit-error">Submit error.</xf:message>
+			</xf:submission>
+		</xf:model>
+	</head>
+	<body>
+		<h2>Template XSLTForms</h2>
+		<group xmlns="http://www.w3.org/2002/xforms">
+			<input ref="name">
+				<label>Name</label>
+			</input>
+			<select1 ref="gender">
+				<label>Gender</label>
+				<item>
+					<label>Male</label>
+					<value>M</value>
+				</item>
+				<item>
+					<label>Female</label>
+					<value>F</value>
+				</item>
+			</select1>
+			<input ref="birthdate">
+				<label>Birth date</label>
+			</input>
+			<group>
+				<label>Telephones</label>
+				<repeat id="repeat" nodeset="telephones/telephone" appearance="compact">
+					<select1 ref="@type" appearance="minimal">
+						<label>Type</label>
+						<item>
+							<label>Home</label>
+							<value>home</value>
+						</item>
+						<item>
+							<label>Mobile</label>
+							<value>mobile</value>
+						</item>
+						<item>
+							<label>Company</label>
+							<value>company</value>
+						</item>
+					</select1>
+					<input ref=".">
+						<label>Number</label>
+					</input>
+					<trigger>
+						<label>X</label>
+						<delete nodeset="." at="1" if="count(//telephone) > 1"
+                                ev:event="DOMActivate" />
+						</trigger>
+					</repeat>
+				<trigger>
+					<label>New</label>
+					<insert nodeset="telephones/telephone" at="index('repeat')"
+                        position="after" ev:event="DOMActivate" />
+					</trigger>
+				</group>
+			</group>
+		<xf:submit submission="s01">
+			<xf:label>Save</xf:label>
+			</xf:submit>
+		<xf:trigger>
+			<xf:label>Reset</xf:label>
+			<xf:reset ev:event="DOMActivate"/>
+			</xf:trigger>
+		</body>
+	</html>

@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>ParcelCommercialIndustrialCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Accounting</Label>
+         <Value>accounting</Value>
+      </Item>
+      <Item>
+         <Label>Accounting</Label>
+         <Value>accounting</Value>
+      </Item>
+      <Item>
+         <Label>Agricultural - Other</Label>
+         <Value>agricultural-other</Value>
+      </Item>
+      <Item>
+         <Label>Amusement Centers - Miniature Golf - Water Slides - Etc.</Label>
+         <Value>amusement-centers</Value>
+      </Item>
+      <Item>
+         <Label>Animal Processing - (Beef,Poultry,Swine, Etc.)</Label>
+         <Value>animal-processing</Value>
+      </Item>
+      <Item>
+         <Label>Animal Processing - (Beef, Poultry, Swine, Etc.)</Label>
+         <Value>animal-processing</Value>
+      </Item>
+      <Item>
+         <Label>Apartments (4 to 10 Units)</Label>
+         <Value>apartments-small</Value>
+      </Item>
+      <Item>
+         <Label>Apartments (Over 10 Units)</Label>
+         <Value>apartments-large</Value>
+      </Item>
+      <Item>
+         <Label>Apartments - Subsidized (4 to 10 Units)</Label>
+         <Value>apartments-subsidized-small</Value>
+      </Item>
+      <Item>
+         <Label>Apartments - Subsidized (Over 10 Units)</Label>
+         <Value>apartments-subsidized-large</Value>
+      </Item>
+      <Item>
+         <Label>Attorney - Legal Services</Label>
+         <Value>attorney-legal-services</Value>
+      </Item>
+      <Item>
+         <Label>Attorney - Legal Services</Label>
+         <Value>attorney-legal-services</Value>
+      </Item>
+      <Item>
+         <Label>Automotive Dealership</Label>
+         <Value>auto-dealership</Value>
+      </Item>
+      <Item>
+         <Label> Automotive - Other</Label>
+         <Value>auto-other</Value>
+      </Item>
+      <Item>
+         <Label>Automotive Repair - Auto Body</Label>
+         <Value>automotive-repair-autobody</Value>
+      </Item>
+      <Item>
+         <Label>Automotive Service Station</Label>
+         <Value>automotive-service-station</Value>
+      </Item>
+      <Item>
+         <Label>Auto Repair - Body Shop</Label>
+         <Value>auto-repair</Value>
+      </Item>
+      <Item>
+         <Label>Auto Salvage - Junk Yard</Label>
+         <Value>auto-salvage</Value>
+      </Item>
+      <Item>
+         <Label>Bakery/Delicatessen</Label>
+         <Value>bakery-or-delicatessen</Value>
+      </Item>
+      <Item>
+         <Label>Ballroom/Dancehall/Night Club</Label>
+         <Value>night-club</Value>
+      </Item>
+      <Item>
+         <Label>Bank - Savings and Loan</Label>
+         <Value>bank-savings-and-loan</Value>
+      </Item>
+      <Item>
+         <Label>Barber Shop, Beauty Salon, Tanning Salon</Label>
+         <Value>barber-shop-beauty-salon-tanning</Value>
+      </Item>
+      <Item>
+         <Label>Bed and Breakfast</Label>
+         <Value>bed-and-breakfast</Value>
+      </Item>
+      <Item>
+         <Label>Bowling Alley</Label>
+         <Value>bowling-alley</Value>
+      </Item>
+      <Item>
+         <Label>Brewery</Label>
+         <Value>brewery</Value>
+      </Item>
+      <Item>
+         <Label>Campgrounds(privately owned and open to the public for a fee)</Label>
+         <Value>campgrounds</Value>
+      </Item>
+      <Item>
+         <Label>Car Wash</Label>
+         <Value>car-wash</Value>
+      </Item>
+      <Item>
+         <Label>Cement Plant</Label>
+         <Value>cement-plant</Value>
+      </Item>
+      <Item>
+         <Label>Cemetery</Label>
+         <Value>cemetery</Value>
+      </Item>
+      <Item>
+         <Label>Chain Retail Chain General</Label>
+         <Value>chain-retail-general</Value>
+      </Item>
+      <Item>
+         <Label>Church</Label>
+         <Value>church</Value>
+      </Item>
+      <Item>
+         <Label>Clinic - Medical Offices - Dental Offices</Label>
+         <Value>clinics-medical-dental</Value>
+      </Item>
+      <Item>
+         <Label>Condominium</Label>
+         <Value>condominium</Value>
+      </Item>
+      <Item>
+         <Label>Drug Store</Label>
+         <Value>drug-dtore</Value>
+      </Item>
+      <Item>
+         <Label>Educational/Religious - Other</Label>
+         <Value>educational-religious-other</Value>
+      </Item>
+      <Item>
+         <Label>Excavation Service</Label>
+         <Value>excavation-service</Value>
+      </Item>
+      <Item>
+         <Label>Farm Machinery - Dealership</Label>
+         <Value>farm-machinery-dealership</Value>
+      </Item>
+      <Item>
+         <Label>Farm Machinery - Repair</Label>
+         <Value>farm-machinery-repair</Value>
+      </Item>
+      <Item>
+         <Label>Fast Foods - Franchised, .,"Chain"</Label>
+         <Value>fast-foods</Value>
+      </Item>
+      <Item>
+         <Label>Fertilizer Plant - Feed Mill - Grain Storage but not a grain elevator.</Label>
+         <Value>fertilizer-plant-feed-mill-grain-storage</Value>
+      </Item>
+      <Item>
+         <Label>Financial - Other</Label>
+         <Value>financial-other</Value>
+      </Item>
+      <Item>
+         <Label>Food Processing - (Cheese, Vegetables, Etc.)</Label>
+         <Value>food-frocessing</Value>
+      </Item>
+      <Item>
+         <Label>Food Processing - (Cheese, Vegetables, Etc.)</Label>
+         <Value>food-processing</Value>
+      </Item>
+      <Item>
+         <Label>Funeral Home</Label>
+         <Value>funeral-home</Value>
+      </Item>
+      <Item>
+         <Label>Gas - Convenience Store - Superette</Label>
+         <Value>gas-station</Value>
+      </Item>
+      <Item>
+         <Label>Gas - Convenience Store - Superette</Label>
+         <Value>gas-convenience-store-superette</Value>
+      </Item>
+      <Item>
+         <Label>Gas - Convenience - Superette</Label>
+         <Value>gas-convenience-superette</Value>
+      </Item>
+      <Item>
+         <Label>General Office Buildings (1 to 2 Stories)</Label>
+         <Value>office-buildings-1-2-stories</Value>
+      </Item>
+      <Item>
+         <Label>General Office Buildings (Over 2 Stories)</Label>
+         <Value>office-buildings-over-2-stories</Value>
+      </Item>
+      <Item>
+         <Label>General Office Buildings (Story Height Not Stated)</Label>
+         <Value>office-buildings-height-not-stated</Value>
+      </Item>
+      <Item>
+         <Label>General Repair Shop - (Appliances, Electrical, Electronics, Shoes, Etc.)</Label>
+         <Value>general-repair-shop</Value>
+      </Item>
+      <Item>
+         <Label>General Retail - Clothing Store</Label>
+         <Value>general-retail</Value>
+      </Item>
+      <Item>
+         <Label>Golf Course</Label>
+         <Value>golf-course</Value>
+      </Item>
+      <Item>
+         <Label>Grain Elevator</Label>
+         <Value>grain-elevator</Value>
+      </Item>
+      <Item>
+         <Label>Gravel Pit</Label>
+         <Value>gravel-pit</Value>
+      </Item>
+      <Item>
+         <Label>Greenhouse - Nursery</Label>
+         <Value>greenhouse-or-nursery</Value>
+      </Item>
+      <Item>
+         <Label>Greenhouse - Nursery</Label>
+         <Value>greenhouse-nursery</Value>
+      </Item>
+      <Item>
+         <Label>Hospital</Label>
+         <Value>hospital</Value>
+      </Item>
+      <Item>
+         <Label>Hotel, Motel or Apartments/Other</Label>
+         <Value>hotel-other</Value>
+      </Item>
+      <Item>
+         <Label>Hotel (0 to 30 Units)</Label>
+         <Value>hotel-small</Value>
+      </Item>
+      <Item>
+         <Label>Hotel (Over 30 Units)</Label>
+         <Value>hotel-large</Value>
+      </Item>
+      <Item>
+         <Label>Insurance Agency</Label>
+         <Value>insurance-agency</Value>
+      </Item>
+      <Item>
+         <Label>Insurance Agency</Label>
+         <Value>insurance-agency</Value>
+      </Item>
+      <Item>
+         <Label>Lumberyard</Label>
+         <Value>lumberyard</Value>
+      </Item>
+      <Item>
+         <Label>Lumberyard</Label>
+         <Value>lumberyard</Value>
+      </Item>
+      <Item>
+         <Label>Manufacturing/ Industrial - Other</Label>
+         <Value>manufacturing-industrial</Value>
+      </Item>
+      <Item>
+         <Label>Manufacturing - Heavy</Label>
+         <Value>manufacturing-heavy</Value>
+      </Item>
+      <Item>
+         <Label>Manufacturing - Light</Label>
+         <Value>manufacturing-light</Value>
+      </Item>
+      <Item>
+         <Label>Marina</Label>
+         <Value>marina</Value>
+      </Item>
+      <Item>
+         <Label>Media - Other</Label>
+         <Value>media-other</Value>
+      </Item>
+      <Item>
+         <Label>Medical - Other</Label>
+         <Value>medical-other</Value>
+      </Item>
+      <Item>
+         <Label>Metal Buildings - Finished</Label>
+         <Value>metal-buildings-finished</Value>
+      </Item>
+      <Item>
+         <Label>Metal Buildings - Unfinished</Label>
+         <Value>metal-buildings-unfinished</Value>
+      </Item>
+      <Item>
+         <Label>Mobile Home Park</Label>
+         <Value>mobile-home-park</Value>
+      </Item>
+      <Item>
+         <Label>Mobile Home Park </Label>
+         <Value>mobile-home </Value>
+      </Item>
+      <Item>
+         <Label>Motel (0 to 20 Units)</Label>
+         <Value>motel-small</Value>
+      </Item>
+      <Item>
+         <Label>Motel (21 to 40 Units)</Label>
+         <Value>motel-medium</Value>
+      </Item>
+      <Item>
+         <Label>Motel (Over 40 Units)</Label>
+         <Value>motel-large</Value>
+      </Item>
+      <Item>
+         <Label>Movie Theatre</Label>
+         <Value>movie-theatre</Value>
+      </Item>
+      <Item>
+         <Label>Newspaper</Label>
+         <Value>newspaper</Value>
+      </Item>
+      <Item>
+         <Label>Nursing Home</Label>
+         <Value>nursing-home</Value>
+      </Item>
+      <Item>
+         <Label>Off-Sale Liquor Store</Label>
+         <Value>off-sale-liquor-store</Value>
+      </Item>
+      <Item>
+         <Label>Oil - Gas Refinery - And/Or</Label>
+         <Value>refinery</Value>
+      </Item>
+      <Item>
+         <Label>Oil - Gas Refinery - And /Or Storage Facility, Fuel Alcohol</Label>
+         <Value>refinery</Value>
+      </Item>
+      <Item>
+         <Label>Parking Ramp</Label>
+         <Value>parking-ramp</Value>
+      </Item>
+      <Item>
+         <Label>Pole Building - Plain</Label>
+         <Value>pole-building-plain</Value>
+      </Item>
+      <Item>
+         <Label>Post Office</Label>
+         <Value>post-office</Value>
+      </Item>
+      <Item>
+         <Label>Post Office</Label>
+         <Value>post-office</Value>
+      </Item>
+      <Item>
+         <Label>Preschool - Day Care Center</Label>
+         <Value>preschool-day-care</Value>
+      </Item>
+      <Item>
+         <Label>Private School</Label>
+         <Value>private-school</Value>
+      </Item>
+      <Item>
+         <Label>Radio Station /Television Station</Label>
+         <Value>Radio or Television Station</Value>
+      </Item>
+      <Item>
+         <Label>Recreational/Entertainment - Other</Label>
+         <Value>recreational-other</Value>
+      </Item>
+      <Item>
+         <Label>Recreational Center - Ice Arena</Label>
+         <Value>recreational-center</Value>
+      </Item>
+      <Item>
+         <Label>Resort/Seas. - Res. - Comm. - Property Type 14)</Label>
+         <Value>resort</Value>
+      </Item>
+      <Item>
+         <Label>Restaurant,Bar-Cafe,Coffee shop or drive-in</Label>
+         <Value>restaurant-non-franchised</Value>
+      </Item>
+      <Item>
+         <Label>Restaurant/ Liquor - Other</Label>
+         <Value>restaurant-liquor</Value>
+      </Item>
+      <Item>
+         <Label>Restaurant-franchised,i.e.,"Chain"</Label>
+         <Value>fast-food</Value>
+      </Item>
+      <Item>
+         <Label>Restaurant-franchised,i.e.,"Chain"</Label>
+         <Value>restaurant-franchised</Value>
+      </Item>
+      <Item>
+         <Label>Retail -General,Merchandise,Food,other</Label>
+         <Value>retail</Value>
+      </Item>
+      <Item>
+         <Label>Roller Skating Rink</Label>
+         <Value>Roller Skating Rink</Value>
+      </Item>
+      <Item>
+         <Label>Sauna - Massage - Steam Bath</Label>
+         <Value>sauna-massage-steam-bath</Value>
+      </Item>
+      <Item>
+         <Label>Service Club</Label>
+         <Value>service-club</Value>
+      </Item>
+      <Item>
+         <Label>Services - Other</Label>
+         <Value>services-other</Value>
+      </Item>
+      <Item>
+         <Label>Service Station</Label>
+         <Value>service-station</Value>
+      </Item>
+      <Item>
+         <Label>Shopping Center/Mall</Label>
+         <Value>shopping-center-mall</Value>
+      </Item>
+      <Item>
+         <Label>Special Purpose Commercial Shops (Laundromat, Printshop, Etc.) .</Label>
+         <Value>special-purpose-commercial-shops</Value>
+      </Item>
+      <Item>
+         <Label>Stockyard</Label>
+         <Value>stockyard</Value>
+      </Item>
+      <Item>
+         <Label>Storage Buildings - Other</Label>
+         <Value>storage-buildings-other</Value>
+      </Item>
+      <Item>
+         <Label>Storage Lockers - (Mini-Storage)</Label>
+         <Value>storage-lockers</Value>
+      </Item>
+      <Item>
+         <Label>Supermarket - Grocery Store - Bakery - Delicatessen</Label>
+         <Value>supermarket-grocery-store-bakery-delicatessen</Value>
+      </Item>
+      <Item>
+         <Label>Supper Club</Label>
+         <Value>supper-club</Value>
+      </Item>
+      <Item>
+         <Label>Tavern -Bar - Cocktail Lounge</Label>
+         <Value>tavern-bar-cocktail-lounge</Value>
+      </Item>
+      <Item>
+         <Label>Taxi Service, Flying Service or Delivery Service</Label>
+         <Value>taxi-service-flying-service-or-delivery-service</Value>
+      </Item>
+      <Item>
+         <Label>Tennis - Racquet - Health Club</Label>
+         <Value>tennis-racquet-health-club</Value>
+      </Item>
+      <Item>
+         <Label>Townhouse</Label>
+         <Value>townhouse</Value>
+      </Item>
+      <Item>
+         <Label>Travel Agency</Label>
+         <Value>travel-agency</Value>
+      </Item>
+      <Item>
+         <Label>Travel Agency</Label>
+         <Value>travel-agency</Value>
+      </Item>
+      <Item>
+         <Label>Trucking Firm</Label>
+         <Value>trucking-firm</Value>
+      </Item>
+      <Item>
+         <Label>Vacant Building - (Use Not Specified)</Label>
+         <Value>vacant-building</Value>
+      </Item>
+      <Item>
+         <Label>Vacant - Use Not Specified</Label>
+         <Value>vacant-use-not-specified</Value>
+      </Item>
+      <Item>
+         <Label>Veterinary Clinic</Label>
+         <Value>veterinary-clinic</Value>
+      </Item>
+      <Item>
+         <Label>Veterinary Clinic</Label>
+         <Value>veterinary-clinic</Value>
+      </Item>
+      <Item>
+         <Label>Warehouse</Label>
+         <Value>warehouse</Value>
+      </Item>
+      <Item>
+         <Label>Warehouse</Label>
+         <Value>warehouse</Value>
+      </Item>
+      <Item>
+         <Label>Wood Pulp Plant</Label>
+         <Value>wood-pulp-plant</Value>
+      </Item>
+      <Item>
+         <Label>Wood Pulp Plant</Label>
+         <Value>wood-pulp-plant</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

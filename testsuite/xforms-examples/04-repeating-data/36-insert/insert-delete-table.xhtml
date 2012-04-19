@@ -1,0 +1,79 @@
+<html 
+xmlns="http://www.w3.org/1999/xhtml"
+xmlns:ev="http://www.w3.org/2001/xml-events"  
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:xf="http://www.w3.org/2002/xforms">
+  <head>
+    <style type="text/css">
+     @namespace xf url("http://www.w3.org/2002/xforms");
+     
+    * { font-family: Ariel, Helvetica, sans-serif }
+
+	.table-header {
+		display: table-row;
+	}
+   
+	.column-header {
+		display: table-cell;
+		text-align: center;
+		width: 185px;
+		color: white;
+		background-color: gray;
+		font-weight: bold;
+	}
+    </style>
+    <title>Demonstration of inserting and deleting records from a table</title>
+    <xf:model id="phone-list">
+      <xf:instance id="my-phone-list" src="phone-list.xml" xmlns="" />
+      <xf:submission id="update-from-local-file" method="get" action="phone-list.xml" replace="instance" instance="my-phone-list"/>
+       <xf:submission id="view-xml-instance" method="get" action="phone-list.xml" />
+      <xf:submission id="save-to-local-file" method="put" action="phone-list.xml" />
+    </xf:model>
+  </head>
+  <body>
+
+    <!-- table header -->
+    <div class="table-header">
+		<div class="column-header">Name</div>
+		<div class="column-header">Phone</div>
+    </div>
+    
+    <!-- For each Person in the PersonList display the name and phone-->
+    <xf:repeat nodeset="/PhoneList/Person" id="repeatPerson">
+	   <xf:input id="name-input" ref="Name"/>
+	   <xf:input ref="Phone"/>
+	   <br/>
+    </xf:repeat>
+    
+     <xf:trigger id="insertbutton">
+        <xf:label>Add Person</xf:label>
+        <xf:action ev:event="DOMActivate">
+			<xf:insert nodeset="/PhoneList/Person[last()]" position="after" at="last()"/>
+			<xf:setvalue ref="/PhoneList/Person[last()]/Name" value="''"/>
+			<xf:setvalue ref="/PhoneList/Person[last()]/Phone" value="''"/>
+			<!-- put the cursor in the name field -->
+			<xf:setfocus control="name-input"/>
+        </xf:action>
+     </xf:trigger>
+
+     <xf:trigger id="delete">
+        <xf:label>Delete Person</xf:label>
+        <xf:delete nodeset="/PhoneList/Person[index('repeatPerson')]" 
+            at="index('repeatPerson')" ev:event="DOMActivate" />
+      </xf:trigger>
+   <br/>
+   
+   <xf:submit submission="update-from-local-file">
+      <xf:label>Reload</xf:label>
+    </xf:submit>
+    
+    <xf:submit submission="save-to-local-file">
+      <xf:label>Save</xf:label>
+    </xf:submit>
+    
+    <xf:submit submission="view-xml-instance">
+      <xf:label>View XML Instance</xf:label>
+    </xf:submit>
+    
+  </body>
+</html>

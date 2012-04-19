@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="Chapters" ExtStr="html">
+		<File FilePath="chapter-1.html" HomeFolder="Yes"/>
+		<File FilePath="chapter-2.html" HomeFolder="Yes"/>
+		<File FilePath="chapter-3.html" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Special Pages" ExtStr="html">
+		<File FilePath="index.html" HomeFolder="Yes"/>
+		<File FilePath="toc.html" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Stylesheets" ExtStr="css">
+		<File FilePath="book-nav.css" HomeFolder="Yes"/>
+	</Folder>
+</Project>

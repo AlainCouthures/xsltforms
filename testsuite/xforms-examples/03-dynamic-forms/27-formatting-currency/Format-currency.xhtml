@@ -1,0 +1,99 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    >
+   <head>
+      <style type="text/css">
+     @namespace xf url("http://www.w3.org/2002/xforms");
+
+   * { font-family: Ariel, Helvetica, sans-serif }
+
+   .table-header, .table-footer {
+      display: table-row;
+   }
+   
+   .column-header, .column-footer {
+      display: table-cell;
+      text-align: center;
+      color: white;
+      background-color: gray;
+      font-weight: bold;
+   }
+   
+   /* make the "Total:" in the table footer right align */
+   .table-footer .item-description,
+   .table-footer .item-amount {
+      text-align: right;
+   }
+   
+   .item-description {
+      width: 300px;
+   }
+   
+   .item-amount {
+      width: 112px;
+   }
+   
+   .item-description  .xf-value {width: 300px; text-align: left}
+   
+   .item-amount .xf-value {width: 100px; text-align: right}
+    </style>
+      <title>Demonstration of table with column total</title>
+      <xf:model id="my-model">
+         <xf:instance id="my-data" src="my-data.xml" xmlns="" />
+         <xf:bind nodeset="/Data/Total" calculate="sum(../Item/Amount)"/>
+         <xf:bind nodeset="/Data/FormattedTotal" calculate="concat('$',../Total)"/>
+         <xf:submission id="update-from-local-file" method="get" action="my-data.xml" 
+              replace="instance" instance="my-crv" />
+         <xf:submission id="view-xml-instance" method="get" action="my-data.xml" />
+         <xf:submission id="save-to-local-file" method="put" action="my-data.xml" />
+      </xf:model>
+   </head>
+   <body>
+      <div class="table-header">
+         <div class="column-header item-description">Description</div>
+         <div class="column-header item-amount">Value</div>
+      </div>
+      <xf:group ref="/Data">
+         <!-- For each Person in the PersonList display the name and phone-->
+         <xf:repeat nodeset="Item" id="repeatItem">
+            <xf:input id="description-input" ref="Description" class="item-description" />
+            <xf:input ref="Amount" class="item-amount" />
+            <br />
+         </xf:repeat>
+         
+         <div class="table-footer">
+            <div class="column-footer item-description">Total:</div>
+            <div class="column-footer item-amount">
+               <xf:output ref="/Data/FormattedTotal" />
+            </div>
+         </div>
+         <xf:trigger id="insertbutton">
+            <xf:label>Add Item</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:insert nodeset="PersonalPropertyItem[last()]" position="after" at="last()" />
+               <xf:setvalue ref="Item[last()]/Description" value="''" />
+               <xf:setvalue ref="Item[last()]/Amount" value="0" />
+               <!-- put the cursor in the name field -->
+               <xf:setfocus control="description-input" />
+            </xf:action>
+         </xf:trigger>
+         <xf:trigger id="delete">
+            <xf:label>Delete Item</xf:label>
+            <xf:delete nodeset="Item[index('repeatItem')]" at="index('repeatItem')" ev:event="DOMActivate" />
+         </xf:trigger>
+         <br />
+         <xf:submit submission="update-from-local-file">
+            <xf:label>Reload</xf:label>
+         </xf:submit>
+         <xf:submit submission="save-to-local-file">
+            <xf:label>Save</xf:label>
+         </xf:submit>
+         <xf:submit submission="view-xml-instance">
+            <xf:label>View XML Instance</xf:label>
+         </xf:submit>
+      </xf:group>
+   </body>
+</html>

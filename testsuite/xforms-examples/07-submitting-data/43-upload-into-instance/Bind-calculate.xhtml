@@ -1,0 +1,76 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
+   <head>
+      <title>Example of binding to inputs and output ids</title>
+      <style type="text/css">
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+/* put each textarea on its own row */
+xf|input, xf|output {
+ display: table-row;
+ line-height: 1.6em;
+}
+
+xf|input > xf|label, xf|output > xf|label {
+   display: table-cell;
+   font-family: sans-serif;
+   font-size: small;
+   font-weight: bold;
+   text-align: right;
+   padding-right: 3px;
+}
+
+value {
+   width: 300px;
+}
+
+</style>
+      <xf:model>
+         <xf:instance id="input">
+            <Data xmlns="">
+               <DirectoryName>file:\\\C:\tmp</DirectoryName>
+               <FileName>Input</FileName>
+                <Extension>xml</Extension>
+                <Message>Hi</Message>
+            </Data>
+         </xf:instance>
+         <!-- make the inputs data types be strings and give them ids for the UI -->
+         <xf:bind id="base-name" nodeset="/Data/DirectoryName" type="xs:string" />
+         <xf:bind id="file-name" nodeset="/Data/FileName" type="xs:string" />
+         <xf:bind id="file-extension" nodeset="/Data/Extension"  type="xs:string"/>
+         <!-- second instance bound to outputs -->
+         <xf:instance id="output">
+            <DataOut xmlns="">
+               <FullPathName xsi:type="xs:anyURI"/>
+               <LocalPathName xsi:type="xs:anyURI"/>
+            </DataOut>
+         </xf:instance>
+         <!-- Make the output be an string that is the concatination of the inputs -->
+         <xf:bind id="full-path-name" nodeset="instance('output')/FullPathName" calculate="concat(instance('input')/DirectoryName, '\', instance('input')/FileName, '.', instance('input')/Extension)" xsi:type="xs:anyURI" />
+         <xf:instance id="load-file-src" xmlns="" src="instance('output')/FullPathName"/> 
+         <!-- <xf:instance  id="load-file-src" xmlns="" src="Input.xml"/>-->
+          <xf:bind id="local-message" nodeset="instance('output')/LocalPathName" calculate="concat(instance('load-file-src')/Message, '!!!')" xsi:type="xs:anyURI" />
+      </xf:model>
+   </head>
+   <body>
+      <xf:input bind="base-name" incremental="true">
+         <xf:label>Directory Name:</xf:label>
+      </xf:input>
+      <xf:input bind="file-name" incremental="true">
+         <xf:label>File Name:</xf:label>
+      </xf:input>
+      <xf:input bind="file-extension" incremental="true">
+         <xf:label>Extension:</xf:label>
+      </xf:input>
+      <xf:output bind="full-path-name">
+         <xf:label>Full Path Name :</xf:label>
+      </xf:output>
+       <xf:output ref="/Data/Message">
+         <xf:label>Message :</xf:label>
+      </xf:output>
+      <xf:output bind="local-message">
+         <xf:label>Local Message From File :</xf:label>
+      </xf:output>
+   </body>
+</html>

@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Call JavaScript Using Load Resource</title>
+      <xf:model>
+         <xf:instance xmlns="">
+            <data/>
+         </xf:instance>
+      </xf:model>
+    <script type="text/javascript">
+       var MyJavaScript=function(){
+          alert('Hello From JavaScript');
+       }    
+    </script>
+
+   </head>
+   <body>
+      <xf:trigger>
+         <xf:label>Call JavaScript</xf:label>
+         <xf:action ev:event="DOMActivate">
+            <xf:load resource="javascript:MyJavaScript();"/>
+         </xf:action>
+      </xf:trigger>
+   </body>
+</html>

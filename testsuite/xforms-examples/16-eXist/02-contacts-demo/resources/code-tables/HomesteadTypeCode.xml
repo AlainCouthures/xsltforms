@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>HomesteadTypeCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Actively Farming</Label>
+         <Value>actively-farming</Value>
+      </Item>
+      <Item>
+         <Label>Agricultural</Label>
+         <Value>agricultural</Value>
+      </Item>
+      <Item>
+         <Label>Manufactured Home</Label>
+         <Value>manufactured-home</Value>
+      </Item>
+      <Item>
+         <Label>Non-agricultural</Label>
+         <Value>non-agricultural</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

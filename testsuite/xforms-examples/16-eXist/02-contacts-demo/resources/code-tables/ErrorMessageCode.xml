@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>ErrorMessageCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Business Rule Check Failed</Label>
+         <Value>business-rule-check-failed</Value>
+      </Item>
+      <Item>
+         <Label>Document Invalid</Label>
+         <Value>invalid</Value>
+      </Item>
+      <Item>
+         <Label>Document Not Well-Formed</Label>
+         <Value>malformed</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

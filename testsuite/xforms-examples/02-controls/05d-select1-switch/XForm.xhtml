@@ -1,0 +1,87 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Dynamically bind to a group</title>
+      <!-- Using bind and relevent in the model to conditionally display a group -->
+      <!-- Alternative to switch/case/toggle when the id of toggle is dynamically calculated -->
+      <style type="text/css">
+      @namespace xf url("http://www.w3.org/2002/xforms");
+      xf|group {
+         border: solid black 2px;
+         background-color: silver;
+         height: 100px;
+      }
+      xf|group xf|label {
+         position: relative;
+         font-family: Helvetica, sans-serif;
+         font-weight: bold;
+         background-color: white;
+         padding: 2px;
+         top: -10px;
+         left: 10px;
+      }
+      xf|group p {
+         position: relative;
+         top: -30px;
+         padding: 5px;
+      }
+      </style>
+      <xf:model>
+         <xf:instance>
+            <data xmlns="">
+               <current-view>one</current-view>
+               <view-1>one</view-1>
+               <view-2>two</view-2>
+               <view-3>three</view-3>
+            </data>
+         </xf:instance>
+         <xf:bind nodeset="view-1" relevant="../current-view= 'one'" />
+         <xf:bind nodeset="view-2" relevant="../current-view = 'two'" />
+         <xf:bind nodeset="view-3" relevant="../current-view = 'three'" />
+      </xf:model>
+   </head>
+   <body>
+         <xf:select1 ref="current-view">
+            <xf:label>Select View: </xf:label>
+            <xf:item>
+               <xf:label>One</xf:label>
+               <xf:value>one</xf:value>
+            </xf:item>
+            <xf:item>
+               <xf:label>Two</xf:label>
+               <xf:value>two</xf:value>
+            </xf:item>
+            <xf:item>
+               <xf:label>Three</xf:label>
+               <xf:value>three</xf:value>
+            </xf:item>
+         </xf:select1>
+         <br/>
+         <!-- only one of the three outputs will display -->
+         <xf:output ref="view-1">
+            <xf:label>Current view: </xf:label>
+         </xf:output>
+         <xf:output ref="view-2">
+            <xf:label>Current view: </xf:label>
+         </xf:output>
+         <xf:output ref="view-3">
+            <xf:label>Current view: </xf:label>
+         </xf:output>
+         <br/>
+         <br/>
+         <!-- only a single group will be displayed at any time -->
+         <xf:group ref="view-1">
+            <xf:label>View One</xf:label>
+            <p>One One One One One One One One One One One One One One One One One One</p>
+         </xf:group>
+         <xf:group ref="view-2">
+            <xf:label>View Two</xf:label>
+            <p>Two Two Two Two Two Two Two Two Two Two Two Two Two Two Two Two Two</p>
+         </xf:group>
+         <xf:group ref="view-3">
+            <xf:label>View Three</xf:label>
+            <p>Three Three Three Three Three Three Three Three Three Three Three Three Three Three Three Three Three</p>
+         </xf:group>
+   </body>
+</html>

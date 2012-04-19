@@ -1,0 +1,35 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <title>Testing the XForms bind relevent attribute.</title>
+   <xf:model>
+      <xf:instance>
+         <var xmlns="">
+            <first>3.0</first>
+            <second>0.00</second>
+         </var>
+      </xf:instance>
+      <xf:bind nodeset="/var/first" type="xsd:decimal" />
+      <xf:bind nodeset="/var/second" relevant="/var/first &gt; 2.03" />
+   </xf:model>
+   <body>
+      <p>Demonstration of relevant fields.</p>
+      <xf:select1 ref="/var/first" >
+         <xf:label>Should I show the second list? </xf:label>
+         <br />
+         <xf:item select="yes">
+            <xf:label>Yes Please!</xf:label>
+            <xf:value>3.0</xf:value>
+         </xf:item>
+         <xf:item>
+            <xf:label>No Thank You</xf:label>
+            <xf:value>1.0</xf:value>
+         </xf:item>
+      </xf:select1>
+      <br />
+      <xf:input ref="/var/second">
+         <xf:label>Second value </xf:label>
+      </xf:input>
+   </body>
+</html>

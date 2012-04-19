@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:xforms="http://www.w3.org/2002/xforms"
+		xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<head>
+		<title>Balance</title>
+		<meta name="description" content="Balance sample"/>
+		<meta name="keywords" content="AJAX, Javascript, Web, XForms, AJAXForms, Ejemplos, Samples"/>
+		<style type="text/css">
+			.amount input {
+			width : 60px;
+			}
+
+			.desc input {
+			width : 100px;
+			}
+
+			.delete button {
+			padding : 0px;
+			}
+		</style>
+		<xforms:model id="default-model">
+			<xforms:instance>
+				<balance xmlns="">
+					<transaction>
+						<date>2004-05-06</date>
+						<desc>Salery</desc>
+						<withdraw>false</withdraw>
+						<amount>5000.00</amount>
+					</transaction>
+					<transaction>
+						<date>2004-05-06</date>
+						<desc>News Paper</desc>
+						<withdraw>true</withdraw>
+						<amount>2.00</amount>
+					</transaction>
+					<totals>
+						<in>0</in>
+						<out>0</out>
+						<total>0</total>
+					</totals>
+				</balance>
+			</xforms:instance>
+			<xforms:bind nodeset="transaction/date" type="xsd:date"/>
+			<xforms:bind nodeset="transaction/amount" type="xforms:amount"/>
+			<xforms:bind nodeset="totals/in" type="xforms:amount" calculate="sum(/balance/transaction[withdraw='false']/amount)"/>
+			<xforms:bind nodeset="totals/out" type="xforms:amount" calculate="sum(/balance/transaction[withdraw='true']/amount)"/>
+			<xforms:bind nodeset="totals/total" type="xforms:amount" calculate="../in - ../out"/>
+			<xforms:submission id="s01" method="post" show="new" replace="all" action="http://localhost/sourceforge/trunk/src/txs.php?exec=beautify.txs">
+				<xforms:message level="modeless" ev:event="xforms-submit-error">Submit error.</xforms:message>
+			</xforms:submission>
+			<xforms:submission id="s02" method="xml-urlencoded-post" replace="none" action="http://localhost/sourceforge/trunk/src/txs.php?exec=returnasattachment.txs&amp;file=mybalance.xml">
+				<xforms:message level="modeless" ev:event="xforms-submit-error">Submit error.</xforms:message>
+			</xforms:submission>
+		</xforms:model>
+	</head>
+	<body>
+		<h3>Balance</h3>
+		<xforms:repeat nodeset="transaction" id="transactions" appearance="compact">
+			<xforms:input ref="date">
+				<xforms:label>Date</xforms:label>
+			</xforms:input>
+			<xforms:select1 ref="withdraw" appearance="minimal" incremental="true">
+				<xforms:label>Type</xforms:label>
+				<xforms:item>
+					<xforms:label>Withdraw</xforms:label>
+					<xforms:value>true</xforms:value>
+				</xforms:item>
+				<xforms:item>
+					<xforms:label>Deposit</xforms:label>
+					<xforms:value>false</xforms:value>
+				</xforms:item>
+			</xforms:select1>
+			<xforms:input ref="desc" class="desc">
+				<xforms:label>Description</xforms:label>
+			</xforms:input>
+			<xforms:input ref="amount[../withdraw = 'false']" class="amount">
+				<xforms:label>Deposit</xforms:label>
+			</xforms:input>
+			<xforms:input ref="amount[../withdraw = 'true']" class="amount">
+				<xforms:label>Withdraw</xforms:label>
+			</xforms:input>
+			<xforms:trigger class="delete">
+				<xforms:label>X</xforms:label>
+				<xforms:delete nodeset="." at="1" ev:event="DOMActivate" if="count(//transaction) > 1"/>
+			</xforms:trigger>
+		</xforms:repeat>
+		<table>
+			<tr>
+				<td style="width: 350px;">Totals</td>
+				<td style="width: 90px; text-align: right;">
+					<xforms:output ref="totals/in"/>
+				</td>
+				<td style="width: 90px; text-align: right;">
+					<xforms:output ref="totals/out"/>
+				</td>
+			</tr>
+			<tr>
+				<td>Balance</td>
+				<td colspan="2" style="text-align: right;">
+					<xforms:output ref="totals/total"/>
+				</td>
+			</tr>
+		</table>
+		<xforms:trigger>
+			<xforms:label>New withdraw</xforms:label>
+			<xforms:action ev:event="DOMActivate">
+				<xforms:insert nodeset="transaction" position="after" at="last()"/>
+				<xforms:setvalue ref="transaction[last()]/date" value="substring-before(now(), 'T')"/>
+				<xforms:setvalue ref="transaction[last()]/amount" value="'0.00'"/>
+				<xforms:setvalue ref="transaction[last()]/withdraw">true</xforms:setvalue>
+				<xforms:setvalue ref="transaction[last()]/desc"/>
+			</xforms:action>
+		</xforms:trigger>
+		<xforms:trigger>
+			<xforms:label>New deposit</xforms:label>
+			<xforms:action ev:event="DOMActivate">
+				<xforms:insert nodeset="transaction" position="after" at="last()"/>
+				<xforms:setvalue ref="transaction[last()]/date" value="substring-before(now(), 'T')"/>
+				<xforms:setvalue ref="transaction[last()]/amount" value="'0.00'"/>
+				<xforms:setvalue ref="transaction[last()]/withdraw">false</xforms:setvalue>
+				<xforms:setvalue ref="transaction[last()]/desc"/>
+			</xforms:action>
+		</xforms:trigger>
+		<xforms:submit submission="s01">
+			<xforms:label>View</xforms:label>
+		</xforms:submit>
+		<xforms:submit submission="s02">
+			<xforms:label>Save As</xforms:label>
+		</xforms:submit>
+		<xforms:trigger>
+			<xforms:label>Reset</xforms:label>
+			<xforms:dispatch name="xforms-reset" targetid="default-model" ev:event="DOMActivate"/>
+		</xforms:trigger>
+	</body>
+</html>

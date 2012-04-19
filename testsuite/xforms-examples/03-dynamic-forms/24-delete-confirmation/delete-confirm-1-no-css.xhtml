@@ -1,0 +1,130 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>XForms Delete Example</title>
+      <style type="text/css">
+     * {
+        font-family: Arial, Helvetica, sans-serif;
+     }
+     label {
+        font-weight: bold;
+     }
+      .header {
+        color: white;
+        background-color: gray;
+        font-weight: bold;
+        padding: 2px;
+      }
+      
+      .header {
+         width: 370px;
+      }
+      
+       .leftColumn, .rightColumn {
+         display: inline;
+      }
+      
+      .leftColumn {
+         margin-left: 10px;
+      }
+      
+      .rightColumn {
+         position: absolute;
+         left: 0;
+         margin-left: 150px;
+      }
+      </style>
+      <xf:model>
+         <xf:instance id="contacts" xmlns="">
+            <PhoneList>
+               <Person>
+                  <Name>Peggy</Name>
+                  <Phone>123</Phone>
+               </Person>
+               <Person>
+                  <Name>Dan</Name>
+                  <Phone>456</Phone>
+               </Person>
+               <Person>
+                  <Name>John</Name>
+                  <Phone>789</Phone>
+               </Person>
+               <Person>
+                  <Name>Sue</Name>
+                  <Phone>234</Phone>
+               </Person>
+               <NewPerson>
+                  <Name />
+                  <Phone />
+               </NewPerson>
+               <SelectedRow />
+            </PhoneList>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <xf:group nodeset="/PhoneList">
+         <xf:label class="group-label">Company Phone List</xf:label>
+         <div class="header">
+            <div class="leftColumn">Name</div>
+            <div class="rightColumn">Phone</div>
+         </div>
+         <xf:repeat id="contact-repeat" nodeset="Person">
+            <xf:input ref="Name" class="leftColumn" />
+            <xf:input ref="Phone" class="rightColumn" />
+         </xf:repeat>
+      </xf:group>
+      <xf:group>
+         <xf:label class="group-label">Add/Delete Person</xf:label>
+         <br />
+         <xf:input ref="NewPerson/Name">
+            <xf:label>Name:</xf:label>
+         </xf:input>
+         <br />
+         <xf:input ref="NewPerson/Phone">
+            <xf:label>Phone:</xf:label>
+         </xf:input>
+         <br />
+         <xf:trigger>
+            <xf:label>Insert After Selected Row</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:insert nodeset="Person" at="index('contact-repeat')" position="after" />
+               <xf:setvalue ref="Person[index('contact-repeat')]/Name" value="/PhoneList/NewPerson/Name" />
+               <xf:setvalue ref="Person[index('contact-repeat')]/Phone" value="/PhoneList/NewPerson/Phone" />
+               <xf:setvalue ref="SelectedRow" value="index('contact-repeat')" />
+            </xf:action>
+         </xf:trigger>
+         <br />
+         <xf:switch>
+            <xf:case id="delete">
+               <!-- don't display the delete trigger unless we have at lease one person -->
+               <xf:trigger ref="instance('contacts')[count(//Person) > 1]">
+                  <xf:label>Delete person</xf:label>
+                  <xf:action ev:event="DOMActivate">
+                     <xf:toggle case="confirm" />
+                  </xf:action>
+               </xf:trigger>
+            </xf:case>
+            <xf:case id="confirm">
+               <h2>Are you sure you want to delete the following:</h2>
+               <div id="content-for-deletion">
+                  <p>Description: <xf:output ref="Person[index('contact-repeat')]/Name" />
+                  </p>
+                  <p>Value: <xf:output ref="Person[index('contact-repeat')]/Phone" />
+                  </p>
+               </div>
+               <xf:trigger>
+                  <xf:label>Delete</xf:label>
+                  <xf:action ev:event="DOMActivate">
+                     <xf:delete nodeset="Person[index('contact-repeat')]" at="index('contact-repeat')" ev:event="DOMActivate" />
+                     <xf:toggle case="delete" />
+                  </xf:action>
+               </xf:trigger>
+               <xf:trigger>
+                  <xf:label>Cancel</xf:label>
+                  <xf:toggle case="delete" ev:event="DOMActivate" />
+               </xf:trigger>
+            </xf:case>
+         </xf:switch>
+      </xf:group>
+   </body>
+</html>

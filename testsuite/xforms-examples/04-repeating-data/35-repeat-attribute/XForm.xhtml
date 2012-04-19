@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xf="http://www.w3.org/2002/xforms" xml:lang="en">
+  <head>
+    <title>Attribute-Based Repeat</title>
+    <xforms:model xmlns:ev="http://www.w3.org/2001/xml-events" id="i_model">
+      <xforms:instance xmlns="">
+        <data xmlns="">
+          <val>1</val>
+
+          <val>2</val>
+          <val>3</val>
+        </data>
+      </xforms:instance>
+    </xforms:model>
+  </head>
+  <body>
+    <div xmlns:ev="http://www.w3.org/2001/xml-events" xmlns="http://www.w3.org/1999/xhtml">
+
+      Attribute-based repeats using <code>xf:repeat-nodeset</code> on a
+      non-XForms element. Here we have a div, which should be repeat over the
+      nodeset.
+    </div>
+    <div xmlns:ev="http://www.w3.org/2001/xml-events" xmlns="http://www.w3.org/1999/xhtml">
+      <div xforms:repeat-nodeset="val">
+        This is the inline content, just text. Here comes the output:
+        <br/>
+        <xf:output ref="."><xf:label>Value: </xf:label></xf:output>
+      </div>
+
+      <xf:trigger>
+        <xf:label>Insert new row</xf:label>
+        <xf:action ev:event="DOMActivate">
+          <xf:insert nodeset="val" position="after" at="last()"/>
+          <xf:setvalue ref="val[last()]" value="count(/data/val)"/>
+        </xf:action>
+      </xf:trigger>
+      <xf:trigger>
+
+        <xf:label>Delete last row</xf:label>
+        <xf:delete nodeset="val" at="last()" ev:event="DOMActivate"/>
+      </xf:trigger>
+    </div>
+    <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=280368">Bug 280368</a>
+  </body>
+</html>

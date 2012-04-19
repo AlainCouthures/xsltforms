@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph>
+   <graph-name>USA</graph-name>
+   <graph-description>Example of graph with states, counties, cities and neighborhoods.</graph-description>
+   <node>
+      <node-id>usa</node-id>
+      <links>
+         <link-id>states-in-the-us</link-id>
+         <node>
+            <node-id>california</node-id>
+         </node>
+         <node>
+            <node-id>kansas</node-id>
+         </node>
+         <node>
+            <node-id>illinois</node-id>
+         </node>
+         <node>
+            <node-id>iowa</node-id>
+         </node>
+         <node>
+            <node-id>minnesota</node-id>
+            <links>
+               <link-id>counties-in-minnesota</link-id>
+                <node>
+                  <node-id>carver</node-id>
+               </node>
+               <node>
+                  <node-id>dakota</node-id>
+               </node>
+               <node>
+                  <node-id>hennepin</node-id>
+                  <links>
+                     <link-id>cities in hennpin county</link-id>
+                     <node>
+                        <node-id>bloomington</node-id>
+                     </node>
+                     <node>
+                        <node-id>minneapolis</node-id>
+                     </node>
+                     <node>
+                        <node-id>richfield</node-id>
+                     </node>
+                     <node>
+                        <node-id>st-louis-park</node-id>
+                        <links>
+                           <link-id>neighborhoods-in-st-louis-park</link-id>
+                           <node>
+                              <node-id>aquila</node-id>
+                           </node>
+                           <node>
+                              <node-id>cobblecrest</node-id>
+                           </node>
+                           <node>
+                              <node-id>elmwood</node-id>
+                           </node>
+                        </links>
+                        <!-- neighborhoods-in-st-louis-park -->
+                     </node>
+                  </links>
+                  <!-- cities-in-hennepin county -->
+               </node>
+               <node>
+                  <node-id>ramsey</node-id>
+                  <links>
+                     <link-id>cities in ramsey county</link-id>
+                     <node>
+                        <node-id>eagan</node-id>
+                     </node>
+                     <node>
+                        <node-id>st-paul</node-id>
+                     </node>
+                  </links>
+               </node>
+            </links>
+            <!-- counties-in-minnesota -->
+         </node>
+         <node>
+            <node-id>new-york</node-id>
+         </node>
+      </links>
+      <!-- states-in-the-us -->
+   </node>
+</Graph>

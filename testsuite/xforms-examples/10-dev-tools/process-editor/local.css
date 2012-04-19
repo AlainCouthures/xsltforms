@@ -1,0 +1,78 @@
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+body {
+   font-family: Helvetica, sans-serif;
+}
+
+.process-steps {
+   border: black 1px solid;
+   color: black; background-color: lightgreen;
+   padding: 18px 10px 14px 15px;
+}
+
+xf|label {
+font-weight: bold;
+}
+
+.group-label {
+   position:relative;
+   text-align:left;
+   font-weight:bold;
+   font-size:12pt;
+   background-color: #D6D6DA;
+   top: -9px;
+   left: -9px;
+   -moz-border-radius: .3em;
+   padding: 3px;
+   border: solid black 1px;
+}
+
+.activity {
+  position: relative;
+  width: 250px;
+  padding: 8px; margin: 2px;
+  border: 1px solid blue;
+  background: PowderBlue;
+  /* the following only works under FireFox */
+  -moz-border-radius: 1em;
+}
+
+/* this makes the repeated items get added to the right */
+.xf-repeat-item {display:inline;}
+/* you MUST put this in to limit the width of the repeated item */
+.xf-repeat-item .xf-value {width: 70px;}
+
+.activity-label {
+  display: inline;
+  text-align: center;
+}
+
+/* the label in the center of an activity box */
+.activity .xf-value {
+  background-color: white;
+  text-align: center;
+}
+
+/* make the plus/minus buttons larger */
+.activity xf|trigger xf|label {font-weight: bold; font-size: 12pt;}
+
+.inspector {
+   border: black 1px solid;
+   color: black; background-color: pink;
+   padding: 15px;
+   width: 400px;
+}
+
+/* Makes the labels right aligned in a 200px wide column that floats to the left of the input controls. */
+.inspector xf|input > xf|label,
+.inspector xf|select > xf|label,
+.inspector xf|select1 > xf|label,
+.inspector xf|textarea > xf|label
+{text-align:right; padding-right:10px; width:200px; float:left; text-align:right;}
+
+/* This line ensures all the separate label  controls in the inspector appear on their own lines */
+.inspector xf|input,
+.inspector xf|select,
+.inspector xf|select1,
+.inspector xf|textarea
+{display:block; margin:5px 0;}

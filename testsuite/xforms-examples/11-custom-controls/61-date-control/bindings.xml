@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<bindings id="xformsBindings"
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:html="http://www.w3.org/1999/xhtml">
+  <binding id="output-date"
+      extends="chrome://xforms/content/xforms.xml#xformswidget-base">
+    <content>
+      <html:span anonid="content" />
+    </content>
+    <implementation implements="nsIXFormsUIWidget">
+      <method name="refresh">
+         <body>
+          var span = document.getAnonymousElementByAttribute(this,
+"anonid", "content");
+          if (span) {
+            var date = new Date();
+          // this line depends on the setISO8601 package from http://delete.me.uk/2005/03/iso8601.html
+            date.setISO8601(this.stringValue);
+            var str = date.toLocaleString();
+            // crock for removing "Monday, " if present; not I18N.
+            var idx = str.indexOf("day, ");
+            if (idx != -1) {
+              str = str.substring(idx+5);
+            }
+            span.textContent = str;
+          }
+          return true;
+         </body>
+      </method>
+    </implementation>
+  </binding>
+</bindings> 

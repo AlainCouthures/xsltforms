@@ -1,0 +1,22 @@
+<html 
+xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:xf="http://www.w3.org/2002/xforms" 
+xmlns:ev="http://www.w3.org/2001/xml-events" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Enter the title of your XHTML document here</title>
+      <xf:model>
+         <xf:instance xmlns="">
+            <Data>
+               <MyDate />
+            </Data>
+         </xf:instance>
+         <xf:bind nodeset="MyDate" type="xs:date" />
+      </xf:model>
+   </head>
+   <body>
+         <xf:input ref="MyDate">
+            <xf:label>Enter a date: </xf:label>
+         </xf:input>
+   </body>
+</html>

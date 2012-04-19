@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+   <Item>
+      <Description>Furniture</Description>
+      <Amount>1000</Amount>
+      <FormattedAmount>$1,000</FormattedAmount>
+   </Item>
+   <Item>
+      <Description>Dock</Description>
+      <Amount>2000</Amount>
+      <FormattedAmount>$2,000</FormattedAmount>
+   </Item>
+   <Item>
+      <Description>Boat</Description>
+      <Amount>3000</Amount>
+      <FormattedAmount>$3,000</FormattedAmount>
+   </Item>
+   <Item>
+      <Description>Lawn equipment</Description>
+      <Amount>4000</Amount>
+      <FormattedAmount>$4,000</FormattedAmount>
+   </Item>
+   <Item>
+      <Description>Hot tub</Description>
+      <Amount>5000</Amount>
+      <FormattedAmount>$5,000</FormattedAmount>
+   </Item>
+   <Total>12345678</Total>
+   <FormattedTotal>$15,000</FormattedTotal>
+</Data>

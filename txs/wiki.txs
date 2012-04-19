@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<txs:scriptsheet xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cm="http://www.agencexml.com/cm" version="0.4">
+	<xsl:stylesheet version="1.0" txs:name="main" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:template match="/">
+			<txs:transform stylesheet="#build">
+				<txs:with-param name="filename" value="{/req:params/req:file}"/>
+				<txs:input>
+					<txs:load filename="{/req:params/req:file}.xml" format="xml"/>
+				</txs:input>
+			</txs:transform>
+		</xsl:template>
+	</xsl:stylesheet>
+	<xsl:stylesheet txs:name="build" version="1.0" xmlns:cm="http://www.agencexml.com/cm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:param name="filename"/>
+		<xsl:template match="/">
+			<xsl:choose>
+				<xsl:when test="string(/cm:component/cm:source/@type)=''">
+					<txs:return contenttype="text/plain" format="text">
+						<xsl:value-of select="substring-after($filename,'../')"/> not found
+					</txs:return>
+				</xsl:when>
+				<xsl:otherwise>
+					<txs:return contenttype="text/html" format="text">
+						<xsl:apply-templates select="/cm:component/cm:source/node()">
+							<xsl:with-param name="loc">
+								<xsl:call-template name="locationextract">
+									<xsl:with-param name="path" select="$filename"/>
+								</xsl:call-template>
+							</xsl:with-param>
+						</xsl:apply-templates>
+					</txs:return>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+		<xsl:template match="cm:import-components" priority="2">
+			<xsl:param name="loc"/>
+			<xsl:apply-templates select="document(concat($loc,@path))/cm:component/cm:source/node()">
+				<xsl:with-param name="loc">
+					<xsl:call-template name="locationextract">
+						<xsl:with-param name="path" select="concat($loc,@path)"/>
+					</xsl:call-template>
+				</xsl:with-param>
+			</xsl:apply-templates>
+		</xsl:template>
+		<xsl:template match="cm:wiki" priority="2"><xsl:value-of select="."/></xsl:template>
+		<xsl:template match="cm:*" priority="1"/>
+		<xsl:template match="@* | node()" priority="0">
+			<xsl:param name="loc"/>
+			<xsl:apply-templates select="@* | node()">
+				<xsl:with-param name="loc" select="$loc"/>
+			</xsl:apply-templates>
+		</xsl:template>
+		<xsl:template name="locationextract">
+			<xsl:param name="path"/>
+			<xsl:if test="contains($path,'/')"><xsl:value-of select="substring-before($path,'/')"/>/<xsl:call-template name="locationextract"><xsl:with-param name="path" select="substring-after($path,'/')"/></xsl:call-template></xsl:if>
+		</xsl:template>
+	</xsl:stylesheet>
+</txs:scriptsheet>

@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Example of binding to lists</title>
+      <xf:model id="model">
+         <xf:instance id="input">
+            <Data xmlns="">
+               <InputValueOne>3</InputValueOne>
+            </Data>
+         </xf:instance>
+         <!-- make the inputs data types be integers -->
+         <xf:bind id="input-one-bind" nodeset="/Data/InputValueOne" type="xs:integer" />
+         <xf:bind id="input-two-bind" nodeset="/Data/InputValueTwo" type="xs:integer" />
+         <!-- second instance bound to outputs -->
+         <xf:instance id="output">
+            <DataOut xmlns="">
+               <List>
+                  <item>one</item>
+                  <item>two</item>
+                  <item>three</item>
+                  <item>four</item>
+               </List>
+               <ListValue />
+            </DataOut>
+         </xf:instance>
+         <!-- Make the output be an integer that is the the product of the inputs -->
+         <xf:bind id="output-value" nodeset="instance('output')/ListValue" calculate="instance('output')/List/item[instance('input')/InputValueOne]" type="xs:string" />
+      </xf:model>
+   </head>
+   <body>
+      <p>
+         <xf:range bind="input-one-bind" start="1" end="5" step="1" incremental="true">
+            <xf:label>Input 1: </xf:label>
+         </xf:range>
+         <br />
+         <xf:output bind="input-one-bind">
+            <xf:label>Ouput label:</xf:label>
+         </xf:output>
+         <br />
+         <xf:output bind="output-value">
+            <xf:label>Ouput label:</xf:label>
+         </xf:output>
+      </p>
+   </body>
+</html>

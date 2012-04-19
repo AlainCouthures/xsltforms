@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XForm" ExtStr="xml;cml;math;mtx;rdf;smil;svg;wml">
+		<File FilePath="PieChart.xhtml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="CSS" ExtStr="xsl;xslt">
+		<File FilePath="PieChart.css" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="JavaScript">
+		<File FilePath="TaxForm.js" HomeFolder="Yes"/>
+	</Folder>
+</Project>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Example of binding to instance ids</title>
+   </head>
+   <body>
+      <xf:model id="model">
+         <xf:instance id="input">
+            <DataIn xmlns="">
+               <InputIndicator>false</InputIndicator>
+            </DataIn>
+         </xf:instance>
+         <!-- make the input data type be an XML Schema type boolean so it renders as a checkbox -->
+         <xf:bind id="input-bind" nodeset="/DataIn/InputIndicator" type="xs:boolean"/>
+         <!-- second instance bound to outputs -->
+         <xf:instance id="output">
+            <DataOut xmlns="">
+               <OutputValue>Hello World!</OutputValue>
+            </DataOut>
+         </xf:instance>
+         <!-- if the inputIndicator is true, then the output is relevant and is bound -->
+         <xf:bind id="output-bind" nodeset="instance('output')/OutputValue" relevant="instance('input')/InputIndicator[.='true']"/>
+      </xf:model>
+      <p>
+         <xf:input bind="input-bind">
+            <xf:label>Check to see the value of output: </xf:label>
+         </xf:input>
+     <br/>
+         <xf:output bind="output-bind">
+            <xf:label>Value of Output: </xf:label>
+         </xf:output>
+      </p>
+   </body>
+</html>
+
+

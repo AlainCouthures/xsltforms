@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>DeedTypeCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Contract for Deed</Label>
+         <Value>contract-for-deed</Value>
+      </Item>
+      <Item>
+         <Label>Other Transaction</Label>
+         <Value>other</Value>
+      </Item>
+      <Item>
+         <Label>Probate Deed</Label>
+         <Value>probate-deed</Value>
+      </Item>
+      <Item>
+         <Label>Quit Claim Deed</Label>
+         <Value>quit-claim-deed</Value>
+      </Item>
+      <Item>
+         <Label>Trustee Deed</Label>
+         <Value>trust-deed</Value>
+      </Item>
+      <Item>
+         <Label>Warranty Deed</Label>
+         <Value>warranty-deed</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

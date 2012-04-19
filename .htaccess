@@ -1,0 +1,33 @@
+RewriteEngine on
+RewriteRule ^(.*)-engine/testsuite/(.*\.xhtml)$																									txs/xforms.txs?engine=$1&file=testsuite/$2
+RewriteRule ^(.*)-engine/testsuite/(.*)$																														testsuite/$2 [L]
+RewriteRule ^releases/(.*)/testsuite/(.*\.xhtml)$																								txs/xforms.txs?file=testsuite/$2
+RewriteRule ^releases/(.*)/testsuite/(.*\.css)$																										txs/css.txs?file=testsuite/$2&referer=%{HTTP_REFERER}
+RewriteRule ^releases/(.*)/testsuite/(.*)$																													testsuite/$2 [L]
+RewriteRule ^trunk/(build|src|test|short)/(.*)-options/testsuite/(.*\.xhtml)$				txs/xforms.txs?options=$2-options.xml&file=testsuite/$3&requesturi=%{REQUEST_URI}&httphost=%{HTTP_HOST}
+RewriteRule ^trunk/(build|src|test|short)/(.*)-options/testsuite/(.*\.css)$						txs/css.txs?file=testsuite/$3&referer=%{HTTP_REFERER}
+RewriteRule ^trunk/(build|src|test|short)/(.*)-options/testsuite/(.*)$									testsuite/$3 [L]
+RewriteRule ^trunk/(build|src|test|short)/testsuite/(.*\.xhtml)$													txs/xforms.txs?file=testsuite/$2
+RewriteRule ^trunk/(build|src|test|short)/testsuite/(.*\.css)$															txs/css.txs?file=testsuite/$2&referer=%{HTTP_REFERER}
+RewriteRule ^trunk/(build|src|test|short)/testsuite/(.*)$																		testsuite/$2 [L]
+#RewriteRule ^trunk/(build|src|test|short)/config\.xsl$   											txs/config.txs?dir=../trunk/$1&languages=%{HTTP:Accept-Language} [L]
+RewriteRule ^trunk/(src|test)/config(_.*)?\.xsl$   								trunk/$1/config$2.xsl [L]
+RewriteRule ^trunk/(src|test)/svg2xaml\.xsl$   								trunk/$1/svg2xaml.xsl [L]
+RewriteRule ^branches/(.*)/(build|src|test|short)/(.*)-options/testsuite/(.*\.xhtml)$				txs/xforms.txs?options=$3-options.xml&file=testsuite/$4&requesturi=%{REQUEST_URI}&httphost=%{HTTP_HOST}
+RewriteRule ^branches/(.*)/(build|src|test|short)/(.*)-options/testsuite/(.*\.css)$						txs/css.txs?file=testsuite/$4&referer=%{HTTP_REFERER}
+RewriteRule ^branches/(.*)/(build|src|test|short)/(.*)-options/testsuite/(.*)$									testsuite/$4 [L]
+RewriteRule ^branches/(.*)/(build|src|test|short)/testsuite/(.*\.xhtml)$													txs/xforms.txs?file=testsuite/$3
+RewriteRule ^branches/(.*)/(build|src|test|short)/testsuite/(.*\.css)$															txs/css.txs?file=testsuite/$3&referer=%{HTTP_REFERER}
+RewriteRule ^branches/(.*)/(build|src|test|short)/testsuite/(.*)$																		testsuite/$3 [L]
+#RewriteRule ^branches/(.*)/(build|src|test|short)/config\.xsl$   											txs/config.txs?dir=../branches/$1/$2&languages=%{HTTP:Accept-Language} [L]
+RewriteRule ^branches/(.*)/(src|test)/config(_.*)?\.xsl$   								branches/$1/$2/config$3.xsl [L]
+RewriteRule ^branches/(.*)/(src|test)/svg2xaml\.xsl$   								branches/$1/$2/svg2xaml.xsl [L]
+RewriteCond %{QUERY_STRING}																														.+
+RewriteRule ^(.*-options/)?trunk/(src|test)/(.*\.(js|css|xsl))$							 		txs/txs.php?exec=%{QUERY_STRING}.txs&file=../trunk/$2/$3 [L]
+RewriteRule ^(.*-options/)?trunk/(src|test)/(.*\.(js|css|xsl))$   							txs/txs.php?exec=cm.txs&file=../trunk/$2/$3 [L]
+RewriteRule ^(.*-options/)?trunk/(.*)$   																	trunk/$2 [L]
+RewriteCond %{QUERY_STRING}																														.+
+RewriteRule ^(.*-options/)?branches/(.*)/(src|test)/(.*\.(js|css|xsl))$							 		txs/txs.php?exec=%{QUERY_STRING}.txs&file=../branches/$2/$3/$4 [L]
+RewriteRule ^(.*-options/)?branches/(.*)/(src|test)/(.*\.(js|css|xsl))$   							txs/txs.php?exec=cm.txs&file=../branches/$2/$3/$4 [L]
+RewriteRule ^(.*-options/)?branches/(.*)/(.*)$   																	branches/$2/$3 [L]
+RewriteRule ^txs/(.*\.txs)																																			txs/txs.php?exec=$1 [QSA,L]

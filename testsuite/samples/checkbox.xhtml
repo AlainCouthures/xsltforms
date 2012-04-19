@@ -1,0 +1,41 @@
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 >
+   <head>
+      <title>XForms Checkbox Demo</title>
+      <style type="text/css">body {font-family: Helvetica, sans-serif;}</style>
+      <xf:model>
+         <!-- load the module test data into the model -->
+         <xf:instance>
+            <data xmlns="">
+               <bool1>true</bool1>
+               <bool2>false</bool2>
+            </data>
+         </xf:instance>
+         <!-- Here is where we indicate the datatypes of the instance variables -->
+         <xf:bind nodeset="bool1" type="xs:boolean"  />
+         <xf:bind id="bool2" nodeset="bool2" type="xs:boolean"  />
+      </xf:model>
+   </head>
+   <body>
+      <h1>XForms Checkbox Demo</h1>
+      <xf:input ref="bool1" incremental="true">
+         <xf:label>Bool 1: </xf:label>
+      </xf:input>
+      <br/>
+      <!-- use a named binding -->
+      <xf:input bind="bool2" incremental="true">
+         <xf:label>Bool 2: </xf:label>
+      </xf:input>
+      <br/>
+      <xf:output ref="bool1">
+         <xf:label>Bool 1: </xf:label>
+      </xf:output>
+      <br/>
+      <xf:output bind="bool2">
+         <xf:label>Bool 2: </xf:label>
+      </xf:output>
+   </body>
+</html>

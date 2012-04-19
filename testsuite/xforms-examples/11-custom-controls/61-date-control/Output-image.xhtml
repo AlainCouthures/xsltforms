@@ -1,0 +1,58 @@
+<html 
+  xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Custom Image Control Sample</title>
+      <bindings id="xformsBindings" xmlns="http://www.mozilla.org/xbl" xmlns:html="http://www.w3.org/1999/xhtml">
+         <binding id="output-image" extends="chrome://xforms/content/xforms.xml#xformswidget-base">
+            <content>
+               <html:div>
+                  <html:img anonid="content" />
+               </html:div>
+            </content>
+            <implementation implements="nsIXFormsUIWidget">
+               <method name="refresh">
+                  <body>
+                  <!-- 
+                  set the src attribute on the html:img to be the simpleContent
+                  of the instance node bound to this control
+                  -->
+                  var img = document.getAnonymousElementByAttribute(this, "anonid", "content");
+                  img.setAttribute("src", this.stringValue);
+                  return true;
+                  </body>
+               </method>
+            </implementation>
+         </binding>
+      </bindings>
+      <xf:model>
+         <xf:instance xmlns="">
+            <data>
+               <curimg />
+               <img label="Firefox">http://www.mozilla.org/foundation/identity-guidelines/firefox-128.png</img>
+               <img label="Thunderbird">http://www.mozilla.org/foundation/identity-guidelines/thunderbird-128.png</img>
+               <img label="Bugzilla">http://www.mozilla.org/images/p-bugz.gif</img>
+               <img label="Mozilla">http://www.mozilla.org/images/mozhead-80x64.gif</img>
+            </data>
+         </xf:instance>
+      </xf:model>
+      <style type="text/css">
+      @namespace xf url(http://www.w3.org/2002/xforms);
+
+      xf|output[mediatype="image/*"] {
+        -moz-binding: url('#output-image');
+      }
+    </style>
+   </head>
+   <body>
+      <h1>Custom Control Sample</h1>
+      <xf:select1 ref="curimg">
+         <xf:label>Select image to display: </xf:label>
+         <xf:itemset nodeset="../img">
+            <xf:label ref="@label" />
+            <xf:value ref="." />
+         </xf:itemset>
+      </xf:select1>
+      <xf:output ref="curimg" mediatype="image/*" />
+   </body>
+</html>

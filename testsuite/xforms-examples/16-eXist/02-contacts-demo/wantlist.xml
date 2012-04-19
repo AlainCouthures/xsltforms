@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<w:WantList w:release="1.0" w:product="NIEM" xmlns:w="http://niem.gov/niem/wantlist/1">
+  <w:Element w:prefix="c" w:name="LocationStateFIPS5-2AlphaCode" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="CommentText" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="ContactEmailID" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="LocationCityName" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="LocationPostalCodeID" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="LocationStateName" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="PersonGivenName" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="PersonSurName" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="StreetFullText" w:isReference="false"/>
+  <w:Element w:prefix="u" w:name="TelephoneNumberFullID" w:isReference="false"/>
+</w:WantList>

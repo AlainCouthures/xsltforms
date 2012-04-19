@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="Data">
+      <xs:annotation>
+         <xs:documentation>A demonstration of XML Schema string facets.</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="string-length-2">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:length value="2"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="string-min-3">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:minLength value="3"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="string-max-5">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:maxLength value="5"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="string-5-7">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:minLength value="5"/>
+                     <xs:maxLength value="7"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

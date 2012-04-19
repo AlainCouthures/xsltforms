@@ -1,0 +1,49 @@
+<html
+xmlns="http://www.w3.org/1999/xhtml"
+xmlns:xf="http://www.w3.org/2002/xforms"
+>
+   <head>
+      <title>XForms Radio Button Usng Select1 appearance="full"</title>
+      <style type="text/css">
+         
+      </style>
+      <xf:model>
+         <xf:instance xmlns="">
+            <MyModel>
+               <MyCode type="xs:string"/>
+            </MyModel>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+       <p>XForms Radio Button Usng Select1 appearance="full"</p>
+        <xf:select1 ref="/MyModel/MyCode" selection="closed" appearance="full" >  
+            <xf:item>
+                <xf:label>Red</xf:label>
+                <xf:value>red</xf:value> 
+                <a href="http://www.example.com/mydefinitions.html#red">Red definition</a>
+            </xf:item>
+            <xf:item>
+                <xf:label>Orange</xf:label>
+                <xf:value>orange</xf:value>
+                 <a href="http://www.example.com/mydefinitions.html#orange">Orange definition</a>
+            </xf:item>
+            <xf:item>
+                <xf:label>Yellow</xf:label>
+                <xf:value>yellow</xf:value>
+                 <a href="http://www.example.com/mydefinitions.html#yellow">Yellow definition</a>
+            </xf:item>
+            <xf:item>
+                <xf:label>Green</xf:label>
+                <xf:value>green</xf:value>
+                <a href="http://www.example.com/mydefinitions.html#green">Green definition</a>
+            </xf:item>
+            <xf:item>
+                <xf:label>Blue</xf:label>
+                <xf:value>blue</xf:value>
+                <a href="http://www.example.com/mydefinitions.html#blue">Blue definition</a>
+            </xf:item>
+       </xf:select1>
+       Output: <xf:output ref="/MyModel/MyCode"/>
+   </body>
+</html>

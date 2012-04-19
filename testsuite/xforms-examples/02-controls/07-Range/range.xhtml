@@ -1,0 +1,49 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <head>
+        <title>XForms Submit Example</title>
+        <style type="text/css">
+            * {
+            font-family: Helvetica, sans-serif;
+            }
+        </style>
+        <xf:model>
+            <xf:instance xmlns="">
+                <data>
+                    <data1>3.14159</data1>
+                    <data2>6</data2>
+                    <data3>66</data3>
+                </data>
+            </xf:instance>
+            <!-- you MUST bind each data type to the decimal type for the range control to work -->
+            <xf:bind nodeset="/data/data1" type="xs:decimal" />
+            <xf:bind nodeset="/data/data2" type="xs:decimal" />
+            <xf:bind nodeset="/data/data3" type="xs:decimal" />
+        </xf:model>
+    </head>
+    <body>
+        <xf:range ref="data1" start="1" end="5" step="1" incremental="true">
+            <xf:label>Data1: </xf:label>
+        </xf:range>
+        <xf:output ref="data1">
+            <xf:label> Value= </xf:label>
+        </xf:output>
+        <br />
+        <xf:range ref="data2" start="1" end="10" step="1"  incremental="true">
+            <xf:label>Data2: </xf:label>
+        </xf:range>
+        <xf:output ref="data2">
+            <xf:label> Value= </xf:label>
+        </xf:output>
+        <br />
+        <xf:range ref="data3" start="1" end="100" step="5"  incremental="true">
+            <xf:label>Data3: </xf:label>
+        </xf:range>
+        <xf:output ref="data3">
+            <xf:label> Value= </xf:label>
+        </xf:output>
+    </body>
+</html>

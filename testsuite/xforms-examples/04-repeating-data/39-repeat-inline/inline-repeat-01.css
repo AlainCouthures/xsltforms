@@ -1,0 +1,26 @@
+/* CSS file for person search results table */
+@namespace xf url("http://www.w3.org/2002/xforms");
+
+body {
+   font-family: Helvetica, sans-serif;
+}
+
+.cell {
+  display:inline;
+  height: 30px;
+  padding: 8px; margin: 4px;
+  border: 2px solid blue;
+  background-color: lightblue;
+  /* the following only works under FireFox */
+  -moz-border-radius: 1em;
+}
+
+xf|output {
+   text-align: center;
+   vertical-align: middle;
+   font-weight: bold;
+}
+
+.xf-repeat-item {
+   display:inline;
+}

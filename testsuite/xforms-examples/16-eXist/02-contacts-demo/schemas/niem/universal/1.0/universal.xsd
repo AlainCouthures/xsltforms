@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:u="http://niem.gov/niem/universal/1.0" xmlns:i="http://niem.gov/niem/appinfo/1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:s="http://niem.gov/niem/structures/1.0" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:niem-xsd="http://niem.gov/niem/proxy/xsd/1.0" targetNamespace="http://niem.gov/niem/universal/1.0" version="1">
+   <xsd:annotation>
+      <xsd:documentation>NIEM universal core</xsd:documentation>
+      <xsd:appinfo>
+         <i:ConformantIndicator>true</i:ConformantIndicator>
+      </xsd:appinfo>
+   </xsd:annotation>
+   <xsd:import namespace="http://niem.gov/niem/structures/1.0" schemaLocation="../../structures/1.0/structures.xsd"/>
+   <xsd:import namespace="http://niem.gov/niem/appinfo/1.0" schemaLocation="../../appinfo/1.0/appinfo.xsd"/>
+   <xsd:import namespace="http://niem.gov/niem/proxy/xsd/1.0" schemaLocation="../../proxy/xsd/1.0/xsd.xsd"/>
+   <xsd:complexType name="IDType">
+      <xsd:annotation>
+         <xsd:documentation>A structure that describes an identifier of an entity.</xsd:documentation>
+         <xsd:appinfo>
+            <i:Base i:name="SuperType"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="u:SuperType"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="PersonNameTextType">
+      <xsd:annotation>
+         <xsd:documentation>A structure that describes a name of a person.</xsd:documentation>
+         <xsd:appinfo>
+            <i:Base i:name="ProperNameTextType"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="u:ProperNameTextType"/>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:complexType name="ProperNameTextType">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <i:Base i:name="TextType"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="u:TextType"/>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:complexType name="SuperType">
+      <xsd:annotation>
+         <xsd:documentation>A structure that serves as a root to many of the types in NIEM.</xsd:documentation>
+         <xsd:appinfo>
+            <i:Base i:namespace="http://niem.gov/niem/structures/1.0" i:name="Object"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="s:ComplexObjectType">
+            <xsd:attributeGroup ref="u:SuperTypeAttributeGroup"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:attributeGroup name="SuperTypeAttributeGroup"/>
+   <xsd:complexType name="TextType">
+      <xsd:annotation>
+         <xsd:documentation>A structure that represents a character string, generally in the form of words of a language, and includes language metadata.</xsd:documentation>
+         <xsd:appinfo>
+            <i:Base i:namespace="http://niem.gov/niem/proxy/xsd/1.0" i:name="string"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="niem-xsd:string"/>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:element name="CommentText" type="u:TextType" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A comment or note intended as an explanation.  (This is not a catch-all bucket for information that should be represented by existing elements or local extensions.)</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="ContactEmailID" type="niem-xsd:string" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>An email address of a person or organization.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="LocationCityName" type="u:ProperNameTextType" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A name of a city or town.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="LocationPostalCodeID" type="xsd:string" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A zip code or postal code.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="LocationState" abstract="true"/>
+   <xsd:element name="LocationStateName" type="u:ProperNameTextType" substitutionGroup="u:LocationState" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A name of a state, commonwealth, province, or other subregion of a country.</xsd:documentation>
+         <xsd:appinfo>
+            <i:Base i:name="LocationState"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="PersonGivenName" type="u:PersonNameTextType" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A first name of a person.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="PersonSurName" type="u:PersonNameTextType" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A last name or family name of a person.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="StreetFullText" type="u:TextType" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A complete street reference, e.g., &quot;123 Main Street NW&quot;.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+   <xsd:element name="TelephoneNumberFullID" type="niem-xsd:string" nillable="true">
+      <xsd:annotation>
+         <xsd:documentation>A full length telephone identifier.</xsd:documentation>
+      </xsd:annotation>
+   </xsd:element>
+</xsd:schema>

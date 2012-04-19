@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>SalesAgreementAssumedFinancingCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Assumed Mortgage</Label>
+         <Value>assumed</Value>
+      </Item>
+      <Item>
+         <Label>Contract for Deed</Label>
+         <Value>contract-for-deed</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

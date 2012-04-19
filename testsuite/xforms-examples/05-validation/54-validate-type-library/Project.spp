@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XForm" ExtStr="xhtml">
+		<File FilePath="XForm.xhtml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Initial Instace Data" ExtStr="xsl;xslt">
+		<File FilePath="instance.xml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="XML Schemas" ExtStr="xsd">
+		<File FilePath="schema.xsd" HomeFolder="Yes"/>
+		<File FilePath="my-simple-types.xsd" HomeFolder="Yes"/>
+	</Folder>
+</Project>

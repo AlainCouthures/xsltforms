@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<txs:scriptsheet xmlns="http://www.w3.org/1999/xhtml" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="0.4">
+	<xsl:stylesheet version="1.0" txs:name="main" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:template match="/">
+			<xsl:variable name="f" select="concat('../',/req:params/req:file)"/>
+			<xsl:variable name="sheet">
+				<xsl:choose>
+					<xsl:when test="/req:params/req:engine = 'mozilla'">mozilla</xsl:when>
+					<xsl:when test="/req:params/req:engine = 'ubiquity'">ubiquity</xsl:when>
+					<xsl:when test="/req:params/req:engine = 'formula'">formula</xsl:when>
+					<xsl:otherwise>xsltforms</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="delta">
+				<xsl:choose>
+					<xsl:when test="string(/req:params/req:options) != ''">3</xsl:when>
+					<xsl:otherwise>0</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<txs:transform stylesheet="#{$sheet}">
+				<txs:with-param name="resourcesdir" value="{substring('../../../../../../../../../../../../../../../../../../../../../../../../',1,string-length(translate(/req:params/req:file,'/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. +','/'))*3 + $delta)}"/>
+				<txs:with-param name="opt" value="{/req:params/req:options}"/>
+				<txs:with-param name="lopt" value="http://{concat(/req:params/req:httphost,substring-before(/req:params/req:requesturi,concat('/',/req:params/req:file)),'.xml')}"/>
+				<txs:with-param name="f" value="{$f}"/>
+				<txs:with-param name="sf" value="{/req:params/req:file}"/>
+				<txs:input>
+					<txs:load filename="{$f}" format="xml"/>
+				</txs:input>
+			</txs:transform>
+		</xsl:template>
+	</xsl:stylesheet>
+	<xsl:stylesheet txs:name="xsltforms" version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:param name="resourcesdir"/>
+		<xsl:param name="opt"/>
+		<xsl:param name="lopt"/>
+		<xsl:param name="f"/>
+		<xsl:template match="/">
+			<txs:return contenttype="text/xml">
+				<txs:processing-instruction name="xml-stylesheet">type="text/xsl" href="<xsl:value-of select="$resourcesdir"/>xsltforms.xsl"</txs:processing-instruction>
+				<xsl:if test="string($opt) != ''">
+					<xsl:for-each select="document($lopt)//processing-instruction()">
+						<txs:processing-instruction name="{name()}"><xsl:value-of select="."/></txs:processing-instruction>
+					</xsl:for-each>
+				</xsl:if>
+				<xsl:apply-templates />
+			</txs:return>
+		</xsl:template>
+		<xsl:template match="@action[.='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="action"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@resource[.='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="resource"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="*[text()='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:copy><xsl:value-of select="$resourcesdir"/>echo.php</xsl:copy>
+		</xsl:template>
+		<xsl:template match="@action[.='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:attribute name="action"><xsl:value-of select="$resourcesdir"/>dump.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@resource[.='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:attribute name="resource"><xsl:value-of select="$resourcesdir"/>dump.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="*[text()='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:copy><xsl:value-of select="$resourcesdir"/>dump.php</xsl:copy>
+		</xsl:template>
+		<xsl:template match="@*[starts-with(.,'http://jsunittest.com/')]" priority="1">
+			<xsl:attribute name="{name()}"><xsl:value-of select="concat(substring('../../../../../../../../../../../../../../../../../../../../../../../../',1,string-length(translate($f,'/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. +','/'))*3+3),substring-after(., 'http://jsunittest.com/'))"/></xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@* | node()" priority="0">
+			<xsl:copy>
+				<xsl:apply-templates select="@* | node()"/>
+			</xsl:copy>
+		</xsl:template>
+		<xsl:template match="processing-instruction()">
+			<txs:processing-instruction name="{name()}"><xsl:value-of select="."/></txs:processing-instruction>
+		</xsl:template>
+	</xsl:stylesheet>
+	<xsl:stylesheet txs:name="mozilla" version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:param name="resourcesdir"/>
+		<xsl:template match="/">
+			<txs:return contenttype="application/xhtml+xml">
+				<xsl:apply-templates />
+			</txs:return>
+		</xsl:template>
+		<xsl:template match="@action[.='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="action"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@resource[.='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="resource"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="*[text()='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:copy><xsl:value-of select="$resourcesdir"/>echo.php</xsl:copy>
+		</xsl:template>
+		<xsl:template match="@action[.='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:attribute name="action"><xsl:value-of select="$resourcesdir"/>dump.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@resource[.='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:attribute name="resource"><xsl:value-of select="$resourcesdir"/>dump.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="*[text()='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:copy><xsl:value-of select="$resourcesdir"/>dump.php</xsl:copy>
+		</xsl:template>
+		<xsl:template match="@* | node()" priority="0">
+			<xsl:copy>
+				<xsl:apply-templates select="@* | node()"/>
+			</xsl:copy>
+		</xsl:template>
+	</xsl:stylesheet>
+	<xsl:stylesheet txs:name="formula" version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:param name="resourcesdir"/>
+		<xsl:template match="/">
+			<txs:return contenttype="text/html">
+				<html>
+					<head>
+						<title>EMC Documentum XForms Engine (Formula)</title>
+						<script language='javascript' src='/formula/formula.nocache.js'>&#160;</script>
+					</head>
+					<body>
+						<script type='text/javascript'>
+							function initFormula() {
+								var documentAsString = '/xsltforms/<xsl:value-of select="$sf"/>';
+								var form = new emc.xforms.XFormsDocument(documentAsString);
+								form.addEventListener(function(event) {
+									if (event.getName() == "xforms-submit-error") {
+										if (event.getContext("error-type") == "validation-error") {
+											alert("The form input is not valid.");
+										}
+									}
+								});
+								form.add();
+							}
+						</script>
+					</body>
+				</html>
+			</txs:return>
+		</xsl:template>
+		<xsl:template match="*" mode="xml2string">
+			<xsl:param name="root"/>
+			<xsl:text>&lt;</xsl:text>
+			<xsl:value-of select="name()"/>
+			<xsl:variable name="parent" select=".."/>
+			<xsl:variable name="element" select="."/>
+			<xsl:choose>
+				<xsl:when test="namespace::*">
+					<xsl:for-each select="(namespace::* | @*/namespace::*)[name()!='xml']">
+						<xsl:variable name="prefix" select="name()"/>
+						<xsl:variable name="uri" select="."/>
+						<xsl:if test="(not($parent/namespace::*[name()=$prefix and . = $uri]) or $root) and (($element|$element//*|$element//@*)[namespace-uri()=$uri])"> xmlns<xsl:if test="$prefix">:<xsl:value-of select="$prefix"/></xsl:if>="<xsl:value-of select="$uri"/>"</xsl:if>
+					</xsl:for-each>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:for-each select="(. | @*)[name() != local-name()]"> xmlns:<xsl:value-of select="substring-before(name(),':')"/>="<xsl:value-of select="namespace-uri()"/>"</xsl:for-each>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:apply-templates select="@*" mode="xml2string"/>
+			<xsl:choose>
+				<xsl:when test="node()">&gt;<xsl:apply-templates select="node()" mode="xml2string"><xsl:with-param name="root" select="false()"/></xsl:apply-templates>&lt;/<xsl:value-of select="name()"/>&gt;</xsl:when>
+				<xsl:otherwise>/&gt;</xsl:otherwise>
+			</xsl:choose>
+			<xsl:text/>
+		</xsl:template>
+		<xsl:template match="text()" mode="xml2string">
+			<xsl:if test="normalize-space(.)!=''"><xsl:call-template name="escapeApos"><xsl:with-param name="text" select="normalize-space(.)"/></xsl:call-template></xsl:if>
+		</xsl:template>
+		<xsl:template match="@*" mode="xml2string">
+			<xsl:text> </xsl:text>
+			<xsl:value-of select="name()"/>
+			<xsl:text>="</xsl:text>
+			<xsl:call-template name="escapeApos"><xsl:with-param name="text" select="."/></xsl:call-template>
+			<xsl:text>"</xsl:text>
+		</xsl:template>
+		<xsl:template name="escapeApos">
+			<xsl:param name="text"/>
+			<xsl:variable name="apos" select="&quot;'&quot;"/>
+			<xsl:choose>
+				<xsl:when test="contains($text, $apos)">
+					<xsl:variable name="bufferBefore" select="substring-before($text,$apos)"/>
+					<xsl:variable name="newBuffer" select="substring-after($text,$apos)"/>
+					<xsl:value-of select="$bufferBefore"/><xsl:text>\'</xsl:text>
+					<xsl:call-template name="escapeApos">
+						<xsl:with-param name="text" select="$newBuffer"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$text"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+		<!--
+		<xsl:template match="@action[.='http://xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="action"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@resource[.='http://xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="resource"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="*[text()='http://xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:copy><xsl:value-of select="$resourcesdir"/>echo.php</xsl:copy>
+		</xsl:template>
+		<xsl:template match="@action[.='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:attribute name="action"><xsl:value-of select="$resourcesdir"/>dump.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@resource[.='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:attribute name="resource"><xsl:value-of select="$resourcesdir"/>dump.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="*[text()='http://www.agencexml.com/xsltforms/dump.php']" priority="1">
+			<xsl:copy><xsl:value-of select="$resourcesdir"/>dump.php</xsl:copy>
+		</xsl:template>
+		<xsl:template match="@* | node()" priority="0">
+			<xsl:copy>
+				<xsl:apply-templates select="@* | node()"/>
+			</xsl:copy>
+		</xsl:template>
+		-->
+	</xsl:stylesheet>
+	<xsl:stylesheet txs:name="ubiquity" version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms">
+		<xsl:param name="resourcesdir"/>
+		<xsl:template match="/">
+			<txs:return contenttype="text/html">
+				<xsl:apply-templates />
+			</txs:return>
+		</xsl:template>
+		<xsl:template match="@* | node()" priority="0">
+			<xsl:copy>
+				<xsl:apply-templates select="@* | node()"/>
+			</xsl:copy>
+		</xsl:template>
+    <xsl:template match="xhtml:head" priority="1">
+			<xsl:copy>
+				<xsl:copy-of select="@*"/>
+				<xsl:apply-templates select="*[local-name()!='model']"/> 
+			<xhtml:script type="text/javascript" src="/Ubiquity-xforms/src/ubiquity-loader.js">/**/</xhtml:script>                     
+			</xsl:copy>
+		</xsl:template>
+		<xsl:template match="xhtml:body" priority="1">
+			<xsl:copy>
+				<xsl:copy-of select="@*" />
+				<xsl:apply-templates select="//xhtml:head/xforms:model"/>
+				<xsl:apply-templates />
+			</xsl:copy>
+		</xsl:template>
+		<xsl:template match="@action[.='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="action"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="@resource[.='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:attribute name="resource"><xsl:value-of select="$resourcesdir"/>echo.php</xsl:attribute>
+		</xsl:template>
+		<xsl:template match="*[text()='http://xformstest.org/cgi-bin/echo.sh' or .='http://www.xformstest.org/cgi-bin/echo.sh']" priority="1">
+			<xsl:copy><xsl:value-of select="$resourcesdir"/>echo.php</xsl:copy>
+		</xsl:template>
+	</xsl:stylesheet>
+</txs:scriptsheet>

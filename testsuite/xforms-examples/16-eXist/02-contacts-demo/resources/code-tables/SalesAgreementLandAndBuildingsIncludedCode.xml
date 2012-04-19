@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>SalesAgreementLandAndBuildingsIncludedCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Buildings only</Label>
+         <Value>buildings-only</Value>
+      </Item>
+      <Item>
+         <Label>Land and Buildings</Label>
+         <Value>land-and-buildings</Value>
+      </Item>
+      <Item>
+         <Label>Land only</Label>
+         <Value>land-only</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

@@ -1,0 +1,69 @@
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:xf="http://www.w3.org/2002/xforms"
+ xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Switch, case and toggle</title>
+      <!-- Demonstration of switch/case and toggle -->
+      <style type="text/css">
+      @namespace xf url("http://www.w3.org/2002/xforms");
+      xf|group {
+         border: solid black 2px;
+         background-color: silver;
+         height: 100px;
+      }
+      xf|group xf|label {
+         position: relative;
+         font-family: Helvetica, sans-serif;
+         font-weight: bold;
+         background-color: white;
+         padding: 2px;
+         top: -10px;
+         left: 10px;
+      }
+      xf|group p {
+         position: relative;
+         top: -30px;
+         padding: 5px;
+      }
+      </style>
+      <xf:model />
+   </head>
+   <body>
+      <xf:trigger>
+         <xf:label>View One</xf:label>
+         <xf:toggle case="case-1" accesskey="1" ev:event="DOMActivate" />
+      </xf:trigger>
+      <xf:trigger>
+         <xf:label>View Two</xf:label>
+         <xf:toggle case="case-2" accesskey="2" ev:event="DOMActivate" />
+      </xf:trigger>
+      <xf:trigger>
+         <xf:label>View Three</xf:label>
+         <xf:toggle case="case-3" accesskey="3" ev:event="DOMActivate" />
+      </xf:trigger>
+      <br />
+      <br />
+      <!-- only a single group will be displayed at any time -->
+      <xf:switch>
+         <xf:case id="case-1">
+            <xf:group>
+               <xf:label>View One</xf:label>
+               <p>One One One One One One One One One One One One One One One One One One</p>
+            </xf:group>
+         </xf:case>
+         <xf:case id="case-2">
+            <xf:group>
+               <xf:label>View Two</xf:label>
+               <p>Two Two Two Two Two Two Two Two Two Two Two Two Two Two Two Two Two</p>
+            </xf:group>
+         </xf:case>
+         <xf:case id="case-3">
+            <xf:group>
+               <xf:label>View Three</xf:label>
+               <p>Three Three Three Three Three Three Three Three Three Three Three Three Three Three Three Three Three</p>
+            </xf:group>
+         </xf:case>
+      </xf:switch>
+   </body>
+</html>

@@ -1,0 +1,207 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="label.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template match="xforms:label" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2">
+			<xsl:param name="appearance" select="'undefined'"/>
+			<xsl:choose>
+				<xsl:when test="$appearance = 'groupTitle'">
+					<div>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel">
+							<xsl:with-param name="class">xforms-group-label</xsl:with-param>
+						</xsl:call-template>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</div>
+				</xsl:when>
+				<xsl:when test="$appearance = 'treeLabel'">
+					<div>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel">
+							<xsl:with-param name="class">xforms-tree-label</xsl:with-param>
+						</xsl:call-template>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</div>
+				</xsl:when>
+				<xsl:when test="$appearance = 'itemTreeLabel'">
+					<a>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel">
+							<xsl:with-param name="class">xforms-tree-item-label</xsl:with-param>
+						</xsl:call-template>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+						<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</a>
+				</xsl:when>
+				<xsl:when test="$appearance = 'minimal'">
+					<legend>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel"/>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</legend>
+				</xsl:when>
+				<xsl:when test="$appearance = 'caption'">
+					<caption>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel"/>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</caption>
+				</xsl:when>
+				<xsl:when test="$appearance = 'table'">
+					<span scope="col">
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel"/>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</span>
+				</xsl:when>
+				<xsl:when test="$appearance = 'item'">
+					<span>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="style">
+							<xsl:with-param name="class">xforms-item-label</xsl:with-param>
+						</xsl:call-template>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</span>
+				</xsl:when>
+				<xsl:when test="$appearance = 'field-minimal' and ../xforms:help[@appearance='minimal' and @href]">
+					<a class="xforms-help xforms-minimal-help-link" href="{../xforms:help/@href}">
+						<label>
+							<xsl:call-template name="genid"/>
+							<xsl:call-template name="comunLabel">
+								<xsl:with-param name="class">xforms-appearance-minimal</xsl:with-param>
+							</xsl:call-template>
+							<xsl:choose>
+								<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+								</xsl:when>
+								<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+							</xsl:choose>
+						</label>
+					</a>
+				</xsl:when>
+				<xsl:when test="$appearance = 'field-minimal' and not(../xforms:help[@appearance='minimal' and @href])">
+					<label>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel">
+							<xsl:with-param name="class">xforms-appearance-minimal</xsl:with-param>
+						</xsl:call-template>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</label>
+				</xsl:when>
+				<xsl:when test="$appearance = 'tabs'">
+					<xsl:variable name="pid">
+						<xsl:choose>
+							<xsl:when test="../@id"><xsl:value-of select="../@id"/></xsl:when>
+							<xsl:otherwise>
+								<xsl:for-each select="parent::*">
+									<xsl:variable name="lname" select="local-name()"/>
+									<xsl:value-of select="$id_pf"/>
+									<xsl:value-of select="$lname"/>
+									<xsl:text>-</xsl:text>
+									<xsl:value-of select="count(preceding::*[local-name()=$lname]|ancestor::*[local-name()=$lname])"/>
+								</xsl:for-each>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<a href="javascript:void(0);" onclick="XsltForms_toggle.toggle('{$pid}');">
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel"/>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</a>
+				</xsl:when>
+				<xsl:when test="$appearance = 'span'">
+					<span>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel"/>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</span>
+				</xsl:when>
+				<xsl:when test="local-name(../..) = 'tabs' or $appearance = 'none' or $appearance = 'groupNone'"/>
+				<xsl:when test="../xforms:help[@appearance='minimal' and @href]">
+					<a class="xforms-help xforms-minimal-help-link" href="{../xforms:help/@href}">
+						<label>
+							<xsl:call-template name="genid"/>
+							<xsl:call-template name="comunLabel"/>
+							<xsl:choose>
+								<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+								</xsl:when>
+								<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+							</xsl:choose>
+						</label>
+					</a>
+				</xsl:when>
+				<xsl:otherwise>
+					<label>
+						<xsl:call-template name="genid"/>
+						<xsl:call-template name="comunLabel"/>
+						<xsl:choose>
+							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							</xsl:when>
+						<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
+						</xsl:choose>
+					</label>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</cm:source>
+</cm:component>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<txs:scriptsheet xmlns="http://www.w3.org/1999/xhtml" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="0.4">
+	<xsl:stylesheet version="1.0" txs:name="main" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:template match="/">
+			<xsl:variable name="f" select="concat('../',/req:params/req:file)"/>
+			<xsl:variable name="sheet">
+				<xsl:choose>
+					<xsl:when test="/req:params/req:engine = 'mozilla'">identity</xsl:when>
+					<xsl:when test="/req:params/req:engine = 'ubiquity'">identity</xsl:when>
+					<xsl:when test="/req:params/req:engine = 'formula'">identity</xsl:when>
+					<xsl:otherwise>xsltforms</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="string($sheet) = 'xsltforms'">
+					<txs:return contenttype="text/css" format="text">
+						<css xmlns="">
+							<txs:load filename="{$f}" format="text"/>
+						</css>
+					</txs:return>
+				</xsl:when>
+				<xsl:otherwise>
+					<txs:return contenttype="text/css" format="text">
+						<txs:load filename="{$f}" format="text"/>
+					</txs:return>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</xsl:stylesheet>
+</txs:scriptsheet>

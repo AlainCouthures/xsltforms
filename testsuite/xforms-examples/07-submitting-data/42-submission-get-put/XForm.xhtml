@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <head>
+      <title>Submission with HTTP get and put</title>
+      <xf:model>
+         <xf:instance id="data-instance" src="data.xml" xmlns=""/>
+         <xf:submission id="read-from-file"
+            method="get" action="data.xml" replace="instance" instance="data-instance"/>
+         <xf:submission id="save-to-file"
+            method="put" action="data.xml" replace="instance" instance="data-instance"/>
+      </xf:model>
+   </head>
+   <body>
+      <p>Demonstration of using XForms to get and put data using the submission element.</p>
+      
+      <xf:input ref="Element1">
+         <xf:label>Element 1:</xf:label>
+      </xf:input>
+      <br/>
+      <xf:input ref="Element2">
+         <xf:label>Element 2:</xf:label>
+      </xf:input>
+      <br/>
+      <xf:input ref="Element3">
+         <xf:label>Element 3:</xf:label>
+      </xf:input>
+      <br/>
+     <xf:submit submission="read-from-file">
+         <xf:label>Refresh</xf:label>
+      </xf:submit>
+      <xf:submit submission="save-to-file">
+         <xf:label>Save</xf:label>
+      </xf:submit>
+   </body>
+</html>

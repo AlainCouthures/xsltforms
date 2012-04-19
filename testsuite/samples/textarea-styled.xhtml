@@ -1,0 +1,52 @@
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:xf="http://www.w3.org/2002/xforms"
+ >
+   <head>
+      <title>XForms textarea demo</title>
+      <link rel="stylesheet" type="text/css" href="textarea.css" />
+      <xf:model>
+         <xf:instance>
+            <data xmlns="">
+               <Default>Default Default Default Default</Default>
+               <Small>Small Small Small Small Small Small Small Small Small Small Small
+               Small Small Small Small Small Small Small </Small>
+               <Medium>Medium Medium Medium Medium Medium Medium Medium Medium Medium Medium
+               Medium Medium Medium Medium Medium Medium Medium Medium Medium Medium Medium
+               Medium Medium Medium Medium Medium Medium Medium Medium Medium Medium</Medium>
+               <Large>Large Large Large Large Large Large Large Large Large Large Large Large
+               Large Large Large Large Large Large Large Large Large Large Large Large Large
+               Large Large Large Large Large Large Large Large Large Large Large Large Large
+               Large Large Large Large Large Large Large Large Large Large Large Large</Large>
+               <XLarge>X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large X-Large
+               X-Large X-Large X-Large X-Large X-Large X-Large X-Large</XLarge>
+            </data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <p>Resizing textarea and scrolling.</p>
+      <xf:textarea ref="Default">
+         <xf:label>Default: </xf:label>
+      </xf:textarea>
+      <xf:textarea class="small-textarea" ref="Small">
+         <xf:label>Small: </xf:label>
+      </xf:textarea>
+      <xf:textarea class="medium-textarea" ref="Medium">
+         <xf:label>Medium: </xf:label>
+      </xf:textarea>
+      <xf:textarea class="large-textarea" ref="Large">
+         <xf:label>Large: </xf:label>
+      </xf:textarea>
+      <xf:textarea class="x-large-textarea" ref="XLarge">
+         <xf:label>X-Large: </xf:label>
+      </xf:textarea>
+   </body>
+</html>

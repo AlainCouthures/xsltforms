@@ -1,0 +1,182 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:ev="http://www.w3.org/2001/xml-events"
+   xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Recipie Builder</title>
+        <style type="text/css">
+           @namespace xf url("http://www.w3.org/2002/xforms");
+           body {font-family: Helvetica, sans-serif}
+	#suggest {
+            	position: absolute;
+            	top: 0;
+            	margin: 0 0 0 300px;
+            	width: auto;
+            	border: 1px solid blue;			
+	}
+	#log {
+		position: absolute;
+		width: auto;
+		font-size: 8pt; 
+		color: SlateGray;
+		background-color: lavender; 
+		border: 1px solid SlateGray;			
+	}
+	.xf-value {width: 200px}
+	</style>
+        <xf:model>
+            <xf:instance xmlns="" id="my-form">
+                <data>
+                    <element/>
+                    <element/>
+                    <element/>
+                </data>
+            </xf:instance>
+            <xf:instance xmlns="" id="conditional-views">
+                <data>
+                    <suggest-view/>
+                </data>
+            </xf:instance>
+
+            <!-- only show the suggested values if we have at least one suggestion -->
+            <xf:bind nodeset="instance('conditional-views')/suggest-view" 
+                     relevant="count(instance('suggest-results')//item) &gt; 0"/>
+
+        	<!-- this is the place that we store the parameters that are going out to the remote suggest service -->
+            <xf:instance id="suggest-query">
+                <query xmlns="">
+                    <prefix/>
+                </query>
+            </xf:instance>
+           
+           <!-- this is where we put an ID to the calling element  -->
+            <xf:instance xmlns="" id="selected-word">
+                <data>
+                    <calling-element/>
+                </data>
+            </xf:instance>
+        	
+           <!-- this is where we get the suggestion items back -->
+           <xf:instance id="suggest-results" xmlns="">
+                <suggestions/>
+            </xf:instance>
+           
+            <xf:submission id="get-suggestions" action="http://www.cems.uwe.ac.uk/xmlwiki/XForms/suggest-ingredient.xq" 
+                method="get" separator="&amp;" 
+                ref="instance('suggest-query')" 
+                replace="instance" instance="suggest-results">
+                <xf:action ev:event="xforms-submit">
+                    <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                    <xf:setvalue ref="instance('log')/event[last()]" 
+                        value="concat('getting suggestions for: ', instance('suggest-query')/prefix)"/>
+                 </xf:action>
+            </xf:submission>
+ 
+           <!-- this is where we put the logging events -->
+            <xf:instance id="log">
+                <data xmlns="">
+                    <event/>
+                </data>
+            </xf:instance>           
+           
+            <!-- put the cursor in the first field when the form becomes ready -->
+            <xf:action ev:event="xforms-ready">
+                <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                <xf:setvalue ref="instance('log')/event[last()]" value="'xforms-ready'"/>
+                <xf:setfocus control="field-1"/>
+            </xf:action>
+        </xf:model>
+    </head>
+    <body>
+        <h3>Recipie Builder</h3>
+        <xf:input ref="instance('my-form')/element[1]" incremental="true" id="field-1">
+            <xf:label>Ingredient 1:</xf:label>
+            <xf:action ev:event="DOMFocusIn">             
+                <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                <xf:setvalue ref="instance('log')/event[last()]" value="'Focus into input 1'"/>
+            </xf:action>
+            <xf:action ev:event="xforms-value-changed">
+                <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                <xf:setvalue ref="instance('log')/event[last()]" value="'Value changed in input 1'"/>
+                <xf:setvalue ref="instance('suggest-query')/prefix" value="instance('my-form')/element[1]"/>
+               <xf:send submission="get-suggestions"/>
+            </xf:action>
+            <xf:action ev:event="DOMFocusOut">
+                <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                <xf:setvalue ref="instance('log')/event[last()]" value="'Out of input 1'"/>
+               <xf:setvalue ref="instance('selected-word')/calling-element" value="'1'"/>
+            </xf:action>
+        </xf:input>
+        <br/>
+        <br/>
+       
+       <xf:input ref="instance('my-form')/element[2]" incremental="true" id="field-2">
+            <xf:label>Ingredient 2:</xf:label>
+           <xf:action ev:event="DOMFocusIn">             
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'FocusIn input 2'"/>
+           </xf:action>
+            <xf:action ev:event="xforms-value-changed">
+                <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                <xf:setvalue ref="instance('log')/event[last()]" value="'Value changed in input 2'"/>
+               <xf:setvalue ref="instance('suggest-query')/prefix" value="instance('my-form')/element[2]"/>
+               <xf:send submission="get-suggestions"/>
+            </xf:action>
+            <xf:action ev:event="DOMFocusOut">
+               <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+               <xf:setvalue ref="instance('log')/event[last()]" value="'FocusOut input 2'"/>
+               <xf:setvalue ref="instance('selected-word')/calling-element" value="2"/>
+            </xf:action>
+        </xf:input>
+        <br/>
+        <br/>
+       
+       <xf:input ref="instance('my-form')/element[3]" incremental="true" id="field-3">
+            <xf:label>Ingredient 3:</xf:label>
+           <xf:action ev:event="DOMFocusIn">             
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'FocusIn input 3'"/>
+           </xf:action>
+            <xf:action ev:event="xforms-value-changed">
+                <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                <xf:setvalue ref="instance('log')/event[last()]" value="'Value changed in input 3'"/>
+               <xf:setvalue ref="instance('suggest-query')/prefix" value="instance('my-form')/element[3]"/>
+               <xf:send submission="get-suggestions"/>
+            </xf:action>
+            <xf:action ev:event="DOMFocusOut">
+               <xf:setvalue ref="instance('selected-word')/calling-element" value="'3'"/>
+            </xf:action>
+       </xf:input>
+       
+        <xf:group ref="instance('conditional-views')/suggest-view">
+            <div id="suggest">
+                <span>suggestions:</span>
+                <xf:repeat id="results-repeat" nodeset="instance('suggest-results')/ingredient">
+                    <xf:trigger appearance="minimal">
+                        <xf:label>
+                            <xf:output ref="."/>
+                        </xf:label>
+                        <!-- When the use clicks on  suggestion -->
+                        <xf:action ev:event="DOMActivate">
+                            <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+                            <xf:setvalue ref="instance('log')/event[last()]" value="concat('Clicked on a suggested ingredient:', instance('suggest-results')/ingredient[index('results-repeat')])"/>
+                           <xf:setvalue ref="instance('my-form')/element[number(instance('selected-word')/calling-element)]" 
+                              value="instance('suggest-results')/ingredient[index('results-repeat')]"/>
+                        </xf:action>
+                    </xf:trigger>
+                </xf:repeat>
+            </div>
+        </xf:group>
+        <br/>
+       <xf:output ref="instance('selected-word')/calling-element"><xf:label>Prior-field: </xf:label></xf:output>
+       <br/>
+        
+        <div id="log">
+            <span>
+                <b>Event Log</b>
+            </span>
+            <xf:repeat id="results-repeat" nodeset="instance('log')/event">
+                <xf:output ref="."/>
+            </xf:repeat>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,33 @@
+<Schema2XFormsRulesDocument>
+   <Rule id="R1">
+      <RuleName>How to Display True/False Fields</RuleName>
+      <RuleDescriptionText>Rules for displaying a boolean values in the form.  Match all elements that have a suffix of Indicator or have an XML datatype of xs:boolean.</RuleDescriptionText>
+      <RuleSelector>match ends-with(//xs:element/@ref, 'Indicator')</RuleSelector>
+       <RuleOptions>
+         <RuleOption>
+            <RuleOptionName>Display Yes/No Radio Buttons</RuleOptionName>
+            <RuleActions>
+               <Action>
+                  <AddToOutputIndicator>true</AddToOutputIndicator>
+                  <RuleFileName>boolean-radio.xml</RuleFileName>
+               </Action>
+            </RuleActions>
+         </RuleOption>
+         <RuleOption>
+            <RuleOptionName>Display Checkbox</RuleOptionName>
+            <RuleFileName>boolean-checkbox.xml</RuleFileName>
+         </RuleOption>
+           <RuleActions>
+               <Action>
+                  <AddToBindsIndicator>true</AddToBindsIndicator>
+                  <RuleFileName>boolean-radio.xml</RuleFileName>
+               </Action>
+            </RuleActions>
+      </RuleOptions>
+   </Rule>
+   <Rule id="R2">
+      <RuleName>How to Display Dates</RuleName>
+      <RuleDescriptionText>Rules for displaying a date.</RuleDescriptionText>
+      <RuleSelector>match ends-with(//xs:element/@ref, 'Indicator')</RuleSelector>
+   </Rule>
+</Schema2XFormsRulesDocument>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:element name="Graph">
+      <xs:annotation>
+         <xs:documentation>Graph with nodes and links with recursive definitions.</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="graph-name">
+               <xs:annotation>
+                  <xs:documentation>The name of the graph</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+            <xs:element name="graph-description" minOccurs="0"/>
+            <xs:element name="node" type="nodeType" minOccurs="0" maxOccurs="unbounded">
+               <xs:annotation>
+                  <xs:documentation>A node that has zero or more links</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:complexType name="nodeType">
+      <xs:annotation>
+         <xs:documentation>A node in a graph with 0 to n links</xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+         <xs:element name="node-id">
+            <xs:annotation>
+               <xs:documentation>node identifier</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="links" type="linkType" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="linkType">
+      <xs:annotation>
+         <xs:documentation>A link from one node to another.</xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+         <xs:element name="link-id">
+            <xs:annotation>
+               <xs:documentation>link identifier</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="node" type="nodeType" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

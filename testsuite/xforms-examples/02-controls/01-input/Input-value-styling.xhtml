@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>XForms inputs with labels</title>
+      <style type="text/css">
+      xf|input .xf-value {
+         width: 400px;
+         color: red;
+         background-color: yellow;
+      }
+      </style>
+      <!-- the default model -->
+      <xf:model>
+         <xf:instance xmlns="">
+            <MyData>
+               <PersonGivenName></PersonGivenName>
+               <PersonSurName></PersonSurName>
+            </MyData>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <p>Enter your first name, and last name:</p>
+      <div >
+      <xf:input  class="xf-value" ref="/MyData/PersonGivenName" incremental="true">
+         <xf:label>Input First Name:</xf:label>
+      </xf:input>
+      <br></br>
+      <xf:input class="xf-value" ref="/MyData/PersonSurName" incremental="true">
+         <xf:label>Input Last Name:</xf:label>
+      </xf:input>
+      <br></br>
+      <br></br>
+         Output First Name: <b>
+         <xf:output ref="/MyData/PersonGivenName"></xf:output>
+      </b>
+      <br></br>
+         Output Last Name Output: <b>
+         <xf:output ref="/MyData/PersonSurName"></xf:output>
+      </b>
+      <p>Note that for each character you type, the model output will be updated.</p>
+      </div>
+   </body>
+</html>

@@ -1,0 +1,80 @@
+<html
+xmlns="http://www.w3.org/1999/xhtml"
+xmlns:xf="http://www.w3.org/2002/xforms"
+xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <head>
+      <title>Demonstration of spreadsheet like update of XForms</title>
+      <xf:model>
+      	<xf:instance xmlns="">
+            <MySpreadsheet>
+               <a1>10.0</a1>
+			   <a2>20.0</a2>
+			   <a3>30.0</a3>
+			   <b1>40.0</b1><b2>50.0</b2><b3>60.0</b3>
+			   <c1>70.0</c1><c2>80.0</c2><c3>80.0</c3>
+			   <sum1/>
+			   <sum2/>
+			   <sum3/>
+            </MySpreadsheet>
+        </xf:instance>
+		<xf:bind nodeset="/MySpreadsheet/a1" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/a2" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/a3" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/sum1" calculate="../a1+../b1+../c1" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/sum2" calculate="(../a2+../b2+../c2) div 3" type="xs:decimal"/>
+		<xf:bind nodeset="/MySpreadsheet/sum3" calculate="max(1,4,9)" type="xs:decimal"/>
+      </xf:model>
+   </head>
+   <body>
+       <p>Demonstration of Spreadsheet-like updates.</p>
+        <xf:group nodeset="/MySpreadsheet">  
+			<table>
+            	<tr>
+            		<td>
+            			<xf:input ref="a1"/>
+            		</td>
+            		<td>
+            			<xf:input ref="a2"/>
+            		</td>
+					<td>
+            			<xf:input ref="a3"/>
+            		</td>
+				</tr>
+				<tr>
+					<td>
+            			<xf:input ref="b1"/>
+            		</td>
+            		<td>
+            			<xf:input ref="b2"/>
+            		</td>
+					<td>
+            			<xf:input ref="b3"/>
+            		</td>
+				</tr>
+				<tr>
+					<td>
+            			<xf:input ref="c1"/>
+            		</td>
+            		<td>
+            			<xf:input ref="c2"/>
+            		</td>
+					<td>
+            			<xf:input ref="c3"/>
+            		</td>
+				</tr>
+				<tr>
+					<td>
+            			Sum= <xf:output ref="sum1"/>
+            		</td>
+            		<td>
+            			Avg= <xf:output ref="sum2"/>
+            		</td>
+					<td>
+            			Max= <xf:output ref="sum3"/>
+            		</td>
+				</tr>
+ 			</table>
+		</xf:group>
+	</body>
+</html>

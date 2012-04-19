@@ -1,0 +1,149 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>XForms Delete Example</title>
+      <style type="text/css">
+      @namespace xf url("http://www.w3.org/2002/xforms");
+      body {font-family:Arial, Helvetica, sans-serif; font-size:75%; margin:0; padding:0; width:370px;}
+      
+     label {font-weight: bold;}
+      .header {
+        color: white;
+        background-color: gray;
+        font-weight: bold;
+        float:left;
+        width:370px;
+      }
+      .header .leftColumn, .header .rightColumn {
+        display:block;  width:11em;  float:left; margin:5px 10px;
+      }
+       .leftColumn, .rightColumn {
+         display: inline; margin-left: 10px; 
+      }
+/* This marks the "selected" point within a set of repeated elements */
+xf|repeat {background:#eee;  float:left; width:370px;}
+xf|repeat .xf-value {margin:3px 0;}
+xf|repeat .xf-repeat-item {border:1px solid #eee;}
+xf|repeat .xf-repeat-index  {background:#999; border:1px dotted black; }
+xf|input .xf-value {width:10em;}
+
+/*  model delete confirmation box */
+#background {position:fixed; top:0; left:0; background:#888; width:100%; height:110%;}
+#delete-confirm-box {width:500px; height:250px; border:3px dotted #1c5180; background:#ddd; margin:auto; margin-top:200px;}
+#delete-option-triggers {text-align:center; width:100%; margin-top:-70px;}
+xf|trigger {margin-right:20px;}
+#content-for-deletion {float:left; width:340px; position:relative; top:0; left:0; padding:10px;}
+#content-for-deletion p {padding:0; margin-bottom:10px; font-weight:bold; font-size:1.2em;}
+#delete-confirm-box h2 {font-size:1.5em; margin:0; padding:5px; color:#fff; font-family:Century Gothic; text-align:center; background:#3e7c8f;}
+      </style>
+      <xf:model>
+         <xf:instance id="contacts" xmlns="">
+            <PhoneList>
+               <Person>
+                  <Name>Peggy</Name>
+                  <Phone>123</Phone>
+               </Person>
+               <Person>
+                  <Name>Dan</Name>
+                  <Phone>456</Phone>
+               </Person>
+               <Person>
+                  <Name>John</Name>
+                  <Phone>789</Phone>
+               </Person>
+               <Person>
+                  <Name>Sue</Name>
+                  <Phone>234</Phone>
+               </Person>
+               <NewPerson>
+                  <Name />
+                  <Phone />
+               </NewPerson>
+               <SelectedRow />
+            </PhoneList>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <xf:group nodeset="/PhoneList">
+         <xf:label class="group-label">Company Phone List</xf:label>
+         <div class="header">
+            <div class="leftColumn">Name</div>
+            <div class="rightColumn">Phone</div>
+         </div>
+         <xf:repeat id="contact-repeat" nodeset="Person">
+            <xf:input ref="Name" class="leftColumn" />
+            <xf:input ref="Phone" class="rightColumn" />
+         </xf:repeat>
+      </xf:group>
+      <xf:group>
+         <xf:label class="group-label">Add/Delete Person</xf:label>
+         <br />
+         <xf:input ref="NewPerson/Name">
+            <xf:label>Name:</xf:label>
+         </xf:input>
+         <br />
+         <xf:input ref="NewPerson/Phone">
+            <xf:label>Phone:</xf:label>
+         </xf:input>
+         <br />
+         <xf:trigger>
+            <xf:label>Insert After Selected Row</xf:label>
+            <xf:action ev:event="DOMActivate">
+               <xf:insert nodeset="Person" at="index('contact-repeat')" position="after" />
+               <xf:setvalue ref="Person[index('contact-repeat')]/Name" value="/PhoneList/NewPerson/Name" />
+               <xf:setvalue ref="Person[index('contact-repeat')]/Phone" value="/PhoneList/NewPerson/Phone" />
+               <xf:setvalue ref="SelectedRow" value="index('contact-repeat')" />
+            </xf:action>
+         </xf:trigger>
+         <br />
+         <xf:switch>
+            <xf:case id="delete">
+               <!-- don't display the delete button unless we have at two or more records -->
+               <xf:trigger ref="instance('contacts')[count(//Person) > 1]">
+                  <xf:label>Delete person</xf:label>
+                  <xf:action ev:event="DOMActivate">
+                     <xf:toggle case="confirm" />
+                  </xf:action>
+               </xf:trigger>
+            </xf:case>
+            <xf:case id="confirm">
+              <div id="background">
+               <div id="delete-confirm-box">
+                  <h2>Are you sure you want to delete the following:</h2>
+                  <div id="content-for-deletion">
+                     <p>Description: <xf:output ref="Person[index('contact-repeat')]/Name" />
+                     </p>
+                     <p>Value: <xf:output ref="Person[index('contact-repeat')]/Phone" />
+                     </p>
+                  </div>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+                     <radialGradient id="alert-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0" style="stop-color:#f92500; stop-opacity:0.7" />
+                        <stop offset="1" style="stop-color:#f92500; stop-opacity:1" />
+                     </radialGradient>
+                     <!-- base triangle -->
+                     <polygon points="10,110 70,10 130,110" style="fill:url(#alert-gradient); stroke:#fff; stroke-width:3" />
+                     <!-- exclamation mark -->
+                     <rect x="65" y="40" width="10" height="40" style="fill:#000; stroke:#fff; stroke-width:2" />
+                     <rect x="65" y="90" width="10" height="10" style="fill:#000; stroke:#fff; stroke-width:2" />
+                  </svg>
+                  <div id="delete-option-triggers">
+                     <xf:trigger>
+                        <xf:label>Delete</xf:label>
+                        <xf:action ev:event="DOMActivate">
+                           <xf:delete nodeset="Person[index('contact-repeat')]" at="index('contact-repeat')" ev:event="DOMActivate" />
+                           <xf:toggle case="delete" />
+                        </xf:action>
+                     </xf:trigger>
+                     <xf:trigger>
+                        <xf:label>Cancel</xf:label>
+                        <xf:toggle case="delete" ev:event="DOMActivate" />
+                     </xf:trigger>
+                  </div>
+               </div>
+            </div>
+         </xf:case>
+         </xf:switch>
+      </xf:group>
+   </body>
+</html>

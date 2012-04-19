@@ -1,0 +1,71 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Google Pie Chart Demo</title>
+        <style type="text/css">
+            @namespace xf url("http://www.w3.org/2002/xforms");
+            body {font-family: Helvetica, sans-serif}
+            
+            /* This line ensures all the separate input controls appear on their own lines */
+            xf|input, xf|select1 {display:block; margin:5px 0;}
+            
+            /* this puts the labels in 200px columns and right aligns them */
+            xf|input > xf|label, xf|select1 > xf|label
+            {text-align:right; padding-right:10px; width:200px; float:left; text-align:right;}
+           
+            .xf-value {width: 250px}
+        </style>
+        <xf:model>
+            <xf:instance id="chart-params" xmlns="">
+                <data>
+                    <cht>p</cht>
+                    <chs>400x200</chs>
+                    <chd>t:10,20,30,40,20</chd>                    
+                    <chl>Amount|Indicators|Code|Date|Text</chl>
+                </data>
+            </xf:instance>
+            <xf:instance xmlns="" id="conditional-views">
+                <data>
+                    <suggest-view/>
+                </data>
+            </xf:instance>
+               
+            <xf:submission id="get-chart" action="http://chart.apis.google.com/chart" method="get" 
+                separator="&amp;" ref="instance('chart-params')" replace="all"/>
+            
+            <!-- put the cursor in the first field when the form becomes ready -->
+            <xf:action ev:event="xforms-ready">
+                <xf:setfocus control="field-1"/>
+            </xf:action>
+        </xf:model>
+    </head>
+    <body>
+        <h3>Google PieChart Demo</h3>
+
+        <xf:select1 ref="cht">
+            <xf:label>Chart Type: </xf:label>
+            <xf:item>
+                <xf:label>Pie Chart - flat</xf:label>
+                <xf:value>p</xf:value>
+            </xf:item>
+            <xf:item>
+                <xf:label>Pie Chart - 3D</xf:label>
+                <xf:value>p3</xf:value>
+            </xf:item>
+        </xf:select1>
+        
+        <xf:input ref="chd">
+            <xf:label>Data: (t:5,10,20): </xf:label>
+        </xf:input>
+        
+        <xf:input ref="chl">
+            <xf:label>Labels: (A|B) </xf:label>
+        </xf:input>
+        
+        <xf:submit submission="get-chart">
+            <xf:label>Create Chart</xf:label>
+        </xf:submit>
+        
+    </body>
+</html>

@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Address Form</title>
+      <xf:model>
+         <xf:instance>
+            <Address xmlns="">
+               <LocationStreetFullText />
+               <LocationCityName />
+               <LocationStateName />
+               <LocationPostalID />
+            </Address>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <xf:group ref="/Address">
+         <fieldset>
+            <legend>Mailing Address</legend>
+            <xf:input ref="LocationStreetFullText">
+               <xf:label>Street: </xf:label>
+            </xf:input>
+            <br />
+            <xf:input ref="LocationCityName">
+               <xf:label>City:</xf:label>
+            </xf:input>
+            <br />
+            <xf:input ref="LocationStateName">
+               <xf:label>State:</xf:label>
+            </xf:input>
+            <br />
+            <xf:input ref="LocationPostalID">
+               <xf:label>Postal Code:</xf:label>
+            </xf:input>
+         </fieldset>
+      </xf:group>
+   </body>
+</html>

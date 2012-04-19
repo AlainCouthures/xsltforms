@@ -1,0 +1,101 @@
+<html xmlns="http://www.w3.org/1999/xhtml"   
+  xmlns:xf="http://www.w3.org/2002/xforms" 
+  xmlns:ev="http://www.w3.org/2001/xml-events" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:svg="http://www.w3.org/2000/svg"
+  >
+   <head>
+      <title>Example of binding to inputs and output ids</title>
+      <xf:model id="model">
+      <style type="text/css">
+      body {font-family: sans-serif}
+      .output {font-size: 2em}
+      .drawing-view {position: absolute; margin-left: 400px; top: 0px; border: blue solid 1px; width 100px; height 100px}
+      </style>
+         <xf:instance id="input">
+            <Data xmlns="">
+               <InputValueOne>30</InputValueOne>
+               <InputValueTwo>60</InputValueTwo>
+                <InputValueThree>90</InputValueThree>
+                <InputValueFour>120</InputValueFour>
+            </Data>
+         </xf:instance>
+         <!-- make the inputs data types be integers -->
+         <xf:bind id="input-one-bind" nodeset="/Data/InputValueOne" type="xs:integer"/>
+         <xf:bind id="input-two-bind" nodeset="/Data/InputValueTwo" type="xs:integer"/>
+         <xf:bind id="input-three-bind" nodeset="/Data/InputValueThree" type="xs:integer"/>
+         <xf:bind id="input-four-bind" nodeset="/Data/InputValueFour" type="xs:integer"/>
+         <!-- second instance bound to outputs -->
+         <xf:instance id="output">
+            <DataOut xmlns="">
+               <OutputValue>9</OutputValue>
+            </DataOut>
+         </xf:instance>
+         <!-- Make the output be an integer that is the the product of the inputs -->
+         <xf:bind id="output-bind" nodeset="instance('output')/OutputValue" 
+         calculate="instance('input')/InputValueOne 
+         + instance('input')/InputValueTwo
+         + instance('input')/InputValueThree
+         + instance('input')/InputValueFour
+         " 
+         type="xs:integer"/>
+      </xf:model>
+   </head>
+   <body>
+
+         
+
+
+
+<xf:range bind="input-one-bind" start="0" end="360" step="1" incremental="true">
+            <xf:label>Input 1: </xf:label>
+         </xf:range>
+         <br/>
+         <xf:range bind="input-two-bind" start="0" end="360" step="1" incremental="true">
+            <xf:label>Input 2: </xf:label>
+         </xf:range>
+     <br/>
+     <xf:range bind="input-three-bind" start="0" end="360" step="1" incremental="true">
+            <xf:label>Input 3: </xf:label>
+         </xf:range>
+     <br/>
+     <xf:range bind="input-four-bind" start="0" end="360" step="1" incremental="true">
+            <xf:label>Input 4: </xf:label>
+         </xf:range>
+     <br/>
+     <div class="output">
+        <xf:output bind="input-one-bind"/> + <xf:output bind="input-two-bind"/> + <xf:output bind="input-three-bind"/> + <xf:output bind="input-four-bind"/>=
+         <xf:output bind="output-bind"/>
+         </div>
+         
+         <div class="drawing-view">
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+<!-- Pie chart sample -->
+<path d="M200,200 L200,20 A180,180 0 0,1 377,231 z"
+	style="fill:red;
+		fill-opacity: 1;
+		stroke:black;
+		stroke-width: 1"/>
+<path d="M200,200 L377,231 A180,180 0 0,1 138,369 z"
+	style="fill:green;
+		fill-opacity: 1;
+		stroke:black;
+		stroke-width: 1"/>
+<path d="M200,200 L138,369 A180,180 0 0,1 20,194 z"
+	style="fill:blue;
+		fill-opacity: 1;
+		stroke:black;
+		stroke-width: 1"/>
+<path d="M200,200 L20,194 A180,180 0 0,1 75,71 z"
+	style="fill:yellow;
+		fill-opacity: 1;
+		stroke:black;
+		stroke-width: 1"/>
+<path d="M200,200 L75,71 A180,180 0 0,1 200,20 z"
+	style="fill:orange;
+		fill-opacity: 1;
+		stroke:black;
+		stroke-width: 1"/>
+</svg></div>
+   </body>
+</html>

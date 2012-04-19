@@ -1,0 +1,60 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="NodeTestName.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== XSltForms_nodeTestName Class ===
+XPath Expression Class for node test expressions
+* constructor function : initializes prefix and name properties</cm:wiki>
+<![CDATA[
+function XsltForms_nodeTestName(prefix, name) {
+    this.prefix = prefix;
+    this.name = name;
+	this.uppercase = name.toUpperCase();
+	this.wildcard = name === "*";
+	this.notwildcard = name !== "*";
+	this.notwildcardprefix = prefix !== "*";
+	this.hasprefix = prefix && this.notwildcardprefix;
+}
+
+]]>
+		<cm:wiki>
+* '''evaluate''' method : evaluates as a boolean value if a given node has the same namespace and name as this expression object. Wildcard is supported as a valid namespace test as an extension.</cm:wiki>
+<![CDATA[
+XsltForms_nodeTestName.prototype.evaluate = function(node, nsresolver, csensitive) {
+	var nodename = node.localName || node.baseName;
+	if (this.notwildcard && (nodename !== this.name || (csensitive && nodename.toUpperCase() !== this.uppercase))) {
+		return false;
+	}
+	if (this.wildcard) {
+		return this.hasprefix ? node.namespaceURI === nsresolver.lookupNamespaceURI(this.prefix) : true;
+	}
+	var ns = node.namespaceURI;
+	return this.hasprefix ? ns === nsresolver.lookupNamespaceURI(this.prefix) :
+		(this.notwildcardprefix ? !ns || ns === "" || ns === nsresolver.lookupNamespaceURI("") : true);
+};
+    ]]>
+	</cm:source>
+</cm:component>

@@ -1,0 +1,227 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<title>SVG Gantt</title>
+		<xf:model>
+			<xf:instance id="project" xmlns="">
+<project name="My house building project" company="Myself LLC" webLink="www.myselfllc.net" view-date="2009-01-02" view-index="0" gantt-divider-location="369" resource-divider-location="322" version="2.0">
+    <description><![CDATA[Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.]]></description>
+    <view zooming-state="default:6" id="gantt-chart"/>
+    <view id="resource-table">
+        <field id="0" name="Name" width="54" order="0"/>
+        <field id="1" name="Default role" width="45" order="1"/>
+    </view>
+    <!-- -->
+    <calendars>
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <calendar id="1" name="default">
+                <default-week sun="1" mon="0" tue="0" wed="0" thu="0" fri="0" sat="1"/>
+                <overriden-day-types/>
+                <days/>
+            </calendar>
+        </day-types>
+        <date year="2006" month="2" date="14"/>
+    </calendars>
+    <tasks color="#99ccff">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="0" name="Architectural design" color="#99ccff" meeting="false" start="2009-01-02" duration="26" complete="81" priority="1" expand="true">
+            <task id="9" name="Create draft of architecture" color="#99ccff" meeting="false" start="2009-01-02" duration="10" complete="100" priority="1" expand="true">
+                <depend id="10" type="2" difference="0" hardness="Strong"/>
+                <depend id="12" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="10" name="Prepare construction documents" color="#99ccff" meeting="false" start="2009-01-16" duration="15" complete="75" priority="1" expand="true">
+                <depend id="17" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="17" name="Agreement on architectural plan " color="#000000" meeting="true" start="2009-02-06" duration="1" complete="0" priority="1" expand="true">
+                <depend id="1" type="2" difference="0" hardness="Strong"/>
+            </task>
+        </task>
+        <task id="11" name="Interior design" color="#99ccff" meeting="false" start="2009-01-16" duration="10" complete="33" priority="1" expand="true">
+            <depend id="6" type="2" difference="0" hardness="Strong"/>
+            <task id="12" name="Pre-design" color="#99ccff" meeting="false" start="2009-01-16" duration="5" complete="100" priority="1" expand="true">
+                <depend id="13" type="2" difference="0" hardness="Strong"/>
+                <depend id="14" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="13" name="Furniture selection" color="#99ccff" meeting="false" start="2009-01-23" duration="5" complete="0" priority="1" expand="true"/>
+            <task id="14" name="Equipment planning" color="#99ccff" meeting="false" start="2009-01-23" duration="5" complete="0" priority="1" expand="true">
+                <notes><![CDATA[Embedded devices, kitchen, washing machine, dryer etc]]></notes>
+            </task>
+        </task>
+        <task id="7" name="Construction phase" color="#99ccff" meeting="false" start="2009-02-09" duration="76" complete="0" priority="1" expand="true">
+            <depend id="20" type="2" difference="0" hardness="Strong"/>
+            <task id="1" name="Foundation building" color="#99ccff" meeting="false" start="2009-02-09" duration="15" complete="0" priority="1" expand="false">
+                <depend id="2" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="2" name="Ground Floor building" color="#99ccff" meeting="false" start="2009-03-02" duration="20" complete="0" priority="1" expand="false">
+                <depend id="4" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="4" name="First Floor building" color="#99ccff" meeting="false" start="2009-03-30" duration="20" complete="0" priority="1" expand="false">
+                <depend id="5" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="5" name="Roof" color="#99ccff" meeting="false" start="2009-04-27" duration="10" complete="0" priority="1" expand="false">
+                <depend id="18" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="16" name="Connect to communications" color="#99ccff" meeting="false" start="2009-05-12" duration="10" complete="0" priority="1" expand="true"/>
+            <task id="18" name="Construction completed " color="#000000" meeting="true" start="2009-05-11" duration="1" complete="0" priority="1" expand="true">
+                <depend id="6" type="2" difference="0" hardness="Strong"/>
+                <depend id="16" type="2" difference="0" hardness="Strong"/>
+            </task>
+        </task>
+        <task id="8" name="Decoration phase" color="#99ccff" meeting="false" start="2009-05-12" duration="11" complete="0" priority="1" expand="true">
+            <task id="6" name="Walls" color="#99ccff" meeting="false" start="2009-05-12" duration="5" complete="0" priority="1" expand="false">
+                <depend id="15" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="15" name="Furniture" color="#99ccff" meeting="false" start="2009-05-19" duration="3" complete="0" priority="1" expand="true">
+                <depend id="20" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="20" name="Bring your family here" color="#000000" meeting="true" start="2009-05-26" duration="1" complete="0" priority="1" expand="true"/>
+        </task>
+    </tasks>
+    <resources>
+        <resource id="1" name="Jack House" function="Default:1" contacts="jack.house@myselfllc.net" phone="0044 077345456"/>
+        <resource id="0" name="John Black" function="4" contacts="john.black@myselfllc.net" phone="+44 0794353567"/>
+        <resource id="2" name="Michelangelo" function="0" contacts="mickelangelo@heaven.net" phone="078 9059056"/>
+        <resource id="3" name="Tom White" function="1" contacts="tom.white@myselfllc.net" phone="07978978978"/>
+        <resource id="4" name="Peter Green" function="1" contacts="peter.green@myselfllc.net" phone="0797897856"/>
+        <resource id="5" name="George Brown" function="1" contacts="george.brown@myselfllc.net" phone="07967766447"/>
+        <resource id="6" name="John Silver" function="2" contacts="john.silver@myselfllc.net" phone="07778967889"/>
+    </resources>
+    <allocations>
+        <allocation task-id="9" resource-id="1" function="Default:1" responsible="false" load="50.0"/>
+        <allocation task-id="9" resource-id="2" function="0" responsible="true" load="100.0"/>
+        <allocation task-id="10" resource-id="2" function="0" responsible="true" load="100.0"/>
+        <allocation task-id="12" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="12" resource-id="2" function="0" responsible="false" load="50.0"/>
+        <allocation task-id="13" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="14" resource-id="1" function="Default:1" responsible="true" load="50.0"/>
+        <allocation task-id="14" resource-id="2" function="0" responsible="false" load="50.0"/>
+        <allocation task-id="1" resource-id="6" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="0" function="4" responsible="false" load="100.0"/>
+        <allocation task-id="1" resource-id="5" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="1" resource-id="3" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="2" resource-id="6" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="2" resource-id="5" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="2" resource-id="3" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="2" resource-id="4" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="4" resource-id="6" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="4" resource-id="5" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="4" resource-id="3" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="4" resource-id="4" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="5" resource-id="6" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="5" resource-id="3" function="5" responsible="false" load="100.0"/>
+        <allocation task-id="16" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="16" resource-id="4" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="6" resource-id="6" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="6" resource-id="5" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="6" resource-id="3" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="6" resource-id="4" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="15" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="15" resource-id="3" function="1" responsible="false" load="100.0"/>
+    </allocations>
+    <vacations>
+        <vacation start="2009-02-02" end="2009-02-09" resourceid="1"/>
+    </vacations>
+    <taskdisplaycolumns>
+        <displaycolumn property-id="tpd3" order="0" width="75"/>
+        <displaycolumn property-id="tpd4" order="1" width="75"/>
+        <displaycolumn property-id="tpd5" order="2" width="75"/>
+    </taskdisplaycolumns>
+    <previous/>
+    <roles roleset-name="Default"/>
+    <roles>
+        <role id="0" name="Architect"/>
+        <role id="1" name="Bricklayer"/>
+        <role id="2" name="Foreman"/>
+        <role id="3" name="Decorator"/>
+        <role id="4" name="Excavator operator"/>
+        <role id="5" name="Roofer"/>
+    </roles>
+</project>
+			</xf:instance>
+			<xf:instance id="params">
+				<params xmlns="">
+					<day_width>15</day_width>
+					<task_height>15</task_height>
+					<offset_top>30</offset_top>
+					<show_progress>1</show_progress>
+					<use_pattern>1</use_pattern>
+					<text_style>font-family: sans-serif;font-size: 8;fill: Black;</text_style>
+				</params>
+			</xf:instance>
+			<xf:instance id="intermediate">
+				<intermediate xmlns="">
+					<lastday/>
+					<height/>
+					<width/>
+				</intermediate>
+			</xf:instance>
+			<xf:bind nodeset="instance('intermediate')/lastday" calculate="lastday(string-join(instance('project')//task/@start,','),string-join(instance('project')//task/@duration,','))"/>
+			<xf:bind nodeset="instance('intermediate')/height" calculate="instance('params')/offset_top * 2 + count(instance('project')/tasks/descendant::task) * instance('params')/task_height"/>
+			<xf:bind nodeset="instance('intermediate')/width" calculate="(instance('intermediate')/lastday - days-from-date(instance('project')/@view-date)) * instance('params')/day_width"/>
+		</xf:model>
+		<script type="text/javascript">
+<![CDATA[
+			function lastday(starts, durations) {
+				var sarr = starts.split(",");
+				var darr = durations.split(",");
+				var last = 0;
+				for( var i = 0, l = sarr.length; i != l; i++ ) {
+					var c = sarr[i].match(/^(\d{4})[.\/-](\d{1,2})[.\/-](\d{1,2})$/);
+					var d = new Date(Date.UTC(c[1], c[2]-1, c[3]));
+					var t = Math.floor(d.getTime()/ 86400000 + 0.000001) + parseInt(darr[i], 10);
+					last = Math.max(t, last);
+				}
+				return last;
+			}
+]]>
+		</script>
+	</head>
+	<body>
+		<h1>SVG Gantt</h1>
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="{(instance('intermediate')/lastday - days-from-date(@view-date)) * instance('params')/day_width}" height="{instance('intermediate')/height}">
+			<defs>
+				<pattern id="pattern" x="0" y="0" width="{instance('params')/day_width * 2}" height="1" patternUnits="userSpaceOnUse">
+					<rect x="{instance('params')/day_width}" y="0" width="{instance('params')/day_width}" height="{instance('params')/offset_top * 2 + count(tasks/descendant::task) * instance('params')/task_height}" fill="#CCccCC"/>
+					<rect x="{instance('params')/day_width}" y="0" width="{instance('params')/day_width}" height="{instance('params')/offset_top * 2 + count(tasks/descendant::task) * instance('params')/task_height}" fill="#EEeeEE"/>
+				</pattern>
+			</defs>
+			<xf:group ref=".[instance('params')/use_pattern != 0]">
+				<rect x="0" y="0" width="{(instance('intermediate')/lastday - days-from-date(@view-date)) * instance('params')/day_width}" height="{instance('intermediate')/height}" fill="url(#pattern)"/>
+			</xf:group>
+			<xf:group ref=".[instance('params')/use_pattern = 0]">
+				<xf:repeat from="0" to="instance('intermediate')/lastday - days-from-date(/project/@view-date) - 1">
+					<rect x="{. * instance('params')/day_width}" y="0" width="{instance('intermediate')/width}" height="{instance('intermediate')/height}" fill="{choose(. mod 2 = 0,'#CCccCC','#EEeeEE')}"/>
+				</xf:repeat>
+			</xf:group>
+			<xf:repeat from="0" to="instance('intermediate')/lastday - days-from-date(@view-date) - 1">
+				<text font-size="10" x="{. * instance('params')/day_width}" y="12" style="{instance('params')/text_style}">
+					<xf:output value="choose(substring(days-to-date(days-from-date(instance('project')/@view-date) + .),9,2) = '01',substring(days-to-date(days-from-date(instance('project')/@view-date) + .),1,7),'')"/>
+				</text>
+				<text font-size="10" x="{(. + 0.5) * instance('params')/day_width}" y="24" text-anchor="middle" style=" {concat(instance('params')/text_style, choose((days-from-date(instance('project')/@view-date) + .) mod 7 = 1,'font-weight:bold;',' '))}">
+					<xf:output value="substring(days-to-date(days-from-date(instance('project')/@view-date) + .),9,2)"/>
+				</text>
+			</xf:repeat>
+			<xf:repeat nodeset="//task">
+				<rect x="{(days-from-date(@start) - days-from-date(/project/@view-date)) * instance('params')/day_width}" y="{30 + (count(preceding::task | ancestor::task)) * instance('params')/task_height}" width="{@duration * instance('params')/day_width}" height="{instance('params')/task_height}" style="fill:{@color};stroke:#000000;"/>
+				<text x="{(days-from-date(@start) - days-from-date(/project/@view-date)) * instance('params')/day_width + 2}" y="{42 + (count(preceding::task | ancestor::task)) * instance('params')/task_height}" style="{instance('params')/text_style}"><xf:output value="concat(@name, choose(instance('params')/show_progress != 0,concat(' (', @complete,'%)'),''))"/></text>
+			</xf:repeat>
+			<xf:group ref="instance('params')/show_progress[. != 0]">
+				<xf:repeat nodeset="//task">
+					<rect x="{(days-from-date(@start) - days-from-date(/project/@view-date)) * instance('params')/day_width}" y="{30 + (count(preceding::task | ancestor::task)) * instance('params')/task_height}" width="{(@duration * instance('params')/day_width) div 100 * @complete}" height="{instance('params')/task_height}" style="fill:#DDDDDD;stroke:none;"/>
+				</xf:repeat>
+			</xf:group>
+		</svg>
+	</body>
+</html>

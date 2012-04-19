@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+     <title>Disable Delete</title>
+     <xf:model>
+       <xf:instance id="myInstance" xmlns="">
+         <data>
+           <person>
+             <name>John Doe</name>
+           </person>
+           <display-delete/>
+         </data>
+       </xf:instance>
+       <xf:bind id="triggerDisplay" nodeset="display-delete"
+relevant="count(/data/person) > 1"/>
+         <xf:submission id="mySubmission" ref="/root" method="post"
+action="http://www.xformstest.org/cgi-bin/echo.sh"/>
+     </xf:model>
+   </head>
+   <body>
+     <h2>Demo of Button Disable</h2>
+     <xf:repeat nodeset="person">
+       <xf:input ref="name">
+         <xf:label>name: </xf:label>
+       </xf:input>
+     </xf:repeat>
+     <hr/>
+     <xf:trigger>
+       <xf:label>Insert</xf:label>
+       <xf:insert nodeset="instance('myInstance')/person"
+at="last()" position="after" ev:event="DOMActivate"/>
+     </xf:trigger>
+     <xf:trigger bind="triggerDisplay">
+       <xf:label>delete</xf:label>
+       <xf:delete nodeset="instance('myInstance')/person"
+at="last()" ev:event="DOMActivate"/>
+     </xf:trigger>
+     <xf:submit submission="mySubmission">
+       <xf:label>Submit instance</xf:label>
+     </xf:submit>
+   </body>
+</html>

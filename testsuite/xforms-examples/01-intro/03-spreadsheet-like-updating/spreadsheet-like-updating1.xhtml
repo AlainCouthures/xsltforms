@@ -1,0 +1,147 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+    <head>
+        <title>XForms Spreadsheat like Update</title>
+        <style type="text/css">
+            table {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            }
+            
+            th {
+            color: white;
+            background-color: black;
+            }
+            
+            .output tr td {
+            border: solid black 1px;
+            padding: 2px;
+            text-align: center;
+            }
+        </style>
+        <xf:model>
+            <xf:instance>
+                <Spreadsheet xmlns="">
+                    <Row>
+                        <A>10</A>
+                        <B>20</B>
+                        <C>30</C>
+                    </Row>
+                    <Row>
+                        <A>40</A>
+                        <B>50</B>
+                        <C>60</C>
+                    </Row>
+                    <Row>
+                        <A>70</A>
+                        <B>80</B>
+                        <C>90</C>
+                    </Row>
+                    <Results>
+                        <sum/>
+                        <avg/>
+                        <min/>
+                    </Results>
+                </Spreadsheet>
+            </xf:instance>
+            <xf:bind nodeset="/Spreadsheet/Results/sum" calculate="sum(/Spreadsheet/Row/A)" type="xs:decimal" />
+            <xf:bind nodeset="/Spreadsheet/Results/avg" calculate="avg(/Spreadsheet/Row/B)" type="xs:decimal" />
+            <xf:bind nodeset="/Spreadsheet/Results/min" calculate="min(/Spreadsheet/Row/C)" type="xs:decimal" />
+        </xf:model>
+    </head>
+    <body>
+        <xf:group ref="/Spreadsheet">
+            <xf:input ref="Row[1]/A">
+                <xf:label></xf:label>
+            </xf:input>
+            <xf:input ref="Row[1]/B">
+                <xf:label></xf:label>
+            </xf:input>
+            <xf:input ref="Row[1]/C">
+                <xf:label></xf:label>
+            </xf:input>
+            <br/>
+            <xf:input ref="Row[2]/A">
+                <xf:label></xf:label>
+            </xf:input>
+            <xf:input ref="Row[2]/B">
+                <xf:label></xf:label>
+            </xf:input>
+            <xf:input ref="Row[2]/C">
+                <xf:label></xf:label>
+            </xf:input>
+            <br/>
+            <xf:input ref="Row[3]/A">
+                <xf:label></xf:label>
+            </xf:input>
+            <xf:input ref="Row[3]/B">
+                <xf:label></xf:label>
+            </xf:input>
+            <xf:input ref="Row[3]/C">
+                <xf:label></xf:label>
+            </xf:input>
+            <table class="output">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <xf:output value="1" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[1]/A" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[1]/B" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[1]/C" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <xf:output value="2" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[2]/A" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[2]/B" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[2]/C" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <xf:output value="3" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[3]/A" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[3]/B" />
+                        </td>
+                        <td>
+                            <xf:output ref="Row[3]/C" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td />
+                        <td>Sum=<xf:output ref="Results/sum" />
+                        </td>
+                        <td>Avg=<xf:output ref="Results/avg" />
+                        </td>
+                        <td>Min=<xf:output ref="Results/min" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </xf:group>
+    </body>
+</html>

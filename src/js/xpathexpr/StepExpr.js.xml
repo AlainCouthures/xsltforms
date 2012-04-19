@@ -1,0 +1,171 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="StepExpr.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== XsltForms_stepExpr Class ===
+XPath Expression Class for location step expressions
+* constructor function : initializes axis, nodetest and unlimited number of predicates properties</cm:wiki>
+		<![CDATA[
+function XsltForms_stepExpr(axis, nodetest) {
+	this.axis = axis;
+	this.nodetest = nodetest;
+	this.predicates = [];
+	for (var i = 2, len = arguments.length; i < len; i++) {
+		this.predicates.push(arguments[i]);
+	}
+}
+
+]]>
+		<cm:wiki>
+* '''evaluate''' method : evaluates as a node list this expression object according to the context</cm:wiki>
+<![CDATA[
+XsltForms_stepExpr.prototype.evaluate = function(ctx) {
+	var input = ctx.node;
+	var list = [];
+	switch(this.axis) {
+		case XsltForms_xpathAxis.ANCESTOR_OR_SELF :
+			XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
+			if (input.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+				input = input.ownerElement ? input.ownerElement : input.selectSingleNode("..");
+				XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
+			}
+			for (var pn = input.parentNode; pn.parentNode; pn = pn.parentNode) {
+				XsltForms_stepExpr.push(ctx, list, pn, this.nodetest);
+			}
+			break;
+		case XsltForms_xpathAxis.ANCESTOR :
+			if (input.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+				input = input.ownerElement ? input.ownerElement : input.selectSingleNode("..");
+				XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
+			}
+			for (var pn2 = input.parentNode; pn2.parentNode; pn2 = pn2.parentNode) {
+				XsltForms_stepExpr.push(ctx, list, pn2, this.nodetest);
+			}
+			break;
+		case XsltForms_xpathAxis.ATTRIBUTE :
+			XsltForms_stepExpr.pushList(ctx, list, input.attributes, this.nodetest, !input.namespaceURI || input.namespaceURI === "http://www.w3.org/1999/xhtml");
+			break;
+		case XsltForms_xpathAxis.CHILD :
+			XsltForms_stepExpr.pushList(ctx, list, input.childNodes, this.nodetest);
+			break;
+		case XsltForms_xpathAxis.DESCENDANT_OR_SELF :
+			XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
+			XsltForms_stepExpr.pushDescendants(ctx, list, input, this.nodetest);
+			break;
+		case XsltForms_xpathAxis.DESCENDANT :
+			XsltForms_stepExpr.pushDescendants(ctx, list, input, this.nodetest);
+			break;
+		case XsltForms_xpathAxis.FOLLOWING :
+			var n = input.nodeType === XsltForms_nodeType.ATTRIBUTE ? input.ownerElement ? input.ownerElement : input.selectSingleNode("..") : input;
+			while (n.nodeType !== XsltForms_nodeType.DOCUMENT) {
+				for (var nn = n.nextSibling; nn; nn = nn.nextSibling) {
+					XsltForms_stepExpr.push(ctx, list, nn, this.nodetest);
+					XsltForms_stepExpr.pushDescendants(ctx, list, nn, this.nodetest);
+				}
+				n = n.parentNode;
+			}
+			break;
+		case XsltForms_xpathAxis.FOLLOWING_SIBLING :
+			for (var ns = input.nextSibling; ns; ns = ns.nextSibling) {
+				XsltForms_stepExpr.push(ctx, list, ns, this.nodetest);
+			}
+			break;
+		case XsltForms_xpathAxis.NAMESPACE : 
+			alert('not implemented: axis namespace');
+			break;
+		case XsltForms_xpathAxis.PARENT :
+			if (input.parentNode) {
+				XsltForms_stepExpr.push(ctx, list, input.parentNode, this.nodetest);
+			} else {
+				if (input.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+					XsltForms_stepExpr.push(ctx, list, input.ownerElement ? input.ownerElement : input.selectSingleNode(".."), this.nodetest);
+				}
+			}
+			break;
+		case XsltForms_xpathAxis.PRECEDING :
+			var p = input.nodeType === XsltForms_nodeType.ATTRIBUTE ? input.ownerElement ? input.ownerElement : input.selectSingleNode("..") : input;
+			while (p.nodeType !== XsltForms_nodeType.DOCUMENT) {
+				for (var ps = p.previousSibling; ps; ps = ps.previousSibling) {
+					XsltForms_stepExpr.pushDescendantsRev(ctx, list, ps, this.nodetest);
+					XsltForms_stepExpr.push(ctx, list, ps, this.nodetest);
+				}
+				p = p.parentNode;
+			}
+			break;
+		case XsltForms_xpathAxis.PRECEDING_SIBLING :
+			for (var ps2 = input.previousSibling; ps2; ps2 = ps2.previousSibling) {
+				XsltForms_stepExpr.push(ctx, list, ps2, this.nodetest);
+			}
+			break;
+		case XsltForms_xpathAxis.SELF :
+			XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
+			break;
+		default :
+			throw {name:'ERROR -- NO SUCH AXIS: ' + this.axis};
+	}
+	for (var i = 0, len = this.predicates.length; i < len; i++) {
+		var pred = this.predicates[i];
+		var newList = [];
+		for (var j = 0, len1 = list.length; j < len1; j++) {
+			var x = list[j];
+			var newCtx = ctx.clone(x, j + 1, list);
+			if (XsltForms_globals.booleanValue(pred.evaluate(newCtx))) {
+				newList.push(x);
+			}
+		}
+		list = newList;
+	}
+	return list;
+};
+
+XsltForms_stepExpr.push = function(ctx, list, node, test, csensitive) {
+	if (test.evaluate(node, ctx.nsresolver, csensitive) && !XsltForms_browser.inArray(node, list)) {
+		list.push(node);
+	}
+};
+
+XsltForms_stepExpr.pushList = function(ctx, list, l, test, csensitive) {
+	for (var i = 0, len = l ? l.length : 0; i < len; i++) {
+		XsltForms_stepExpr.push(ctx, list, l[i], test, csensitive);
+	}
+};
+
+XsltForms_stepExpr.pushDescendants = function(ctx, list, node, test) {
+	for (var n = node.firstChild; n; n = n.nextSibling) {
+		XsltForms_stepExpr.push(ctx, list, n, test);
+		arguments.callee(ctx, list, n, test);
+	}
+};
+
+XsltForms_stepExpr.pushDescendantsRev = function(ctx, list, node, test) {
+	for (var n = node.lastChild; n; n = n.previousSibling) {
+		XsltForms_stepExpr.push(ctx, list, n, test);
+		arguments.callee(ctx, list, n, test);
+	}
+};
+]]>
+	</cm:source>
+</cm:component>

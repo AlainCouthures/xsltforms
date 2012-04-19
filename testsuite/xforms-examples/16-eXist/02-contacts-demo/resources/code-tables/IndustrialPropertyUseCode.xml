@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <EnumeratedValues>
+      <Item>
+         <Label>Animal Processing</Label>
+         <Value>animal-processing</Value>
+      </Item>
+      <Item>
+         <Label>Animal Processing - (Beef, Poultry, Swine, Etc.)</Label>
+         <Value>animal-processing</Value>
+      </Item>
+      <Item>
+         <Label>Agricultural - Other</Label>
+         <Value>agricultural-other</Value>
+      </Item>
+      <Item>
+         <Label>Oil - Gas Refinery - And/Or</Label>
+         <Value>refinery</Value>
+      </Item>
+      <Item>
+         <Label>Fertilizer Plant or Feed Mill</Label>
+         <Value>fertilizer-plant-feed-mill-grain-storage</Value>
+      </Item>
+      <Item>
+         <Label>Food Processing Plant</Label>
+         <Value>food-processing</Value>
+      </Item>
+      <Item>
+         <Label>Gravel Pit</Label>
+         <Value>gravel-pit</Value>
+      </Item>
+      <Item>
+         <Label>Lumberyard</Label>
+         <Value>lumberyard</Value>
+      </Item>
+      <Item>
+         <Label>Stockyard</Label>
+         <Value>stockyard</Value>
+      </Item>
+      <Item>
+         <Label>Brewery - non retail</Label>
+         <Value>brewery</Value>
+      </Item>
+      <Item>
+         <Label>Cement Plant</Label>
+         <Value>cement-plant</Value>
+      </Item>
+      <Item>
+         <Label>Food Processing - (Cheese, Vegetables, Etc.)</Label>
+         <Value>food-frocessing</Value>
+      </Item>
+      <Item>
+         <Label>Warehouse, Fuel Alcohol</Label>
+         <Value>warehouse</Value>
+      </Item>
+      <Item>
+         <Label>Manufacturing - Light</Label>
+         <Value>manufacturing-light</Value>
+      </Item>
+      <Item>
+         <Label>Manufacturing - Heavy</Label>
+         <Value>manufacturing-heavy</Value>
+      </Item>
+      <Item>
+         <Label>Manufacturing - Industrial - Other</Label>
+         <Value>manufacturing-industrial</Value>
+      </Item>
+      <Item>
+         <Label>Oil or Gas Refinery and/or Storage Facility</Label>
+         <Value>refinery</Value>
+      </Item>
+      <Item>
+         <Label>Wood Pulp Plant</Label>
+         <Value>wood-pulp-plant</Value>
+      </Item>
+      <Item>
+         <Label>Wood Pulp Plant</Label>
+         <Value>wood-pulp-plant</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

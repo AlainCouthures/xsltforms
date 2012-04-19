@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XForms" ExtStr="xhtml">
+		<File FilePath="insert.xhtml" HomeFolder="Yes"/>
+		<File FilePath="insert_2.xhtml" HomeFolder="Yes"/>
+		<File FilePath="insert-non-vis.xhtml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Instance Data" ExtStr="xml">
+		<File FilePath="phone-list.xml" HomeFolder="Yes"/>
+	</Folder>
+</Project>

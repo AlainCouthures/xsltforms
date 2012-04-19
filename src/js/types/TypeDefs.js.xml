@@ -1,0 +1,1276 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="TypeDefs.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2010-04-17</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_typeDefs" class ===
+Default Type Definitions Initialization Class</cm:wiki>
+		<![CDATA[
+var XsltForms_typeDefs = {
+]]>
+		<cm:wiki>
+* '''initAll''' method : inits the default types definitions for XML Schema and XForms</cm:wiki>
+<![CDATA[
+	initAll : function() {
+		this.init("http://www.w3.org/2001/XMLSchema", this.Default);
+		this.init("http://www.w3.org/2002/xforms", this.XForms);
+		this.init("http://www.agencexml.com/xsltforms", this.XSLTForms);
+	},
+]]>
+		<cm:wiki>
+* '''init''' method : inits the default types definitions for a given namespace</cm:wiki>
+<![CDATA[
+	init : function(ns, list) {
+		var schema = XsltForms_schema.get("xsltforms-mainform", ns);
+		for (var id in list) {
+			if (list.hasOwnProperty(id)) {
+				var type = new XsltForms_atomicType();
+				type.setSchema(schema);
+				type.setName(id);
+				var props = list[id];
+				var base = props.base;
+				if (base) {
+					type.setBase(base);
+				}
+				for (var prop in props) {
+					if (prop !== "base") {
+						type[prop] = props[prop];
+					}
+				}
+			}
+		}
+	},
+	ctes : {
+		i : "A-Za-z_\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\xFF",
+		c : "A-Za-z_\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\xFF\\-\\.0-9\\xB7"
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''Default''' associative array : every default type definition for XML Schema
+** '''base''' : prefix:name of the base type
+** '''whitespace''' : white space behavior
+** '''patterns''' : array of regular expressions
+** '''class''' : associated class
+** '''displayLength''' : number
+** '''fractionDigits''' : number
+** '''totalDigits''' : number
+** '''minInclusive''' : number
+** '''maxInclusive''' : number
+** '''minExclusive''' : number
+** '''maxExclusive''' : number
+** '''format''' : formatting function
+** '''parse''' : parsing function
+* Predefined types :</cm:wiki>
+<![CDATA[
+XsltForms_typeDefs.Default = {
+]]>
+		<cm:wiki>
+** '''xsd:string'''</cm:wiki>
+<![CDATA[
+	"string" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"whiteSpace" : "preserve"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:boolean'''</cm:wiki>
+<![CDATA[
+	"boolean" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^(true|false|0|1)$" ],
+		"class" : "boolean"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:decimal'''</cm:wiki>
+<![CDATA[
+	"decimal" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^[\\-+]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)$" ],
+		"class" : "number",
+		"format" : function(value) {
+			return XsltForms_browser.i18n.formatNumber(value, this.fractionDigits);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.parseNumber(value);
+		}
+	},
+]]>
+		<cm:wiki>
+** '''xsd:float'''</cm:wiki>
+<![CDATA[
+	"float" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^(([\\-+]?([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))([eE][\\-+]?[0-9]+)?|-?INF|NaN)$" ],
+		"class" : "number"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:double'''</cm:wiki>
+<![CDATA[
+	"double" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^(([\\-+]?([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))([eE][-+]?[0-9]+)?|-?INF|NaN)$" ],
+		"class" : "number"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:dateTime'''</cm:wiki>
+<![CDATA[
+	"dateTime" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?$" ],
+		"class" : "datetime",
+		"displayLength" : 20,
+		"format" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value, "yyyy-MM-ddThh:mm:ss"),null, true);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value), "yyyy-MM-ddThh:mm:ss", true);
+		}
+	},
+]]>
+		<cm:wiki>
+** '''xsd:date'''</cm:wiki>
+<![CDATA[
+	"date" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?$" ],
+		"class" : "date",
+		"displayLength" : 10,
+		"format" : function(value) {
+			return XsltForms_browser.i18n.formatDate(XsltForms_browser.i18n.parse(value, "yyyy-MM-dd"), null, true);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parseDate(value), "yyyy-MM-dd", true);
+		}
+	},
+]]>
+		<cm:wiki>
+** '''xsd:time'''</cm:wiki>
+<![CDATA[
+	"time" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?$" ],
+		"displayLength" : 8
+	},
+]]>
+		<cm:wiki>
+** '''xsd:duration'''</cm:wiki>
+<![CDATA[
+	"duration" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^-?P(?!$)([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T(?!$)([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:gDay'''</cm:wiki>
+<![CDATA[
+	"gDay" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^---(0[1-9]|[12][0-9]|3[01])$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:gMonth'''</cm:wiki>
+<![CDATA[
+	"gMonth" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^--(0[1-9]|1[012])$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:gMonthDay'''</cm:wiki>
+<![CDATA[
+	"gMonthDay" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^--(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:gYear'''</cm:wiki>
+<![CDATA[
+	"gYear" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^([\\-+]?([0-9]{4}|[1-9][0-9]{4,}))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:gYearMonth'''</cm:wiki>
+<![CDATA[
+	"gYearMonth" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^([12][0-9]{3})-(0[1-9]|1[012])$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:integer'''</cm:wiki>
+<![CDATA[
+	"integer" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:decimal",
+		"fractionDigits" : "0"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:nonPositiveInteger'''</cm:wiki>
+<![CDATA[
+	"nonPositiveInteger" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"patterns" : [ "^(-[0-9]+|0)$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:nonNegativeInteger'''</cm:wiki>
+<![CDATA[
+	"nonNegativeInteger" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"patterns" : [ "^\\+?[0-9]+$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:negativeInteger'''</cm:wiki>
+<![CDATA[
+	"negativeInteger" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"patterns" : [ "^-0*[1-9][0-9]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:positiveInteger'''</cm:wiki>
+<![CDATA[
+	"positiveInteger" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"patterns" : [ "^\\+?0*[1-9][0-9]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:byte'''</cm:wiki>
+<![CDATA[
+	"byte" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"minInclusive" : -128,
+		"maxInclusive" : 127
+	},
+]]>
+		<cm:wiki>
+** '''xsd:short'''</cm:wiki>
+<![CDATA[
+	"short" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"minInclusive" : -32768,
+		"maxInclusive" : 32767
+	},
+]]>
+		<cm:wiki>
+** '''xsd:int'''</cm:wiki>
+<![CDATA[
+	"int" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"minInclusive" : -2147483648,
+		"maxInclusive" : 2147483647
+},
+]]>
+		<cm:wiki>
+** '''xsd:long'''</cm:wiki>
+<![CDATA[
+	"long" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:integer",
+		"minInclusive" : -9223372036854775808,
+		"maxInclusive" : 9223372036854775807
+},
+]]>
+		<cm:wiki>
+** '''xsd:unsignedByte'''</cm:wiki>
+<![CDATA[
+	"unsignedByte" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:nonNegativeInteger",
+		"maxInclusive" : 255
+	},
+]]>
+		<cm:wiki>
+** '''xsd:unsignedShort'''</cm:wiki>
+<![CDATA[
+	"unsignedShort" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:nonNegativeInteger",
+		"maxInclusive" : 65535
+	},
+]]>
+		<cm:wiki>
+** '''xsd:unsignedInt'''</cm:wiki>
+<![CDATA[
+	"unsignedInt" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:nonNegativeInteger",
+		"maxInclusive" : 4294967295
+	},
+]]>
+		<cm:wiki>
+** '''xsd:unsignedLong'''</cm:wiki>
+<![CDATA[
+	"unsignedLong" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:nonNegativeInteger",
+		"maxInclusive" : 18446744073709551615
+},
+]]>
+		<cm:wiki>
+** '''xsd:normalizedString'''</cm:wiki>
+<![CDATA[
+	"normalizedString" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"whiteSpace" : "replace"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:token'''</cm:wiki>
+<![CDATA[
+	"token" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"whiteSpace" : "collapse"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:language'''</cm:wiki>
+<![CDATA[
+	"language" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:token",
+		"patterns" : [ "^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:anyURI'''</cm:wiki>
+<![CDATA[
+	"anyURI" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:token",
+		"patterns" : [ "^(([^:\\/?#]+):)?(\\/\\/([^\\/\\?#]*))?([^\\?#]*)(\\?([^#]*))?(#([^\\:#\\[\\]\\@\\!\\$\\&\\\\'\\(\\)\\*\\+\\,\\;\\=]*))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:Name'''</cm:wiki>
+<![CDATA[
+	"Name" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:token",
+		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.i + ":][" + XsltForms_typeDefs.ctes.c + ":]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:NCName'''</cm:wiki>
+<![CDATA[
+	"NCName" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:token",
+		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:QName'''</cm:wiki>
+<![CDATA[
+	"QName" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:token",
+		"patterns" : [ "^(([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\>> -_!~*'()%]+)?(>> #[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?:[" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:ID'''</cm:wiki>
+<![CDATA[
+	"ID" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:NCName"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:IDREF'''</cm:wiki>
+<![CDATA[
+	"IDREF" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"base" : "xsd_:NCName"
+	},
+]]>
+		<cm:wiki>
+** '''xsd:IDREFS'''</cm:wiki>
+<![CDATA[
+	"IDREFS" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*( +[" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*)*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:NMTOKEN'''</cm:wiki>
+<![CDATA[
+	"NMTOKEN" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.c + "]+$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:NMTOKENS'''</cm:wiki>
+<![CDATA[
+	"NMTOKENS" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.c + "]+( +[" + XsltForms_typeDefs.ctes.c + "]+)*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:base64Binary'''</cm:wiki>
+<![CDATA[
+	"base64Binary" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^[a-zA-Z0-9+/=]+$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xsd:hexBinary'''</cm:wiki>
+<![CDATA[
+	"hexBinary" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"patterns" : [ "^[0-9A-Fa-f]+$" ],
+		"format" : function(value) {
+			return value.toUpperCase();
+		},
+		"parse" : function(value) {
+			return value.toUpperCase();
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''XForms''' associative array : every default type definition for XForms types</cm:wiki>
+<![CDATA[
+XsltForms_typeDefs.XForms = {
+]]>
+		<cm:wiki>
+** '''xforms:string'''</cm:wiki>
+<![CDATA[
+	"string" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"whiteSpace" : "preserve"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:boolean'''</cm:wiki>
+<![CDATA[
+	"boolean" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(true|false|0|1)?$" ],
+		"class" : "boolean"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:decimal'''</cm:wiki>
+<![CDATA[
+	"decimal" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^([\\-+]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+))?$" ],
+		"class" : "number",
+		"format" : function(value) {
+			return XsltForms_browser.i18n.formatNumber(value, this.fractionDigits);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.parseNumber(value);
+		}
+	},
+]]>
+		<cm:wiki>
+** '''xforms:float'''</cm:wiki>
+<![CDATA[
+	"float" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^((([\\-+]?([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))([eE][\\-+]?[0-9]+)?|-?INF|NaN))?$" ],
+		"class" : "number"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:double'''</cm:wiki>
+<![CDATA[
+	"double" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^((([\\-+]?([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))([eE][-+]?[0-9]+)?|-?INF|NaN))?$" ],
+		"class" : "number"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:dateTime'''</cm:wiki>
+<![CDATA[
+	"dateTime" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?)?$" ],
+		"class" : "datetime",
+		"displayLength" : 20,
+		"format" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value, "yyyy-MM-ddThh:mm:ss"), null, true);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value), "yyyy-MM-ddThh:mm:ss", true);
+		}
+	},
+]]>
+		<cm:wiki>
+** '''xforms:date'''</cm:wiki>
+<![CDATA[
+	"date" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?)?$" ],
+		"class" : "date",
+		"displayLength" : 10,
+		"format" : function(value) {
+			return XsltForms_browser.i18n.formatDate(XsltForms_browser.i18n.parse(value, "yyyy-MM-dd"), null, true);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parseDate(value), "yyyy-MM-dd", true);
+		}
+	},
+]]>
+		<cm:wiki>
+** '''xforms:time'''</cm:wiki>
+<![CDATA[
+	"time" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?)?$" ],
+		"displayLength" : 8
+	},
+]]>
+		<cm:wiki>
+** '''xforms:duration'''</cm:wiki>
+<![CDATA[
+	"duration" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(-?P(?!$)([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T(?!$)([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:dayTimeDuration'''</cm:wiki>
+<![CDATA[
+	"dayTimeDuration" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(-?P([0-9]+D(T([0-9]+(H([0-9]+(M([0-9]+(\\.[0-9]*)?S|\\.[0-9]+S)?|(\\.[0-9]*)?S)|(\\.[0-9]*)?S)?|M([0-9]+(\\.[0-9]*)?S|\\.[0-9]+S)?|(\\.[0-9]*)?S)|\\.[0-9]+S))?|T([0-9]+(H([0-9]+(M([0-9]+(\\.[0-9]*)?S|\\.[0-9]+S)?|(\\.[0-9]*)?S)|(\\.[0-9]*)?S)?|M([0-9]+(\\.[0-9]*)?S|\\.[0-9]+S)?|(\\.[0-9]*)?S)|\\.[0-9]+S)))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:yearMonthDuration'''</cm:wiki>
+<![CDATA[
+	"yearMonthDuration" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(-?P[0-9]+(Y([0-9]+M)?|M))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:gDay'''</cm:wiki>
+<![CDATA[
+	"gDay" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(---(0[1-9]|[12][0-9]|3[01]))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:gMonth'''</cm:wiki>
+<![CDATA[
+	"gMonth" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(--(0[1-9]|1[012]))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:gMonthDay'''</cm:wiki>
+<![CDATA[
+	"gMonthDay" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(--(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:gYear'''</cm:wiki>
+<![CDATA[
+	"gYear" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^([\\-+]?([0-9]{4}|[1-9][0-9]{4,}))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:gYearMonth'''</cm:wiki>
+<![CDATA[
+	"gYearMonth" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^(([12][0-9]{3})-(0[1-9]|1[012]))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:integer'''</cm:wiki>
+<![CDATA[
+	"integer" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:decimal",
+		"fractionDigits" : "0"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:nonPositiveInteger'''</cm:wiki>
+<![CDATA[
+	"nonPositiveInteger" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"patterns" : [ "^((-[0-9]+|0))?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:nonNegativeInteger'''</cm:wiki>
+<![CDATA[
+	"nonNegativeInteger" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"patterns" : [ "^(\\+?[0-9]+)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:negativeInteger'''</cm:wiki>
+<![CDATA[
+	"negativeInteger" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"patterns" : [ "^(-[0-9]+)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:positiveInteger'''</cm:wiki>
+<![CDATA[
+	"positiveInteger" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"patterns" : [ "^\\+?0*[1-9][0-9]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:byte'''</cm:wiki>
+<![CDATA[
+	"byte" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"minInclusive" : -128,
+		"maxInclusive" : 127
+	},
+]]>
+		<cm:wiki>
+** '''xforms:short'''</cm:wiki>
+<![CDATA[
+	"short" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"minInclusive" : -32768,
+		"maxInclusive" : 32767
+	},
+]]>
+		<cm:wiki>
+** '''xforms:int'''</cm:wiki>
+<![CDATA[
+	"int" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"minInclusive" : -2147483648,
+		"maxInclusive" : 2147483647
+	},
+]]>
+		<cm:wiki>
+** '''xforms:long'''</cm:wiki>
+<![CDATA[
+	"long" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:integer",
+		"minInclusive" : -9223372036854775808,
+		"maxInclusive" : 9223372036854775807
+	},
+]]>
+		<cm:wiki>
+** '''xforms:unsignedByte'''</cm:wiki>
+<![CDATA[
+	"unsignedByte" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:nonNegativeInteger",
+		"maxInclusive" : 255
+	},
+]]>
+		<cm:wiki>
+** '''xforms:unsignedShort'''</cm:wiki>
+<![CDATA[
+	"unsignedShort" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:nonNegativeInteger",
+		"maxInclusive" : 65535
+	},
+]]>
+		<cm:wiki>
+** '''xforms:unsignedInt'''</cm:wiki>
+<![CDATA[
+	"unsignedInt" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:nonNegativeInteger",
+		"maxInclusive" : 4294967295
+	},
+]]>
+		<cm:wiki>
+** '''xforms:unsignedLong'''</cm:wiki>
+<![CDATA[
+	"unsignedLong" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:nonNegativeInteger",
+		"maxInclusive" : 18446744073709551615
+	},
+]]>
+		<cm:wiki>
+** '''xforms:normalizedString'''</cm:wiki>
+<![CDATA[
+	"normalizedString" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"whiteSpace" : "replace"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:token'''</cm:wiki>
+<![CDATA[
+	"token" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"whiteSpace" : "collapse"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:language'''</cm:wiki>
+<![CDATA[
+	"language" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:token",
+		"patterns" : [ "^([a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:anyURI'''</cm:wiki>
+<![CDATA[
+	"anyURI" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:token",
+		"patterns" : [ "^((([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\>> -_!~*'()%]+)?(>> #[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:Name'''</cm:wiki>
+<![CDATA[
+	"Name" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:token",
+		"patterns" : [ "^([" + XsltForms_typeDefs.ctes.i + ":][" + XsltForms_typeDefs.ctes.c + ":]*)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:NCName'''</cm:wiki>
+<![CDATA[
+	"NCName" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:token",
+		"patterns" : [ "^([" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:QName'''</cm:wiki>
+<![CDATA[
+	"QName" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:token",
+		"patterns" : [ "^((([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\>> -_!~*'()%]+)?(>> #[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?:[" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:ID"'''</cm:wiki>
+<![CDATA[
+	"ID" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:NCName"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:IDREF'''</cm:wiki>
+<![CDATA[
+	"IDREF" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xforms:NCName"
+	},
+]]>
+		<cm:wiki>
+** '''xforms:IDREFS'''</cm:wiki>
+<![CDATA[
+	"IDREFS" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^([" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]+( +[" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*)*)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:NMTOKEN'''</cm:wiki>
+<![CDATA[
+	"NMTOKEN" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.c + "]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:NMTOKENS'''</cm:wiki>
+<![CDATA[
+	"NMTOKENS" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^([" + XsltForms_typeDefs.ctes.c + "]+( +[" + XsltForms_typeDefs.ctes.c + "]+)*)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:base64Binary'''</cm:wiki>
+<![CDATA[
+	"base64Binary" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^[a-zA-Z0-9+/]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:hexBinary'''</cm:wiki>
+<![CDATA[
+	"hexBinary" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"patterns" : [ "^[0-9A-Fa-f]*$" ],
+		"format" : function(value) {
+			return value.toUpperCase();
+		},
+		"parse" : function(value) {
+			return value.toUpperCase();
+		}
+	},
+]]>
+		<cm:wiki>
+** '''xforms:email'''</cm:wiki>
+<![CDATA[
+	"email" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xsd_:string",
+		"whiteSpace" : "collapse",
+		"patterns" : [ "^([A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+(\\.[A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+)*@[A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+(\\.[A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+)*)?$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:card-number'''</cm:wiki>
+<![CDATA[
+	"card-number" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xsd_:string",
+		"patterns" : [ "^[0-9]*$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:url'''</cm:wiki>
+<![CDATA[
+	"url" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xsd_:string",
+		"whiteSpace" : "collapse",
+		"patterns" : [ "^(ht|f)tp(s?)://([a-z0-9]*:[a-z0-9]*@)?([a-z0-9.]*\\.[a-z]{2,7})$" ]
+	},
+]]>
+		<cm:wiki>
+** '''xforms:amount'''</cm:wiki>
+<![CDATA[
+	"amount" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xsd_:decimal",
+		"format" : function(value) {
+			return XsltForms_browser.i18n.formatNumber(value, 2);
+		}
+	}
+};
+]]>
+		<cm:wiki>
+* '''XSLTForms''' associative array : every default type definition for XSLTForms types</cm:wiki>
+<![CDATA[
+XsltForms_typeDefs.XSLTForms = {
+]]>
+		<cm:wiki>
+** '''xsltforms:decimal'''</cm:wiki>
+<![CDATA[
+	"decimal" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"patterns" : [ "^[\\-+]?\\(*[\\-+]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)(([+-/]|\\*)\\(*([0-9]+(\\.[0-9]*)?|\\.[0-9]+)\\)*)*$" ],
+		"class" : "number",
+		"eval" : "xsd:decimal"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:float'''</cm:wiki>
+<![CDATA[
+	"float" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:float"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:double'''</cm:wiki>
+<![CDATA[
+	"double" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:double"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:integer'''</cm:wiki>
+<![CDATA[
+	"integer" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:integer"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:nonPositiveInteger'''</cm:wiki>
+<![CDATA[
+	"nonPositiveInteger" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:nonPositiveInteger"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:nonNegativeInteger'''</cm:wiki>
+<![CDATA[
+	"nonNegativeInteger" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:nonNegativeInteger"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:negativeInteger'''</cm:wiki>
+<![CDATA[
+	"negativeInteger" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:negativeInteger"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:positiveInteger'''</cm:wiki>
+<![CDATA[
+	"positiveInteger" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:positiveInteger"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:byte'''</cm:wiki>
+<![CDATA[
+	"byte" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:byte"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:short'''</cm:wiki>
+<![CDATA[
+	"short" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:short"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:int'''</cm:wiki>
+<![CDATA[
+	"int" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:int"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:long'''</cm:wiki>
+<![CDATA[
+	"long" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:long"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:unsignedByte'''</cm:wiki>
+<![CDATA[
+	"unsignedByte" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:unsignedByte"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:unsignedShort'''</cm:wiki>
+<![CDATA[
+	"unsignedShort" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:unsignedShort"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:unsignedInt'''</cm:wiki>
+<![CDATA[
+	"unsignedInt" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:unsignedInt"
+	},
+]]>
+		<cm:wiki>
+** '''xsltforms:unsignedLong'''</cm:wiki>
+<![CDATA[
+	"unsignedLong" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"base" : "xsltforms:decimal",
+		"eval" : "xsd:unsignedLong"
+	}
+};
+
+XsltForms_typeDefs.initAll();
+]]>
+	</cm:source>
+	<cm:unit-test-group>
+		<cm:import-components path="../main/jsCore.js.xml"/>
+		<cm:import-components path="../main/utils.js.xml"/>
+		<cm:import-components path="Schema.js.xml"/>
+		<cm:import-components path="Type.js.xml"/>
+		<cm:import-components path="AtomicType.js.xml"/>
+		<cm:unit-test name="xsd:string">
+			<![CDATA[
+			var dt = Schema.getType("xsd:string");
+			var n = 1;
+			assert( dt.validate(""), n++ );
+			assert( dt.validate("x"), n++ );
+			assert( dt.validate("abcdefghijlkmnopqrstuvwxyz   abcdefghijlkmnopqrstuvwxyz"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:boolean">
+			<![CDATA[
+			var dt = Schema.getType("xsd:boolean");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( dt.validate("true"), n++ );
+			assert( dt.validate("false"), n++ );
+			assert( dt.validate("0"), n++ );
+			assert( dt.validate("1"), n++ );
+			assert( !dt.validate("true_"), n++ );
+			assert( !dt.validate("x"), n++ );
+			assert( !dt.validate("False"), n++ );
+			assert( !dt.validate("FALSE"), n++ );
+			assert( !dt.validate("True"), n++ );
+			assert( !dt.validate("TRUE"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:decimal">
+			<![CDATA[
+			var dt = Schema.getType("xsd:decimal");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( dt.validate("123456"), n++ );
+			assert( dt.validate("123456789012345678901234567890"), n++ );
+			assert( dt.validate("123.456"), n++ );
+			assert( !dt.validate("123.x"), n++ );
+			assert( dt.validate("-123.0000"), n++ );
+			assert( dt.validate("+123.0000"), n++ );
+			assert( !dt.validate("++123.0000"), n++ );
+			assert( !dt.validate("- -123.0000"), n++ );
+			assert( dt.validate(".0"), n++ );
+			assert( dt.validate("0.0"), n++ );
+			assert( !dt.validate("."), n++ );
+			assert( dt.validate("0."), n++ );
+			assert( !dt.validate("0.1.2"), n++ );
+			assert( !dt.validate("1..2"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:float">
+			<![CDATA[
+			var dt = Schema.getType("xsd:float");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( !dt.validate("E"), n++ );
+			assert( !dt.validate("E1"), n++ );
+			assert( dt.validate("123456"), n++ );
+			assert( !dt.validate("123456E"), n++ );
+			assert( dt.validate("123456E0"), n++ );
+			assert( dt.validate("123456E1"), n++ );
+			assert( dt.validate("123456E-1"), n++ );
+			assert( dt.validate("123456E123456"), n++ );
+			assert( dt.validate("123456E123456789012345678901234567890"), n++ );
+			assert( dt.validate("123456789012345678901234567890"), n++ );
+			assert( dt.validate("123456789012345678901234567890E1"), n++ );
+			assert( dt.validate("123.456"), n++ );
+			assert( dt.validate("123.456E1"), n++ );
+			assert( !dt.validate("123.x"), n++ );
+			assert( !dt.validate("123.xE1"), n++ );
+			assert( dt.validate("-123.0000"), n++ );
+			assert( dt.validate("-123.0000E1"), n++ );
+			assert( dt.validate("+123.0000"), n++ );
+			assert( dt.validate("+123.0000E1"), n++ );
+			assert( !dt.validate("++123.0000"), n++ );
+			assert( !dt.validate("- -123.0000"), n++ );
+			assert( dt.validate(".0"), n++ );
+			assert( dt.validate(".0E1"), n++ );
+			assert( dt.validate("0.0"), n++ );
+			assert( dt.validate("0.0E0"), n++ );
+			assert( !dt.validate("."), n++ );
+			assert( dt.validate("0."), n++ );
+			assert( dt.validate("0.E1"), n++ );
+			assert( !dt.validate("0.1.2"), n++ );
+			assert( !dt.validate("1..2"), n++ );
+			assert( !dt.validate("1Ex"), n++ );
+			assert( !dt.validate("1E1.0"), n++ );
+			assert( !dt.validate("1E"), n++ );      
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:integer">
+			<![CDATA[
+			var dt = Schema.getType("xsd:integer");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( dt.validate("0"), n++ );
+			assert( dt.validate("123456"), n++ );
+			assert( dt.validate("123456789012345678901234567890"), n++ );
+			assert( !dt.validate("123x"), n++ );
+			assert( dt.validate("-123"), n++ );
+			assert( dt.validate("+123"), n++ );
+			assert( !dt.validate("++123"), n++ );
+			assert( !dt.validate("- -123"), n++ );
+			assert( !dt.validate("x"), n++ );
+			assert( !dt.validate(" "), n++ );
+			assert( !dt.validate("1.0"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:date">
+			<![CDATA[
+			var dt = Schema.getType("xsd:date");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( dt.validate("2008-01-02"), n++ );
+			//assert( dt.validate("-2008-01-02"), "yes, negative dates are allowed by the spec" );
+			assert( dt.validate("2008-01-02Z"), n++ );
+			assert( dt.validate("2008-01-02+00:00"), n++ );
+			assert( dt.validate("2008-01-02-00:00"), n++ );
+			assert( !dt.validate("20080102"), n++ );
+			assert( !dt.validate("2008"), n++ );
+			assert( !dt.validate("2008-01"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:time">
+			<![CDATA[
+			var dt = Schema.getType("xsd:time");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( dt.validate("10:20:30"), n++ );
+			assert( dt.validate("00:00:00"), n++ );
+			assert( dt.validate("23:59:59"), n++ );
+			assert( dt.validate("23:59:59.9999"), n++ );
+			assert( !dt.validate("-10:20:30"), n++ );
+			assert( dt.validate("10:20:30Z"), n++ );
+			assert( dt.validate("10:20:30+00:00"), n++ );
+			assert( dt.validate("10:20:30-00:00"), n++ );
+			assert( !dt.validate("102030"), n++ );
+			assert( !dt.validate("10"), n++ );
+			assert( !dt.validate("10:20"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:dateTime">
+			<![CDATA[
+			var dt = Schema.getType("xsd:dateTime");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( dt.validate("2008-01-02T10:20:30"), n++ );
+			assert( dt.validate("2008-01-02T23:59:59"), n++ );
+			assert( dt.validate("2008-01-02T10:59:59.9999"), n++ );
+			assert( dt.validate("2008-01-02T10:20:30Z"), n++ );
+			assert( dt.validate("2008-01-02T10:20:30+00:00"), n++ );
+			assert( dt.validate("2008-01-02T10:20:30-00:00"), n++ );
+			assert( !dt.validate("20080102T102030"), n++ );
+			assert( !dt.validate("2008"), n++ );
+			assert( !dt.validate("2008-01"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:duration">
+			<![CDATA[
+			var dt = Schema.getType("xsd:duration");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( !dt.validate("P") , n++);
+			assert( dt.validate("P1Y"), n++ );
+			assert( dt.validate("P1M"), n++ );
+			assert( dt.validate("P1Y1M"), n++ );
+			assert( dt.validate("-P1Y1M"), n++ );
+			assert( dt.validate("P10Y10M"), n++ );
+			assert( !dt.validate("P1Y1MT"), n++ );
+			//
+			assert( dt.validate("P1D"), n++ );
+			assert( dt.validate("PT1H"), n++ );
+			assert( dt.validate("PT1M"), n++ );
+			assert( dt.validate("PT1S"), n++ );
+			assert( dt.validate("PT1.9999S"), n++ );
+			assert( dt.validate("P1DT1H1M1S"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xsd:gYear">
+			<![CDATA[
+			var dt = Schema.getType("xsd:gYear");
+			var n = 1;
+			assert( !dt.validate(""), n++ );
+			assert( dt.validate("2008"), n++ );
+			assert( !dt.validate("x"), n++ );
+			]]>
+		</cm:unit-test>
+		<cm:unit-test name="xforms:email">
+			<![CDATA[
+			var dt = Schema.getType("xforms:email");
+			var n = 1;
+			assert( dt.validate("editors@example.com"), n++ );
+			assert( dt.validate("~my_mail+{nospam}$?@sub-domain.example.info"), n++ );
+			assert( !dt.validate("editors@(this is a comment)example.info"), n++ );
+			assert( !dt.validate("editors{at}example{dot}info"), n++ );
+			]]>
+		</cm:unit-test>
+	</cm:unit-test-group>
+	</cm:component>

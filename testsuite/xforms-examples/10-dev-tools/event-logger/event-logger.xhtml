@@ -1,0 +1,98 @@
+<html 
+   xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:ev="http://www.w3.org/2001/xml-events"
+   xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>Demo of XForms Event Logging</title>
+      <style type="text/css">
+          body {font-family: Helvetica, sans-serif;}
+          #log {
+          font-size: 8pt; 
+          color: SlateGray;
+          background-color: lavender; 
+          border: 1px solid SlateGray;			
+          }	
+      </style>
+      <xf:model>
+          <xf:instance id="my-form">
+             <data xmlns="">
+                <element1/>
+                <element2/>
+                <element3/>
+             </data>
+          </xf:instance>               
+           <!-- this is were we log events -->
+           <xf:instance id="log">
+              <data xmlns="">
+                 <event/>
+              </data>
+           </xf:instance>                      
+             <!-- put the cursor in the first field when the form becomes ready -->
+            <xf:action ev:event="xforms-ready">
+               <xf:setfocus control="field-1"/>
+               <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+               <xf:setvalue ref="instance('log')/event[last()]" value="'Set Focus on Field-1'" />
+            </xf:action>
+        </xf:model>
+   </head>
+   <body>
+      <h2>Demonstration of XForms Event Logging</h2>
+       <xf:input ref="instance('my-form')/element1" incremental="true" id="field-1">
+            <xf:label>Input 1:</xf:label>
+           <xf:action ev:event="DOMFocusIn">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'DOMFocusIn in input 1'" />
+           </xf:action>
+            <xf:action ev:event="xforms-value-changed">
+               <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+               <xf:setvalue ref="instance('log')/event[last()]" value="'xforms-value-changed in input 1'" />
+            </xf:action>
+           <xf:action ev:event="DOMFocusOut">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'Out of input 1'" />
+           </xf:action>
+        </xf:input>
+        <br/>
+
+        <xf:input ref="instance('my-form')/element2" incremental="true">
+           <xf:label>Input 2:</xf:label>
+           <xf:action ev:event="DOMFocusIn">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'DOMFocusIn in input 2'"/>
+           </xf:action>
+           <xf:action ev:event="xforms-value-changed">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'xforms-value-changed in input 2'" />
+           </xf:action>
+           <xf:action ev:event="DOMFocusOut">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'Out of input 2'" />
+           </xf:action>
+        </xf:input>
+        <br/>
+
+        <xf:input ref="instance('my-form')/element3" incremental="true">
+           <xf:label>Input 3:</xf:label>
+           <xf:action ev:event="DOMFocusIn">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'DOMFocusIn in input 3'" />
+           </xf:action>
+           <xf:action ev:event="xforms-value-changed">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'xforms-value-changed in input 3'" />
+           </xf:action>
+           <xf:action ev:event="DOMFocusOut">
+              <xf:insert nodeset="instance('log')/event" at="last()" position="after"/>
+              <xf:setvalue ref="instance('log')/event[last()]" value="'Out of input 3'" />
+           </xf:action>
+        </xf:input>
+       
+       <div id="log">
+          <p>Event Log</p>
+          <xf:repeat id="results-repeat" nodeset="instance('log')/event">
+                   <xf:output ref="."/>
+          </xf:repeat>
+       </div>
+       
+    </body>
+</html>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="schema.xsd">
+   <string-length-2>MN</string-length-2>
+   <string-min-3>abcd</string-min-3>
+   <string-max-5>abcd</string-max-5>
+   <string-5-7>abcdef</string-5-7>
+</Data>

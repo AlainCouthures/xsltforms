@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <head>
+      <title>Loading data from an XML Schema file</title>
+      <style type="text/css">
+      @namespace xf url("http://www.w3.org/2002/xforms");
+         xf|input {
+            display: table-row;
+            line-height: 2em;
+         }
+         
+         xf|label {
+            display: table-cell;
+            text-align: right;
+            font-family: Ariel, Helvetica, sans-serif;
+            font-weight: bold;
+            font-size: small;
+            padding-right: 5px;
+            width: 150px;
+         }
+         
+         *:required {
+             background-color: yellow;
+         }
+         
+         *:invalid  {
+            background-color: pink;
+         }
+      </style>
+      <xf:model id="test" schema="schema.xsd">
+         <xf:instance src="instance.xml"/>
+      </xf:model>
+   </head>
+   <body>
+      <xf:group model="test" nodeset="/Data">
+         <xf:input ref="date" incremental="true">
+            <xf:label>Date:</xf:label>
+         </xf:input>
+         <xf:input ref="string-required" incremental="true">
+            <xf:label>Required String:</xf:label>
+         </xf:input>
+         <xf:input model="test" ref="string-optional">
+            <xf:label>Optional String:</xf:label>
+         </xf:input>
+         <xf:repeat nodeset="string-unbounded">
+         <xf:input ref=".">
+            <xf:label>Unbounded String:</xf:label>
+         </xf:input>
+         </xf:repeat>
+         <xf:input ref="integer" incremental="true">
+            <xf:label>Integer:</xf:label>
+         </xf:input>
+         <xf:input ref="positive-integer" incremental="true">
+            <xf:label>Positive Integer:</xf:label>
+         </xf:input>
+         <xf:input ref="short" incremental="true">
+            <xf:label>Short:</xf:label>
+         </xf:input>
+         <xf:input ref="byte" incremental="true">
+            <xf:label>Byte:</xf:label>
+         </xf:input>
+         <xf:input ref="unsignedByte" incremental="true">
+            <xf:label>Unsigned Byte:</xf:label>
+         </xf:input>
+         <xf:input ref="boolean">
+            <xf:label>Boolean:</xf:label>
+         </xf:input>
+      </xf:group>
+   </body>
+</html>

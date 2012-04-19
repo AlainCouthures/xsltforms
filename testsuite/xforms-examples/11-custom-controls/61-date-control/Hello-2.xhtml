@@ -1,0 +1,66 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Custom Image Control Sample</title>
+            <style type="">
+      @namespace xf url(http://www.w3.org/2002/xforms);
+      
+         /* defaults for forms */
+         * {
+            Ariel, Helvetica, sans-serif;
+         }
+
+         h1 {
+            font-size: medium;
+         }
+
+         xf|label {
+            font-style: bold;
+         }
+
+      xf|output[appearance="string-filter"] {
+        -moz-binding: url('#string-filter');
+      }
+    </style>
+      <bindings id="xformsBindings" xmlns="http://www.mozilla.org/xbl" xmlns:html="http://www.w3.org/1999/xhtml">
+         <binding id="string-filter" extends="chrome://xforms/content/xforms.xml#xformswidget-base">
+            <content>
+               <html:div>
+                  <html:p anonid="content" />
+               </html:div>
+            </content>
+            <implementation implements="nsIXFormsUIWidget">
+               <method name="refresh">
+                  <body>
+                  var myString = document.getAnonymousElementByAttribute(this, "anonid", "content");
+                  var str ="Hello World";
+                  myString = str.toLowerCase();
+                  return true;
+                  </body>
+               </method>
+            </implementation>
+         </binding>
+      </bindings>
+      <xf:model>
+         <xf:instance xmlns="">
+            <data>
+               <input-string>This is a test</input-string>
+            </data>
+         </xf:instance>
+      </xf:model>
+ 
+   </head>
+   <body>
+      <h1>Custom Control Sample</h1>
+      <xf:input ref="input-string" incremental="true">
+         <xf:label>Input string: </xf:label>
+      </xf:input>
+      <br/>
+      <xf:output ref="input-string">
+         <xf:label>Output:</xf:label>
+      </xf:output>
+      <br/>
+      <xf:output ref="input-string" appearance="string-filter">
+         <xf:label>Output:</xf:label>
+      </xf:output>
+   </body>
+</html>

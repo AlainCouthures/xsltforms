@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>CRVAdjustmentCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Annual Payment Principal Only</Label>
+         <Value>annual-payment-principal-only</Value>
+      </Item>
+      <Item>
+         <Label>Annual Payment with Interest</Label>
+         <Value>annual-payment-interest</Value>
+      </Item>
+      <Item>
+         <Label>Hand Adjustment - See Note</Label>
+         <Value>hand-adjustment</Value>
+      </Item>
+      <Item>
+         <Label>Incomplete Financing Terms</Label>
+         <Value>incomplete</Value>
+      </Item>
+      <Item>
+         <Label>Market Rate Contract</Label>
+         <Value>market-rate-contract</Value>
+      </Item>
+      <Item>
+         <Label>Monthly Payment</Label>
+         <Value>monthly-payment</Value>
+      </Item>
+      <Item>
+         <Label>Other Financing - See Note</Label>
+         <Value>other</Value>
+      </Item>
+      <Item>
+         <Label>Quarterly Payments Principal Only</Label>
+         <Value>quarterly-principal-only</Value>
+      </Item>
+      <Item>
+         <Label>Quarterly payment stream (payments include interest)</Label>
+         <Value>quarterly-interest</Value>
+      </Item>
+      <Item>
+         <Label> Semi-Annual Payment with Interest</Label>
+         <Value>semi-annual-interest</Value>
+      </Item>
+      <Item>
+         <Label>Semi-annual Principal Only</Label>
+         <Value>semi-annual-principal-only</Value>
+      </Item>
+      <Item>
+         <Label>Variable rate contract or assumed mortgage, no adjustment</Label>
+         <Value>variable-rate-contract</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

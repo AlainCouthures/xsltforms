@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>ParcelAddressTypeCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Billboard</Label>
+         <Value>billboard</Value>
+      </Item>
+      <Item>
+         <Label>Cell Tower</Label>
+         <Value>cell-tower</Value>
+      </Item>
+      <Item>
+         <Label>Gas Terminal</Label>
+         <Value>gas-terminal</Value>
+      </Item>
+      <Item>
+         <Label>Mall Location</Label>
+         <Value>mall-location</Value>
+      </Item>
+      <Item>
+         <Label>Other</Label>
+         <Value>other</Value>
+      </Item>
+      <Item>
+         <Label>Power Station</Label>
+         <Value>power-station</Value>
+      </Item>
+      <Item>
+         <Label>Residence Primary</Label>
+         <Value>residence-primary</Value>
+      </Item>
+      <Item>
+         <Label>Residence Secondary</Label>
+         <Value>residence-secondary</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

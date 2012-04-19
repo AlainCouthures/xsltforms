@@ -1,0 +1,64 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events">
+	<head>
+		<title>Test of binding between instances</title>
+		<xf:model>
+			
+			<xf:instance id="tmp" xmlns="">
+				<data1>
+					<counties1>anoka carver</counties1>
+					<counties2>dakota</counties2>
+					<counties3>hennepin</counties3>
+					<counties4>mower</counties4>
+					<counties5>ramsey</counties5>
+					<counties6>scott</counties6>
+					<counties7>washington</counties7>
+					<all-counties>test2</all-counties>
+				</data1>
+			</xf:instance>
+			<xf:instance id="submit" xmlns="">
+				<data2>
+					<select-list>test</select-list>
+				</data2>
+			</xf:instance>
+
+			<xf:bind nodeset="all-counties" calculate="concat(../counties1, ' ', ../counties2, ' ', ../counties3, ' ', ../counties4,' ', ../counties5, ' ', ../counties6, ' ',../counties7)" />
+			<xf:bind  nodeset="instance('submit')/select-list" calculate="instance('tmp')/all-counties" /> 
+		</xf:model>
+	</head>
+	<body>
+	<p>Demo of how a second instance can bind to instance variables in a first instance.</p>
+	
+	<xf:select ref="instance('tmp')/counties1" appearance="full">
+	<xf:label>Select Counties List 1</xf:label>
+	<xf:item>
+		<xf:label>Anoka</xf:label>
+		<xf:value>anoka</xf:value>
+	</xf:item>
+	<xf:item>
+		<xf:label>Carver</xf:label>
+		<xf:value>carver</xf:value>
+	</xf:item>
+	</xf:select>
+	<xf:select ref="instance('tmp')/counties2" appearance="full">
+	<xf:label>Select Counties List 2</xf:label>
+	<xf:item>
+		<xf:label>Dakota</xf:label>
+		<xf:value>dakota</xf:value>
+	</xf:item>
+	<xf:item>
+		<xf:label>Clay</xf:label>
+		<xf:value>clay</xf:value>
+	</xf:item>
+	</xf:select>
+	
+		<xf:output ref="instance('tmp')/all-counties">
+			<xf:label>Value in the first instance: </xf:label>
+		</xf:output>
+		<br/>
+		
+		<xf:output  ref="instance('submit')/select-list">
+			<xf:label>Value in the submit instance: </xf:label>
+		</xf:output>
+
+	</body>
+</html>

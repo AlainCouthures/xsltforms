@@ -1,0 +1,104 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Process Steps</title>
+        <link rel="stylesheet" type="text/css" href="local.css"/>
+        <xf:model>
+            <xf:instance xmlns="" id="process">
+                <data>
+                    <activity>
+                        <activity-name>Step 1</activity-name>
+                        <activity-type-code>enrich</activity-type-code>
+                        <webservice-id>ws111</webservice-id>
+                        <ruleset-id>r111</ruleset-id>
+                        <schema-id>s111</schema-id>
+                    </activity>
+                    <activity>
+                        <activity-name>Step 2</activity-name>
+                        <activity-type-code>validate</activity-type-code>
+                        <webservice-id>ws222</webservice-id>
+                        <ruleset-id>r222</ruleset-id>
+                        <schema-id>s222</schema-id>
+                    </activity>
+                    <activity>
+                        <activity-name>Step 3</activity-name>
+                        <activity-type-code>check-ruleset</activity-type-code>
+                        <webservice-id>ws333</webservice-id>
+                        <ruleset-id>r333</ruleset-id>
+                        <schema-id>schema333</schema-id>
+                    </activity>
+                    <activity>
+                        <activity-name>Step 4</activity-name>
+                        <activity-type-code>check-ruleset</activity-type-code>
+                        <webservice-id>ws444</webservice-id>
+                        <ruleset-id>r444</ruleset-id>
+                        <schema-id>s444</schema-id>
+                    </activity>
+                </data>
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <h1>Process Step Editor</h1>
+        <div class="process-steps">
+            <xf:label class="group-label">Process:</xf:label>
+            <xf:repeat nodeset="instance('process')/activity" id="activity-repeat">
+
+                <div class="activity" style="display:inline;">
+                    <div class="activity-label">
+                        <xf:input ref="activity-name" id="activity-name"/>
+                    </div>
+                    <xf:trigger>
+                        <xf:label>+</xf:label>
+                        <xf:action ev:event="DOMActivate">
+                            <xf:insert nodeset="instance('process')/activity" at="index('activity-repeat')" position="after"/>
+                            <xf:setvalue ref="instance('process')/activity[index('activity-repeat')]/activity-name" value="''"/>
+                              <!-- should insert on the new row -->
+                            <xf:setfocus control="activity-name"/>
+                        </xf:action>
+                    </xf:trigger>
+                    <xf:trigger>
+                        <xf:label>-</xf:label>
+                        <xf:delete nodeset="instance('process')/activity[index('activity-repeat')]" ev:event="DOMActivate"/>
+                    </xf:trigger>
+                </div>
+            </xf:repeat>
+        </div>
+
+          <!-- this is always showing the selected activity-->
+        <div class="inspector">
+            <xf:label class="group-label">Activity Inspector:</xf:label>
+            <xf:repeat nodeset="instance('process')/activity[index('activity-repeat')=position()]" style="display:inline">
+            <xf:input ref="activity-name">
+                    <xf:label>Step Name:</xf:label>
+                </xf:input>
+                <xf:select1 ref="activity-type-code">
+                    <xf:label>Activity Type:</xf:label>
+                    <xf:item>
+                        <xf:label>Enrich</xf:label>
+                        <xf:value>enrich</xf:value>
+                    </xf:item>
+                    <xf:item>
+                        <xf:label>Validate</xf:label>
+                        <xf:value>validate</xf:value>
+                    </xf:item>
+                    <xf:item>
+                        <xf:label>Check Ruleset</xf:label>
+                        <xf:value>check-ruleset</xf:value>
+                    </xf:item>
+                </xf:select1>
+                <xf:input ref="webservice-id">
+                    <xf:label>Enrichment Service ID:</xf:label>
+                </xf:input>
+                <xf:input ref="ruleset-id">
+                    <xf:label>Ruleset ID:</xf:label>
+                </xf:input>
+                <xf:input ref="schema-id">
+                    <xf:label>Validate with Schema ID:</xf:label>
+                </xf:input>
+            </xf:repeat>
+        </div>
+    </body>
+</html>

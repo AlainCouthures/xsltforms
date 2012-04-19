@@ -1,0 +1,91 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="var_dump.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<![CDATA[
+function var_dump(data,addwhitespace,safety,level) {
+	var rtrn = '';
+	var dt,it,spaces = '';
+	if(!level) {level = 1;}
+	for(var i=0; i<level; i++) {
+		 spaces += '   ';
+	}//end for i<level
+	if(typeof(data) != 'object') {
+		 dt = data;
+		 if(typeof(data) == 'string') {
+				if(addwhitespace == 'html') {
+					 dt = dt.replace(/&/g,'&amp;');
+					 dt = dt.replace(/>/g,'&gt;');
+					 dt = dt.replace(/</g,'&lt;');
+				}//end if addwhitespace == html
+				dt = dt.replace(/\"/g,'\"');
+				dt = '"' + dt + '"';
+		 }//end if typeof == string
+		 if(typeof(data) == 'function' && addwhitespace) {
+				dt = new String(dt).replace(/\n/g,"\n"+spaces);
+				if(addwhitespace == 'html') {
+					 dt = dt.replace(/&/g,'&amp;');
+					 dt = dt.replace(/>/g,'&gt;');
+					 dt = dt.replace(/</g,'&lt;');
+				}//end if addwhitespace == html
+		 }//end if typeof == function
+		 if(typeof(data) == 'undefined') {
+				dt = 'undefined';
+		 }//end if typeof == undefined
+		 if(addwhitespace == 'html') {
+				if(typeof(dt) != 'string') {
+					 dt = new String(dt);
+				}//end typeof != string
+				dt = dt.replace(/ /g,"&nbsp;").replace(/\n/g,"<br>");
+		 }//end if addwhitespace == html
+		 return dt;
+	}//end if typeof != object && != array
+	for (var x in data) {
+		 if(safety && (level > safety)) {
+				dt = '*RECURSION*';
+		 } else {
+				try {
+					 dt = var_dump(data[x],addwhitespace,safety,level+1);
+				} catch (e) {continue;}
+		 }//end if-else level > safety
+		 it = var_dump(x,addwhitespace,safety,level+1);
+		 rtrn += it + ':' + dt + ',';
+		 if(addwhitespace) {
+				rtrn += '\n'+spaces;
+		 }//end if addwhitespace
+	}//end for...in
+	if(addwhitespace) {
+		 rtrn = '{\n' + spaces + rtrn.substr(0,rtrn.length-(2+(level*3))) + '\n' + spaces.substr(0,spaces.length-3) + '}';
+	} else {
+		 rtrn = '{' + rtrn.substr(0,rtrn.length-1) + '}';
+	}//end if-else addwhitespace
+	if(addwhitespace == 'html') {
+		 rtrn = rtrn.replace(/ /g,"&nbsp;").replace(/\n/g,"<br>");
+	}//end if addwhitespace == html
+	return rtrn;
+}
+    ]]>
+	</cm:source>
+</cm:component>

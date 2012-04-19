@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<txs:scriptsheet xmlns="" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cm="http://www.agencexml.com/cm" version="0.4">
+	<xsl:stylesheet version="1.0" txs:name="main" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:template match="/">
+			<txs:return contenttype="application/xml" format="xml">
+				<txs:transform stylesheet="#config">
+					<config>
+						<dir><xsl:value-of select="/req:params/req:dir"/></dir>
+						<xsl:call-template name="languages">
+							<xsl:with-param name="ls" select="translate(/req:params/req:languages,'ABCDEFGHIJKLMNOPQRSTUVWXYZ-','abcdefghijklmnopqrstuvwxyz_')"/>
+						</xsl:call-template>
+					</config>
+				</txs:transform>
+			</txs:return>
+		</xsl:template>
+		<xsl:template name="languages">
+			<xsl:param name="ls"/>
+			<xsl:variable name="l0">
+				<xsl:choose>
+					<xsl:when test="contains($ls, ',')">
+						<xsl:value-of select="normalize-space(substring-before($ls, ','))"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$ls"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="l">
+				<xsl:choose>
+					<xsl:when test="contains($l0, ';')">
+						<xsl:value-of select="normalize-space(substring-before($l0, ';'))"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="normalize-space($l0)"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="fname" select="concat('config_',translate($l,'-','_'),'.xsl')"/>
+			<language>
+				<filename><xsl:value-of select="$fname"/></filename>
+				<supported><txs:fileexists filename="{/req:params/req:dir}/{$fname}"/></supported>
+			</language>
+			<xsl:if test="contains($ls, ',')">
+				<xsl:call-template name="languages">
+					<xsl:with-param name="ls" select="substring-after($ls, ',')"/>
+				</xsl:call-template>
+			</xsl:if>
+		</xsl:template>
+	</xsl:stylesheet>
+	<xsl:stylesheet version="1.0" txs:name="config" xmlns:req="http://www.agencexml.com/requests">
+		<xsl:template match="/">
+			<xsl:choose>
+				<xsl:when test="/config/language[supported = 'true']">
+					<txs:load filename="{/config/dir}/{(/config/language[supported = 'true'])[1]/filename}" format="xml"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<txs:load filename="{/config/dir}/config.xsl" format="xml"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</xsl:stylesheet>
+</txs:scriptsheet>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="Data">
+      <xs:annotation>
+         <xs:documentation>A listing of 10 XML Schema data types</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="date" type="xs:date"/>
+            <xs:element name="string-required" type="xs:string"/>
+            <xs:element name="string-optional" type="xs:string" minOccurs="0"/>
+            <xs:element name="string-unbounded" type="xs:string" maxOccurs="unbounded"/>
+            <xs:element name="integer" type="xs:integer"/>
+            <xs:element name="positive-integer" type="xs:positiveInteger"/>
+            <xs:element name="short" type="xs:short"/>
+            <xs:element name="byte" type="xs:byte"/>
+            <xs:element name="unsignedByte" type="xs:unsignedByte"/>
+            <xs:element name="boolean" type="xs:boolean"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

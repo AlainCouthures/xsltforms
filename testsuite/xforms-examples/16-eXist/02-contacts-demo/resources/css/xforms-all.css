@@ -1,0 +1,119 @@
+@namespace xf url("http://www.w3.org/2002/xforms");
+/* this is a general-purpose CSS file for all XForms files */
+/* do not put form-specific formatting or table-specific formatting in this file */
+
+/* Note #4D9471 is the green used on the Department of Revenue web site */
+
+body, p, span, div, label, legend, input, th, td {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+}
+
+h1 {
+   font-family: Arial, Helvetica, sans-serif;
+	font-size: 14pt;
+}
+
+a:hover {
+	color: #339966;
+}
+
+a:link {
+	color: #003399;
+}
+
+a:visited {
+	color: #663399;
+}
+
+xf|group {
+	border: solid black 1p;
+	margin, padding: 3px;
+}
+
+/* ADDED SO SELECT1 "RADIO BUTTON" Y/N DOESN'T WRAP */
+select1 {
+	border-style: none;
+	width: 100%;
+}
+
+xf|group xf|label {
+	width: 150px;
+	margin: 3px;
+	text-align: right;
+}
+
+xf|value {
+	width: 250px;
+	padding: 2px;
+	text-align: left;
+}
+
+xf|input {
+	margin: .2em .1em;	/* vertical and horiz area around input boxes */
+}
+
+xf|input:required {
+	font-weight: bold;
+}
+	
+xf|input:required .xf-value {
+	background-color: khaki;
+	border-color: black;
+	border-width: 3px;
+}
+
+/* put the next screen button to the right of the form */
+.nextScreenButton {
+	float: right;
+}
+
+
+/* display all XForms groups like a table */
+/* ADDED FOR REPEAT-ITEMS */ 
+xf|group, xf|repeat {
+	display: table;
+}
+
+/* field allignment options */
+/* display all XForms inputs fields as table rows */
+/* ADDED SELECT AND TEXT AREA INPUT FIELDS */
+xf|input, xf|select1, xf|select, xf|textarea {
+	display: table-row;
+}
+
+/* put all inputs inside of repeats into table rows */
+xf|repeat  xf|input {
+	display: table-row;
+} 
+
+/* dispay all labels inside inputs as table cells */
+/* only apply to labels nested inside inputs WARNING - NOT SUPPORTED IN IE 6 */
+/* ADDED SELECT LABELS, TEXT AREA LABELS AND REPEAT-ITEMS */
+xf|input xf|label, xf|select1 > xf|label, xf|select > xf|label, xf|textarea > xf|label {
+	vertical-align: top;
+	float: left;
+	display: table-cell;	
+}
+
+/* display all input values as cells of a table */
+/* ADDED FOR REPEAT-ITEMS */ 
+xf|input::value, xf|repeat::value {
+	display: table-cell;
+}
+
+/* anything with the class="note" attribute should be bold red */
+.note {
+	color: red;
+	font-weight: bold;	
+}
+
+/*ADDED TO BETTER ALIGN RADIO BUTTONS CONSISTENTLY  */
+.radios {
+   width: 245px;
+}
+
+/* don't draw borders around link images */
+a img {
+   border: none;
+}

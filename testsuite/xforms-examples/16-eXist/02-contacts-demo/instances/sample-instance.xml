@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContactsDocument xmlns:u="http://niem.gov/niem/universal/1.0">
+   <Person>
+      <u:PersonGivenName>Dan</u:PersonGivenName>
+      <u:PersonSurName>McCreary</u:PersonSurName>
+      <u:StreetFullText>3007 Cavell Ave So.</u:StreetFullText>
+      <u:LocationCityName>St. Louis Park</u:LocationCityName>
+      <u:LocationStateName>MN</u:LocationStateName>
+      <u:LocationPostalCodeID>55426</u:LocationPostalCodeID>
+      <u:ContactEmailID>dan@danmccreary.com</u:ContactEmailID>
+      <u:TelephoneNumberFullID>home: (952) 931-9198</u:TelephoneNumberFullID>
+   </Person>
+    <Person>
+      <u:PersonGivenName>Joe</u:PersonGivenName>
+      <u:PersonSurName>Smith</u:PersonSurName>
+      <u:StreetFullText>123 Main St.</u:StreetFullText>
+      <u:LocationCityName>Anytown</u:LocationCityName>
+      <u:LocationStateName>MN</u:LocationStateName>
+      <u:LocationPostalCodeID>55123</u:LocationPostalCodeID>
+      <u:ContactEmailID>joe@myisp.com</u:ContactEmailID>
+      <u:TelephoneNumberFullID>home: (612) 123-4567</u:TelephoneNumberFullID>
+   </Person>
+</ContactsDocument>

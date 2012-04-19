@@ -1,0 +1,133 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>XQuery Tester</title>
+        <style type="text/css">
+            @namespace xf url("http://www.w3.org/2002/xforms");
+            
+            body {font-family: Arial,sans-serif}
+            
+            xf|input, xf|output {
+            display: table-row;
+            line-height: 2em;
+            }
+            
+            xf|label {
+            display: table-cell;
+            text-align: right;
+            font-family: Ariel, Helvetica, sans-serif;
+            font-weight: bold;
+            font-size: small;
+            padding-right: 5px;
+            width: 150px;
+            }
+            
+        </style>
+        <xf:model>
+            <xf:instance xmlns="" id="input-parameters">
+                <data>
+                    <arg1>123</arg1>
+                    <arg2>456</arg2>
+                </data>
+            </xf:instance>
+            <xf:instance xmlns="" id="submit-results">
+                <results>
+                    <sum/>
+                </results>
+            </xf:instance>
+            
+            <xf:submission id="get-instance" method="get" replace="instance" instance="submit-results"
+                action="http://www.cems.uwe.ac.uk/xmldb/rest/db/Wiki/adder.xq"
+                separator="&amp;">
+                <xf:toggle case="case-busy" ev:event="xforms-submit"/>
+                <xf:toggle case="case-submit-error" ev:event="xforms-submit-error"/>
+                <xf:toggle case="case-submit-done" ev:event="xforms-submit-done"/>
+            </xf:submission>          
+            
+            <xf:submission id="get-replace" method="get"
+                instance="submit-results" replace="all"
+                separator="&amp;"
+                action="http://www.cems.uwe.ac.uk/xmldb/rest/db/Wiki/adder.xq">
+                <xf:toggle case="case-busy" ev:event="xforms-submit"/>
+                <xf:toggle case="case-submit-error" ev:event="xforms-submit-error"/>
+                <xf:toggle case="case-submit-done" ev:event="xforms-submit-done"/>
+            </xf:submission>
+            
+            <xf:submission id="post-instance" method="post" instance="submit-results" replace="instance"
+                action="http://www.cems.uwe.ac.uk/xmldb/rest/db/Wiki/adder-post.xq">
+                <xf:toggle case="case-busy" ev:event="xforms-submit"/>
+                <xf:toggle case="case-submit-error" ev:event="xforms-submit-error"/>
+                <xf:toggle case="case-submit-done" ev:event="xforms-submit-done"/>
+            </xf:submission>
+            
+            <xf:submission id="post-replace" method="post"
+                action="http://www.cems.uwe.ac.uk/xmldb/rest/db/Wiki/adder-post.xq">
+                <xf:toggle case="case-busy" ev:event="xforms-submit"/>
+                <xf:toggle case="case-submit-error" ev:event="xforms-submit-error"/>
+                <xf:toggle case="case-submit-done" ev:event="xforms-submit-done"/>
+            </xf:submission>
+            
+            <xf:submission id="get-test" method="get" replace="all" 
+                separator="&amp;"
+                action="http://www.cems.uwe.ac.uk/xmldb/rest/db/Wiki/showinstance.sh"/>
+            
+            <xf:submission id="post-test" method="post" replace="all" 
+                action="http://www.cems.uwe.ac.uk/xmldb/rest/db/Wiki/showinstance.sh"/>
+        </xf:model>
+    </head>
+    <body>
+        <h1>Using XForms to test XQuery</h1>
+        <p>Note, you must have xforms-examples.googlecode.com and www.cems.uwe.ac.uk in your whitelist for this demo to work.</p>
+        <xf:input ref="arg1" incremental="true">
+            <xf:label>Arg1:</xf:label>
+        </xf:input>
+        <xf:input ref="arg2" incremental="true">
+            <xf:label>Arg2:</xf:label>
+        </xf:input>
+        
+        <xf:output ref="instance('submit-results')/sum">
+            <xf:label>Sum:</xf:label>
+        </xf:output>
+        
+        <xf:submit submission="get-instance">
+            <xf:label>HTTP GET -> instance</xf:label>
+        </xf:submit>
+        <br/>
+        
+        <xf:submit submission="post-instance">
+            <xf:label>HTTP POST -> instance</xf:label>
+        </xf:submit>
+        <br/>
+        
+        <xf:submit submission="get-replace">
+            <xf:label>HTTP GET -> replace</xf:label>
+        </xf:submit>
+        <br/>
+        
+        <xf:submit submission="post-replace">
+            <xf:label>HTTP POST -> replace</xf:label>
+        </xf:submit>
+        <br/>
+        
+        <xf:submit submission="get-test">
+            <xf:label>HTTP Get Test</xf:label>
+        </xf:submit>
+        <br/>
+        <xf:submit submission="post-test">
+            <xf:label>HTTP Post Test</xf:label>
+        </xf:submit>
+        <br/>
+        
+        <xf:switch>
+            <xf:case id="ready"/>
+            <xf:case id="case-busy">
+                <p>Waiting for results from server...</p>
+            </xf:case>
+            <xf:case id="case-submit-error">
+                <p>Submit error</p>
+            </xf:case>
+            <xf:case id="case-submit-done">
+                <p>Submit done</p>
+            </xf:case>
+        </xf:switch>
+    </body>
+</html>

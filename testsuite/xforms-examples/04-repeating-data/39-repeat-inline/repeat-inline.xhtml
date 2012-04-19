@@ -1,0 +1,131 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Repeat Inline</title>
+        <link rel="stylesheet" type="text/css" href="local.css"/>
+        <xf:model>
+            <xf:instance xmlns="" id="my-table">
+                <data>
+                    <row>
+                        <col>
+							<cell>
+								<cell-label>Row 1 Col 1</cell-label>
+								<cell-type>type-1</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 1 Col 2</cell-label>
+								<cell-type>type-2</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 1 Col 3</cell-label>
+								<cell-type>type-3</cell-type>
+							</cell>
+						</col>
+                    </row>
+                    <row>
+                         <col>
+							<cell>
+								<cell-label>Row 2 Col 1</cell-label>
+								<cell-type>type-1</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 2 Col 2</cell-label>
+								<cell-type>type-2</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 2 Col 3</cell-label>
+								<cell-type>type-3</cell-type>
+							</cell>
+						</col>
+                    </row>
+                    <row>
+                         <col>
+							<cell>
+								<cell-label>Row 3 Col 1</cell-label>
+								<cell-type>type-1</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 3 Col 2</cell-label>
+								<cell-type>type-2</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 3 Col 3</cell-label>
+								<cell-type>type-3</cell-type>
+							</cell>
+						</col>
+                    </row>
+                    <row>
+                         <col>
+							<cell>
+								<cell-label>Row 4 Col 1</cell-label>
+								<cell-type>type-1</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 4 Col 2</cell-label>
+								<cell-type>type-2</cell-type>
+							</cell>
+						</col>
+						<col>
+							<cell>
+								<cell-label>Row 4 Col 3</cell-label>
+								<cell-type>type-2</cell-type>
+							</cell>
+						</col>
+                    </row>
+                </data>
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <h1>Repeat Block and Inline</h1>
+        <div class="my-table-steps">
+            <xf:label class="group-label">Row:</xf:label>
+            <xf:repeat nodeset="instance('my-table')/row" id="row-repeat">
+                <div class="row" style="display:inline;">
+                    <div class="row-label" style="display:inline;">
+                        <xf:input ref="col[1]/cell/cell-label" id="cell-name"/>
+                    </div>
+                    <xf:trigger>
+                        <xf:label>+</xf:label>
+                        <xf:action ev:event="DOMActivate">
+                            <xf:insert nodeset="instance('my-table')/row" at="index('row-repeat')" position="after"/>
+                            <xf:setvalue ref="instance('my-table')/row[index('row-repeat')]/row-name" value="''"/>
+                              <!-- should insert on the new row -->
+                            <xf:setfocus control="row-name"/>
+                        </xf:action>
+                    </xf:trigger>
+                    <xf:trigger>
+                        <xf:label>-</xf:label>
+                        <xf:delete nodeset="instance('my-table')/row[index('row-repeat')]" ev:event="DOMActivate"/>
+                    </xf:trigger>
+                </div>
+            </xf:repeat>
+        </div>
+
+          <!-- this is always showing the selected row-->
+        <div class="inspector">
+            <xf:label class="group-label">Activity Inspector:</xf:label>
+            <xf:repeat nodeset="instance('my-table')/row[index('row-repeat')=position()]" style="display:inline">
+            	<xf:input ref="col[1]/cell/cell-label">
+						<xf:label>Call Label:</xf:label>
+				</xf:input>
+            </xf:repeat>
+        </div>
+    </body>
+</html>

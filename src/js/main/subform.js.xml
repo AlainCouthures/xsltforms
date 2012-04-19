@@ -1,0 +1,105 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="subforms.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2010-06-11</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_subform" class ===
+Global class for XForms Management</cm:wiki>
+		<![CDATA[
+function XsltForms_subform(subform, id, eltid) {
+	this.subform = subform;
+	this.id = id;
+	this.eltid = eltid;
+	if (eltid) {
+		document.getElementById(eltid).xfSubform = this;
+	}
+	this.models = [];
+	this.instances = [];
+	this.binds = [];
+	this.xpaths = [];
+	this.subforms = [];
+	this.ready = false;
+	if (subform) {
+		subform.subforms.push(this);
+	}
+	XsltForms_subform.subforms[id] = this;
+}
+
+XsltForms_subform.subforms = [];
+]]>
+		<cm:wiki>
+* '''construct''' method : reconstructs the models for this object</cm:wiki>
+<![CDATA[
+XsltForms_subform.prototype.construct = function() {
+	for (var i = 0, len = this.instances.length; i < len; i++) {
+		this.instances[i].construct(this);
+	}
+	XsltForms_browser.forEach(this.binds, "refresh");
+	this.ready = true;
+};
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears the properties and recycles the associated nodes</cm:wiki>
+<![CDATA[
+XsltForms_subform.prototype.dispose = function() {
+	var scriptelt = document.getElementById(this.id + "-script");
+	scriptelt.parentNode.removeChild(scriptelt);
+	for (var h = 0, len0 = this.subforms.length; h < len0; h++) {
+		this.subforms[h].dispose();
+	}
+	this.subforms = null;
+	for (var i = 0, len = this.models.length; i < len; i++) {
+		this.models[i].dispose(this);
+	}
+	this.models = null;
+	for (var j = 0, len2 = this.instances.length; j < len2; j++) {
+		this.instances[j].dispose(this);
+	}
+	this.instances = null;
+	for (var k = 0, len3 = this.xpaths.length; k < len3; k++) {
+		this.xpaths[k].dispose(this);
+	}
+	this.xpaths = null;
+	this.binds = null;
+	XsltForms_globals.dispose(this.id);
+	XsltForms_subform.subforms[this.id] = null;
+	var parentform = this.subform;
+	if (parentform) {
+		var parentsubforms = parentform.subforms;
+		for (var l = 0, len4 = parentsubforms.length; l < len4; l++) {
+			if (parentsubforms[l] === this) {
+				if (l < len4 - 1) {
+					parentsubforms[l] = parentsubforms[len4 - 1];
+				}
+				parentsubforms.pop();
+				break;
+			}
+		}
+	}
+};
+
+]]>
+	</cm:source>
+</cm:component>

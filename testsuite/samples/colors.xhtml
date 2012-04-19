@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<title>Background Colors</title>
+		<xf:model>
+			<xf:instance>
+				<colors xmlns="">
+					<color name="Blue" code="#0000FF"/>
+					<color name="Green" code="#00FF00"/>
+					<color name="Olive" code="#808000"/>
+					<color name="Orange" code="#F87A17"/>
+					<color name="Pink" code="#FFC0CB"/>
+					<color name="Purple" code="#800080"/>
+					<color name="Red" code="#FF0000"/>
+					<color name="Yellow" code="#FFFF00"/>
+				</colors>
+			</xf:instance>
+		</xf:model>
+		<script id="myscript" type="text/javascript">
+			function luminosity(c) {
+				var r = parseInt(c.substr(1,2), 16);
+				var g = parseInt(c.substr(3,2), 16);
+				var b = parseInt(c.substr(5,2), 16);
+				return 0.2126 * Math.pow(r/255, 2.2) + 0.7152 * Math.pow(g/255, 2.2) + 0.0722 * Math.pow(b/255, 2.2);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Background Colors</h1>
+		<p>Use of Attribute Value Templates, Direct Javascript Function Calls and Javascript Evaluation.</p>
+		<xf:repeat nodeset="color">
+			<span style="background-color:{@code}; color:{choose(luminosity(@code) &gt; 0.5,'black','white')}">&#xA0;<xf:output value="@name"/>&#xA0;</span>
+		</xf:repeat>
+		<p>Javascript function source for luminosity extracted from HTML DOM:
+		<pre><xf:output value="js-eval('document.getElementById(&quot;myscript&quot;).innerHTML')"/></pre>
+		</p>
+	</body>
+</html>

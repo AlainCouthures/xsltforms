@@ -1,0 +1,86 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Invoice</title>
+      <link rel="stylesheet"  type="text/css" href="xforms.css"/>
+      <xf:model>
+         <xf:instance xmlns="" id="invoice" src="new-instance.xml"/>
+         <xf:bind nodeset="instance('invoice')/InvoiceDate" type="xs:date"/>
+          <xf:bind nodeset="instance('invoice')/PaidIndicator" type="xs:boolean"/>
+         <xf:bind id="total" nodeset="instance('invoice')/TotalAmount" calculate="sum(instance('invoice')/LineItems/Item/Amount)"/>
+      </xf:model>
+   </head>
+   <body>
+   <h1>Invoice</h1>
+   
+      <xf:input ref="InvoiceID" class="newline">
+         <xf:label>Invoice Number: </xf:label>
+      </xf:input>
+      
+      <xf:input ref="InvoiceDate"  class="newline">
+         <xf:label>Invoice Date: </xf:label>
+      </xf:input>
+      
+      <xf:group ref="instance('invoice')/From">
+         <xf:label class="group-label">From: </xf:label>
+         <xf:input ref="OrganizationName" class="newline">
+            <xf:label>Company: </xf:label>
+         </xf:input>
+         <xf:textarea ref="OrganizationAddress" class="newline">
+            <xf:label>Address:</xf:label>
+         </xf:textarea>
+      </xf:group>
+      
+       <xf:group ref="instance('invoice')/To">
+         <xf:label class="group-label">To:</xf:label>
+         <xf:input ref="OrganizationName"  class="newline">
+            <xf:label>Company: </xf:label>
+         </xf:input>
+         <xf:textarea ref="OrganizationAddress"  class="newline">
+            <xf:label>Address:</xf:label>
+         </xf:textarea>
+      </xf:group>
+      
+      <table>
+         <thead>
+            <tr>
+               <th class="Description">Description</th>
+                <th class="Amount">Amount</th>
+            </tr>
+         </thead>
+      </table>
+      
+      <xf:repeat nodeset="instance('invoice')/LineItems/Item">
+         <xf:input ref="Description" class="Description"/>
+         <xf:input ref="Amount" class="Amount"/>
+      </xf:repeat>
+      
+      <xf:input bind="total"  class="Amount">
+            <xf:label>Total: </xf:label>
+         </xf:input>
+         
+         <xf:select1 ref="InvoiceTermsCode"  class="newline">
+            <xf:label>Terms: </xf:label>
+             <xf:item>
+               <xf:label>Payable on Receipt</xf:label>
+               <xf:value>payable-on-receipt</xf:value>
+            </xf:item>
+            <xf:item>
+               <xf:label>Net 30</xf:label>
+               <xf:value>net-30</xf:value>
+            </xf:item>
+            <xf:item>
+               <xf:label>2% discount if paid withn 10 days, Net 30</xf:label>
+               <xf:value>2-10-net-30</xf:value>
+            </xf:item>
+            <xf:item>
+               <xf:label>Net 60</xf:label>
+               <xf:value>net-60</xf:value>
+            </xf:item>
+         </xf:select1>
+         
+         <xf:input ref="PaidIndicator"  class="newline">
+            <xf:label>Paid:</xf:label>
+         </xf:input>
+         
+   </body>
+</html>

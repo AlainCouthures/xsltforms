@@ -1,0 +1,111 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="ExprContext.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== XsltForms_exprContext Class ===
+Context for XPath Expression evaluation Class
+* constructor function : initializes specific properties</cm:wiki>
+		<![CDATA[
+function XsltForms_exprContext(node, position, nodelist, parent, nsresolver, current, depsNodes, depsId, depsElements) {
+	this.node = node;
+	this.current = current || node;
+	if(!position) {
+		var repeat = node && node.nodeType ? XsltForms_browser.getMeta(node, "repeat") : null;
+		if(repeat) {
+			var xrepeat = document.getElementById(repeat).xfElement;
+			var len;
+			for(position = 1, len = xrepeat.nodes.length; position <= len; position++) {
+				if(node === xrepeat.nodes[position-1]) {
+					break;
+				}
+			}
+		}
+	}
+	this.position = position || 1;
+	this.nodelist = nodelist || [ node ];
+	this.parent = parent;
+	this.root = parent ? parent.root : node ? node.ownerDocument : null;
+	this.nsresolver = nsresolver;
+	this.depsId = depsId;
+	this.initDeps(depsNodes, depsElements);
+}
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new expression context based on this Expression Context object</cm:wiki>
+<![CDATA[
+XsltForms_exprContext.prototype.clone = function(node, position, nodelist) {
+	return new XsltForms_exprContext(node || this.node, 
+		typeof position === "undefined" ? this.position : position,
+		nodelist || this.nodelist, this, this.nsresolver, this.current,
+		this.depsNodes, this.depsId, this.depsElements);
+};
+
+]]>
+		<cm:wiki>
+* '''setNode''' method : set node and position properties for this Expression Context object</cm:wiki>
+<![CDATA[
+XsltForms_exprContext.prototype.setNode = function(node, position) {
+	this.node = node;
+	this.position = position;
+};
+
+]]>
+		<cm:wiki>
+* '''initDeps''' method : initializes dependency collections for this Expression Context object</cm:wiki>
+<![CDATA[
+XsltForms_exprContext.prototype.initDeps = function(depsNodes, depsElements) {
+	this.depsNodes = depsNodes;
+	this.depsElements = depsElements;
+};
+
+]]>
+		<cm:wiki>
+* '''addDepNode''' method : adds a node to the corresponding dependency collection for this Expression Context object</cm:wiki>
+<![CDATA[
+XsltForms_exprContext.prototype.addDepNode = function(node) {
+	var deps = this.depsNodes;
+	if (deps && node.nodeType && node.nodeType !== XsltForms_nodeType.DOCUMENT && (!this.depsId || !XsltForms_browser.inValueMeta(node, "depfor", this.depsId))) { // !inArray(node, deps)) {
+		if (this.depsId) {
+			XsltForms_browser.addValueMeta(node, "depfor", this.depsId);
+		}
+		deps.push(node);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''addDepElement''' method : adds an element to the corresponding dependency collection for this Expression Context object</cm:wiki>
+<![CDATA[
+XsltForms_exprContext.prototype.addDepElement = function(element) {
+	var deps = this.depsElements;
+	if (deps && !XsltForms_browser.inArray(element, deps)) {
+		deps.push(element);
+	}
+};
+]]>
+	</cm:source>
+</cm:component>

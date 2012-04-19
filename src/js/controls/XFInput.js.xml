@@ -1,0 +1,370 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFInput.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_input" class ===
+Input Control  Class
+* constructor function : initializes specific properties including aid button management</cm:wiki>
+		<![CDATA[
+function XsltForms_input(subform, id, valoff, itype, binding, inputmode, incremental, delay, mediatype, aidButton, clone) {
+	XsltForms_globals.counters.input++;
+	this.init(subform, id);
+	this.binding = binding;
+	this.inputmode = typeof inputmode === "string"? XsltForms_input.InputMode[inputmode] : inputmode;
+	this.incremental = incremental;
+	this.delay = delay;
+	this.timer = null;
+	var cells = this.element.children;
+	this.valoff = valoff;
+	this.cell = cells[valoff];
+	this.isClone = clone;
+	this.hasBinding = true;
+	this.itype = itype;
+	this.bolAidButton = aidButton;
+	this.mediatype = mediatype;
+	this.initFocus(this.cell.children[0], true);
+	if (aidButton) {
+		this.aidButton = cells[valoff + 1].children[0];
+		this.initFocus(this.aidButton);
+	}
+}
+
+XsltForms_input.prototype = new XsltForms_control();
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new input with the given id</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.clone = function(id) { 
+	return new XsltForms_input(this.subform, id, this.valoff, this.itype, this.binding, this.inputmode, this.incremental, this.delay, this.mediatype, this.bolAidButton, true);
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears properties of this element and calls the parent dispose() method</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.dispose = function() {
+	this.cell = null;
+	this.calendarButton = null;
+	XsltForms_globals.counters.input--;
+	XsltForms_control.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''initInput''' method : initializes the input control according to its type (password/textarea/boolean/date/datetime)</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.initInput = function(type) {
+	var cell = this.cell;
+	var input = cell.children[0];
+	var tclass = type["class"];
+	if (input.type === "password") {
+		this.type = XsltForms_schema.getType("xsd_:string");
+		this.initEvents(input, true);
+	} else if (input.nodeName.toLowerCase() === "textarea") {
+		this.type = type;
+		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
+			input.id = this.element.id + "_textarea";
+			var initinfo;
+			eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
+			initinfo.mode = "none";
+			initinfo.setup = function(ed) {
+				ed.onKeyUp.add(function(ed) {
+					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+				});
+				ed.onChange.add(function(ed) {
+					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+				});
+				ed.onUndo.add(function(ed) {
+					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+				});
+				ed.onRedo.add(function(ed) {
+					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+				});
+			};
+			tinyMCE.init(initinfo);
+			tinyMCE.execCommand("mceAddControl", true, input.id);
+		}
+		this.initEvents(input, false);
+	} else if (type !== this.type) {
+		this.type = type;
+		if (tclass === "boolean" || this.itype !== input.type) {
+			while (cell.firstChild) {
+				cell.removeChild(cell.firstChild);
+			}
+		} else {
+			while (cell.firstChild.nodeType === XsltForms_nodeType.TEXT) {
+				cell.removeChild(cell.firstChild);
+			}
+			for (var i = cell.childNodes.length - 1; i >= 1; i--) {
+				cell.removeChild(cell.childNodes[i]);
+			}
+		}
+		if (tclass === "boolean") {
+			input = XsltForms_browser.createElement("input");
+			input.type = "checkbox";
+			cell.appendChild(input);
+		} else {
+			if(this.itype !== input.type) {
+				input = XsltForms_browser.createElement("input", cell, null, "xforms-value");
+			}
+			this.initEvents(input, (this.itype === "text"));
+			if (tclass === "date" || tclass === "datetime") {
+				this.calendarButton = XsltForms_browser.createElement("button", cell, "...", "aid-button");
+				this.calendarButton.setAttribute("type", "button");
+				this.initFocus(this.calendarButton);
+			} else if (tclass === "number") {
+				input.style.textAlign = "right";
+			}
+			var max = type.getMaxLength();
+			if (max) {
+				input.maxLength = max;
+			} else {
+				input.removeAttribute("maxLength");
+			}
+			var length = type.getDisplayLength();
+			if (length) { 
+				input.size = length;
+			} else { 
+				input.removeAttribute("size");
+			}
+		}
+	}
+	this.initFocus(input, true);
+	this.input = input;
+};
+
+]]>
+		<cm:wiki>
+* '''setValue''' method : sets the value of this input control according to its type</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.setValue = function(value) {
+	var node = this.element.node;
+	var type = node ? XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string") : XsltForms_schema.getType("xsd_:string");
+	if (!this.input || type !== this.type) {
+		this.initInput(type);
+		this.changeReadonly();
+	}
+	if (type["class"] === "boolean") {
+		this.input.checked = value === "true";
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinyMCE.get(this.input.id) && tinyMCE.get(this.input.id).getContent() !== value) {
+		tinyMCE.get(this.input.id).setContent(value);
+	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
+		this.input.value = value || "";
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''changeReadonly''' method : changes the read only state of this input control</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.changeReadonly = function() {
+	if (this.input) {
+		this.input.readOnly = this.readonly;
+		if (this.calendarButton) {
+			this.calendarButton.style.display = this.readonly ? "none" : "";
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''initEvents''' method : initializes the event management according to incremental capability</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.initEvents = function(input, canActivate) {
+	if (this.inputmode) {
+		XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpInputMode);
+	}
+	if (canActivate) {
+		XsltForms_browser.events.attach(input, "keydown", XsltForms_input.keyDownActivate);
+		XsltForms_browser.events.attach(input, "keypress", XsltForms_input.keyPressActivate);
+		if (this.incremental) {
+			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpIncrementalActivate);
+		} else {
+			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpActivate);
+		}
+	} else {
+		if (this.incremental) {
+			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpIncremental);
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''blur''' method : manages the blur event when not in incremental mode</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.blur = function(target) {
+	XsltForms_globals.focus = null;
+	var input = this.input;
+	var value;
+	if (!this.incremental) {
+		XsltForms_browser.assert(input, this.element.id);
+		value = input.type === "checkbox"? (input.checked? "true" : "false") : input.nodeName.toLowerCase() !== "textarea" ? input.value : (this.type.rte && this.type.rte.toLowerCase() === "tinymce") ? tinyMCE.get(input.id).getContent() : input.value;
+		this.valueChanged(value);
+	} else {
+		var node = this.element.node;
+		value = input.value;
+		if (value && value.length > 0 && XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format) {
+			try { input.value = XsltForms_browser.getValue(node, true); } catch(e) { }
+		}
+		if (this.timer) {
+			window.clearTimeout(this.timer);
+			this.timer = null;
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''click''' method : manages the click event according to the input control type</cm:wiki>
+<![CDATA[
+XsltForms_input.prototype.click = function(target) {
+	if (target === this.aidButton) {
+		XsltForms_globals.openAction();
+		XsltForms_xmlevents.dispatch(this, "ajx-aid");
+		XsltForms_globals.closeAction();
+	} else if (target === this.input && this.type["class"] === "boolean") {
+		XsltForms_globals.openAction();
+		this.valueChanged(target.checked? "true" : "false");
+		XsltForms_xmlevents.dispatch(this, "DOMActivate");
+		XsltForms_globals.closeAction();
+	} else if (target === this.calendarButton) {
+		XsltForms_calendar.show(target.previousSibling, this.type["class"] === "datetime"? XsltForms_calendar.SECONDS : XsltForms_calendar.ONLY_DATE);
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''keyUpInputMode''' function : updates this input control value after key up</cm:wiki>
+<![CDATA[
+XsltForms_input.keyUpInputMode = function() {
+	var xf = XsltForms_control.getXFElement(this);
+	this.value = xf.inputmode(this.value);
+};
+
+]]>
+		<cm:wiki>
+* '''keyDownActivate''' function : records the key code when down</cm:wiki>
+<![CDATA[
+XsltForms_input.keyDownActivate = function(a) {
+	this.keyDownCode = a.keyCode;
+};
+
+]]>
+		<cm:wiki>
+* '''keyPressActivate''' function : records the key code when pressed</cm:wiki>
+<![CDATA[
+XsltForms_input.keyPressActivate = function(a) {
+	this.keyPressCode = a.keyCode;
+};
+
+]]>
+		<cm:wiki>
+* '''keyUpActivate''' function : checks if Enter key was pressed to dispatch DOMActivate</cm:wiki>
+<![CDATA[
+XsltForms_input.keyUpActivate = function(a) {
+	var xf = XsltForms_control.getXFElement(this);
+	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
+		XsltForms_globals.openAction();
+		xf.valueChanged(this.value || "");
+		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
+		XsltForms_globals.closeAction();
+	}
+	this.keyDownCode = this.keyPressCode = null;
+};
+
+]]>
+		<cm:wiki>
+* '''keyUpIncrementalActivate''' function : checks if Enter key was pressed to dispatch DOMActivate in incremental mode</cm:wiki>
+<![CDATA[
+XsltForms_input.keyUpIncrementalActivate = function(a) {
+	var xf = XsltForms_control.getXFElement(this);
+	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
+		XsltForms_globals.openAction();
+		xf.valueChanged(this.value || "");
+		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
+		XsltForms_globals.closeAction();
+	} else {
+		if (xf.delay && xf.delay > 0) {
+			if (xf.timer) {
+				window.clearTimeout(xf.timer);
+			}
+			xf.timer = window.setTimeout("XsltForms_globals.openAction();document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction();", xf.delay);
+		} else {
+			XsltForms_globals.openAction();
+			xf.valueChanged(this.value || "");
+			XsltForms_globals.closeAction();
+		}
+	}
+	this.keyDownCode = this.keyPressCode = null;
+};
+
+]]>
+		<cm:wiki>
+* '''keyUpIncremental''' function : updates this input control value after key up in incremental mode</cm:wiki>
+<![CDATA[
+XsltForms_input.keyUpIncremental = function() {
+	var xf = XsltForms_control.getXFElement(this);
+	if (xf.delay && xf.delay > 0) {
+		if (xf.timer) {
+			window.clearTimeout(xf.timer);
+		}
+		xf.timer = window.setTimeout("XsltForms_globals.openAction();document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction();", xf.delay);
+	} else {
+		XsltForms_globals.openAction();
+		xf.valueChanged(this.value || "");
+		XsltForms_globals.closeAction();
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''InputMode''' functions set : specific check function for each possible input mode (lowerCase/upperCase/titleCase/digits)</cm:wiki>
+<![CDATA[
+XsltForms_input.InputMode = {
+	lowerCase : function(value) { return value.toLowerCase(); },
+	upperCase : function(value) { return value.toUpperCase(); },
+	titleCase : function(value) { return value.charAt(0).toUpperCase() + value.substring(1).toLowerCase(); },
+	digits : function(value) {
+		if (/^[0-9]*$/.exec(value)) {
+			return value;
+		} else {
+			alert("Character not valid");
+			var digits = "1234567890";
+			var newValue = "";
+			for (var i = 0, len = value.length; i < len; i++) {
+				if (digits.indexOf(value.charAt(i)) !== -1) {
+					newValue += value.charAt(i);
+				}
+			}
+			return newValue;
+		}
+	}
+};
+]]>
+	</cm:source>
+</cm:component>

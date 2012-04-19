@@ -1,0 +1,72 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+    xmlns:xf="http://www.w3.org/2002/xforms"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <head>
+        <xf:model>
+            <xf:instance id="data" xmlns="">
+                <data>
+                    <item>
+                        <title>red</title>
+                    </item>
+                    <item>
+                        <title>orange</title>
+                    </item>
+                    <item>
+                        <title>yellow</title>
+                    </item>
+                    <item>
+                        <title>green</title>
+                    </item>
+                    <item>
+                        <title>blue</title>
+                    </item>
+                    <item>
+                        <title>indigo</title>
+                    </item>
+                    <item>
+                        <title>violet</title>
+                    </item>
+                    <item>
+                        <title>black</title>
+                    </item>
+                    <item>
+                        <title>biege</title>
+                    </item>
+                    <item>
+                        <title>brown</title>
+                    </item>
+                </data>
+            </xf:instance>
+            <xf:instance id="search" xmlns="">
+                <search>
+                    <filter />
+                </search>
+            </xf:instance>
+            <xf:instance id="selected-data" xmlns="">
+                <data>
+                    <item />
+                </data>
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <xf:input ref="instance('search')/filter" incremental="true">
+            <xf:label>Starts with filter: </xf:label>
+        </xf:input>
+        <br />
+        <xf:repeat nodeset="instance('data')/item[title[starts-with(.,
+            instance('search')/filter)]]" id="data-list">
+            <xf:trigger>
+                <xf:label>Select</xf:label>
+                <xf:action ev:event="DOMActivate">
+                    <xf:setvalue ref="instance('selected-data')/item" value="instance('data')/item[title[starts-with(.,instance('search')/filter)]][index('data-list')]/title" /> 
+                </xf:action>
+            </xf:trigger>
+            <xf:output ref="title" />
+        </xf:repeat>
+        <xf:output ref="instance('selected-data')/item">
+            <xf:label>Selected: </xf:label>
+        </xf:output>
+    </body>
+</html>

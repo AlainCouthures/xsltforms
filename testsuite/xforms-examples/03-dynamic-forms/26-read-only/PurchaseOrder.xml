@@ -1,0 +1,18 @@
+<PurchaseOrder xmlns="">
+   <BillToAddress>
+      <OrganizationName>MegaCorp IT Dept.</OrganizationName>
+      <LocationStreetFullText>123 Main St.</LocationStreetFullText>
+      <LocationStreetFullText2>Mailstop 47</LocationStreetFullText2>
+      <LocationCityName>Anytown</LocationCityName>
+      <LocationStateName>Minnesota</LocationStateName>
+      <LocationPostalID>55123</LocationPostalID>
+   </BillToAddress>
+   <ShipToAddress>
+      <PersonName>John Jones</PersonName>
+      <LocationStreetFullText>123 Main Street SE</LocationStreetFullText>
+      <LocationStreetFullText2>Apartment 123</LocationStreetFullText2>
+      <LocationCityName>Anytown</LocationCityName>
+      <LocationStateName>Minnesota</LocationStateName>
+      <LocationPostalID>55123</LocationPostalID>
+   </ShipToAddress>
+</PurchaseOrder>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="Transform-ContactDocument-schema-to-XForms">
+    <property name="SchemaDir" value="."/>
+    <property name="OutDir" value="xforms"/>
+	<property name="processor" value="trax"/>
+    <property name="saxon8jar" value="C:\Apps\saxon8.9\saxon8.jar"/>
+	<property name="antHome" value="C:/Apps/apache-ant-1.7.0"/>
+	
+	<target name="PrintEnvironment" description="Test XSLT 2.0 features">
+			<echo message="Testing ${saxon8jar}"/>
+			<xslt in="ContactsDocument.xsd"
+				out="xsl-version-information.htm"
+				style="xsl/print-environment.xsl"
+				classpath="${saxon8jar};${antHome}/lib/ant-trax.jar"
+				processor="${processor}" >
+			</xslt>
+			
+			<!-- cat to the console also -->
+			<concat>
+				<filelist dir="." files="xsl-version-information.htm"/>
+			</concat>
+		</target>
+	
+	
+    <target name="Transform-ContactDocument-schema-to-XForms">
+        <xslt
+            in="ContactsDocument.xsd"
+            out="${OutDir}/ContactXForm.xhtml"
+            style="xsl/schema2xforms.xsl"
+            classpath="${saxon8jar};${antHome}/lib/ant-trax.jar"
+            processor="${processor}" >
+        </xslt>
+    </target>
+    <target name="Transform-ContactDocument-v2-schema-to-XForms">
+        <xslt
+            in="scheams/ContactDocument.xsd"
+            out="${OutDir}/ContactXForm-v2.xhtml"
+            style="xsl/schema2xforms.xsl"
+            classpath="${saxon8jar};${antHome}/lib/ant-trax.jar"
+            processor="${processor}" >
+        </xslt>
+    </target>
+</project>

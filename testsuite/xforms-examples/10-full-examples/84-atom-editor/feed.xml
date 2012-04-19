@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atom:feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:atom="http://www.w3.org/2005/Atom">
+	<atom:author>
+		<atom:name>String</atom:name>
+		<atom:uri>http://www.example.com</atom:uri>
+		<atom:email>x@x.x</atom:email>
+	</atom:author>
+	<atom:category term="String"/>
+	<atom:contributor>
+		<atom:name>String</atom:name>
+		<atom:uri>http://www.example.com</atom:uri>
+		<atom:email>x@x.x</atom:email>
+	</atom:contributor>
+	<atom:generator>String</atom:generator>
+	<atom:icon>http://www.example.com</atom:icon>
+	<atom:id>http://www.example.com</atom:id>
+	<atom:link href="http://www.example.com">text</atom:link>
+	<atom:logo>http://www.example.com</atom:logo>
+	<atom:rights>text</atom:rights>
+	<atom:subtitle>text</atom:subtitle>
+	<atom:title>text</atom:title>
+	<atom:updated>2001-12-17T09:30:47.0Z</atom:updated>
+	<atom:entry>
+		<atom:author>
+			<atom:name>John Doe</atom:name>
+			<atom:uri>http://www.example.com</atom:uri>
+			<atom:email>x@x.x</atom:email>
+		</atom:author>
+		<atom:category term="String"/>
+		<atom:content>text</atom:content>
+		<atom:contributor>
+			<atom:name>String</atom:name>
+			<atom:uri>http://www.example.com</atom:uri>
+			<atom:email>x@x.x</atom:email>
+		</atom:contributor>
+		<atom:id>http://www.example.com</atom:id>
+		<atom:link href="http://www.example.com">text</atom:link>
+		<atom:published>2001-12-17T09:30:47.0Z</atom:published>
+		<atom:rights>text</atom:rights>
+		<atom:source>text</atom:source>
+		<atom:summary>text</atom:summary>
+		<atom:title>text</atom:title>
+		<atom:updated>2001-12-17T09:30:47.0Z</atom:updated>
+	</atom:entry>
+</atom:feed>

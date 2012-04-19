@@ -1,0 +1,80 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="closepar.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template name="closepar" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="s"/>
+			<xsl:param name="args"/>
+			<xsl:param name="ops"/>
+			<xsl:variable name="c" select="substring(normalize-space($s),1,1)"/>
+			<xsl:choose>
+				<xsl:when test="$c = ')'">
+					<xsl:variable name="stacks">
+						<xsl:call-template name="calc">
+							<xsl:with-param name="args" select="$args"/>
+							<xsl:with-param name="ops" select="$ops"/>
+							<xsl:with-param name="opprec" select="998"/>
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:variable name="args3len" select="substring-before($stacks,'.')"/>
+					<xsl:variable name="args3" select="substring(substring-after($stacks,'.'),1,number($args3len))"/>
+					<xsl:variable name="nextstack" select="substring($stacks,string-length($args3len)+2+number($args3len))"/>
+					<xsl:variable name="ops3len" select="substring-before($nextstack,'.')"/>
+					<xsl:variable name="ops3" select="substring(substring-after($nextstack,'.'),1,number($ops3len))"/>
+					<xsl:choose>
+						<xsl:when test="starts-with($ops3,'5.999.(')">
+							<xsl:call-template name="closepar">
+								<xsl:with-param name="s" select="substring-after($s,$c)"/>
+								<xsl:with-param name="args" select="$args3"/>
+								<xsl:with-param name="ops" select="substring($ops3,8)"/>
+							</xsl:call-template>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:variable name="arg1len" select="substring-before($args3,'.')"/>
+							<xsl:variable name="arg1val" select="substring(substring-after($args3,'.'),1,number($arg1len))"/>
+							<xsl:variable name="oplen" select="substring-before($ops3,'.')"/>
+							<xsl:variable name="opval" select="substring(substring-after($ops3,'.'),1,number($oplen))"/>
+							<xsl:variable name="newarg1">
+								<xsl:text>new XsltForms_functionCallExpr('</xsl:text>
+								<xsl:call-template name="fctfullname">
+									<xsl:with-param name="fctname" select="substring-after($opval,'.')"/>
+								</xsl:call-template>
+								<xsl:text>',</xsl:text>
+								<xsl:value-of select="$arg1val"/>
+								<xsl:text>)</xsl:text>
+							</xsl:variable>
+							<xsl:call-template name="closepar">
+								<xsl:with-param name="s" select="substring-after($s,$c)"/>
+								<xsl:with-param name="args" select="concat(string-length($newarg1),'.',$newarg1,substring($args3,string-length($arg1len)+2+number($arg1len)))"/>
+								<xsl:with-param name="ops" select="substring($ops3,string-length($oplen)+2+number($oplen))"/>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat(string-length($s),'.',$s,string-length($args),'.',$args,string-length($ops),'.',$ops)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:template>
+	</cm:source>
+</cm:component>

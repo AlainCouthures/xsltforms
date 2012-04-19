@@ -1,0 +1,243 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFControl.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_control" class ===
+Control  Class
+* constructor function : just sets this element as a control</cm:wiki>
+		<![CDATA[
+function XsltForms_control() {
+	this.isControl = true;
+}
+
+XsltForms_control.prototype = new XsltForms_element();
+
+]]>
+		<cm:wiki>
+* '''initFocus''' method : attaches event handlers for "focus" and "blur"</cm:wiki>
+<![CDATA[
+XsltForms_control.prototype.initFocus = function(element, principal) {
+	if (principal) {
+		this.focusControl = element;
+	}
+	XsltForms_browser.events.attach(element, "focus", XsltForms_control.focusHandler);
+	XsltForms_browser.events.attach(element, "blur", XsltForms_control.blurHandler);
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : calls the parent "dispose()" method</cm:wiki>
+<![CDATA[
+XsltForms_control.prototype.dispose = function() {
+	this.focusControl = null;
+	XsltForms_element.prototype.dispose.call(this);
+};
+
+]]>
+		<cm:wiki>
+* '''focus''' method : manages focus and dispatches the "DOMFocusIn" event</cm:wiki>
+<![CDATA[
+XsltForms_control.prototype.focus = function(focusEvent) {
+	if (this.isOutput) {
+		return;
+	}
+	if (XsltForms_globals.focus !== this) {
+		XsltForms_globals.openAction();
+		XsltForms_globals.blur(true);
+		XsltForms_globals.focus = this;
+		XsltForms_browser.setClass(this.element, "xforms-focus", true);
+		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
+		var parent = this.element.parentNode;
+		while (parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			if (typeof parent.node !== "undefined" && XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
+				XsltForms_repeat.selectItem(parent);
+			}
+			parent = parent.parentNode;
+		}
+		XsltForms_xmlevents.dispatch(XsltForms_globals.focus, "DOMFocusIn");
+		XsltForms_globals.closeAction();
+		if (this.full && !focusEvent) { // select full
+			this.focusFirst();
+		}
+	}
+	var fcontrol = this.focusControl;
+	XsltForms_globals.posibleBlur = false;
+	if (fcontrol && !focusEvent) {
+		var control = this.focusControl;
+		var name = control.nodeName.toLowerCase();
+		control.focus();
+		control.focus();
+		if (name === "input" || name === "textarea") {
+			try {
+				control.select();
+			} catch (e) {
+			}
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''build_''' method : specific build method updating dependencies</cm:wiki>
+<![CDATA[
+XsltForms_control.prototype.build_ = function(ctx) {
+	var result = this.evaluateBinding(this.binding, ctx);
+	if (typeof result === "object") {
+		var node = result[0];
+		var element = this.element;
+		var old = element.node;
+		if (old !== node || !XsltForms_globals.ready) {
+			element.node = node;
+			this.nodeChanged = true;
+		}
+		if (node) {
+			this.depsNodesRefresh.push(node);
+		}
+	} else {
+		this.outputValue = result;
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''refresh''' method : refreshes this control according to the value of the corresponding node and dispatches according events</cm:wiki>
+<![CDATA[
+XsltForms_control.prototype.refresh = function() {
+	var element = this.element;
+	var node = element.node;
+	if (node) {
+		var value = XsltForms_browser.getValue(node, true, this.complex);
+		XsltForms_globals.openAction();
+		var changed = value !== this.currentValue || this.nodeChanged;
+		if (this.relevant) {
+			XsltForms_browser.setClass(element, "xforms-disabled", false);
+		}
+		this.changeProp(node, "required", "xforms-required", "xforms-optional", changed, value);
+		this.changeProp(node, "notrelevant", "xforms-disabled", "xforms-enabled", changed, value);
+		this.changeProp(node, "readonly", "xforms-readonly", "xforms-readwrite", changed, value);
+		this.changeProp(node, "notvalid", "xforms-invalid", "xforms-valid", changed, value);
+		this.currentValue = value;
+		if (changed) {
+			this.setValue(value);
+			if (!this.nodeChanged && !this.isTrigger) {
+				XsltForms_xmlevents.dispatch(element, "xforms-value-changed");
+			}
+		}
+		XsltForms_globals.closeAction();
+	} else if (this.outputValue !== undefined) {
+		this.setValue(this.outputValue);
+		XsltForms_browser.setClass(element, "xforms-disabled", false);
+	} else {
+		XsltForms_browser.setClass(element, "xforms-disabled", !this.hasValue);
+	}
+	this.nodeChanged = false;
+};
+
+]]>
+		<cm:wiki>
+* '''changeProp''' method : changes a property, such as '''required''', '''relevant''', '''readonly''' and '''valid''', of this control</cm:wiki>
+<![CDATA[
+XsltForms_control.prototype.changeProp = function(node, prop, onTrue, onFalse, changed, nvalue) {
+	var value = XsltForms_browser.getBoolMeta(node, prop);
+	if (changed || value !== this[prop]) {
+		if (!this.nodeChanged && !this.isTrigger) {
+			XsltForms_xmlevents.dispatch(this.element, (value? onTrue : onFalse));
+		}
+		this[prop] = value;
+		if (prop === "notvalid" && nvalue === "") {
+			value = false;
+		}
+		XsltForms_browser.setClass(this.element, onTrue, value);
+		XsltForms_browser.setClass(this.element, onFalse, !value);
+		if(prop === "readonly" && this.changeReadonly) {
+			this.changeReadonly();
+		}
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''valueChanged''' method : changes the value of this control and dispatches the "xforms-recalculate" event</cm:wiki>
+<![CDATA[
+XsltForms_control.prototype.valueChanged = function(value) {
+	var node = this.element.node;
+	var model = document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement;
+	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
+	if (value && value.length > 0 && schtyp.parse) {
+		try { value = schtyp.parse(value); } catch(e) { }
+	}
+	if (value !== XsltForms_browser.getValue(node)) {
+		XsltForms_globals.openAction();
+		XsltForms_browser.setValue(node, value);
+		model.addChange(node);
+		//XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
+		//XsltForms_globals.refresh();
+		XsltForms_globals.closeAction();
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''getXFElement''' function : gets the ancestor-or-self XFElement value for an element</cm:wiki>
+<![CDATA[
+XsltForms_control.getXFElement = function(element) {
+	var xf = null;
+	while (!xf && element) {
+		xf = element.xfElement;
+		if (xf && !xf.isControl) {
+			xf = null;
+		}
+		element = element.parentNode;
+	}
+	return xf;
+};
+
+]]>
+		<cm:wiki>
+* '''focusHandler''' function : focus handler</cm:wiki>
+<![CDATA[
+XsltForms_control.focusHandler = function() {
+	var xf = XsltForms_control.getXFElement(this);
+	if (XsltForms_globals.focus !== xf) {
+		xf.focus(true);
+	} else {
+		XsltForms_globals.posibleBlur = false;
+	}
+};
+
+]]>
+		<cm:wiki>
+* '''blurHandler''' function : blur handler including a delay</cm:wiki>
+<![CDATA[
+XsltForms_control.blurHandler = function() {
+	if (XsltForms_control.getXFElement(this) === XsltForms_globals.focus) {
+		XsltForms_globals.posibleBlur = true;
+		setTimeout(function(){XsltForms_globals.blur();}, 200);
+	}
+};
+    ]]>
+	</cm:source>
+</cm:component>

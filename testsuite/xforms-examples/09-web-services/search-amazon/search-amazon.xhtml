@@ -1,0 +1,105 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"
+   xmlns:ev="http://www.w3.org/2001/xml-events">
+<head>
+   <title>Searching Amazon</title>
+   <xf:model id="mQuery">
+
+         <xf:instance id="iQuery">
+            <instanceData xmlns="">
+               <t>webservices-20</t>
+               <!-- please get your own key for any production work -->
+               <dev-t>D1723OX2631XW0</dev-t>
+               <KeywordSearch>xforms</KeywordSearch>
+               <mode>books</mode>
+               <type>lite</type>
+               <page>1</page>
+               <f>xml</f>
+            </instanceData>
+         </xf:instance>
+
+         <xf:instance id="iResults">
+            <instanceData xmlns=""/>
+         </xf:instance>
+
+         <xf:bind id="bndResults" nodeset="instance('iResults')/Details"/>
+
+         <xf:submission
+          id="subAmazonQuery"
+          action="http://xml.amazon.com/onca/xml3"
+          method="get"
+          separator="&amp;"
+          ref="instance('iQuery')"
+          replace="instance"
+          instance="iResults"
+          omit-xml-declaration="yes"/>
+
+         <xf:submission
+          id="subTestAmazonQuery"
+          action="http://xml.amazon.com/onca/xml3"
+          method="get"
+          separator="&amp;"
+          ref="instance('iQuery')"
+          replace="all"/>
+      </xf:model>
+
+      <!--Mozilla XForms Custom Control for binding images from results -->
+    <bindings id="xformsBindings"
+         xmlns="http://www.mozilla.org/xbl"
+         xmlns:html="http://www.w3.org/1999/xhtml">
+      <binding id="output-image"
+          extends="chrome://xforms/content/xforms.xml#xformswidget-base">
+         <content>
+           <html:div>
+             <html:img anonid="content" style="margin-right: 5px;"/>
+           </html:div>
+         </content>
+         <implementation implements="nsIXFormsUIWidget">
+            <method name="refresh">
+                <body>
+                  var img = document.getAnonymousElementByAttribute(this, "anonid", "content");
+                  img.setAttribute("src", this.stringValue);
+                  return true;
+                </body>
+           </method>
+         </implementation>
+      </binding>
+    </bindings>
+    <style type="text/css">
+      @namespace xf url(http://www.w3.org/2002/xforms);
+      body {
+         font-family: Helvetica, sans-serif;
+      }
+      <!-- Bind the custom control to output with class="image" -->
+      xf|output.image {
+        -moz-binding: url('#output-image');
+      }
+      </style>
+   </head>
+   <body>
+   <h1>Search Amazon With XForms Web Service</h1>
+           <xf:input ref="KeywordSearch">
+              <xf:label>Search string: </xf:label>
+           </xf:input>
+           <hr/>
+           <xf:submit submission="subAmazonQuery">
+              <xf:label>Search Amazon</xf:label>
+           </xf:submit>
+           <xf:submit submission="subTestAmazonQuery">
+              <xf:label>Show results as XML</xf:label>
+           </xf:submit>
+           <xf:repeat bind="bndResults">
+              <xf:output class="image" value="ImageUrlSmall"/>
+              <xf:trigger appearance="minimal" style="cursor: hand;">
+                  <xf:output ref="ProductName"><xf:label>Title: </xf:label></xf:output>
+                  <br/>
+                  <xf:output ref="Authors/Author"><xf:label>Author: </xf:label></xf:output>
+                 <xf:load ev:event="DOMActivate" ref="@url" show="new"/>
+              </xf:trigger>
+              <br/>
+              <hr/>
+           </xf:repeat>
+   </body>
+</html>

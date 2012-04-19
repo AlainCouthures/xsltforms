@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:xf="http://www.w3.org/2002/xforms" 
+   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <head>
+      <title>Taxonomy Selection</title>
+      <!-- the default model -->
+      <xf:model>
+         <xf:instance id="Codes" >
+            <Data xmlns="">
+               <PrimaryClassCode/>
+               <SecondaryClassCode/>
+            </Data>
+         </xf:instance>
+         <xf:bind id="primary" ref="instance('Codes')/Data/PrimaryClassCode"/>
+          <xf:bind id="secondary" ref="instance('Codes')/Data/SecondaryClassCode"/>
+      </xf:model>
+          
+         <!-- read the codes from an external file into this model -->
+         <xf:model id="bookTax">
+            <xf:instance id="bookTax" src="BookTaxonomy.xml"/>
+         </xf:model>
+      
+   </head>
+   <body>
+
+       <xf:select1 bind="primary">
+         <xf:label>Primary Classification:</xf:label>
+         <xf:itemset model="bookTax" nodeset="/BookTaxonomy/Primary/item">
+            <xf:label ref="label" />
+            <xf:value ref="value" />
+         </xf:itemset>
+       </xf:select1>
+       <br/>
+
+       <xf:output ref="/Data/PrimaryClassCode">
+          <xf:label>Primary: </xf:label>
+       </xf:output>
+        <br/>
+       
+       <xf:output bind="primary">
+          <xf:label>Primary via bind: </xf:label>
+       </xf:output>
+        <br/>
+       
+        <xf:output nodeset="instance('Codes')/Data/PrimaryClassCode">
+          <xf:label>Primary via instance: </xf:label>
+       </xf:output>
+       <br/>
+       
+       <xf:select1 ref="/Data/SecondaryClassCode">
+         <xf:label>Secondary Classification:</xf:label>
+         <!-- /BookTaxonomy/Fiction/item -->
+         <!-- /BookTaxonomy/Non-Fiction/item -->
+         <!-- /BookTaxonomy/instance('Codes')/Data/PrimaryClassCode -->
+          <xf:itemset ref="instance('bookTax')/BookTaxonomy/Fiction/item">
+             <xf:label ref="label" />
+            <xf:value ref="value" />
+         </xf:itemset>
+       </xf:select1>
+   </body>
+</html>

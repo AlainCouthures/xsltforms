@@ -1,0 +1,129 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Example of Dynamic Label Lookup</title>
+      <!-- based on a version by Kurt Cagle -->
+      <style type="text/css">
+      @namespace xf url("http://www.w3.org/2002/xforms");
+      body {font-family: Ariel, Helvetica, san-serif}
+      /* Input Control labels are right-aligned in a 200px wide column that floats to the left. */
+
+/* This line ensures all the separate input controls appear on their own lines */
+xf|input, xf|select, xf|select1, xf|textarea {display:block; margin:5px 0;}
+
+/* Makes the labels right aligned in a 200px wide column that floats to the left of the input controls. */
+xf|input > xf|label, xf|select > xf|label, xf|select1 > xf|label, xf|textarea > xf|label {text-align:right; padding-right:10px; width:200px; float:left; text-align:right;}
+
+/* Put a black border and background color around all specified XForms groups and gives them both margin and padding */
+xf|group {border: solid black 1px; margin:15px 5px; padding:5px; background-color:Lavender;}
+.group-label {text-align:left;font-weight:bold;font-size:12pt;}
+</style>
+      <xf:model>
+         <xf:instance id="data" xmlns="">
+            <Data>
+               <PersonName>
+                  <PersonGivenName>John</PersonGivenName>
+                  <PersonMiddleName>Paul</PersonMiddleName>
+                  <PersonSurName>Doe</PersonSurName>
+               </PersonName>
+               <Address>
+                  <LocationStreetFull>123 Main St.</LocationStreetFull>
+                  <LocationCityName>Anytown</LocationCityName>
+                  <LocationStateName>MN</LocationStateName>
+                  <LocationPostalID>55123</LocationPostalID>
+               </Address>
+            </Data>
+         </xf:instance>
+         <xf:instance id="selected-country" xmlns="">
+            <data>
+               <country-id>usa</country-id>
+            </data>
+         </xf:instance>
+         <xf:bind id="country" nodeset="instance('selected-country')/country-id" />
+         <xf:instance id="label-lookup" xmlns="">
+            <label-lookup>
+               <country>
+                  <country-id>usa</country-id>
+                  <data-element name="record" label="Record" />
+                  <data-element name="PersonName" label="Person Name" />
+                  <data-element name="PersonGivenName" label="First (Given) Name" />
+                  <data-element name="PersonSurName" label="Last (Family) Name" />
+                  <data-element name="PersonMiddleName" label="Middle Name" />
+                  <data-element name="Address" label="Address" />
+                  <data-element name="LocationStreetFull" label="Street" />
+                  <data-element name="LocationCityName" label="City" />
+                  <data-element name="LocationStateName" label="State" />
+                  <data-element name="LocationCountryName" label="Country" />
+                  <data-element name="LocationPostalID" label="Zip" />
+               </country>
+               <country>
+                  <country-id>canada</country-id>
+                  <data-element name="record" label="Record" />
+                  <data-element name="PersonName" label="Person Name" />
+                  <data-element name="PersonGivenName" label="First Name" />
+                  <data-element name="PersonSurName" label="Last Name" />
+                  <data-element name="PersonMiddleName" label="Middle Name" />
+                  <data-element name="Address" label="Address" />
+                  <data-element name="LocationStreetFull" label="Street" />
+                  <data-element name="LocationCityName" label="City" />
+                  <data-element name="LocationStateName" label="Province" />
+                  <data-element name="LocationCountryName" label="Country" />
+                  <data-element name="LocationPostalID" label="Postal Code" />
+               </country>
+                <country>
+                  <country-id>uk</country-id>
+                  <data-element name="record" label="Record" />
+                  <data-element name="PersonName" label="Person Name" />
+                  <data-element name="PersonGivenName" label="First Name" />
+                  <data-element name="PersonSurName" label="Sur Name" />
+                  <data-element name="PersonMiddleName" label="Middle Name" />
+                  <data-element name="Address" label="Address" />
+                  <data-element name="LocationStreetFull" label="Street" />
+                  <data-element name="LocationCityName" label="City" />
+                  <data-element name="LocationStateName" label="County" />
+                  <data-element name="LocationCountryName" label="Country" />
+                  <data-element name="LocationPostalID" label="Postal Code" />
+               </country>
+            </label-lookup>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <p>Demonstration of Dynamic Labels</p>
+      <xf:select1 bind="country">
+         <xf:label>Country: </xf:label>
+         <xf:item>
+            <xf:label>USA</xf:label>
+            <xf:value>usa</xf:value>
+         </xf:item>
+         <xf:item>
+            <xf:label>Canada</xf:label>
+            <xf:value>canada</xf:value>
+         </xf:item>
+         <xf:item>
+            <xf:label>UK</xf:label>
+            <xf:value>uk</xf:value>
+         </xf:item>
+      </xf:select1>
+      <xf:repeat nodeset="*">
+         <xf:group ref=".">
+            <!-- get the label for the group of elements -->
+            <xf:label class="group-label">
+               <!-- when I replace the 2 with country-id=instance('selected-country')/country it fails-->
+               <xf:output value="concat(instance('label-lookup')/country[country-id=instance('selected-country')/country-id]/data-element[string(@name)=string(name(current()))]/@label,':')" />
+            </xf:label>
+            <xf:repeat nodeset="*">
+               <xf:input ref=".">
+                  <xf:label>
+                     <xf:output value="concat(instance('label-lookup')/country[country-id=instance('selected-country')/country-id]/data-element[string(@name)=string(name(current()))]/@label,':')" />
+                  </xf:label>
+               </xf:input>
+            </xf:repeat>
+         </xf:group>
+      </xf:repeat>
+<!-- debug 
+      <xf:output bind="country">
+         <xf:label>Country id:</xf:label>
+      </xf:output>
+-->
+   </body>
+</html>

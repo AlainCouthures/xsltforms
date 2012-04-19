@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml"   
+  xmlns:xf="http://www.w3.org/2002/xforms" 
+  xmlns:ev="http://www.w3.org/2001/xml-events" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <head>
+      <title>Example of binding to inputs and output ids</title>
+      <xf:model id="model">
+      <style type="text/css">
+      body {font-family: sans-serif}
+      	.output {font-size: 2em}
+      </style>
+         <xf:instance id="input">
+            <Data xmlns="">
+               <InputValueOne>3</InputValueOne>
+               <InputValueTwo>3</InputValueTwo>
+            </Data>
+         </xf:instance>
+         <!-- make the inputs data types be integers -->
+         <xf:bind id="input-one-bind" nodeset="/Data/InputValueOne" type="xs:integer"/>
+         <xf:bind id="input-two-bind" nodeset="/Data/InputValueTwo" type="xs:integer"/>
+         <!-- second instance bound to outputs -->
+         <xf:instance id="output">
+            <DataOut xmlns="">
+               <OutputValue>9</OutputValue>
+            </DataOut>
+         </xf:instance>
+         <!-- Make the output be an integer that is the the product of the inputs -->
+         <xf:bind id="output-bind" nodeset="instance('output')/OutputValue" calculate="instance('input')/InputValueOne * instance('input')/InputValueTwo" type="xs:integer"/>
+      </xf:model>
+   </head>
+   <body>
+      <p>
+         <xf:range bind="input-one-bind" start="1" end="5" step="1" incremental="true">
+            <xf:label>Input: </xf:label>
+         </xf:range>
+         <br/>
+         <xf:range bind="input-two-bind" start="1" end="5" step="1" incremental="true">
+            <xf:label>Input: </xf:label>
+         </xf:range>
+     <br/>
+     <div class="output">
+        <xf:output bind="input-one-bind"/> * <xf:output bind="input-two-bind"/> =
+         <xf:output bind="output-bind"/>
+         </div>
+      </p>
+   </body>
+</html>

@@ -1,0 +1,157 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="AtomicType.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-07</cm:creationdate>
+	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_atomicType" class ===
+AtomicType Class
+* constructor function : initializes of patterns property</cm:wiki>
+		<![CDATA[
+function XsltForms_atomicType() {
+	this.patterns = [];
+}
+
+XsltForms_atomicType.prototype = new XsltForms_type();
+
+]]>
+		<cm:wiki>
+* '''setBase''' method : copies the base patterns to this AtomicType object</cm:wiki>
+<![CDATA[
+XsltForms_atomicType.prototype.setBase = function(base) {
+	var baseType = typeof base === "string"? this.schema.getType(base) : base;
+	for (var id in baseType)  {
+		if (baseType.hasOwnProperty(id)) {
+			var value = baseType[id];
+			if (id === "patterns") {
+				XsltForms_browser.copyArray(value, this.patterns);
+			} else if (id !== "name" && id !== "nsuri") {
+				this[id] = value;
+			}
+		}
+	}
+	return this;
+};
+
+]]>
+		<cm:wiki>
+* '''put''' method : sets the base, copies patterns or just add a property</cm:wiki>
+<![CDATA[
+XsltForms_atomicType.prototype.put = function(name, value) {
+	if (name === "base") {
+		this.setBase(value);
+	} else if (name === "pattern") {
+		XsltForms_browser.copyArray([value], this.patterns);
+	} else {
+		this[name] = value;
+	}
+	
+	return this;
+};
+
+]]>
+		<cm:wiki>
+* '''validate''' method : validates a value against this AtomicType object</cm:wiki>
+<![CDATA[
+/** If valid return canonicalValue else null*/
+XsltForms_atomicType.prototype.validate = function (value) {
+	value = this.canonicalValue(value);
+	for (var i = 0, len = this.patterns.length; i < len; i++) {
+		if (!value.match(this.patterns[i])) {
+			return false;
+		}
+	}
+	if (this.enumeration) {
+		var matched = false;
+		for (var j = 0, len1 = this.enumeration.length; j < len1; j++) {
+			if (value === this.canonicalValue(this.enumeration[j])) {
+				matched = true;
+				break;
+			}
+		}
+		if (!matched) {
+			return false;
+		}
+	}
+	var l = value.length;
+	var value_i = parseInt(value, 10);
+	if ( (this.length && this.length !== l) ||
+		(this.minLength && l < this.minLength) ||
+		(this.maxLength && l > this.maxLength) ||
+		(this.maxInclusive && value_i > this.maxInclusive) ||
+		(this.maxExclusive && value_i >= this.maxExclusive) ||
+		(this.minInclusive && value_i < this.minInclusive) ||
+		(this.minExclusive && value_i <= this.minExclusive) ) {
+		return false;
+	}
+	if (this.totalDigits || this.fractionDigits) {
+		var index = value.indexOf(".");
+		var integer = parseInt(index !== -1? value.substring(0, index) : value, 10);
+		var decimal = index !== -1? value.substring(index + 1) : "";
+		if (index !== -1) {
+			if (this.fractionDigits === 0) {
+				return false;
+			}
+			var dl = decimal.length - 1;
+			while (dl >= 0 && decimal.charAt(dl) === 0) {
+				dl--;
+			}
+			decimal = decimal.substring(0, dl + 1);
+		}
+		if ( (this.totalDigits && integer.length + decimal.length > this.totalDigits) ||
+			(this.fractionDigits && decimal.length > this.fractionDigits)) {
+			return false;
+		}
+	}
+	return true;
+};
+
+]]>
+		<cm:wiki>
+* '''normalize''' method : normalizes a value for fraction digits according to this AtomicType object</cm:wiki>
+<![CDATA[
+XsltForms_atomicType.prototype.normalize = function (value) {
+	if (this.fractionDigits) {
+		var number = parseFloat(value);
+		var num;
+		if (isNaN(number)) {
+			return "NaN";
+		}
+		if (number === 0) {
+			num = XsltForms_browser.zeros(0, this.fractionDigits + 1, true);
+		} else {
+			var mult = XsltForms_browser.zeros(1, this.fractionDigits + 1, true);
+			num = "" + Math.round(number * mult);
+		}
+		if (this.fractionDigits !== 0) {
+			var index = num.length - this.fractionDigits;
+			return (index === 0 ? "0" : num.substring(0, index)) + "." + num.substring(index);
+		}
+		return num;
+	}
+	return value;
+};
+    ]]>
+	</cm:source>
+</cm:component>

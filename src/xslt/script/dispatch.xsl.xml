@@ -1,0 +1,92 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="dispatch.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Contact at : info@agencexml.com
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: info@ajaxforms.com
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="application/xml">
+		<xsl:template match="xforms:dispatch" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:apply-templates select="@*" mode="scriptattr"/>
+			<js xmlns="">
+				<xsl:variable name="iddispatch" select="count(preceding::xforms:dispatch|ancestor::xforms:dispatch)"/>
+				<xsl:text>var </xsl:text>
+				<xsl:value-of select="$vn_pf"/>
+				<xsl:text>dispatch_</xsl:text>
+				<xsl:value-of select="$iddispatch"/>
+				<xsl:text> = new XsltForms_dispatch(</xsl:text>
+				<xsl:value-of select="$vn_subform"/>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="xforms:name/@value">
+						<xsl:for-each select="xforms:name[1]">
+							<xsl:call-template name="toScriptBinding"></xsl:call-template>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:when test="xforms:name/text()">
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="normalize-space(xforms:name/text())"/></xsl:call-template>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@name"/></xsl:call-template>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>,</xsl:text>
+				<xsl:choose>
+					<xsl:when test="xforms:targetid/@value">
+						<xsl:for-each select="xforms:targetid[1]">
+							<xsl:call-template name="toScriptBinding"></xsl:call-template>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:when test="xforms:targetid/text()">
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="normalize-space(xforms:targetid/text())"/></xsl:call-template>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@targetid"/></xsl:call-template>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@if"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@while"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@iterate"/></xsl:call-template>
+				<xsl:if test="@delay | xforms:delay">
+					<xsl:text>,</xsl:text>
+					<xsl:choose>
+						<xsl:when test="xforms:delay/@value">
+							<xsl:for-each select="xforms:delay[1]">
+								<xsl:call-template name="toScriptBinding"></xsl:call-template>
+							</xsl:for-each>
+						</xsl:when>
+						<xsl:when test="xforms:delay/text()">
+							<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="normalize-space(xforms:delay/text())"/></xsl:call-template>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@delay"/></xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:if>
+				<xsl:text>);</xsl:text>
+			</js>
+			<xsl:apply-templates select="*" mode="script"/>
+		</xsl:template>
+	</cm:source>
+</cm:component>

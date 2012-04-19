@@ -1,0 +1,4 @@
+ @namespace xf url(http://www.w3.org/2002/xforms);
+xf|output[appearance="date"] {
+  -moz-binding: url('bindings.xml#output-date');
+} 

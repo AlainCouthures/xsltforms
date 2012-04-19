@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+	<head>
+		<title>XForms Trigger Appearances</title>
+		<xf:model>
+			<xf:instance xmlns="">
+				<instance>
+					<label>Label text from the model</label>
+					<message>Message text from the model</message>
+					<hint>Hint text from the model</hint>
+				</instance>
+			</xf:instance>
+			<xf:submission method="post" id="submission" />
+		</xf:model>
+	</head>
+	<body>
+		<h1>Test of Trigger Appearances</h1>
+		<p>A simple model button that brings up a message in a window:
+		<br />
+			<xf:trigger>
+				<xf:label>Simple Button</xf:label>
+				<xf:message level="modal" ev:event="DOMActivate">Button clicked</xf:message>
+			</xf:trigger>
+			<br />
+		</p>
+		<p>A model button that also displays "hint text" when you hover over the button:
+			<br />
+			<xf:trigger>
+				<xf:label>Button With Hint Text On Hover</xf:label>
+				<xf:message level="modal" ev:event="DOMActivate">Button clicked</xf:message>
+				<xf:hint>This is the hint text.</xf:hint>
+			</xf:trigger>
+			<br />
+		</p>
+		<p>A button that includes an image and hint text:
+			<br />
+			<xf:trigger appearance="xf:image">
+				<img src="button_image.jpg" />
+				<xf:message level="modal" ev:event="DOMActivate">Image 
+clicked</xf:message>
+				<xf:hint>This hint text comes up if you hover over a button.</xf:hint>
+			</xf:trigger>
+			<br />
+		</p>
+		<p>A button that includes text, and image and text:
+			<br />
+			<xf:trigger appearance="xf:image">
+				<xf:label>Text before the image...</xf:label>
+				<img src="button_image.jpg" />
+				<xf:label>...text after the image.</xf:label>
+				<xf:message level="modal" ref="message" ev:event="DOMActivate" />
+				<xf:hint>Hints work with labels and images.</xf:hint>
+			</xf:trigger>
+			<br />
+		</p>
+		<p>A trigger that pulls the label, hit and message text from the model:
+			<br />
+			<xf:trigger>
+				<xf:label ref="label"/>
+				<xf:message level="modal" ref="message" ev:event="DOMActivate" />
+				<xf:hint ref="hint"/>
+			</xf:trigger>
+			<br />
+		</p>
+	</body>
+</html>

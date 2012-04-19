@@ -1,0 +1,44 @@
+<?xml version="1.0"  encoding="ISO-8859-1"?>
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xforms="http://www.w3.org/2002/xforms"
+	xmlns:ex="http://example.org">
+	<xhtml:head>
+		<xhtml:title>6.1.3.b required property with xsi:nil</xhtml:title>
+		<xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
+		<xforms:model schema="6.1.3.b.instance.xsd">
+			<xforms:instance>
+				<ex:person-name>
+					<ex:first-name/>
+					<ex:last-name xsi:nil="true"/>
+				</ex:person-name>
+			</xforms:instance>
+			<xforms:bind id="lname_bind" nodeset="/ex:person-name/ex:last-name" required="true()"/>
+            <xforms:submission id="lname" action="http://xformstest.org/cgi-bin/echo.sh"
+        		 method="post" bind="lname_bind"/>
+		</xforms:model>
+	</xhtml:head>
+	<xhtml:body>
+		<xforms:group>
+			<xforms:label class="title">6.1.3.b required property with xsi:nil</xforms:label>
+		</xforms:group>
+		<xforms:group>
+			<xforms:label>
+				The Submit Last Name submit control must not replace this page with the form data until you have 
+				entered a value into the Last Name input field. 
+			</xforms:label>
+		</xforms:group>
+
+		<xforms:input ref="/ex:person-name/ex:last-name">
+			<xforms:label>Last-Name:</xforms:label>
+		</xforms:input>
+
+		<xforms:submit submission="lname">
+			<xforms:label>Submit Last Name</xforms:label>
+		</xforms:submit>
+		
+		
+	</xhtml:body>
+</xhtml:html>

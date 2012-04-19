@@ -1,0 +1,39 @@
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:xf="http://www.w3.org/2002/xforms"
+ >
+   <head>
+      <title>XForms inputs with labels</title>
+      <xf:model>
+         <xf:instance>
+            <data xmlns="">
+               <enabled>enabled</enabled>
+               <name>sample</name>
+            </data>
+         </xf:instance>
+         <xf:bind nodeset="/data/name" relevant="../enabled = 'enabled'"/>
+      </xf:model>
+   </head>
+   <body>
+      <p>Enter your first name, and last name.</p>
+         <xf:select1 ref="enabled" incremental="true">
+            <xf:item>
+               <xf:label>Relevant</xf:label>
+               <xf:value>enabled</xf:value> 
+            </xf:item>
+            <xf:item>
+               <xf:label>Not Relevant</xf:label>
+               <xf:value>disabled</xf:value>
+            </xf:item>
+            <xf:label>Control relevant</xf:label>
+         </xf:select1>
+         <br/>
+         <xf:input ref="name" incremental="true">
+            <xf:label>Sample input:</xf:label>
+         </xf:input>
+         <br/>
+         <br/>
+         Output Name: <b><xf:output ref="name"/></b>
+         <br/>
+   </body>
+</html>

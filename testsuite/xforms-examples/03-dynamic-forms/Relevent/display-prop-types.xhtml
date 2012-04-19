@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <title>Binding Views</title>
+   <style />
+   <xf:model>
+<xf:instance id="crv" xmlns="">
+         <data>
+            <PropertyTypeCode/>
+         </data>
+      </xf:instance>
+      <xf:instance id="view-binds" xmlns="">
+         <data>
+            <apartment-view/>
+            <farm-view/>
+            <residential-view/>
+         </data>
+      </xf:instance>
+      <xf:bind nodeset="instance('view-binds')/apartment-view" relevant="contains(instance('crv')//PropertyTypeCode, 'apartment')" />
+      <xf:bind nodeset="instance('view-binds')/farm-view" relevant="contains(instance('crv')//PropertyTypeCode, 'farm')" />
+      <xf:bind nodeset="instance('view-binds')/residential-view" relevant="contains(instance('crv')//PropertyTypeCode, 'residential')" />
+   </xf:model>
+   <body>
+      <p>Demonstration of using Bind to select one or more views</p>
+      <xf:select1 ref="instance('crv')/PropertyTypeCode">
+         <xf:label>Select the view you would like to display:</xf:label>
+         <br />
+         <xf:item>
+            <xf:label>Apartment</xf:label>
+            <xf:value>apartment</xf:value>
+         </xf:item>
+          <xf:item>
+            <xf:label>Farm</xf:label>
+            <xf:value>farm</xf:value>
+         </xf:item>
+          <xf:item>
+            <xf:label>Residential</xf:label>
+            <xf:value>residential</xf:value>
+         </xf:item>
+      </xf:select1>
+      <br />
+      <xf:group  ref="instance('view-binds')/apartment-view">
+         <h1>Apartment View</h1>
+      </xf:group>
+       <xf:group  ref="instance('view-binds')/farm-view">
+         <h1>Farm View</h1>
+      </xf:group>
+       <xf:group  ref="instance('view-binds')/residential-view">
+         <h1>Residential View </h1>
+      </xf:group>
+   </body>
+</html>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+ xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ xmlns:ftype="http://www.example.com/my-file-types"
+ targetNamespace="http://www.example.com/my-file-types"
+ elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:element name="data">
+      <xs:annotation>
+         <xs:documentation>Test XML Schema</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="zip" type="ftype:zipType"/>
+            <xs:element name="zip2" type="ftype:zip2Type"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:simpleType name="zipType">
+      <xs:restriction base="xs:string">
+         <xs:pattern value="\d{5}"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="zip2Type">
+      <xs:restriction base="xs:string">
+         <xs:pattern value="^\d{5}$"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>

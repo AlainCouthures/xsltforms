@@ -1,0 +1,46 @@
+<html 
+  xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+      <title>Custom Image Control Sample</title>
+      <link rel="stylesheet" type="text/css" href="output.css" />
+      <style type="">
+      @namespace xf url(http://www.w3.org/2002/xforms);
+      
+         /* defaults for forms */
+         * {
+            Ariel, Helvetica, sans-serif;
+         }
+         
+         h1 {
+            font-size: medium;
+         }
+         
+         xf|label {
+            font-style: bold;
+         }
+         
+         xf|output[appearance="hello"] {
+           -moz-binding: url('hello-bindings.xml#hello');
+         } 
+         
+      </style>
+      <xf:model>
+         <xf:instance xmlns="">
+            <Data>
+               <Message>Hello input</Message>
+            </Data>
+         </xf:instance>
+      </xf:model>
+   </head>
+   <body>
+      <h1>Custom Control Sample of Date Formatting</h1>
+      <xf:input ref="/Data/Message" incremental="true">
+         <xf:label>Input string: </xf:label>
+      </xf:input>
+      <br/>
+      <xf:output ref="/Data/Message" appearance="hello">
+         <xf:label>Output from new custom control: </xf:label>
+      </xf:output>
+   </body>
+</html>

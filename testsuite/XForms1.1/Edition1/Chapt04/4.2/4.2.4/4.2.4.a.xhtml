@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xhtml:html xmlns:xforms="http://www.w3.org/2002/xforms"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events">
+  <xhtml:head>
+  	<xhtml:title>4.2.4.a xforms-model-destruct dispatched after form submission</xhtml:title>
+    <xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
+    <xforms:model>
+      <xforms:instance>
+        <car/>
+      </xforms:instance>
+      <xforms:message level="modal" ev:event="xforms-model-destruct">
+				xforms-model-destruct
+	  </xforms:message>
+      <xforms:submission id="submission" action="http://xformstest.org/cgi-bin/echo.sh" 
+      		method="post"/>
+    </xforms:model>
+  </xhtml:head>
+  <xhtml:body>
+  	<xforms:group>
+  		<xforms:label class="title">4.2.4.a xforms-model-destruct dispatched after form submission</xforms:label>
+  	</xforms:group>
+    <xforms:group>
+    	<xforms:label>
+    	  After activating the Submit trigger you must see an xforms-model-destruct message. The page will be 
+    	  replaced by the form data. 
+    	</xforms:label>	
+    </xforms:group>
+
+    <xforms:submit submission="submission">
+	    <xforms:label>Submit</xforms:label>
+    </xforms:submit>
+
+	
+  </xhtml:body>
+</xhtml:html>

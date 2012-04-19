@@ -1,0 +1,79 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      xmlns:xf="http://www.w3.org/2002/xforms"
+      xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>Test conditional selection lists</title>
+      <xf:model>
+
+         <xf:instance id="selected-values" xmlns="">
+            <data>
+               <selected-season>spring</selected-season>
+               <selected-month>January</selected-month>
+            </data>
+         </xf:instance>
+
+         <xf:instance id="seasons" xmlns="">
+            <root>
+               <item name="spring"/>
+               <item name="summer"/>
+               <item name="autumn"/>
+               <item name="winter"/>
+            </root>
+         </xf:instance>
+
+         <xf:instance id="months" xmlns="">
+            <root>
+               <item name="January" season="winter"/>
+               <item name="February" season="winter"/>
+               <item name="March" season="spring"/>
+               <item name="April" season="spring"/>
+               <item name="May" season="spring"/>
+               <item name="June" season="summer"/>
+               <item name="July" season="summer"/>
+               <item name="August" season="summer"/>
+               <item name="September" season="autumn"/>
+               <item name="October" season="autumn"/>
+               <item name="November" season="autumn"/>
+               <item name="December" season="winter"/>
+            </root>
+         </xf:instance>
+         <xf:bind id="selected-season" nodeset="instance('selected-values')/selected-season"/>
+      </xf:model>
+   </head>
+   <body>
+      <p>Test conditional selection lists -
+         month selector depends on the current season</p>
+
+         <xf:select1 ref="instance('selected-values')/selected-season">
+           <xf:label>Season:</xf:label>
+           <xf:itemset nodeset="instance('seasons')/item">
+             <xf:label ref="@name"/>
+             <xf:value ref="@name"/>
+           </xf:itemset>
+         </xf:select1>
+         <br/>
+         <xf:select1 ref="instance('selected-values')/selected-month">
+           <xf:label>Month:</xf:label>
+           <xf:itemset nodeset="instance('months')/item[@season=instance('selected-values')/selected-season]">
+             <xf:label ref="@name"/>
+             <xf:value ref="@name"/>
+           </xf:itemset>
+         </xf:select1>
+         <br/>
+         <xf:output ref="instance('selected-values')/selected-season">
+            <xf:label>selected-season: </xf:label>
+         </xf:output>
+		  <br/>
+
+         <xf:output ref="instance('selected-values')/selected-month">
+            <xf:label>selected-month: </xf:label>
+         </xf:output>
+
+         <h4>Relevent Months using Repeat</h4>
+	   <xf:repeat nodeset="instance('months')/item[@season=instance('selected-values')/selected-season]">
+		   <xf:output ref="@name"/>
+	   </xf:repeat>
+
+   </body>
+</html>

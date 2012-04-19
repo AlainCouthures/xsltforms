@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <EnumeratedValues>
+      <Item>
+         <Label>Farm under 40 acres.</Label>
+         <Value>farm-small</Value>
+      </Item>
+      <Item>
+         <Label>A farm of 40 to 80 acres.</Label>
+         <Value>farm-medium</Value>
+      </Item>
+      <Item>
+         <Label>A farm of over 80 acres.</Label>
+         <Value>farm-large</Value>
+      </Item>
+      <Item>
+         <Label>Farm with bare land.</Label>
+         <Value>farm-bare-land</Value>
+      </Item>
+      <Item>
+         <Label>Agricultural - Other</Label>
+         <Value>agricultural-other</Value>
+      </Item>
+      <Item>
+         <Label>Greenhouse - Nursery</Label>
+         <Value>greenhouse-nursery</Value>
+      </Item>
+      <Item>
+         <Label>Grain Elevator</Label>
+         <Value>grain-elevator</Value>
+      </Item>
+      <Item>
+         <Label>Farm Machinery - Repair</Label>
+         <Value>farm-machinery-repair</Value>
+      </Item>
+      <Item>
+         <Label>Fertilizer Plant</Label>
+         <Value>fertilizer-plant-feed-mill-grain-storage</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

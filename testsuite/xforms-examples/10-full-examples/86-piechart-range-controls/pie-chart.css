@@ -1,0 +1,12 @@
+@namespace xf url("http://www.w3.org/2002/xforms");
+body { font-family:Helvetica,arial,sans-serif;}
+.chartlabel { font-family:Helvetica,sans-serif;font-size:20px;fill:black;stroke:none }
+#chart { width:400px;height:400px }
+xf|range {margin-left: 100px;}
+
+/* This line ensures all the separate input controls appear on their own lines */
+xf|range {display:block; margin:5px 0;}
+
+/* Makes the labels right aligned in a 200px wide column that floats to the left of the input controls. */
+xf|range > xf|label {font-weight:bold; text-align:right; padding-right:10px; width:70px; float:left; text-align:right;}
+

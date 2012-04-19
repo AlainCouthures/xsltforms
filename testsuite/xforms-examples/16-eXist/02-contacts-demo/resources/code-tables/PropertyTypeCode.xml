@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>PropertyTypeCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Agricultural</Label>
+         <Value>agricultural</Value>
+      </Item>
+      <Item>
+         <Label>Apartment</Label>
+         <Value>apartment</Value>
+      </Item>
+      <Item>
+         <Label>Commercial</Label>
+         <Value>commercial</Value>
+      </Item>
+      <Item>
+         <Label>Industrial</Label>
+         <Value>industrial</Value>
+      </Item>
+      <Item>
+         <Label>Other</Label>
+         <Value>other</Value>
+      </Item>
+      <Item>
+         <Label>Residential</Label>
+         <Value>residential</Value>
+      </Item>
+      <Item>
+         <Label>Seasonal Recreational</Label>
+         <Value>seasonal-recreational</Value>
+      </Item>
+      <Item>
+         <Label>Timber</Label>
+         <Value>timber</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>

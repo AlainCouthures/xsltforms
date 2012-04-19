@@ -1,0 +1,51 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xf="http://www.w3.org/2002/xforms"
+		>
+    <head>
+        <title>Demonstration of XForms Select1</title>
+        <style type="text/css">body {font-family: Helvetica, sans-serif;}</style>
+        <xf:model>
+            <xf:instance>
+                <data xmlns="">
+                    <DayOfWeekCode/>
+                </data>
+            </xf:instance>
+        </xf:model>
+    </head>
+    <body>
+        <xf:select1 ref="DayOfWeekCode" appearance="minimal" incremental="true">  
+            <xf:label>Day of Week:</xf:label>
+                <xf:item>
+                    <xf:label>Monday</xf:label>
+                    <xf:value>monday</xf:value> 
+                </xf:item>
+                <xf:item>
+                    <xf:label>Tuesday</xf:label>
+                    <xf:value>tuesday</xf:value>
+                </xf:item>
+                <xf:item>
+                    <xf:label>Wednesday</xf:label>
+                    <xf:value>wednesday</xf:value>
+                </xf:item>
+                <xf:item>
+                    <xf:label>Thrusday</xf:label>
+                    <xf:value>thrusday</xf:value>
+                </xf:item>
+                <xf:item>
+                    <xf:label>Friday</xf:label>
+                    <xf:value>friday</xf:value>
+                </xf:item>
+                <xf:item>
+                    <xf:label>Saturday</xf:label>
+                    <xf:value>saturday</xf:value>
+                </xf:item>
+                <xf:item>
+                    <xf:label>Sunday</xf:label>
+                    <xf:value>sunday</xf:value>
+                </xf:item>             
+        </xf:select1>
+        <br/>
+        Output: <xf:output ref="DayOfWeekCode"/>
+    </body>
+</html>

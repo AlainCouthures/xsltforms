@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--bookmarks.xml-->
+<bookmarks>
+        <section name="Book Homepage">
+                <bookmark href="http://en.wikibooks.org/wiki/XForms" name="XForms Tutorial and Cookbook"></bookmark>
+        </section>
+        <section name="Introduction">
+                <bookmark href="http://en.wikibooks.org/wiki/XForms/Background" name="Background"></bookmark>
+                <bookmark href="http://en.wikibooks.org/wiki/XForms/Benefits" name="Benefits"></bookmark>
+                <bookmark href="http://en.wikibooks.org/wiki/XForms/Installing_and_Testing" name="Installing and Testing"></bookmark>
+                <bookmark href="http://en.wikibooks.org/wiki/XForms/Naming_Conventions" name="Naming Conventions"></bookmark>
+        </section>
+        <section name="Beginning Examples">
+                <bookmark href="http://en.wikibooks.org/wiki/XForms/HelloWorld" name="Hello World"></bookmark>
+                <bookmark href="http://en.wikibooks.org/wiki/XForms/Message" name="Benefits"></bookmark>
+        </section>
+</bookmarks>

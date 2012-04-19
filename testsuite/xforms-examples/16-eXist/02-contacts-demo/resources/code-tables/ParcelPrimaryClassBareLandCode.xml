@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeTable>
+   <DataElementName>ParcelPrimaryClassBareLandCode</DataElementName>
+   <EnumeratedValues>
+      <Item>
+         <Label>Apartment</Label>
+         <Value>apartment</Value>
+      </Item>
+      <Item>
+         <Label>APARTMENT - BARE LAND</Label>
+         <Value>Apartment Bare Land</Value>
+      </Item>
+      <Item>
+         <Label>COMMERCIAL (WITH BUILDINGS)</Label>
+         <Value>Commercial</Value>
+      </Item>
+      <Item>
+         <Label>COMMERCIAL - BARE LAND</Label>
+         <Value>Commercial Bare Land</Value>
+      </Item>
+      <Item>
+         <Label>Farm</Label>
+         <Value>farm</Value>
+      </Item>
+      <Item>
+         <Label>FARM - BARE LAND (35 OR MORE ACRES)</Label>
+         <Value>Farm Bare Land</Value>
+      </Item>
+      <Item>
+         <Label>FARM - BARE LAND (LESS THAN 35 ACRES)</Label>
+         <Value>Farm Bare Land Small</Value>
+      </Item>
+      <Item>
+         <Label>INDUSTRIAL (WITH BUILDINGS)</Label>
+         <Value>Industrial</Value>
+      </Item>
+      <Item>
+         <Label>INDUSTRIAL - BARE LAND</Label>
+         <Value>Industrial Bare Land</Value>
+      </Item>
+      <Item>
+         <Label>Residential</Label>
+         <Value>residential</Value>
+      </Item>
+      <Item>
+         <Label>RESIDENTIAL - BARE LAND</Label>
+         <Value>Residential Bare Land</Value>
+      </Item>
+      <Item>
+         <Label>RESORTS</Label>
+         <Value>Resorts</Value>
+      </Item>
+      <Item>
+         <Label>RURAL RESIDENTIAL (FARM WITH BUILDINGS &lt; 35 ACRES)</Label>
+         <Value>Rural Residential</Value>
+      </Item>
+      <Item>
+         <Label>Seasonal Recreational</Label>
+         <Value>seasonal-recreational-cabin</Value>
+      </Item>
+      <Item>
+         <Label>SEASONAL RECREATIONAL - BARE LAND</Label>
+         <Value>Seasonal Recreational Bare Land</Value>
+      </Item>
+      <Item>
+         <Label>Timber</Label>
+         <Value>timber</Value>
+      </Item>
+      <Item>
+         <Label>TIMBER - BARE LAND (LESS THAN 35 ACRES)</Label>
+         <Value>Timber Bare Land</Value>
+      </Item>
+   </EnumeratedValues>
+</CodeTable>
