@@ -1,4 +1,4 @@
-/* Rev. 539
+/* Rev. 540
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "539",
-	fileVersionNumber: 539,
+	fileVersion: "540",
+	fileVersionNumber: 540,
 
 	language: "navigator",
 	debugMode: false,
@@ -270,7 +270,7 @@ var XsltForms_globals = {
 			if (XsltForms_globals.models[m].element.id !== XsltForms_browser.idPf + "model-config") {
 				for (var id in XsltForms_globals.models[m].instances) {
 					if (XsltForms_globals.models[m].instances.hasOwnProperty(id)) {
-						var count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'XsltForms_'))]", XsltForms_globals.models[m].instances[id].doc);
+						var count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].doc);
 						s += '<xsltforms:instance id="' + id + '">' + count + '</xsltforms:instance>';
 						pos++;
 					}
@@ -814,7 +814,23 @@ var XsltForms_browser = {
 			if (req.responseXML.xml === "") {
 				req.responseXML.loadXML(req.responseText);
 			}
-			XsltForms_browser.loadNode(XsltForms_browser.config, XsltForms_browser.selectSingleNode('//properties', req.responseXML));
+			var n = req.responseXML.documentElement;
+			while (n) {
+				if (n.nodeName === "properties") {
+					break;
+				}
+				if (n.firstChild) {
+					n = n.firstChild;
+				} else {
+					while (n && !n.nextSibling) {
+						n = n.parentNode;
+					}
+					if (n && n.nextSibling) {
+						n = n.nextSibling;
+					}
+				}
+			}
+			XsltForms_browser.loadNode(XsltForms_browser.config, n);
 			var inst = document.getElementById(XsltForms_browser.idPf + "instance-config").xfElement;
 			XsltForms_browser.config = inst.doc.documentElement;
 			inst.srcXML = XsltForms_browser.saveXML(XsltForms_browser.config);
@@ -973,16 +989,18 @@ if (XsltForms_browser.isIE) {
 				xsltDoc = parser.parseFromString(xslt, "text/xml");
 			} else {
 				xsltDoc = document.implementation.createDocument("","",null);
+				/*
 				if (xsltDoc.load) {
 					xsltDoc.async = false;
 					xsltDoc.load(xslt);
 				} else {
-					var xhttp = new XMLHttpRequest();
-					xhttp.open("GET", xslt, false);
-					xhttp.send("");
-					xslt = xhttp.responseText;
-					xsltDoc = parser.parseFromString(xslt, "text/xml");
 				}
+				*/
+				var xhttp = new XMLHttpRequest();
+				xhttp.open("GET", xslt, false);
+				xhttp.send("");
+				xslt = xhttp.responseText;
+				xsltDoc = parser.parseFromString(xslt, "text/xml");
 			}
 			var xsltProcessor = new XSLTProcessor();
 			if (!XsltForms_browser.isMozilla && !XsltForms_browser.isOpera) {
@@ -1273,6 +1291,13 @@ if (XsltForms_browser.isIE) {
 				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
 			}
 		} catch (e) {
+			if (node.nodeName === "properties") {
+				for (var i = 0, l = node.childNodes.length; i < l; i++ ) {
+					if (node.childNodes[i].nodeName === xpath) {
+						return node.childNodes[i].textContent;
+					}
+				}
+			}
 			return "";
 		}
 	};
@@ -1285,7 +1310,48 @@ if (XsltForms_browser.isIE) {
 				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
 			}
 		} catch (e) {
-			return 0;
+			var res = 0;
+			switch (xpath) {
+				case "preceding::* | ancestor::*":
+					while (node) {
+						if (node.previousSibling) {
+							res += node.nodeType === XsltForms_nodeType.ELEMENT ? 1 : 0;
+							node = node.previousSibling;
+						} else {
+							if (node.parentNode) {
+								res++;
+								node = node.parentNode;
+							} else {
+								node = null;
+							}
+						}
+					}
+					break;
+				case "descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]":
+					var n = node.firstChild;
+					if (n) {
+						while (n !== node) {
+							res++;
+							if (n.attributes) {
+								for( var i = 0, l = n.attributes.length; i < l; i++) {
+									res += n.attributes[i].name.substring(0, 10) !== "xsltforms_" ? 1 : 0;
+								}
+							}
+							if (n.firstChild) {
+								n = n.firstChild;
+							} else {
+								while (!n.nextSibling && n !== node) {
+									n = n.parentNode;
+								}
+								if (n !== node) {
+									n = n.nextSibling;
+								}
+							}
+						}
+					}
+					break;
+			}
+			return res;
 		}
 	};
 	XsltForms_browser.selectNodes = function(xpath, node) {
@@ -1297,7 +1363,6 @@ if (XsltForms_browser.isIE) {
 				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 			}
 		} catch (e) {
-			return null;
 		}
 	};
 	try {
@@ -1351,7 +1416,7 @@ if (XsltForms_browser.isIE) {
 				} else {
 					resultDocument = XsltForms_browser.createXMLDocument(XsltForms_browser.serializer.serializeToString(node));
 					if (relevant) {
-						var ns = resultDocument.selectNodes("*[@xsltforms_notrelevant = 'true']", false, resultDocument.documentElement);
+						var ns = resultDocument.selectNodes("descendant::*[@xsltforms_notrelevant = 'true']", false, resultDocument.documentElement);
 						for( var i = 0, l = ns.length; i < l ; i++) {
 							var n = ns[i];
 							try {
@@ -1577,18 +1642,87 @@ if (!XsltForms_browser.isIE) {
 	if (typeof XMLDocument === "undefined") {
 		var XMLDocument = Document;
 	}
-	XMLDocument.prototype.selectNodes = function(path, single, node) {
-		var r = this.evaluate(path, (node ? node : this), this.createNSResolver(this.documentElement), (single ? XPathResult.FIRST_ORDERED_NODE_TYPE : XPathResult.ORDERED_NODE_SNAPSHOT_TYPE), null);
-		if (single) {
-			return r.singleNodeValue ? r.singleNodeValue : null;
+	XMLDocument.prototype.selectNodes = function(xpath, single, node) {
+		try {
+			var r = this.evaluate(xpath, (node ? node : this), this.createNSResolver(this.documentElement), (single ? XPathResult.FIRST_ORDERED_NODE_TYPE : XPathResult.ORDERED_NODE_SNAPSHOT_TYPE), null);
+			if (single) {
+				return r.singleNodeValue ? r.singleNodeValue : null;
+			}
+			for (var i = 0, len = r.snapshotLength, r2 = []; i < len; i++) {
+				r2.push(r.snapshotItem(i));
+			}
+			return r2;
+		} catch (e) {
+			var rx = [];
+			switch (xpath) {
+				case "@*[local-name()='type' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']":
+					for (var i2 = 0, l2 = node.attributes.length; i2 < l2; i2++ ) {
+						if (node.attributes[i2].name === "type" && node.attributes[i2].namespaceURI === "http://www.w3.org/2001/XMLSchema-instance") {
+							rx.push(node.attributes[i2]);
+							break;
+						}
+					}
+					break;
+				case "@*[local-name()='nil' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']":
+					for (var i3 = 0, l3 = node.attributes.length; i3 < l3; i3++ ) {
+						if (node.attributes[i3].name === "nil" && node.attributes[i3].namespaceURI === "http://www.w3.org/2001/XMLSchema-instance") {
+							rx.push(node.attributes[i3]);
+							break;
+						}
+					}
+					break;
+				case "descendant::*[@xsltforms_notrelevant = 'true']":
+					var n = node.firstChild;
+					if (n) {
+						while (n !== node) {
+							if (n.nodeType === XsltForms_nodeType.ELEMENT && n.getAttribute("xsltforms_notrelevant") === "true") {
+								rx.push(n);
+							}
+							if (n.firstChild) {
+								n = n.firstChild;
+							} else {
+								while (!n.nextSibling && n !== node) {
+									n = n.parentNode;
+								}
+								if (n !== node) {
+									n = n.nextSibling;
+								}
+							}
+						}
+					}
+					break;
+				case "descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]":
+					node = node.parentNode;
+					var n = node.firstChild;
+					if (n) {
+						while (n !== node) {
+							if (n.nodeType === XsltForms_nodeType.ELEMENT) {
+								for (var i4 = 0, l4 = n.attributes.length; i4 < l4; i4++ ) {
+									if (n.attributes[i4].name.substring(0,10) === "xsltforms_") {
+										rx.push(n);
+										break;
+									}
+								}
+							}
+							if (n.firstChild) {
+								n = n.firstChild;
+							} else {
+								while (!n.nextSibling && n !== node) {
+									n = n.parentNode;
+								}
+								if (n !== node) {
+									n = n.nextSibling;
+								}
+							}
+						}
+					}
+					break;
+			}
+			return rx;
 		}
-		for (var i = 0, len = r.snapshotLength, r2 = []; i < len; i++) {
-			r2.push(r.snapshotItem(i));
-		}
-		return r2;
 	};
-	XMLDocument.prototype.selectSingleNode = function(path) {
-		return this.selectNodes(path, true);
+	XMLDocument.prototype.selectSingleNode = function(xpath) {
+		return this.selectNodes(xpath, true);
 	};
 	XMLDocument.prototype.createNode = function(t, name, ns) {
 		switch(t) {
@@ -1600,11 +1734,11 @@ if (!XsltForms_browser.isIE) {
 				return null;
 		}
 	};
-	Element.prototype.selectNodes = function(path) {
-		return this.ownerDocument.selectNodes(path, false, this);
+	Element.prototype.selectNodes = function(xpath) {
+		return this.ownerDocument.selectNodes(xpath, false, this);
 	};
-	Element.prototype.selectSingleNode = function(path) {	
-		return this.ownerDocument.selectNodes(path, true, this);
+	Element.prototype.selectSingleNode = function(xpath) {	
+		return this.ownerDocument.selectNodes(xpath, true, this);
 	};
 }
 
@@ -1636,7 +1770,7 @@ XsltForms_browser.debugConsole = {
 					this.doc_ = XsltForms_browser.createXMLDocument('<tracelog xmlns=""/>');
 				}
 				var elt = this.doc_.createElement("event");
-				elt.appendChild(this.doc_.createTextNode(XsltForms_browser.i18n.format(new Date(), "yyyy-MM-ddThh:mm:ssz", false) + " -> " + text));
+				elt.appendChild(this.doc_.createTextNode(XsltForms_browser.i18n.format(new Date(), "yyyy-MM-ddThh:mm:ssz", true) + " -> " + text));
 				this.doc_.documentElement.appendChild(elt);
 			}
 		} catch(e) {

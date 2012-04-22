@@ -274,7 +274,7 @@ var XsltForms_globals = {
 			if (XsltForms_globals.models[m].element.id !== XsltForms_browser.idPf + "model-config") {
 				for (var id in XsltForms_globals.models[m].instances) {
 					if (XsltForms_globals.models[m].instances.hasOwnProperty(id)) {
-						var count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'XsltForms_'))]", XsltForms_globals.models[m].instances[id].doc);
+						var count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].doc);
 						s += '<xsltforms:instance id="' + id + '">' + count + '</xsltforms:instance>';
 						pos++;
 					}
