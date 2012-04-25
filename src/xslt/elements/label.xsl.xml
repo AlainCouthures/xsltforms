@@ -170,7 +170,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:call-template name="genid"/>
 						<xsl:call-template name="comunLabel"/>
 						<xsl:choose>
-							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							<xsl:when test="count(./node()) &gt; 0">
+								<xsl:apply-templates/>
 							</xsl:when>
 							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
 						</xsl:choose>
@@ -183,7 +184,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:call-template name="genid"/>
 							<xsl:call-template name="comunLabel"/>
 							<xsl:choose>
-								<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+								<xsl:when test="count(./node()) &gt; 0">
+									<xsl:apply-templates/>
 								</xsl:when>
 								<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
 							</xsl:choose>
@@ -195,7 +197,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:call-template name="genid"/>
 						<xsl:call-template name="comunLabel"/>
 						<xsl:choose>
-							<xsl:when test="count(./node()) &gt; 0"><xsl:apply-templates />
+							<xsl:when test="count(./node()) &gt; 0">
+								<xsl:apply-templates />
 							</xsl:when>
 						<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
 						</xsl:choose>

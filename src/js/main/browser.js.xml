@@ -305,8 +305,8 @@ if (XsltForms_browser.isIE) {
 			if (inline) {
 				xsltDoc = parser.parseFromString(xslt, "text/xml");
 			} else {
-				xsltDoc = document.implementation.createDocument("","",null);
 				/*
+				xsltDoc = document.implementation.createDocument("","",null);
 				if (xsltDoc.load) {
 					xsltDoc.async = false;
 					xsltDoc.load(xslt);
@@ -316,8 +316,12 @@ if (XsltForms_browser.isIE) {
 				var xhttp = new XMLHttpRequest();
 				xhttp.open("GET", xslt, false);
 				xhttp.send("");
-				xslt = xhttp.responseText;
-				xsltDoc = parser.parseFromString(xslt, "text/xml");
+				if ( xhttp.responseXML && xhttp.responseXML.xml !== "") {
+					xsltDoc = xhttp.responseXML;
+				} else {
+					xslt = xhttp.responseText;
+					xsltDoc = parser.parseFromString(xslt, "text/xml");
+				}
 			}
 			var xsltProcessor = new XSLTProcessor();
 			if (!XsltForms_browser.isMozilla && !XsltForms_browser.isOpera) {

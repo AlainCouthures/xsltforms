@@ -724,6 +724,32 @@ var XsltForms_xpathCoreFunctions = {
 		} ),
 ]]>
 		<cm:wiki>
+* '''adjust-dateTime-to-timezone(string)'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2002/xforms adjust-dateTime-to-timezone" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(string) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.adjustDateTimeToTimezoneInvalidArgumentsNumber;
+			}
+			string = XsltForms_globals.stringValue(string);
+			if( !XsltForms_schema.getType("xsd_:date").validate(string) && !XsltForms_schema.getType("xsd_:dateTime").validate(string)) {
+				return "";
+			}
+			var p = /^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+\-])?([01][0-9]|2[0-3])?:?([0-5][0-9])?/;
+			var c = p.exec(string);
+			var d;
+			if (c[8]) {
+				d = new Date(Date.UTC(c[1], c[2]-1, c[3], c[4], c[5], c[6]));
+				if (c[8] !== "Z") {
+					d.setUTCMinutes(d.getUTCMinutes() + (c[8] === "+" ? 1 : -1)*(c[9]*60 + c[10]));
+				}
+			} else {
+				d = new Date(c[1], c[2]-1, c[3], c[4], c[5], c[6]);
+			}
+			return XsltForms_browser.i18n.format(d, "yyyy-MM-ddThh:mm:ssz", true);
+		} ),
+]]>
+		<cm:wiki>
 * '''days-from-date(string)'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2002/xforms days-from-date" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
@@ -871,7 +897,7 @@ var XsltForms_xpathCoreFunctions = {
 			var i;
 			var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 			switch (algo) {
-				case "SHA-1" :
+				case "SHA-1":
 					var l = str.length;
 					var bl = l*8;
 					var W = [];
@@ -888,10 +914,10 @@ var XsltForms_xpathCoreFunctions = {
 					msg[bl >> 5] |= 0x80 <<(24-bl%32);
 					msg[((bl+65 >> 9)<< 4)+ 15] = bl;
 					l = msg.length;
-					var rotl = function(x,n){
+					var rotl = function(x,n) {
 						return(x <<  n)|(x >>>(32-n));
 					};
-					var add32 = function(x,y){
+					var add32 = function(x,y) {
 						var lsw = (x & 0xFFFF)+(y & 0xFFFF);
 						return ((((x >>> 16)+(y >>> 16)+(lsw >>> 16)) & 0xFFFF)<< 16)|(lsw & 0xFFFF);
 					};
@@ -940,25 +966,170 @@ var XsltForms_xpathCoreFunctions = {
 						H3 = add32(d,H3);
 						H4 = add32(e,H4);
 					}
-					var hex32 = function(v) {
-						var h = v >>> 16;
-						var l = v & 0xFFFF;
-						return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000")+h.toString(16)+(l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000")+l.toString(16);
-					};
-					var b12 = function(v) {
-						return b64.charAt((v >>> 6) & 0x3F)+b64.charAt(v & 0x3F);
-					};
-					var b30 = function(v) {
-						return b64.charAt(v >>> 24)+b64.charAt((v >>> 18) & 0x3F)+b64.charAt((v >>> 12) & 0x3F)+b64.charAt((v >>> 6) & 0x3F)+b64.charAt(v & 0x3F);
-					};
 					switch (enco) {
 						case "hex" :
+							var hex32 = function(v) {
+								var h = v >>> 16;
+								var l = v & 0xFFFF;
+								return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000")+h.toString(16)+(l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000")+l.toString(16);
+							};
 							return hex32(H0)+hex32(H1)+hex32(H2)+hex32(H3)+hex32(H4);
 						case "base64" :
+							var b12 = function(v) {
+								return b64.charAt((v >>> 6) & 0x3F)+b64.charAt(v & 0x3F);
+							};
+							var b30 = function(v) {
+								return b64.charAt(v >>> 24)+b64.charAt((v >>> 18) & 0x3F)+b64.charAt((v >>> 12) & 0x3F)+b64.charAt((v >>> 6) & 0x3F)+b64.charAt(v & 0x3F);
+							};
 							return b30(H0 >>> 2)+b30(((H0 & 0x3) << 28) | (H1 >>> 4))+b30(((H1 & 0xF) << 26) | (H2 >>> 6))+b30(((H2 & 0x3F) << 24) | (H3 >>> 8))+b30(((H3 & 0xFF) << 22) | (H4 >>> 10))+b12((H4 & 0x3FF)<<2)+"=";
 					}
 					break;
-				case 'BASE64':
+				case "MD5":
+					var n = str.length;
+					var add32 = function (a, b) {
+						return (a + b) & 0xFFFFFFFF;
+					};
+					var cmn = function(q, a, b, x, s, t) {
+						a = add32(add32(a, q), add32(x, t));
+						return add32((a << s) | (a >>> (32 - s)), b);
+					};
+					var f1 = function(a, b, c, d, x, s, t) {
+						return cmn((b & c) | ((~b) & d), a, b, x, s, t);
+					};
+					var f2 = function(a, b, c, d, x, s, t) {
+						return cmn((b & d) | (c & (~d)), a, b, x, s, t);
+					};
+					var f3 = function(a, b, c, d, x, s, t) {
+						return cmn(b ^ c ^ d, a, b, x, s, t);
+					};
+					var f4 = function(a, b, c, d, x, s, t) {
+						return cmn(c ^ (b | (~d)), a, b, x, s, t);
+					};
+					var cycle = function (w, t) {
+						var a = w[0], b = w[1], c = w[2], d = w[3];
+						a = f1(a, b, c, d, t[0], 7, -680876936);
+						d = f1(d, a, b, c, t[1], 12, -389564586);
+						c = f1(c, d, a, b, t[2], 17,  606105819);
+						b = f1(b, c, d, a, t[3], 22, -1044525330);
+						a = f1(a, b, c, d, t[4], 7, -176418897);
+						d = f1(d, a, b, c, t[5], 12,  1200080426);
+						c = f1(c, d, a, b, t[6], 17, -1473231341);
+						b = f1(b, c, d, a, t[7], 22, -45705983);
+						a = f1(a, b, c, d, t[8], 7,  1770035416);
+						d = f1(d, a, b, c, t[9], 12, -1958414417);
+						c = f1(c, d, a, b, t[10], 17, -42063);
+						b = f1(b, c, d, a, t[11], 22, -1990404162);
+						a = f1(a, b, c, d, t[12], 7,  1804603682);
+						d = f1(d, a, b, c, t[13], 12, -40341101);
+						c = f1(c, d, a, b, t[14], 17, -1502002290);
+						b = f1(b, c, d, a, t[15], 22,  1236535329);
+						a = f2(a, b, c, d, t[1], 5, -165796510);
+						d = f2(d, a, b, c, t[6], 9, -1069501632);
+						c = f2(c, d, a, b, t[11], 14,  643717713);
+						b = f2(b, c, d, a, t[0], 20, -373897302);
+						a = f2(a, b, c, d, t[5], 5, -701558691);
+						d = f2(d, a, b, c, t[10], 9,  38016083);
+						c = f2(c, d, a, b, t[15], 14, -660478335);
+						b = f2(b, c, d, a, t[4], 20, -405537848);
+						a = f2(a, b, c, d, t[9], 5,  568446438);
+						d = f2(d, a, b, c, t[14], 9, -1019803690);
+						c = f2(c, d, a, b, t[3], 14, -187363961);
+						b = f2(b, c, d, a, t[8], 20,  1163531501);
+						a = f2(a, b, c, d, t[13], 5, -1444681467);
+						d = f2(d, a, b, c, t[2], 9, -51403784);
+						c = f2(c, d, a, b, t[7], 14,  1735328473);
+						b = f2(b, c, d, a, t[12], 20, -1926607734);
+						a = f3(a, b, c, d, t[5], 4, -378558);
+						d = f3(d, a, b, c, t[8], 11, -2022574463);
+						c = f3(c, d, a, b, t[11], 16,  1839030562);
+						b = f3(b, c, d, a, t[14], 23, -35309556);
+						a = f3(a, b, c, d, t[1], 4, -1530992060);
+						d = f3(d, a, b, c, t[4], 11,  1272893353);
+						c = f3(c, d, a, b, t[7], 16, -155497632);
+						b = f3(b, c, d, a, t[10], 23, -1094730640);
+						a = f3(a, b, c, d, t[13], 4,  681279174);
+						d = f3(d, a, b, c, t[0], 11, -358537222);
+						c = f3(c, d, a, b, t[3], 16, -722521979);
+						b = f3(b, c, d, a, t[6], 23,  76029189);
+						a = f3(a, b, c, d, t[9], 4, -640364487);
+						d = f3(d, a, b, c, t[12], 11, -421815835);
+						c = f3(c, d, a, b, t[15], 16,  530742520);
+						b = f3(b, c, d, a, t[2], 23, -995338651);
+						a = f4(a, b, c, d, t[0], 6, -198630844);
+						d = f4(d, a, b, c, t[7], 10,  1126891415);
+						c = f4(c, d, a, b, t[14], 15, -1416354905);
+						b = f4(b, c, d, a, t[5], 21, -57434055);
+						a = f4(a, b, c, d, t[12], 6,  1700485571);
+						d = f4(d, a, b, c, t[3], 10, -1894986606);
+						c = f4(c, d, a, b, t[10], 15, -1051523);
+						b = f4(b, c, d, a, t[1], 21, -2054922799);
+						a = f4(a, b, c, d, t[8], 6,  1873313359);
+						d = f4(d, a, b, c, t[15], 10, -30611744);
+						c = f4(c, d, a, b, t[6], 15, -1560198380);
+						b = f4(b, c, d, a, t[13], 21,  1309151649);
+						a = f4(a, b, c, d, t[4], 6, -145523070);
+						d = f4(d, a, b, c, t[11], 10, -1120210379);
+						c = f4(c, d, a, b, t[2], 15,  718787259);
+						b = f4(b, c, d, a, t[9], 21, -343485551);
+						w[0] = add32(a, w[0]);
+						w[1] = add32(b, w[1]);
+						w[2] = add32(c, w[2]);
+						w[3] = add32(d, w[3]);
+					};
+					var w = [1732584193, -271733879, -1732584194, 271733878];
+					var t;
+					i = 0;
+					while (i <= n-64) {
+						t = [];
+						do {
+							t.push(str.charCodeAt(i) + (str.charCodeAt(i+1) << 8) + (str.charCodeAt(i+2) << 16) + (str.charCodeAt(i+3) << 24));
+							i += 4;
+						} while ( i%64 != 0 );
+						cycle(w, t);
+					}
+					t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+					var j = 0;
+					while ( i < n ) {
+						t[j>>2] |= str.charCodeAt(i) << ((j%4) << 3);
+						i++;
+						j++;
+					}
+					t[j>>2] |= 0x80 << ((j%4) << 3);
+					if (j > 55) {
+						cycle(w, t);
+						t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+					}
+					t[14] = n*8;
+					cycle(w, t);
+					var k;
+					for (k = 0, l = w.length; k < l; k++) {
+						w[k] = ((w[k] & 0xFF) << 24) | (((w[k] >> 8) & 0xFF) << 16) | (((w[k] >> 16) & 0xFF) << 8) | ((w[k] >> 24) & 0xFF);
+					}
+					switch (enco) {
+						case "hex" :
+							var hex32 = function(v) {
+								var h = v >>> 16;
+								var l = v & 0xFFFF;
+								return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000")+h.toString(16)+(l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000")+l.toString(16);
+							};
+							var str2 = "";
+							for (k = 0, l = w.length; k < l; k++) {
+								str2 += hex32(w[k]);
+							}
+							return str2;
+						case "base64" :
+							var l2 = w.length*4;
+							var str2 = "";
+							for (i = 0; i < l2; i += 3) {
+								var c1 = (w[i >> 2] >> (24 - (i%4)*8))& 0xFF;
+								var c2 = i + 1 < l2 ? (w[(i + 1) >> 2] >> (24 - ((i+1)%4)*8))& 0xFF : 0;
+								var c3 = i + 2 < l2 ? (w[(i + 2) >> 2] >> (24 - ((i+2)%4)*8))& 0xFF : 0;
+								str2 += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l2 ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l2 ? b64.charAt(c3 & 63) : "=");
+							}
+							return str2;
+					}
+					break;
+				case "BASE64":
 					str = str.replace(/\r\n/g,"\n");
 					var l2 = str.length;
 					var str2 = "";
@@ -972,7 +1143,7 @@ var XsltForms_xpathCoreFunctions = {
 						var c1 = str2.charCodeAt(i);
 						var c2 = i + 1 < l2 ? str2.charCodeAt(i + 1) : 0;
 						var c3 = i + 2 < l2 ? str2.charCodeAt(i + 2) : 0;
-						res += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l ? b64.charAt(c3 & 63) : "=");
+						res += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l2 ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l2 ? b64.charAt(c3 & 63) : "=");
 					}
 					return res;
 			}
@@ -1520,6 +1691,10 @@ var XsltForms_xpathFunctionExceptions = {
 	localDateTimeInvalidArgumentsNumber : {
 		name : "local-dateTime() : Invalid number of arguments",
 		message : "local-dateTime() function must have no argument"
+	},
+	adjustDateTimeToTimezoneInvalidArgumentsNumber: {
+		name : "adjust-dateTime-to-timezone() : Invalid number of arguments",
+		message : "adjust-dateTime-to-timezone() function must have one argument exactly"
 	},
 	daysFromDateInvalidArgumentsNumber : {
 		name : "days-from-date() : Invalid number of arguments",
