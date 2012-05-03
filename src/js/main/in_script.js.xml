@@ -1,0 +1,113 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="in_script.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2012-04-28</cm:creationdate>
+	<cm:lastupdate>2012-04-28</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2012 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+Copyright (C) 2006 AJAXForms S.L.
+Contact at: &lt;info@ajaxforms.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>'''XSLTForms Javascript for insertion in script elements'''</cm:wiki>
+<![CDATA[
+if (typeof xsltforms_d0 === "undefined") {
+	(function () {
+		var initelts = document.getElementsByTagName("script");
+		var elts = [];
+		var i, l;
+		for (i = 0, l = initelts.length; i < l; i++) {
+			elts[i] = initelts[i];
+		}
+		initelts = null;
+		var root;
+		for (i = 0, l = elts.length; i < l; i++) {
+			if (elts[i].src.indexOf("xsltforms.js") !== -1) {
+				root = elts[i].src.replace("xsltforms.js", "");
+			}
+		}
+		var newelt;
+		newelt = document.createElement("link");
+		newelt.setAttribute("rel", "stylesheet");
+		newelt.setAttribute("type", "text/css");
+		newelt.setAttribute("href", root + "xsltforms.css");
+		document.getElementsByTagName("head")[0].appendChild(newelt);
+		var addLoadListener = function(func) {
+			if (window.addEventListener) {
+				window.addEventListener("load", func, false);
+			} else if (document.addEventListener) {
+				document.addEventListener("load", func, false);
+			} else if (window.attachEvent) {
+				window.attachEvent("onload", func);
+			} else if (typeof window.onload != "function") {
+				window.onload = func;
+			} else {
+				var oldonload = window.onload;
+				window.onload = function() {
+					oldonload();
+					func();
+				};
+			}
+		};
+		var xftrans = function () {
+			var initelts = document.getElementsByTagName("script");
+			var elts = [];
+			var i, l;
+			for (i = 0, l = initelts.length; i < l; i++) {
+				elts[i] = initelts[i];
+			}
+			initelts = null;
+			var res;
+			for (i = 0, l = elts.length; i < l; i++) {
+				if (elts[i].type === "text/xforms") {
+					res = XsltForms_browser.transformText('<html xmlns="http://www.w3.org/1999/xhtml"><body>' + elts[i].text + '</body></html>', root + "xsltforms.xsl", false);
+					var sp = XsltForms_globals.stringSplit(res, "XsltForms_MagicSeparator");
+					var mainjs = "xsltforms_d0 = new Date(); /* xsltforms-mainform " + sp[1] + sp[2] + " xsltforms-mainform */ }";
+					newelt = document.createElement("script");
+					newelt.setAttribute("id", "xsltforms-generated-script");
+					newelt.setAttribute("type", "text/javascript");
+					if (XsltForms_browser.isIE) {
+						newelt.text = mainjs;
+					} else {
+						var scripttxt = document.createTextNode(mainjs);
+						newelt.appendChild(scripttxt);
+					}
+					document.getElementsByTagName("body")[0].appendChild(newelt);
+					var subbody = "<!-- xsltforms-mainform " + sp[4] + " xsltforms-mainform -->";
+					elts[i].outerHTML = subbody;
+				}
+			}
+		}
+		var xsltforms_init = function () {
+			try {
+				xftrans();
+				xsltforms_initImpl();
+			} catch(e) {
+				alert("XSLTForms Exception\n--------------------------\n\nIncorrect Javascript code generation:\n\n"+(typeof(e.stack)=="undefined"?"":e.stack)+"\n\n"+(e.name?e.name+(e.message?"\n\n"+e.message:""):e));
+			}
+		}
+		if (document.readyState === "complete") {
+			xsltforms_init();
+		} else {
+			addLoadListener(xsltforms_init);
+		}
+	})();
+}
+]]>
+	</cm:source>
+</cm:component>

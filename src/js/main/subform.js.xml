@@ -57,6 +57,9 @@ XsltForms_subform.prototype.construct = function() {
 		this.instances[i].construct(this);
 	}
 	XsltForms_browser.forEach(this.binds, "refresh");
+	for (i = 0, len = this.instances.length; i < len; i++) {
+		this.instances[i].revalidate();
+	}
 	this.ready = true;
 };
 ]]>

@@ -34,5 +34,6 @@ Many Javascript objects and functions can be called directly by developers for s
 		<cm:import-components path="js/types/types.js.xml"/>
 		<cm:import-components path="js/xmlevtmngt/xmlevtmngt.js.xml"/>
 		<cm:import-components path="js/xpathexpr/xpathexpr.js.xml"/>
+		<cm:import-components path="js/main/in_script.js.xml"/>
 	</cm:source>
 </cm:component>

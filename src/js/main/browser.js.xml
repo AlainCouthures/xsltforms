@@ -327,8 +327,11 @@ if (XsltForms_browser.isIE) {
 			if (!XsltForms_browser.isMozilla && !XsltForms_browser.isOpera) {
 				xsltProcessor.setParameter(null, "xsltforms_caller", "true");
 			}
-			xsltProcessor.setParameter(null, "xsltforms_config", document.getElementById(XsltForms_browser.idPf + "instance-config").xfElement.srcXML);
-			xsltProcessor.setParameter(null, "xsltforms_lang", XsltForms_globals.language);
+			try {
+				xsltProcessor.setParameter(null, "xsltforms_config", document.getElementById(XsltForms_browser.idPf + "instance-config").xfElement.srcXML);
+				xsltProcessor.setParameter(null, "xsltforms_lang", XsltForms_globals.language);
+			} catch (e) {
+			}
 			for (var i = 3, len = arguments.length-1; i < len ; i += 2) {
 				xsltProcessor.setParameter(null, arguments[i], arguments[i+1]);
 			}
@@ -336,7 +339,7 @@ if (XsltForms_browser.isIE) {
 			try {
 				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
 				return serializer.serializeToString(resultDocument);
-			} catch (e) {
+			} catch (e2) {
 				return "";
 			}
 	};
