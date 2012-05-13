@@ -49,9 +49,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:value-of select="$rid"/>
 				<xsl:text>",</xsl:text>
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@schema"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@functions"/></xsl:call-template>
+				<xsl:text>,</xsl:text>
+				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@version"/></xsl:call-template>
 				<xsl:text>)</xsl:text>
 				<xsl:apply-templates select="xforms:itext" mode="itext"/>
 				<xsl:text>;</xsl:text>
+				<xsl:if test="not(xforms:instance)">
+					<xsl:text>XsltForms_instance.create(</xsl:text>
+					<xsl:value-of select="$vn_subform"/>
+					<xsl:text>,"</xsl:text>
+					<xsl:value-of select="$id_pf"/>
+					<xsl:text>instance-default",</xsl:text>
+					<xsl:value-of select="$vn_pf"/>
+					<xsl:text>model_</xsl:text>
+					<xsl:value-of select="$idmodel"/>
+					<xsl:text>,false,"application/xml",null,'&lt;data xmlns=""&gt;</xsl:text>
+					<xsl:for-each select="//@ref[namespace-uri(parent::*) = 'http://www.w3.org/2002/xforms']">
+						<xsl:text>&lt;</xsl:text>
+						<xsl:value-of select="."/>
+						<xsl:text>/&gt;</xsl:text>
+					</xsl:for-each>
+					<xsl:text>&lt;/data&gt;');</xsl:text>
+				</xsl:if>
 			</js>
 			<js xmlns="">
 				<xsl:apply-templates select="xsd:schema" mode="schema"/>

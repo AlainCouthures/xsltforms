@@ -35,7 +35,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:text> = new XsltForms_dispatch(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,"xforms-focus",</xsl:text>
-				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@control"/></xsl:call-template>
+				<xsl:choose>
+					<xsl:when test="xforms:control/@value">
+						<xsl:for-each select="xforms:control[1]">
+							<xsl:call-template name="toScriptBinding"/>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:variable name="control">
+							<xsl:choose>
+								<xsl:when test="xforms:control"><xsl:value-of select="xforms:control"/></xsl:when>
+								<xsl:otherwise><xsl:value-of select="@control"/></xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="$control"/></xsl:call-template>
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:text>,</xsl:text>
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@if"/></xsl:call-template>
 				<xsl:text>,</xsl:text>

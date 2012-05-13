@@ -112,12 +112,6 @@ XsltForms_submission.prototype.submit = function() {
 	} else {
 		action = this.action;
 	}
-	if (action.subst && action.subst(0, 8) === "local://" && (typeof(localStorage) === 'undefined')) {
-		evcontext["error-type"] = "validation-error";
-		this.issueSubmitException_(evcontext, null, {message: "local:// submission not supported"});
-		XsltForms_globals.closeAction();
-		return;
-	}
 	var method = "post";
 	var subm = this;
 	if(this.method.evaluate) {
@@ -126,6 +120,12 @@ XsltForms_submission.prototype.submit = function() {
 		method = this.method;
 	}
 	var evcontext = {"method": method, "resource-uri": action};
+	if (action.subst && action.subst(0, 8) === "local://" && (typeof(localStorage) === 'undefined')) {
+		evcontext["error-type"] = "validation-error";
+		this.issueSubmitException_(evcontext, null, {message: "local:// submission not supported"});
+		XsltForms_globals.closeAction();
+		return;
+	}
 	if (node) {
 		if (this.validate && !XsltForms_globals.validate_(node)) {
 			evcontext["error-type"] = "validation-error";
@@ -141,6 +141,10 @@ XsltForms_submission.prototype.submit = function() {
 	}
 	XsltForms_xmlevents.dispatch(this, "xforms-submit-serialize");
 	var ser = node ? XsltForms_browser.saveXML(node, this.relevant) : "";
+	switch (this.mediatype) {
+		case "text/csv": 
+			ser = XsltForms_browser.xml2csv(ser);
+	}
 	var instance = this.instance;
 	if (action.substr(0, 7) === "file://" || action.substr(0, 9) === "opener://" || action.substr(0, 8) === "local://") {
 		if (action.substr(0, 7) === "file://" && method === "put") {

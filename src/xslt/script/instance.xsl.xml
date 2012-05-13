@@ -71,26 +71,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:text>,null);</xsl:text>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:text>null,'</xsl:text>
+						<xsl:text>null,</xsl:text>
 						<xsl:choose>
 							<xsl:when test="@mediatype and @mediatype != 'application/xml'">
+								<xsl:text>"</xsl:text>
 								<xsl:call-template name="escapeJS">
 									<xsl:with-param name="text" select="."/>
-									<xsl:with-param name="trtext" select="translate(.,'&#10;&#13;&#9;\','&#10;&#10;&#10;&#10;')"/>
+									<xsl:with-param name="trtext" select="translate(.,'&#10;&#13;&#9;\&quot;','&#10;&#10;&#10;&#10;&#10;')"/>
 								</xsl:call-template>
+								<xsl:text>"</xsl:text>
 							</xsl:when>
 							<xsl:when test="$piform != '' and @id = $piforminstanceid">
+								<xsl:text>'</xsl:text>
 								<xsl:apply-templates select="$piforminstance/*" mode="xml2string">
 									<xsl:with-param name="root" select="true()"/>
 								</xsl:apply-templates>
+								<xsl:text>'</xsl:text>
 							</xsl:when>
 							<xsl:otherwise>
+								<xsl:text>'</xsl:text>
 								<xsl:apply-templates select="node()" mode="xml2string">
 									<xsl:with-param name="root" select="true()"/>
 								</xsl:apply-templates>
+								<xsl:text>'</xsl:text>
 							</xsl:otherwise>
 						</xsl:choose>
-						<xsl:text>');</xsl:text>
+						<xsl:text>);</xsl:text>
 					</xsl:otherwise>
 				</xsl:choose>
 			</js>

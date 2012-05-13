@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 === "XsltForms_model" class ===
 * constructor function : specifically gets the associated schemas</cm:wiki>
 		<![CDATA[
-function XsltForms_model(subform, id, schemas) {
+function XsltForms_model(subform, id, schemas, functions, version) {
 	if (subform.id !== "xsltforms-mainform") {
 		XsltForms_globals.addChange(this);
 	}
@@ -83,6 +83,35 @@ function XsltForms_model(subform, id, schemas) {
 			}
 		}
 	}
+	if (functions) {
+		var fs = functions.split(" ");
+		var found;
+		for (var j = 0, len2 = fs.length; j < len2; j++) {
+			found = false;
+			for (var k = 0, len3 = XsltForms_xpathCoreFunctions.length; k < len3; k++) {
+				if (XsltForms_xpathCoreFunctions[k].split(" ")[1] === fs[j]) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				try {
+					var func = eval(fs[j]);
+				} catch (e) {
+					XsltForms_globals.error(this, "xforms-compute-exception", "Function " + fs[j] + "() not found");
+				}
+			}
+		}
+	}
+	if (version) {
+		var vs = version.split(" ");
+		for (var l = 0, len4 = vs.length; l < len4; l++) {
+			if (vs[l] !== "1.0" && vs[l] !== "1.1") {
+				XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-version-exception", "Version " + vs[l] + " not supported");
+				break;
+			}
+		}
+	}
 }
 
 XsltForms_model.prototype = new XsltForms_coreElement();
@@ -91,7 +120,7 @@ XsltForms_model.prototype = new XsltForms_coreElement();
 		<cm:wiki>
 * '''create''' method : adds an instance to this model</cm:wiki>
 <![CDATA[
-XsltForms_model.create = function(subform, id, schemas) {
+XsltForms_model.create = function(subform, id, schemas, functions, version) {
 	var elt = document.getElementById(id);
 	if (elt) {
 		elt.xfElement.subforms[subform] = true;
@@ -100,7 +129,7 @@ XsltForms_model.create = function(subform, id, schemas) {
 		XsltForms_globals.addChange(elt.xfElement);
 		return elt.xfElement;
 	} else {
-		return new XsltForms_model(subform, id, schemas);
+		return new XsltForms_model(subform, id, schemas, functions, version);
 	}
 };
 
@@ -175,7 +204,11 @@ XsltForms_model.prototype.construct = function() {
 	if (!XsltForms_globals.ready) {
 		XsltForms_browser.forEach(this.instances, "construct");
 	}
-	XsltForms_xmlevents.dispatch(this, "xforms-rebuild");
+	if (XsltForms_globals.ready) {
+		XsltForms_xmlevents.dispatch(this, "xforms-rebuild");
+	} else {
+		this.rebuild();
+	}
 	XsltForms_xmlevents.dispatch(this, "xforms-model-construct-done");
 	if (this === XsltForms_globals.models[XsltForms_globals.models.length - 1]) {
 		window.setTimeout("XsltForms_xmlevents.dispatchList(XsltForms_globals.models, \"xforms-ready\")", 1);
@@ -201,7 +234,11 @@ XsltForms_model.prototype.rebuild = function() {
 		this.setRebuilded(true);
 	}
 	XsltForms_browser.forEach(this.binds, "refresh");
-	XsltForms_xmlevents.dispatch(this, "xforms-recalculate");
+	if (XsltForms_globals.ready) {
+		XsltForms_xmlevents.dispatch(this, "xforms-recalculate");
+	} else {
+		this.recalculate();
+	}
 };
 
 ]]>
@@ -210,7 +247,11 @@ XsltForms_model.prototype.rebuild = function() {
 <![CDATA[
 XsltForms_model.prototype.recalculate = function() { 
 	XsltForms_browser.forEach(this.binds, "recalculate");
-	XsltForms_xmlevents.dispatch(this, "xforms-revalidate");
+	if (XsltForms_globals.ready) {
+		XsltForms_xmlevents.dispatch(this, "xforms-revalidate");
+	} else {
+		this.revalidate();
+	}
 };
 
 ]]>

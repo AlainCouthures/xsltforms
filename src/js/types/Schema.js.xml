@@ -30,9 +30,8 @@ Schema  Class
 * constructor function : creates a Schema object after checking it doesn't exist yet</cm:wiki>
 		<![CDATA[
 function XsltForms_schema(subform, ns, name, prefixes) {
-	XsltForms_browser.assert(ns && !XsltForms_schema.all[ns], "Needed schema name or exists one schema with that namespace");
 	if(XsltForms_schema.all[ns]) {
-		XsltForms_globals.error(this, "xforms-link-exception", "More than one schema with the same namespace declaration");
+		XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-link-exception", "More than one schema with the same namespace declaration");
 		return;
 	}
 	this.subform = subform;

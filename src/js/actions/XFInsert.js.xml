@@ -119,7 +119,8 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 	var model = document.getElementById(XsltForms_browser.getMeta(parent.documentElement ? parent.documentElement : parent.ownerDocument.documentElement, "model")).xfElement;
 	XsltForms_globals.addChange(model);
 	model.setRebuilded(true);
-	XsltForms_xmlevents.dispatch(model.findInstance(parent), "xforms-insert");
+	var evcontext = {"inserted-nodes": XsltForms_globals.stringValue([clone]), "origin-nodes": "dummy", "insert-location-node": "dummy", position: "dummy"};
+	XsltForms_xmlevents.dispatch(model.findInstance(parent), "xforms-insert", null, null, null, null, evcontext);
 };
     ]]>
 	</cm:source>

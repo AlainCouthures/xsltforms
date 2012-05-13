@@ -41,10 +41,14 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML
 				this.srcXML = XsltForms_browser.unescape(this.srcXML);
 			}
 			break;
+		case "text/json":
 		case "application/json":
 			var json;
 			eval("json = " + XsltForms_browser.unescape(srcXML));
 			this.srcXML = XsltForms_browser.json2xml("", json, true, false);
+			break;
+		case "text/vcard":
+			this.srcXML = XsltForms_browser.vcard2xcard(XsltForms_browser.unescape(srcXML));
 			break;
 		default:
 			alert("Unsupported mediatype '" + mediatype + "' for instance #" + id);
@@ -356,7 +360,6 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 * '''jsoninst''' function : replaces instance data from json content</cm:wiki>
 <![CDATA[
 XsltForms_browser.jsoninst = function(json) {
-	//alert(json2xml("", json, true, false));
 	XsltForms_browser.jsoninstobj.setDoc(XsltForms_browser.json2xml("", json, true, false));
 	XsltForms_globals.addChange(XsltForms_browser.jsoninstobj.model);
 	XsltForms_xmlevents.dispatch(XsltForms_browser.jsoninstobj.model, "xforms-rebuild");
@@ -364,5 +367,151 @@ XsltForms_browser.jsoninst = function(json) {
 	document.body.removeChild(document.getElementById("jsoninst"));
 };
     ]]>
+		<cm:wiki>
+* '''vcard2xcard''' function : converts vcard to xcard notation</cm:wiki>
+<![CDATA[
+XsltForms_browser.vcard2xcard_data = {
+	state: 0,
+	version: "4.0",
+	reg_date: /^(\d{8}|\d{4}-\d\d|--\d\d(\d\d)?|---\d\d)$/,
+	reg_time: /^(\d\d(\d\d(\d\d)?)?|-\d\d(\d\d?)|--\d\d)(Z|[+\-]\d\d(\d\d)?)?$/,
+	reg_date_time: /^(\d{8}|--\d{4}|---\d\d)T\d\d(\d\d(\d\d)?)?(Z|[+\-]\d\d(\d\d)?)?$/,
+	reg_uri: /^(([^:\/?#]+):)?(\/\/([^\/\?#]*))?([^\?#]*)(\?([^#]*))?(#([^\:#\[\]\@\!\$\&\\'\(\)\*\+\,\;\=]*))?$/,
+	reg_utc_offset: /^[+\-]\d\d(\d\d)?$/
+};
+
+XsltForms_browser.vcard2xcard_escape = function(s) {
+	return s.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;").replace(/\\;/gm,";");
+};
+
+XsltForms_browser.vcard2xcard_param = {
+	"PREF":        {fparam: function(value) {return "<integer>" + value + "</integer>";}},
+	"TYPE":        {fparam: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}}
+};
+
+XsltForms_browser.vcard2xcard_prop = {
+	"BEGIN":       {state: 0, fvalue: function(value) {XsltForms_browser.vcard2xcard_data.state = 1; return value.toUpperCase() === "VCARD" ? "<vcard>" : "<'Invalid directive: BEGIN:" + value + "'>";}},
+	"END":         {state: 1, fvalue: function(value) {XsltForms_browser.vcard2xcard_data.state = 0; return value.toUpperCase() === "VCARD" ? "</vcard>" : "<'Invalid directive: END:" + value + "'>";}},
+	"SOURCE":      {state: 1, tag: "source", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"KIND":        {state: 1, tag: "kind", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"XML":         {state: 1, fvalue: function(value) {return value;}},
+	"FN":          {state: 1, tag: "fn", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"N":           {state: 1, tag: "n", fvalue: function(value) {var n = value.split(";"); return "<surname>" + XsltForms_browser.vcard2xcard_escape(n[0]) + "</surname><given>" + XsltForms_browser.vcard2xcard_escape(n[1]) + "</given><additional>" + XsltForms_browser.vcard2xcard_escape(n[2]) + "</additional><prefix>" + XsltForms_browser.vcard2xcard_escape(n[3]) + "</prefix><suffix>" + XsltForms_browser.vcard2xcard_escape(n[4]) + "</suffix>";}},
+	"NICKNAME":    {state: 1, tag: "nickname", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"PHOTO":       {state: 1, tag: "photo", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"BDAY":        {state: 1, tag: "bday", fvalue: function(value) {return (XsltForms_browser.vcard2xcard_data.reg_date_time.test(value) ? "<date-time>" + value + "</date-time>" : XsltForms_browser.vcard2xcard_data.reg_date.test(value) ? "<date>" + value + "</date>" : XsltForms_browser.vcard2xcard_data.reg_time.test(value) ? "<time>" + value + "</time>" : "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>");}},
+	"ANNIVERSARY": {state: 1, tag: "anniversary", fvalue: function(value) {return (XsltForms_browser.vcard2xcard_data.reg_date_time.test(value) ? "<date-time>" + value + "</date-time>" : XsltForms_browser.vcard2xcard_data.reg_date.test(value) ? "<date>" + value + "</date>" : XsltForms_browser.vcard2xcard_data.reg_time.test(value) ? "<time>" + value + "</time>" : "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>");}},
+	"GENDER":      {state: 1, tag: "gender", fvalue: function(value) {var gender = value.split(";"); return "<sex>" + gender[0] + "</sex>" + (value.indexOf(";") !== -1 ? "<identity>" + XsltForms_browser.vcard2xcard_escape(gender[1]) + "</identity>": "");}},
+	"ADR":         {state: 1, tag: "adr", fvalue: function(value) {var adr = value.split(";"); return "<pobox>" + XsltForms_browser.vcard2xcard_escape(adr[0]) + "</pobox><ext>" + XsltForms_browser.vcard2xcard_escape(adr[1]) + "</ext><street>" + XsltForms_browser.vcard2xcard_escape(adr[2]) + "</street><locality>" + XsltForms_browser.vcard2xcard_escape(adr[3]) + "</locality><region>" + XsltForms_browser.vcard2xcard_escape(adr[4]) + "</region><code>" + XsltForms_browser.vcard2xcard_escape(adr[5]) + "</code><country>" + XsltForms_browser.vcard2xcard_escape(adr[6]) + "</country>";}},
+	"TEL":         {state: 1, tag: "tel", fvalue: function(value) {return (XsltForms_browser.vcard2xcard_data.reg_uri.test(value) ? "<uri>" + value + "</uri>" : "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>");}},
+	"EMAIL":       {state: 1, tag: "email", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"IMPP":        {state: 1, tag: "impp", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"LANG":        {state: 1, tag: "lang", fvalue: function(value) {return "<language-tag>" + value + "</language-tag>";}},
+	"TZ":          {state: 1, tag: "tz", fvalue: function(value) {return XsltForms_browser.vcard2xcard_data.reg_uri.test(value) ? "<uri>" + value + "</uri>" : XsltForms_browser.vcard2xcard_data.reg_utc_offset.test(value) ? "<utc-offset>" + value + "</utc-offset>" : "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"GEO":         {state: 1, tag: "geo", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"TITLE":       {state: 1, tag: "title", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"ROLE":        {state: 1, tag: "role", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"LOGO":        {state: 1, tag: "logo", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"ORG":         {state: 1, tag: "org", fvalue: function(value) {var orgs = value.split(";"); var s = ""; for (var i = 0, len = orgs.length; i < len; i++) { s += "<text>" + XsltForms_browser.vcard2xcard_escape(orgs[i]) + "</text>";} return s;}},
+	"MEMBER":      {state: 1, tag: "member", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"RELATED":     {state: 1, tag: "related", fvalue: function(value) {return XsltForms_browser.vcard2xcard_data.reg_uri.test(value) ? "<uri>" + value + "</uri>" : "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"CATEGORIES":  {state: 1, tag: "categories", fvalue: function(value) {var cats = value.split(";"); var s = ""; for (var i = 0, len = cats.length; i < len; i++) { s += "<text>" + XsltForms_browser.vcard2xcard_escape(cats[i]) + "</text>";} return s;}},
+	"NOTE":        {state: 1, tag: "note", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"X-LOTUS-BRIEFCASE":        {state: 1, tag: "x-lotus-briefcase", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"PRODID":      {state: 1, tag: "prodid", fvalue: function(value) {return "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"REV":         {state: 1, tag: "rev", fvalue: function(value) {return "<timestamp>" + value + "</timestamp>";}},
+	"SOUND":       {state: 1, tag: "sound", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"UID":         {state: 1, tag: "uid", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"CLIENTPIDMAP":{state: 1, tag: "clientpidmap", fvalue: function(value) {var cmap = value.split(";"); return "<sourceid>" + cmap[0] + "</sourceid><value-uri>" + cmap[1] + "</value-uri>";}},
+	"URL":         {state: 1, tag: "url", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"VERSION":     {state: 1, fvalue: function(value) {XsltForms_browser.vcard2xcard_data.version = value; return "";}},
+	"KEY":         {state: 1, tag: "key", fvalue: function(value) {return XsltForms_browser.vcard2xcard_data.reg_uri.test(value) ? "<uri>" + value + "</uri>" : "<text>" + XsltForms_browser.vcard2xcard_escape(value) + "</text>";}},
+	"FBURL":       {state: 1, tag: "fburl", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"CALADRURI":   {state: 1, tag: "caladruri", fvalue: function(value) {return "<uri>" + value + "</uri>";}},
+	"CALURI":      {state: 1, tag: "caluri", fvalue: function(value) {return "<uri>" + value + "</uri>";}}
+};
+
+XsltForms_browser.vcard2xcard = function(v) {
+	var s = '<vcards xmlns="urn:ietf:params:xml:ns:vcard-4.0">';
+	var vcards = v.replace(/(\r\n|\n|\r) /gm,"").replace(/^\s+/,"").replace(/\s+$/,"").split("\n");
+	var state = 0;
+	for (var i = 0, len = vcards.length; i < len; i++) {
+		var sep = vcards[i].indexOf(":");
+		var before = vcards[i].substring(0, sep);
+		var after = vcards[i].substring(sep + 1);
+		var name = before.split(";");
+		var p = XsltForms_browser.vcard2xcard_prop[name[0]];
+		if (p && p.state === XsltForms_browser.vcard2xcard_data.state) {
+			var val = after.replace(/\\n/gm,"\n").replace(/\\,/gm,",");
+			if (p.tag) {
+				s += "<" + p.tag + ">";
+			}
+			if (name.length > 1) {
+				s += "<parameters>";
+				name.shift();
+				for (var j = 0, len2 = name.length; j < len2;) {
+					var par = name[j].split("=");
+					var parname = par[0];
+					var parobj = XsltForms_browser.vcard2xcard_param[parname];
+					if (parobj) {
+						s += "<" + parname.toLowerCase() + ">";
+						while (par[0] === parname) {
+							s += parobj.fparam(par[1]);
+							j++;
+							if (j < len2) {
+								par = name[j].split("=");
+							} else {
+								break;
+							}
+						}
+						s += "</" + parname.toLowerCase() + ">";
+					} else {
+						j++;
+					}
+				}
+				s += "</parameters>";
+			}
+			s += p.fvalue(val);
+			if (p.tag) {
+				s += "</" + p.tag + ">";
+			}
+		}
+	}
+	return s + "</vcards>";
+};
+
+XsltForms_browser.xml2csv = function(s) {
+	var d = XsltForms_browser.createXMLDocument(s);
+	var n0 = d.documentElement.firstChild;
+	while (n0 && n0.nodeType !== XsltForms_nodeType.ELEMENT) {
+		n0 = n0.nextSibling;
+	}
+	var h = n0.cloneNode(true);
+	d.documentElement.insertBefore(h, n0);
+	var n = h;
+	var r = "";
+	var sep = ",";
+	while (n) {
+		if (n.nodeType === XsltForms_nodeType.ELEMENT) {
+			var m = n.firstChild;
+			var m0 = m;
+			var l = "";
+			while (m) {
+				if (m.nodeType === XsltForms_nodeType.ELEMENT) {
+					var v = n === h ? m.getAttribute("fullname") || m.localName : m.text !== undefined ? m.text : m.textContent;
+					if (v.indexOf("\n") !== -1 || v.indexOf(sep) !== -1) {
+						v = '"' + v.replace(/"/gm, '""') + '"';
+					}
+					l += sep + v;
+				}
+				m = m.nextSibling;
+			}
+			r += l.substr(1) + "\n";
+		}
+		n = n.nextSibling;
+	}
+	return r;
+};
+]]>
 	</cm:source>
 </cm:component>

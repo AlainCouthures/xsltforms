@@ -63,6 +63,13 @@ XsltForms_atomicType.prototype.put = function(name, value) {
 		this.setBase(value);
 	} else if (name === "pattern") {
 		XsltForms_browser.copyArray([value], this.patterns);
+	} else if (name === "length") {
+		this.length = parseInt(value, 10);
+	} else if (name === "enumeration") {
+		if (!this.enumeration) {
+			this.enumeration = [];
+		}
+		this.enumeration.push(value);
 	} else {
 		this[name] = value;
 	}

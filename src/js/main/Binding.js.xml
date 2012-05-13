@@ -47,6 +47,9 @@ function XsltForms_binding(type, xpath, model, bind) {
 <![CDATA[
 XsltForms_binding.prototype.evaluate = function(ctx, depsNodes, depsId, depsElements) {
 	var result = null;
+	if( typeof this.model === "string" ) {
+		this.model = document.getElementById(this.model).xfElement;
+	}
 	if (this.bind) {
 		if (typeof this.bind === "string") {
 			var idel = document.getElementById(this.bind);

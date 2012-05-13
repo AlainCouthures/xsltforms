@@ -570,9 +570,12 @@ if (XsltForms_browser.isIE) {
 		var result = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		result.setProperty("SelectionLanguage", "XPath");
 		result.validateOnParse = false;
-		result.loadXML(xml);
-		var r = result.documentElement.cloneNode(true);
-		dest.parentNode.replaceChild(r, dest);
+		if (result.loadXML(xml)) {
+			var r = result.documentElement.cloneNode(true);
+			dest.parentNode.replaceChild(r, dest);
+		} else {
+			XsltForms_globals.error(document.getElementById(XsltForms_browser.getMeta(dest.ownerDocument.documentElement, "model")).xfElement, "xforms-link-exception", "Unable to parse XML");
+		}
 	};
 	XsltForms_browser.saveXML = function(node, relevant, indent) {
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
@@ -725,8 +728,12 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.loadXML = function(dest, xml) {
 		var result = XsltForms_browser.parser.parseFromString(xml, "text/xml");
-		var r = result.documentElement.cloneNode(true);
-		dest.parentNode.replaceChild(r, dest);
+		if (result.documentElement.localName !== "parsererror" && (!result.documentElement.textContent || result.documentElement.textContent.substring(0,40) !== "This page contains the following errors:")) {
+			var r = result.documentElement.cloneNode(true);
+			dest.parentNode.replaceChild(r, dest);
+		} else {
+			XsltForms_globals.error(document.getElementById(XsltForms_browser.getMeta(dest.ownerDocument.documentElement, "model")).xfElement, "xforms-link-exception", "Unable to parse XML");
+		}
 	};
 	XsltForms_browser.saveXML = function(node, relevant, indent) {
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
