@@ -398,7 +398,7 @@ var XsltForms_globals = {
 						var name = target.nodeName.toLowerCase();
 						xf.focus(name === "input" || name === "textarea");
 					}
-					if(xf.click) {
+					if(xf.click && xf.input && !xf.input.disabled) {
 						xf.click(target);
 						break;
 					}

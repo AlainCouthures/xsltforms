@@ -96,7 +96,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<head>
 					<xsl:copy-of select="xhtml:head/@* | head/@*"/>
 					<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-					<xsl:copy-of select="xhtml:meta[@http-equiv != 'Content-Type'] | head/meta[@http-equiv != 'Content-Type']"/>
+					<xsl:copy-of select="xhtml:head/xhtml:meta[string(@http-equiv) != 'Content-Type'] | head/meta[string(@http-equiv) != 'Content-Type']"/>
 					<script id="xsltforms-initialdate" type="text/javascript">
 						<xsl:text>var xsltforms_d0 = new Date();
 </xsl:text>

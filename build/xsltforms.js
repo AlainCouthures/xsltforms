@@ -1,4 +1,4 @@
-/* Rev. 544
+/* Rev. 545
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "544",
-	fileVersionNumber: 544,
+	fileVersion: "545",
+	fileVersionNumber: 545,
 
 	language: "navigator",
 	debugMode: false,
@@ -392,7 +392,7 @@ var XsltForms_globals = {
 						var name = target.nodeName.toLowerCase();
 						xf.focus(name === "input" || name === "textarea");
 					}
-					if(xf.click) {
+					if(xf.click && xf.input && !xf.input.disabled) {
 						xf.click(target);
 						break;
 					}
