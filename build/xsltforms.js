@@ -1,4 +1,4 @@
-/* Rev. 545
+/* Rev. 546
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "545",
-	fileVersionNumber: 545,
+	fileVersion: "546",
+	fileVersionNumber: 546,
 
 	language: "navigator",
 	debugMode: false,
@@ -652,6 +652,7 @@ function XsltForms_subform(subform, id, eltid) {
 		document.getElementById(eltid).xfSubform = this;
 	}
 	this.models = [];
+	this.schemas = [];
 	this.instances = [];
 	this.binds = [];
 	this.xpaths = [];
@@ -691,6 +692,10 @@ XsltForms_subform.prototype.dispose = function() {
 		this.models[i].dispose(this);
 	}
 	this.models = null;
+	for (var i0 = 0, len0 = this.schemas.length; i0 < len0; i0++) {
+		this.schemas[i0].dispose(this);
+	}
+	this.schemas = null;
 	for (var j = 0, len2 = this.instances.length; j < len2; j++) {
 		this.instances[j].dispose(this);
 	}
@@ -1526,7 +1531,7 @@ XsltForms_browser.getNil = function(node) {
 		} else {
 			var att = node.selectSingleNode("@*[local-name()='nil' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
 			if (att && att.value !== "") {
-				return XsltForms_globals.booleanValue(att.value);
+				return att.value !== "false";
 			} else {
 				return false;
 			}
@@ -5544,24 +5549,29 @@ XsltForms_input.prototype.initInput = function(type) {
 		this.type = type;
 		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
 			input.id = this.element.id + "_textarea";
-			var initinfo;
-			eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
-			initinfo.mode = "none";
-			initinfo.setup = function(ed) {
-				ed.onKeyUp.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-				ed.onChange.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-				ed.onUndo.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-				ed.onRedo.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-			};
-			tinyMCE.init(initinfo);
+			XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
+			if (!XsltForms_globals.tinyMCEinit) {
+				var initinfo;
+				eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
+				initinfo.mode = "none";
+				initinfo.setup = function(ed) {
+					ed.onKeyUp.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+					ed.onChange.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+					ed.onUndo.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+					ed.onRedo.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+				};
+				XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
+				tinyMCE.init(initinfo);
+				XsltForms_globals.tinyMCEinit = true;
+			}
 			tinyMCE.execCommand("mceAddControl", true, input.id);
 		}
 		this.initEvents(input, false);
@@ -5623,10 +5633,18 @@ XsltForms_input.prototype.setValue = function(value) {
 		this.initInput(type);
 		this.changeReadonly();
 	}
+	XsltForms_browser.debugConsole.write(this.input.id+": setValue("+value+")");
+//	if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) === undefined) {
+//		XsltForms_browser.debugConsole.write(this.input.id+" is undefined");
+//	}
 	if (type["class"] === "boolean") {
 		this.input.checked = value === "true";
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinyMCE.get(this.input.id) && tinyMCE.get(this.input.id).getContent() !== value) {
-		tinyMCE.get(this.input.id).setContent(value);
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce") { // && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
+		this.input.value = value || "";
+		//tinymce.get(this.input.id).setContent(value);
+		//this.input.value = tinymce.get(this.input.id).getContent() || "";
+		//XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";
 	}
@@ -7015,6 +7033,13 @@ XsltForms_upload.prototype.directclick = function() {
 		throw "Error";
 	} else {
 		this.value = XsltForms_browser.readFile("", "ISO-8859-1", this.type.name, "XSLTForms Java Upload");
+		if (document.applets.xsltforms) {
+			this.input.value = document.applets.xsltforms.lastChosenFileName;
+		} else {
+			if( document.getElementById("xsltforms_applet") ) {
+				this.input.value = document.getElementById("xsltforms_applet").xsltforms.lastChosenFileName;
+			}
+		}
 		if (this.incremental) {
 			this.valueChanged(this.value);
 		}
@@ -7396,8 +7421,19 @@ function XsltForms_schema(subform, ns, name, prefixes) {
 	this.types = {};
 	this.prefixes = prefixes || {};
 	XsltForms_schema.all[ns] = this;
+	if (subform) {
+		subform.schemas.push(this);
+	}
 }
 
+
+		
+
+XsltForms_schema.prototype.dispose = function(subform) {
+	XsltForms_schema.all[this.ns] = null;
+	this.types = null;
+	this.prefixes = null;
+};
 
 		
 
@@ -7729,7 +7765,7 @@ var XsltForms_typeDefs = {
 		
 
 	init : function(ns, list) {
-		var schema = XsltForms_schema.get("xsltforms-mainform", ns);
+		var schema = XsltForms_schema.get(null, ns);
 		for (var id in list) {
 			if (list.hasOwnProperty(id)) {
 				var type = new XsltForms_atomicType();

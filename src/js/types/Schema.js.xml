@@ -40,8 +40,20 @@ function XsltForms_schema(subform, ns, name, prefixes) {
 	this.types = {};
 	this.prefixes = prefixes || {};
 	XsltForms_schema.all[ns] = this;
+	if (subform) {
+		subform.schemas.push(this);
+	}
 }
 
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears the properties of this object</cm:wiki>
+<![CDATA[
+XsltForms_schema.prototype.dispose = function(subform) {
+	XsltForms_schema.all[this.ns] = null;
+	this.types = null;
+	this.prefixes = null;
+};
 ]]>
 		<cm:wiki>
 * '''all''' associative array : stores all schemas according to their respective namespace</cm:wiki>

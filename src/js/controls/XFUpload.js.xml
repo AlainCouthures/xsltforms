@@ -111,6 +111,13 @@ XsltForms_upload.prototype.directclick = function() {
 		throw "Error";
 	} else {
 		this.value = XsltForms_browser.readFile("", "ISO-8859-1", this.type.name, "XSLTForms Java Upload");
+		if (document.applets.xsltforms) {
+			this.input.value = document.applets.xsltforms.lastChosenFileName;
+		} else {
+			if( document.getElementById("xsltforms_applet") ) {
+				this.input.value = document.getElementById("xsltforms_applet").xsltforms.lastChosenFileName;
+			}
+		}
 		if (this.incremental) {
 			this.valueChanged(this.value);
 		}

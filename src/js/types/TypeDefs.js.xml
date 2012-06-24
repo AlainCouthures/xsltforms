@@ -43,7 +43,7 @@ var XsltForms_typeDefs = {
 * '''init''' method : inits the default types definitions for a given namespace</cm:wiki>
 <![CDATA[
 	init : function(ns, list) {
-		var schema = XsltForms_schema.get("xsltforms-mainform", ns);
+		var schema = XsltForms_schema.get(null, ns);
 		for (var id in list) {
 			if (list.hasOwnProperty(id)) {
 				var type = new XsltForms_atomicType();

@@ -36,6 +36,7 @@ function XsltForms_subform(subform, id, eltid) {
 		document.getElementById(eltid).xfSubform = this;
 	}
 	this.models = [];
+	this.schemas = [];
 	this.instances = [];
 	this.binds = [];
 	this.xpaths = [];
@@ -77,6 +78,10 @@ XsltForms_subform.prototype.dispose = function() {
 		this.models[i].dispose(this);
 	}
 	this.models = null;
+	for (var i0 = 0, len0 = this.schemas.length; i0 < len0; i0++) {
+		this.schemas[i0].dispose(this);
+	}
+	this.schemas = null;
 	for (var j = 0, len2 = this.instances.length; j < len2; j++) {
 		this.instances[j].dispose(this);
 	}

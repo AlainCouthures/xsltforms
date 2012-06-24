@@ -26,26 +26,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 		<xsl:template name="escapeEntities" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:param name="text"/>
-			<xsl:param name="done"/>
-			<xsl:param name="entities">&amp;.&amp;amp;.&apos;.&amp;apos;.&lt;.&amp;lt;.&gt;.&amp;gt;.&quot;.&amp;quot;.&#xA;.&amp;#xA;.&#8232;.&amp;#xA;.\.\\.</xsl:param>
-			<xsl:param name="entity" select="substring-before($entities,'.')"/>
+			<xsl:param name="entities">&amp;.&amp;amp;.&apos;.&amp;apos;.&lt;.&amp;lt;.&gt;.&amp;gt;.&quot;.&amp;quot;.\.\\.&#xA;.&amp;#xA;.&#8232;.&amp;#xA;.&#xD;.&amp;#xD;.</xsl:param>
+			<xsl:variable name="entity" select="substring-before($entities,'.')"/>
 			<xsl:choose>
 				<xsl:when test="contains($text, $entity)">
+					<xsl:variable name="text2" select="substring-before($text,$entity)"/>
+					<xsl:variable name="last" select="substring($text2, string-length($text2), 1)"/>
+					<xsl:variable name="lastn" select="substring(normalize-space($text2), string-length(normalize-space($text2)), 1)"/>
+					<xsl:variable name="text3"><xsl:choose><xsl:when test="$entity = '&#xA;' and $last != $lastn and $last != ' ' and $last != '&#x9;'"><xsl:value-of select="substring($text2,1,string-length($text2)-1)"/></xsl:when><xsl:otherwise><xsl:value-of select="$text2"/></xsl:otherwise></xsl:choose></xsl:variable>
+					<xsl:call-template name="escapeEntities">
+						<xsl:with-param name="text" select="$text3"/>
+						<xsl:with-param name="entities" select="substring-after(substring-after($entities,'.'),'.')"/>
+					</xsl:call-template>
+					<xsl:value-of select="substring-before(substring-after($entities,'.'), '.')"/>
 					<xsl:call-template name="escapeEntities">
 						<xsl:with-param name="text" select="substring-after($text,$entity)"/>
-						<xsl:with-param name="done" select="concat($done, substring-before($text,$entity), substring-before(substring-after($entities,'.'), '.'))"/>
 						<xsl:with-param name="entities" select="$entities"/>
-						<xsl:with-param name="entity" select="$entity"/>
 					</xsl:call-template>
 				</xsl:when>
 				<xsl:when test="substring-after(substring-after($entities,'.'),'.') != ''">
 					<xsl:call-template name="escapeEntities">
-						<xsl:with-param name="text" select="concat($done, $text)"/>
+						<xsl:with-param name="text" select="$text"/>
 						<xsl:with-param name="entities" select="substring-after(substring-after($entities,'.'),'.')"/>
 					</xsl:call-template>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:value-of select="concat($done, $text)"/>
+					<xsl:value-of select="$text"/>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:template>

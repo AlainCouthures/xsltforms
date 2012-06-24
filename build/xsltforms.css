@@ -1,4 +1,4 @@
-/* Rev. 545
+/* Rev. 546
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -320,17 +320,18 @@ div#statusPanel {
 	
 		
 .xforms-trigger a, .xforms-trigger a:link, .xforms-trigger a:hover, .xforms-trigger a:visited {
-	text-decoration				: none;
-	color 													: #000000;
+	text-decoration: none;
+	color: #000000;
 	border: none !important;
+	cursor: pointer;
 }
 
 .xforms-label img{
-	border : none !important;
+	border: none !important;
 }
 
 img.xforms-value {
-	border : 0;
+	border: 0;
 }
 	
 	

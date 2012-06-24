@@ -88,24 +88,29 @@ XsltForms_input.prototype.initInput = function(type) {
 		this.type = type;
 		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
 			input.id = this.element.id + "_textarea";
-			var initinfo;
-			eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
-			initinfo.mode = "none";
-			initinfo.setup = function(ed) {
-				ed.onKeyUp.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-				ed.onChange.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-				ed.onUndo.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-				ed.onRedo.add(function(ed) {
-					XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-				});
-			};
-			tinyMCE.init(initinfo);
+			XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
+			if (!XsltForms_globals.tinyMCEinit) {
+				var initinfo;
+				eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
+				initinfo.mode = "none";
+				initinfo.setup = function(ed) {
+					ed.onKeyUp.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+					ed.onChange.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+					ed.onUndo.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+					ed.onRedo.add(function(ed) {
+						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+					});
+				};
+				XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
+				tinyMCE.init(initinfo);
+				XsltForms_globals.tinyMCEinit = true;
+			}
 			tinyMCE.execCommand("mceAddControl", true, input.id);
 		}
 		this.initEvents(input, false);
@@ -168,10 +173,18 @@ XsltForms_input.prototype.setValue = function(value) {
 		this.initInput(type);
 		this.changeReadonly();
 	}
+	XsltForms_browser.debugConsole.write(this.input.id+": setValue("+value+")");
+//	if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) === undefined) {
+//		XsltForms_browser.debugConsole.write(this.input.id+" is undefined");
+//	}
 	if (type["class"] === "boolean") {
 		this.input.checked = value === "true";
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinyMCE.get(this.input.id) && tinyMCE.get(this.input.id).getContent() !== value) {
-		tinyMCE.get(this.input.id).setContent(value);
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce") { // && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
+		this.input.value = value || "";
+		//tinymce.get(this.input.id).setContent(value);
+		//this.input.value = tinymce.get(this.input.id).getContent() || "";
+		//XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";
 	}

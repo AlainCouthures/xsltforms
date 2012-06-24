@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:with-param name="body">
 					<xsl:choose>
 						<xsl:when test="@appearance = 'minimal'">
-							<a href="javascript:void(0);">
+							<a>
 								<xsl:copy-of select="$innerbody"/>
 							</a>
 						</xsl:when>

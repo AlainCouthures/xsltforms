@@ -96,7 +96,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<head>
 					<xsl:copy-of select="xhtml:head/@* | head/@*"/>
 					<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-					<xsl:copy-of select="xhtml:head/xhtml:meta[string(@http-equiv) != 'Content-Type'] | head/meta[string(@http-equiv) != 'Content-Type']"/>
+					<xsl:for-each select="xhtml:head/xhtml:meta[string(@http-equiv) != 'Content-Type'] | head/meta[string(@http-equiv) != 'Content-Type']">
+						<meta>
+							<xsl:copy-of select="@*"/>
+						</meta>
+					</xsl:for-each>
 					<script id="xsltforms-initialdate" type="text/javascript">
 						<xsl:text>var xsltforms_d0 = new Date();
 </xsl:text>
@@ -365,7 +369,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:comment>XsltForms_MagicSeparator</xsl:comment>
 					<xsl:apply-templates select=".//xforms:message|.//ajx:confirm"/>
 					<xsl:if test="//xforms:dialog">
-						<div id="xforms-dialog-surround"><xsl:text/></div>
+						<div id="xforms-dialog-surround">&#160;<xsl:text/></div>
 					</xsl:if>
 					<xsl:apply-templates select="xhtml:body/node() | body/node()"/>
 					<div id="xsltforms_console">&#160;<xsl:text/></div>

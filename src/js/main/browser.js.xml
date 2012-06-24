@@ -846,7 +846,7 @@ XsltForms_browser.getNil = function(node) {
 		} else {
 			var att = node.selectSingleNode("@*[local-name()='nil' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
 			if (att && att.value !== "") {
-				return XsltForms_globals.booleanValue(att.value);
+				return att.value !== "false";
 			} else {
 				return false;
 			}
