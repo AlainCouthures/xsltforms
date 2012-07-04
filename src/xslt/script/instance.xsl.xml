@@ -25,29 +25,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:instance" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:apply-templates select="@*" mode="scriptattr"/>
 			<js xmlns="">
-				<xsl:variable name="idinstance" select="count(preceding::xforms:instance|ancestor::xforms:instance)"/>
 				<xsl:text>XsltForms_instance.create(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,</xsl:text>
 				<xsl:choose>
 					<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
-					<xsl:when test="$idinstance = 0 and parent::xforms:model/@id = ''">"<xsl:value-of select="$id_pf"/>instance-default</xsl:when>
+					<xsl:when test="not(preceding-sibling::xforms:instance) and string(parent::xforms:model/@id) = ''">"<xsl:value-of select="$id_pf"/>instance-default</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="$jsid_pf"/>
 						<xsl:text>instance-</xsl:text>
-						<xsl:value-of select="$idinstance"/>
+						<xsl:value-of select="$workid"/>
 					</xsl:otherwise>
 				</xsl:choose>
 				<xsl:text>",</xsl:text>
-				<xsl:for-each select="parent::*">
-					<xsl:variable name="lname" select="local-name()"/>
-					<xsl:value-of select="$vn_pf"/>
-					<xsl:value-of select="$lname"/>
-					<xsl:text>_</xsl:text>
-					<xsl:value-of select="count(preceding::*[local-name()=$lname]|ancestor::*[local-name()=$lname])"/>
-				</xsl:for-each>
+				<xsl:variable name="lname" select="local-name(parent::*)"/>
+				<xsl:value-of select="$vn_pf"/>
+				<xsl:value-of select="$lname"/>
+				<xsl:text>_</xsl:text>
+				<xsl:value-of select="$parentworkid"/>
 				<xsl:text>,</xsl:text>
 				<xsl:choose>
 					<xsl:when test="@readonly = 'true'">true</xsl:when>
@@ -100,8 +99,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</xsl:otherwise>
 				</xsl:choose>
 			</js>
-			<xsl:apply-templates select="*" mode="script"/>
-			<xsl:call-template name="listeners"/>
+			<xsl:apply-templates select="node()" mode="script">
+				<xsl:with-param name="parentworkid" select="$workid"/>
+			</xsl:apply-templates>
+			<xsl:call-template name="listeners">
+				<xsl:with-param name="workid" select="$workid"/>
+			</xsl:call-template>
 		</xsl:template>
 	</cm:source>
 </cm:component>

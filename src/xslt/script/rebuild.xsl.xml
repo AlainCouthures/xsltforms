@@ -25,15 +25,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:rebuild" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:apply-templates select="@*" mode="scriptattr"/>
 			<js xmlns="">
 				<xsl:choose>
 					<xsl:when test="parent::xforms:action">
-						<xsl:variable name="idrebuild" select="count(preceding::xforms:rebuild|ancestor::xforms:rebuild)"/>
 						<xsl:text>var </xsl:text>
 						<xsl:value-of select="$vn_pf"/>
 						<xsl:text>rebuild_</xsl:text>
-						<xsl:value-of select="$idrebuild"/>
+						<xsl:value-of select="$workid"/>
 						<xsl:text> = new XsltForms_dispatch(</xsl:text>
 						<xsl:value-of select="$vn_subform"/>
 						<xsl:text>,"xforms-rebuild",</xsl:text>
@@ -48,18 +49,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:variable name="parentid">
-							<xsl:for-each select="parent::*">
-								<xsl:choose>
-									<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
-									<xsl:otherwise>
-										<xsl:variable name="lname" select="local-name()"/>
-										<xsl:value-of select="$jsid_pf"/>
-										<xsl:value-of select="$lname"/>
-										<xsl:text>-</xsl:text>
-										<xsl:value-of select="count(preceding::*[local-name()=$lname]|ancestor::*[local-name()=$lname])"/>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:for-each>
+							<xsl:choose>
+								<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
+								<xsl:otherwise>
+									<xsl:variable name="lname" select="local-name(parent::*)"/>
+									<xsl:value-of select="$jsid_pf"/>
+									<xsl:value-of select="$lname"/>
+									<xsl:text>-</xsl:text>
+									<xsl:value-of select="$parentworkid"/>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:variable>
 						<xsl:text>new XsltForms_listener(document.getElementById(</xsl:text>
 						<xsl:value-of select="$parentid"/>
@@ -89,7 +88,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</xsl:otherwise>
 				</xsl:choose>
 			</js>
-			<xsl:apply-templates select="*" mode="script"/>
+			<xsl:apply-templates select="node()" mode="script">
+				<xsl:with-param name="parentworkid" select="$workid"/>
+			</xsl:apply-templates>
 		</xsl:template>
 	</cm:source>
 </cm:component>

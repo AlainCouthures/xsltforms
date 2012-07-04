@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:switch" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:variable name="elt">
 				<xsl:choose>
 					<xsl:when test="namespace-uri(parent::*) = 'http://www.w3.org/2000/svg'">g</xsl:when>
@@ -35,23 +37,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:if test="$elt = 'g'">http://www.w3.org/2000/svg</xsl:if>
 			</xsl:variable>
 			<xsl:element name="{$elt}" namespace="{$ns}">
-				<xsl:call-template name="genid"/>
+				<xsl:call-template name="genid">
+					<xsl:with-param name="workid" select="$workid"/>
+				</xsl:call-template>
 				<xsl:call-template name="style">
 					<xsl:with-param name="class">xforms-switch</xsl:with-param>
 				</xsl:call-template>
 				<xsl:variable name="noselected" select="count(xforms:case[@selected='true']) = 0"/>
-				<xsl:for-each select="xforms:case">
-					<xsl:variable name="otherselected" select="count(preceding-sibling::xforms:case[@selected='true']) != 0"/>
-					<xsl:element name="{$elt}" namespace="{$ns}">
-						<xsl:call-template name="genid"/>
-						<xsl:call-template name="style">
-							<xsl:with-param name="class">xforms-case</xsl:with-param>
-						</xsl:call-template>
-						<xsl:if test="(not($noselected) and (not(@selected) or @selected != 'true')) or ($noselected and (position() != 1 or @selected)) or $otherselected">
-							<xsl:attribute name="style">display:none;</xsl:attribute>
-						</xsl:if>
-						<xsl:apply-templates/>
-					</xsl:element>
+				<xsl:for-each select="node()">
+					<xsl:if test="self::xforms:case">
+						<xsl:variable name="otherselected" select="count(preceding-sibling::xforms:case[@selected='true']) != 0"/>
+						<xsl:element name="{$elt}" namespace="{$ns}">
+							<xsl:call-template name="genid">
+								<xsl:with-param name="workid" select="concat(position(),'_',$workid)"/>
+							</xsl:call-template>
+							<xsl:call-template name="style">
+								<xsl:with-param name="class">xforms-case</xsl:with-param>
+							</xsl:call-template>
+							<xsl:if test="(not($noselected) and (not(@selected) or @selected != 'true')) or ($noselected and (position() != 1 or @selected)) or $otherselected">
+								<xsl:attribute name="style">display:none;</xsl:attribute>
+							</xsl:if>
+							<xsl:apply-templates select="node()">
+								<xsl:with-param name="parentworkid" select="concat(position(),'_',$workid)"/>
+							</xsl:apply-templates>
+						</xsl:element>
+					</xsl:if>
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:template>

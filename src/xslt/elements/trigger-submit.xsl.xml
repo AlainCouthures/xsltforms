@@ -25,10 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:trigger|xforms:submit" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:variable name="innerbody">
 				<xsl:choose>
 					<xsl:when test="xforms:label">
-						<xsl:apply-templates select="xforms:label">
+						<xsl:apply-templates select="node()">
+							<xsl:with-param name="parentworkid" select="$workid"/>
 							<xsl:with-param name="appearance" select="'span'"/>
 						</xsl:apply-templates>
 					</xsl:when>
@@ -36,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</xsl:choose>
 			</xsl:variable>
 			<xsl:call-template name="field">
+				<xsl:with-param name="workid" select="$workid"/>
 				<xsl:with-param name="appearance">none</xsl:with-param>
 				<xsl:with-param name="body">
 					<xsl:choose>

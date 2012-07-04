@@ -56,15 +56,23 @@ XsltForms_itemset.prototype.build_ = function(ctx) {
 	var listeners = next.listeners;
 	for (var cont = 1; true;) {
 		next = next.nextSibling;
-		if (next && next.getAttribute("cloned")) {
-			if (cont >= length) {
-				next.listeners = null;
-				parentNode.removeChild(next);
-				next = oldNode;
+		if (next) {
+			if (next.nodeType === XsltForms_nodeType.ELEMENT) {
+				if (next.getAttribute("cloned")) {
+					if (cont >= length) {
+						next.listeners = null;
+						parentNode.removeChild(next);
+						next = oldNode;
+					} else {
+						next.node = this.nodes[cont];
+						this.refresh_(next, cont++);
+						oldNode = next;
+					}
+				}
 			} else {
-				next.node = this.nodes[cont];
-				this.refresh_(next, cont++);
-				oldNode = next;
+				var n = next.previousSibling;
+				next.parentNode.removeChild(next);
+				next = n;
 			}
 		} else {
 			for (var i = cont; i < length; i++) {

@@ -25,24 +25,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:model" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:apply-templates select="@*" mode="scriptattr"/>
 			<js xmlns="">
-				<xsl:variable name="idmodel" select="count(preceding::xforms:model|ancestor::xforms:model)"/>
 				<xsl:text>var </xsl:text>
 				<xsl:value-of select="$vn_pf"/>
 				<xsl:text>model_</xsl:text>
-				<xsl:value-of select="$idmodel"/>
+				<xsl:value-of select="$workid"/>
 				<xsl:text> = XsltForms_model.create(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,</xsl:text>
 				<xsl:variable name="rid">
 					<xsl:choose>
 						<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
-						<xsl:when test="$idmodel = 0">"<xsl:value-of select="$id_pf"/>model-default</xsl:when>
+						<xsl:when test="not(preceding-sibling::xforms:model)">"<xsl:value-of select="$id_pf"/>model-default</xsl:when>
 						<xsl:otherwise>
 							<xsl:value-of select="$jsid_pf"/>
 							<xsl:text>model-</xsl:text>
-							<xsl:value-of select="$idmodel"/>
+							<xsl:value-of select="$workid"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
@@ -64,7 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:text>instance-default",</xsl:text>
 					<xsl:value-of select="$vn_pf"/>
 					<xsl:text>model_</xsl:text>
-					<xsl:value-of select="$idmodel"/>
+					<xsl:value-of select="$workid"/>
 					<xsl:text>,false,"application/xml",null,'&lt;data xmlns=""&gt;</xsl:text>
 					<xsl:for-each select="//@ref[namespace-uri(parent::*) = 'http://www.w3.org/2002/xforms']">
 						<xsl:text>&lt;</xsl:text>
@@ -77,8 +78,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<js xmlns="">
 				<xsl:apply-templates select="xsd:schema" mode="schema"/>
 			</js>
-			<xsl:apply-templates select="*" mode="script"/>
-			<xsl:call-template name="listeners"><xsl:with-param name="current" select="."/></xsl:call-template>
+			<xsl:apply-templates select="node()" mode="script">
+				<xsl:with-param name="parentworkid" select="$workid"/>
+			</xsl:apply-templates>
+			<xsl:call-template name="listeners">
+				<xsl:with-param name="current" select="."/>
+				<xsl:with-param name="workid" select="$workid"/>
+			</xsl:call-template>
 		</xsl:template>
 	</cm:source>
 </cm:component>

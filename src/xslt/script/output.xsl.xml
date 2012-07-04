@@ -24,11 +24,12 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
-		<xsl:template match="xforms:output | xforms:label[(@ref or @bind) and not(parent::xforms:itemset)]" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+		<xsl:template match="xforms:output | xforms:label[(@ref or @bind) and not(parent::xforms:item) and not(parent::xforms:itemset)]" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:apply-templates select="@*" mode="scriptattr"/>
 			<js xmlns="">
 				<xsl:variable name="lname" select="local-name()"/>
-				<xsl:variable name="idoutput" select="count(preceding::xforms:*[local-name()=$lname]|ancestor::xforms:*[local-name()=$lname])"/>
 				<xsl:text>new XsltForms_output(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,</xsl:text>
@@ -38,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:value-of select="$jsid_pf"/>
 						<xsl:value-of select="$lname"/>
 						<xsl:text>-</xsl:text>
-						<xsl:value-of select="$idoutput"/>
+						<xsl:value-of select="$workid"/>
 					</xsl:otherwise>
 				</xsl:choose>
 				<xsl:text>",</xsl:text>
@@ -52,8 +53,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@mediatype"/></xsl:call-template>
 				<xsl:text>);</xsl:text>
 			</js>
-			<xsl:apply-templates select="*" mode="script"/>
-			<xsl:call-template name="listeners"/>
+			<xsl:apply-templates select="node()" mode="script">
+				<xsl:with-param name="parentworkid" select="$workid"/>
+			</xsl:apply-templates>
+			<xsl:call-template name="listeners">
+				<xsl:with-param name="workid" select="$workid"/>
+			</xsl:call-template>
 		</xsl:template>
 	</cm:source>
 </cm:component>

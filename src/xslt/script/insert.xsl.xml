@@ -25,13 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:insert" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:apply-templates select="@*" mode="scriptattr"/>
 			<js xmlns="">
-				<xsl:variable name="idinsert" select="count(preceding::xforms:insert|ancestor::xforms:insert)"/>
 				<xsl:text>var </xsl:text>
 				<xsl:value-of select="$vn_pf"/>
 				<xsl:text>insert_</xsl:text>
-				<xsl:value-of select="$idinsert"/>
+				<xsl:value-of select="$workid"/>
 				<xsl:text> = new XsltForms_insert(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,"</xsl:text>
@@ -56,7 +57,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@iterate"/></xsl:call-template>
 				<xsl:text>);</xsl:text>
 			</js>
-			<xsl:apply-templates select="*" mode="script"/>
+			<xsl:apply-templates select="node()" mode="script">
+				<xsl:with-param name="parentworkid" select="$workid"/>
+			</xsl:apply-templates>
 		</xsl:template>
 	</cm:source>
 </cm:component>

@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<type xmlns=""><xsl:value-of select="."/></type>
 		</xsl:template>
 		<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform" match="@*[contains(.,'{') and (namespace-uri(parent::*) != 'http://www.w3.org/2002/xforms' or local-name() = 'class' or local-name() = 'style')]" mode="script" priority="1">
+			<xsl:param name="workid"/>
 			<xsl:variable name="avt">
 				<xsl:call-template name="avtparser">
 					<xsl:with-param name="s" select="."/>
@@ -55,7 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<js xmlns="">
 					<xsl:variable name="lname" select="local-name(parent::*)"/>
 					<xsl:variable name="nsuri" select="namespace-uri(parent::*)"/>
-					<xsl:variable name="idparent"><xsl:choose><xsl:when test="parent::*/@id">"<xsl:value-of select="parent::*/@id"/></xsl:when><xsl:otherwise><xsl:value-of select="$jsid_pf"/><xsl:value-of select="$lname"/>-<xsl:value-of select="count(preceding::*[local-name()=$lname and namespace-uri()=$nsuri]|ancestor::*[local-name()=$lname and namespace-uri()=$nsuri]) - 1"/></xsl:otherwise></xsl:choose></xsl:variable>
+					<xsl:variable name="idparent"><xsl:choose><xsl:when test="parent::*/@id">"<xsl:value-of select="parent::*/@id"/></xsl:when><xsl:otherwise><xsl:value-of select="$jsid_pf"/><xsl:value-of select="$lname"/>-<xsl:value-of select="$workid"/></xsl:otherwise></xsl:choose></xsl:variable>
 					<xsl:text>new XsltForms_avt(</xsl:text>
 					<xsl:value-of select="$vn_subform"/>
 					<xsl:text>,</xsl:text>

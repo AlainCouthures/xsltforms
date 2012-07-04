@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template name="group" xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:param name="workid"/>
 			<xsl:param name="type" select="'group'"/>
 			<xsl:param name="appearance" select="@appearance"/>
 			<xsl:choose>
@@ -44,7 +45,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="$mainelt = 'g'">http://www.w3.org/2000/svg</xsl:if>
 					</xsl:variable>
 					<xsl:element name="{$mainelt}" namespace="{$mainns}">
-						<xsl:call-template name="genid"/>
+						<xsl:call-template name="genid">
+							<xsl:with-param name="workid" select="$workid"/>
+						</xsl:call-template>
 						<xsl:call-template name="style">
 							<xsl:with-param name="class">
 								<xsl:choose>
@@ -58,7 +61,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:attribute name="mixedrepeat">true</xsl:attribute>
 						</xsl:if>
 						<xsl:if test="parent::*[local-name()='table']">
-							<xsl:apply-templates select="preceding-sibling::node()"/>
+							<xsl:apply-templates select="preceding-sibling::node()">
+								<xsl:with-param name="parentworkid" select="substring-after($workid,'_')"/>
+							</xsl:apply-templates>
 						</xsl:if>
 						<xsl:variable name="itemelt">
 							<xsl:choose>
@@ -73,7 +78,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						</xsl:variable>
 						<xsl:choose>
 							<xsl:when test="$itemelt = 'tr' and */xforms:repeat">
-								<xsl:apply-templates>
+								<xsl:apply-templates select="node()">
+									<xsl:with-param name="parentworkid" select="$workid"/>
 									<xsl:with-param name="appearance">
 										<xsl:if test="$appearance = 'minimal'">minimal</xsl:if>
 									</xsl:with-param>
@@ -82,7 +88,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:otherwise>
 								<xsl:element name="{$itemelt}" namespace="{$itemns}">
 									<xsl:attribute name="class">xforms-repeat-item</xsl:attribute>
-									<xsl:apply-templates>
+									<xsl:apply-templates select="node()">
+										<xsl:with-param name="parentworkid" select="$workid"/>
 										<xsl:with-param name="appearance">
 											<xsl:if test="$appearance = 'minimal'">minimal</xsl:if>
 										</xsl:with-param>
@@ -91,13 +98,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:if test="parent::*[local-name()='table']">
-							<xsl:apply-templates select="following-sibling::node()"/>
+							<xsl:apply-templates select="following-sibling::node()">
+								<xsl:with-param name="parentworkid" select="substring-after($workid,'_')"/>
+							</xsl:apply-templates>
 						</xsl:if>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$appearance = 'compact'">
 					<span>
-						<xsl:call-template name="genid"/>
+						<xsl:call-template name="genid">
+							<xsl:with-param name="workid" select="$workid"/>
+						</xsl:call-template>
 						<xsl:call-template name="style">
 							<xsl:with-param name="class">xforms-<xsl:value-of select="$type"/></xsl:with-param>
 						</xsl:call-template>
@@ -105,17 +116,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:attribute name="style">display:none;</xsl:attribute>
 						</xsl:if>
 						<xsl:if test="xforms:label">
-							<xsl:apply-templates select="xforms:label">
+							<xsl:apply-templates select="node()">
+								<xsl:with-param name="parentworkid" select="$workid"/>
 								<xsl:with-param name="appearance" select="'caption'"/>
 							</xsl:apply-templates>
 						</xsl:if>
-						<xsl:for-each select="xforms:*">
+						<xsl:for-each select="node()">
 							<xsl:choose>
-								<xsl:when test="(not(xforms:label) and local-name() != 'label') or local-name() = 'trigger' or local-name() = 'submit'">
+								<xsl:when test="namespace-uri() = 'http://www.w3.org/2002/xforms' and ((not(xforms:label) and local-name() != 'label') or local-name() = 'trigger' or local-name() = 'submit')">
 									<span class="xforms-label">&#160;</span>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:apply-templates select="xforms:label">
+									<xsl:apply-templates select="node()">
+										<xsl:with-param name="parentworkid" select="concat(position(),'_',$workid)"/>
 										<xsl:with-param name="appearance" select="'table'"/>
 									</xsl:apply-templates>
 								</xsl:otherwise>
@@ -124,18 +137,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="$type = 'repeat'">
 							<xsl:attribute name="class">xforms-repeat-item</xsl:attribute>
 						</xsl:if>
-						<xsl:for-each select="xforms:input|xforms:output|xforms:select|xforms:select1|xforms:textarea|xforms:secret|xforms:group|xforms:repeat|xforms:switch|xforms:trigger|xforms:submit">
-							<span>
-								<xsl:apply-templates select=".">
-									<xsl:with-param name="appearance" select="'none'"/>
-								</xsl:apply-templates>
-							</span>
+						<xsl:for-each select="node()">
+							<xsl:if test="contains(':input:output:select:select1:textarea:secret:group:repeat:switch:trigger:submit:',concat(':',local-name(),':'))">
+								<span>
+									<xsl:apply-templates select=".">
+										<xsl:with-param name="parentworkid" select="$workid"/>
+										<xsl:with-param name="appearance" select="'none'"/>
+									</xsl:apply-templates>
+								</span>
+							</xsl:if>
 						</xsl:for-each>
 					</span>
 				</xsl:when>
 				<xsl:when test="$appearance = 'minimal'">
 					<fieldset>
-						<xsl:call-template name="genid"/>
+						<xsl:call-template name="genid">
+							<xsl:with-param name="workid" select="$workid"/>
+						</xsl:call-template>
 						<xsl:call-template name="style">
 							<xsl:with-param name="class">xforms-<xsl:value-of select="$type"/>
 							</xsl:with-param>
@@ -143,7 +161,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="$type = 'case' and (not(@selected) or @selected != 'true')">
 							<xsl:attribute name="style">display:none;</xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates>
+						<xsl:apply-templates select="node()">
+							<xsl:with-param name="parentworkid" select="$workid"/>
 							<xsl:with-param name="appearance">minimal</xsl:with-param>
 						</xsl:apply-templates>
 					</fieldset>
@@ -164,7 +183,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="$mainelt = 'g'">http://www.w3.org/2000/svg</xsl:if>
 					</xsl:variable>
 					<xsl:element name="{$mainelt}" namespace="{$mainns}">
-						<xsl:call-template name="genid"/>
+						<xsl:call-template name="genid">
+							<xsl:with-param name="workid" select="$workid"/>
+						</xsl:call-template>
 						<xsl:call-template name="style">
 							<xsl:with-param name="class">
 								<xsl:choose>
@@ -176,9 +197,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="$type = 'case' and (not(@selected) or @selected != 'true')">
 							<xsl:attribute name="style">display:none;</xsl:attribute>
 						</xsl:if>
-						<xsl:apply-templates select="xforms:label">
-							<xsl:with-param name="appearance" select="'groupTitle'"/>
-						</xsl:apply-templates>
+						<xsl:for-each select="node()">
+							<xsl:if test="self::xforms:label">
+								<xsl:apply-templates select=".">
+									<xsl:with-param name="workid" select="concat(position(),'_',$workid)"/>
+									<xsl:with-param name="appearance" select="'groupTitle'"/>
+								</xsl:apply-templates>
+							</xsl:if>
+						</xsl:for-each>
 						<xsl:variable name="itemelt">
 							<xsl:choose>
 								<xsl:when test="parent::*[local-name()='table' or local-name()='thead' or local-name()='tbody' or local-name()='tfoot']">tr</xsl:when>
@@ -192,7 +218,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						</xsl:variable>
 						<xsl:element name="{$itemelt}" namespace="{$itemns}">
 							<xsl:attribute name="class">xforms-<xsl:value-of select="$type"/>-content</xsl:attribute>
-							<xsl:apply-templates>
+							<xsl:apply-templates select="node()">
+								<xsl:with-param name="parentworkid" select="$workid"/>
 								<xsl:with-param name="appearance" select="'groupNone'"/>
 							</xsl:apply-templates>
 						</xsl:element>

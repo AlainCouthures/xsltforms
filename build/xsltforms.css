@@ -1,4 +1,4 @@
-/* Rev. 546
+/* Rev. 548
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -332,6 +332,13 @@ div#statusPanel {
 
 img.xforms-value {
 	border: 0;
+}
+
+.ajx-tabs-list, .ajx-tabs-list a:link, .ajx-tabs-list a:hover, .ajx-tabs-list a:visited {
+	text-decoration: none;
+	color: #000000;
+	border: none !important;
+	cursor: pointer;
 }
 	
 	

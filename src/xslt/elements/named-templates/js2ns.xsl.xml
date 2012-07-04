@@ -35,25 +35,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:variable name="p" select="substring-before(substring($js2,2),&quot;&apos;&quot;)"/>
 					<xsl:variable name="pmin" select="translate($p,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"/>
 					<xsl:choose>
-						<xsl:when test="($main/descendant::*|$main/descendant::*/@*)/namespace::*[name()=$p]">
-							<xsl:value-of select="(($main/descendant::*|$main/descendant::*/@*)/namespace::*[name()=$p])[1]"/>
+						<xsl:when test="$p = 'xml'">http://www.w3.org/XML/1998/namespace</xsl:when>
+						<xsl:when test="system-property('xsl:vendor')='Transformiix'">
+							<xsl:choose>
+								<xsl:when test="($main/descendant::*|$main/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))]">
+									<xsl:value-of select="namespace-uri(($main/descendant::*|$main/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))][1])"/>
+								</xsl:when>
+								<xsl:when test="$main/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]">
+									<xsl:value-of select="$main/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]"/>
+								</xsl:when>
+								<xsl:when test="($piformdoc/descendant::*|$piformdoc/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))]">
+									<xsl:value-of select="namespace-uri(($piformdoc/descendant::*|$piformdoc/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))][1])"/>
+								</xsl:when>
+								<xsl:when test="$piformdoc/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]">
+									<xsl:value-of select="$piformdoc/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]"/>
+								</xsl:when>
+								<xsl:otherwise>notfound</xsl:otherwise>
+							</xsl:choose>
 						</xsl:when>
-						<xsl:when test="($main/descendant::*|$main/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))]">
-							<xsl:value-of select="namespace-uri(($main/descendant::*|$main/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))][1])"/>
-						</xsl:when>
-						<xsl:when test="$main/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]">
-							<xsl:value-of select="$main/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]"/>
-						</xsl:when>
-						<xsl:when test="($piformdoc/descendant::*|$piformdoc/descendant::*/@*)/namespace::*[name()=$p]">
-							<xsl:value-of select="(($piformdoc/descendant::*|$piformdoc/descendant::*/@*)/namespace::*[name()=$p])[1]"/>
-						</xsl:when>
-						<xsl:when test="($piformdoc/descendant::*|$piformdoc/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))]">
-							<xsl:value-of select="namespace-uri(($piformdoc/descendant::*|$piformdoc/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))][1])"/>
-						</xsl:when>
-						<xsl:when test="$piformdoc/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]">
-							<xsl:value-of select="$piformdoc/descendant::*/@*[translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = concat('xmlns:',$pmin)]"/>
-						</xsl:when>
-						<xsl:otherwise>notfound</xsl:otherwise>
+						<xsl:otherwise>
+							<xsl:choose>
+								<xsl:when test="($main/descendant::*|$main/descendant::*/@*)/namespace::*[name()=$p]">
+									<xsl:value-of select="(($main/descendant::*|$main/descendant::*/@*)/namespace::*[name()=$p])[1]"/>
+								</xsl:when>
+								<xsl:when test="($piformdoc/descendant::*|$piformdoc/descendant::*/@*)/namespace::*[name()=$p]">
+									<xsl:value-of select="(($piformdoc/descendant::*|$piformdoc/descendant::*/@*)/namespace::*[name()=$p])[1]"/>
+								</xsl:when>
+								<xsl:otherwise>notfound</xsl:otherwise>
+							</xsl:choose>
+						</xsl:otherwise>
 					</xsl:choose>
 					<xsl:text>'</xsl:text>
 				</xsl:if>

@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:repeat" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:apply-templates select="@*" mode="scriptattr"/>
 			<xsl:variable name="nodeset">
 				<xsl:choose>
@@ -48,11 +50,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xexpr xmlns=""><xsl:value-of select="$nodeset"/></xexpr>
 			</xsl:if>
 			<js xmlns="">
-				<xsl:variable name="idrepeat" select="count(preceding::xforms:repeat|ancestor::xforms:repeat)"/>
 				<xsl:text>var </xsl:text>
 				<xsl:value-of select="$vn_pf"/>
 				<xsl:text>repeat_</xsl:text>
-				<xsl:value-of select="$idrepeat"/>
+				<xsl:value-of select="$workid"/>
 				<xsl:text> = new XsltForms_repeat(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,</xsl:text>
@@ -61,15 +62,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:otherwise>
 						<xsl:value-of select="$jsid_pf"/>
 						<xsl:text>repeat-</xsl:text>
-						<xsl:value-of select="$idrepeat"/>
+						<xsl:value-of select="$workid"/>
 					</xsl:otherwise>
 				</xsl:choose>
 				<xsl:text>",</xsl:text>
 				<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="$nodeset"/></xsl:call-template>
 				<xsl:text>);</xsl:text>
 			</js>
-			<xsl:apply-templates select="*" mode="script"/>
-			<xsl:call-template name="listeners"/>
+			<xsl:apply-templates select="node()" mode="script">
+				<xsl:with-param name="parentworkid" select="$workid"/>
+			</xsl:apply-templates>
+			<xsl:call-template name="listeners">
+				<xsl:with-param name="workid" select="$workid"/>
+			</xsl:call-template>
 		</xsl:template>
 	</cm:source>
 </cm:component>

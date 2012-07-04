@@ -1,4 +1,4 @@
-<cm:component xmlns:cm="http://www.agencexml.com/cm" name="textarea.xsl">
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="item.xsl">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-08</cm:creationdate>
 	<cm:lastupdate>2009-04-08</cm:lastupdate>
@@ -24,17 +24,15 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
-		<xsl:template match="xforms:textarea" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2">
-			<xsl:param name="appearance" select="false()"/>
+		<xsl:template match="xforms:choices" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2">
+			<xsl:param name="type" select="false()" /> 
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
-			<xsl:call-template name="field">
-				<xsl:with-param name="workid" select="$workid"/>
-				<xsl:with-param name="appearance" select="$appearance"/>
-				<xsl:with-param name="body">
-					<textarea><xsl:copy-of select="@*[local-name() != 'ref']"/><xsl:call-template name="comun"/><xsl:text/>&#160;</textarea>
-				</xsl:with-param>
-			</xsl:call-template>
+			<optgroup label="{xforms:label/text()}">
+				<xsl:apply-templates select="node()">
+					<xsl:with-param name="parentworkid" select="$workid"/>
+				</xsl:apply-templates>
+			</optgroup>
 		</xsl:template>
 	</cm:source>
 </cm:component>

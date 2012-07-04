@@ -25,7 +25,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:repeat" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" priority="2">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:call-template name="group">
+				<xsl:with-param name="workid" select="$workid"/>
 				<xsl:with-param name="type" select="'repeat'"/>
 			</xsl:call-template>
 		</xsl:template>

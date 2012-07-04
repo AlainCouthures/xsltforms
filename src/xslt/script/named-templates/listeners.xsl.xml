@@ -26,61 +26,63 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 		<xsl:template name="listeners" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
 			<xsl:param name="current"/>
+			<xsl:param name="workid"/>
 			<xsl:variable name="lname" select="local-name()"/>
-			<xsl:variable name="idlist" select="count(preceding::xforms:*[local-name()=$lname]|ancestor::xforms:*[local-name()=$lname])"/>
 			<xsl:variable name="rid">
 				<xsl:choose>
 					<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
-					<xsl:when test="$lname = 'model' and $idlist = 0">"xsltforms-mainform-model-default</xsl:when>
+					<xsl:when test="$lname = 'model' and not(preceding-sibling::xforms:model)">"xsltforms-mainform-model-default</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="$jsid_pf"/>
 						<xsl:value-of select="$lname"/>
 						<xsl:text>-</xsl:text>
-						<xsl:value-of select="$idlist"/>
+						<xsl:value-of select="$workid"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
-			<xsl:for-each select="xforms:setvalue|xforms:insert|xforms:load|xforms:delete|xforms:action|xforms:toggle|xforms:send|xforms:setfocus|xforms:dispatch|xforms:message|xforms:show|xforms:hide|xforms:script|xforms:unload">
-				<js xmlns="">
-					<xsl:text>new XsltForms_listener(document.getElementById(</xsl:text>
-					<xsl:choose>
-						<xsl:when test="@ev:observer">"<xsl:value-of select="@ev:observer"/></xsl:when>
-						<xsl:otherwise><xsl:value-of select="$rid"/></xsl:otherwise>
-					</xsl:choose>
-					<xsl:text>"),</xsl:text>
-					<xsl:choose>
-						<xsl:when test="@ev:target">
-							<xsl:text>document.getElementById("</xsl:text>
-							<xsl:value-of select="@ev:target"/>
-							<xsl:text>"),</xsl:text>
-						</xsl:when>
-						<xsl:otherwise><xsl:text>null,</xsl:text></xsl:otherwise>
-					</xsl:choose>
-					<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@ev:event | @ev:actiontype"/></xsl:call-template>
-					<xsl:text>,</xsl:text>
-					<xsl:choose>
-						<xsl:when test="@ev:phase">"<xsl:value-of select="@ev:phase"/>"</xsl:when>
-						<xsl:otherwise>null</xsl:otherwise>
-					</xsl:choose>
-					<xsl:text>,function(evt) {XsltForms_browser.run(</xsl:text>
-					<xsl:value-of select="$vn_pf"/>
-					<xsl:variable name="lname2" select="local-name()"/>
-					<xsl:variable name="nsuri" select="namespace-uri()"/>
-					<xsl:value-of select="$lname2"/>
-					<xsl:text>_</xsl:text>
-					<xsl:value-of select="count(preceding::*[local-name()=$lname2 and namespace-uri()=$nsuri]|ancestor::*[local-name()=$lname2 and namespace-uri()=$nsuri])"/>
-					<xsl:text>,XsltForms_browser.getId(evt.currentTarget ? evt.currentTarget : evt.target),evt,</xsl:text>
-					<xsl:choose>
-						<xsl:when test="@mode = 'synchronous'">true</xsl:when>
-						<xsl:otherwise>false</xsl:otherwise>
-					</xsl:choose>
-					<xsl:text>,</xsl:text>
-					<xsl:choose>
-						<xsl:when test="@ev:propagate = 'stop'">false</xsl:when>
-						<xsl:otherwise>true</xsl:otherwise>
-					</xsl:choose>
-					<xsl:text>);});</xsl:text>
-				</js>
+			<xsl:for-each select="node()">
+				<xsl:if test="namespace-uri() = 'http://www.w3.org/2002/xforms' and contains(':setvalue:insert:load:delete:action:toggle:send:setfocus:dispatch:message:show:hide:script:unload:',concat(':',local-name(),':'))">
+					<js xmlns="">
+						<xsl:text>new XsltForms_listener(document.getElementById(</xsl:text>
+						<xsl:choose>
+							<xsl:when test="@ev:observer">"<xsl:value-of select="@ev:observer"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$rid"/></xsl:otherwise>
+						</xsl:choose>
+						<xsl:text>"),</xsl:text>
+						<xsl:choose>
+							<xsl:when test="@ev:target">
+								<xsl:text>document.getElementById("</xsl:text>
+								<xsl:value-of select="@ev:target"/>
+								<xsl:text>"),</xsl:text>
+							</xsl:when>
+							<xsl:otherwise><xsl:text>null,</xsl:text></xsl:otherwise>
+						</xsl:choose>
+						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@ev:event | @ev:actiontype"/></xsl:call-template>
+						<xsl:text>,</xsl:text>
+						<xsl:choose>
+							<xsl:when test="@ev:phase">"<xsl:value-of select="@ev:phase"/>"</xsl:when>
+							<xsl:otherwise>null</xsl:otherwise>
+						</xsl:choose>
+						<xsl:text>,function(evt) {XsltForms_browser.run(</xsl:text>
+						<xsl:value-of select="$vn_pf"/>
+						<xsl:variable name="lname2" select="local-name()"/>
+						<xsl:variable name="nsuri" select="namespace-uri()"/>
+						<xsl:value-of select="$lname2"/>
+						<xsl:text>_</xsl:text>
+						<xsl:value-of select="concat(position(),'_',$workid)"/>
+						<xsl:text>,XsltForms_browser.getId(evt.currentTarget ? evt.currentTarget : evt.target),evt,</xsl:text>
+						<xsl:choose>
+							<xsl:when test="@mode = 'synchronous'">true</xsl:when>
+							<xsl:otherwise>false</xsl:otherwise>
+						</xsl:choose>
+						<xsl:text>,</xsl:text>
+						<xsl:choose>
+							<xsl:when test="@ev:propagate = 'stop'">false</xsl:when>
+							<xsl:otherwise>true</xsl:otherwise>
+						</xsl:choose>
+						<xsl:text>);});</xsl:text>
+					</js>
+				</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
 	</cm:source>

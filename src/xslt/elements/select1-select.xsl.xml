@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 		<xsl:template match="xforms:select1|xforms:select" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2">
 			<xsl:param name="appearance" select="false()"/>
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:variable name="body">
 				<xsl:choose>
 					<xsl:when test="@appearance='compact'">
@@ -34,18 +36,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:if test="local-name() = 'select'">
 								<xsl:attribute name="multiple">true</xsl:attribute>
 							</xsl:if>
-							<xsl:for-each select="xforms:item|xforms:itemset|xforms:choices">
-								<xsl:choose>
-									<xsl:when test="local-name() = 'choices'">
-										<optgroup label="{xforms:label/text()}">
-											<xsl:apply-templates select="xforms:item|xforms:itemset"/>
-										</optgroup>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:apply-templates select="."/>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:for-each>
+							<xsl:apply-templates select="node()" mode="item">
+								<xsl:with-param name="parentworkid" select="$workid"/>
+							</xsl:apply-templates>
 						</select>
 					</xsl:when>
 					<xsl:when test="@appearance='full'">
@@ -57,22 +50,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 									<xsl:otherwise>radio</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
-							<xsl:for-each select="xforms:item|xforms:itemset|xforms:choices">
-								<xsl:choose>
-									<xsl:when test="local-name() = 'choices'">
-										<optgroup label="{xforms:label/text()}">
-											<xsl:apply-templates select="xforms:item|xforms:itemset">
-												<xsl:with-param name="type" select="$type" />
-											</xsl:apply-templates>
-										</optgroup>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:apply-templates select=".">
-											<xsl:with-param name="type" select="$type" />
-										</xsl:apply-templates>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:for-each>
+							<xsl:apply-templates select="node()" mode="item">
+								<xsl:with-param name="parentworkid" select="$workid"/>
+								<xsl:with-param name="type" select="$type" />
+							</xsl:apply-templates>
 						</span>
 					</xsl:when>
 					<xsl:otherwise>
@@ -84,23 +65,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 									<xsl:value-of select="count(descendant::xforms:item)"/>
 								</xsl:attribute>
 							</xsl:if>
-							<xsl:for-each select="xforms:item|xforms:itemset|xforms:choices">
-								<xsl:choose>
-									<xsl:when test="local-name() = 'choices'">
-										<optgroup label="{xforms:label/text()}">
-											<xsl:apply-templates select="xforms:item|xforms:itemset" />
-										</optgroup>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:apply-templates select="." />
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:for-each>
+							<xsl:apply-templates select="node()" mode="item">
+								<xsl:with-param name="parentworkid" select="$workid"/>
+							</xsl:apply-templates>
 						</select>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
 			<xsl:call-template name="field">
+				<xsl:with-param name="workid" select="$workid"/>
 				<xsl:with-param name="appearance" select="$appearance"/>
 				<xsl:with-param name="body" select="$body"/>
 			</xsl:call-template>

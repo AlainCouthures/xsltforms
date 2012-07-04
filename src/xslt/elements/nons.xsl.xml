@@ -25,9 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="*" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" mode="nons">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:element name="{local-name()}" namespace="http://www.w3.org/1999/xhtml">
 				<xsl:apply-templates select="@*" mode="nons"/>
-				<xsl:apply-templates select="node()" mode="nons"/>
+				<xsl:apply-templates select="node()" mode="nons">
+					<xsl:with-param name="parentworkid" select="$workid"/>
+				</xsl:apply-templates>
 			</xsl:element>
 		</xsl:template>
 		<xsl:template match="@*" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" mode="nons">

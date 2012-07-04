@@ -64,6 +64,7 @@ var XsltForms_globals = {
 	building : false,
 	posibleBlur : false,
 	bindErrMsgs : [],		// binding-error messages gathered during refreshing
+	transformtime: "unknown",
 	htmltime: 0,
 	creatingtime: 0,
 	inittime: 0,
@@ -299,6 +300,7 @@ var XsltForms_globals = {
 			hc++;
 		}
 		s += '<xsltforms:htmlelements>' + hc + '</xsltforms:htmlelements>';
+		s += '<xsltforms:transformtime>' + this.transformtime + '</xsltforms:transformtime>';
 		s += '<xsltforms:htmltime>' + this.htmltime + '</xsltforms:htmltime>';
 		s += '<xsltforms:creatingtime>' + this.creatingtime + '</xsltforms:creatingtime>';
 		s += '<xsltforms:inittime>' + this.inittime + '</xsltforms:inittime>';
@@ -306,7 +308,7 @@ var XsltForms_globals = {
 		s += '<xsltforms:refreshtime>' + this.refreshtime + '</xsltforms:refreshtime>';
 		var exprtab = [];
 		for (var expr in XsltForms_xpath.expressions) {
-			if (XsltForms_xpath.expressions.hasOwnProperty(expr)) {
+			if (XsltForms_xpath.expressions.hasOwnProperty(expr) && XsltForms_xpath.expressions[expr]) {
 				exprtab[exprtab.length] = {expr: expr, evaltime: XsltForms_xpath.expressions[expr].evaltime};
 			}
 		}

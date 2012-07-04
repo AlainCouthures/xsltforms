@@ -25,8 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template name="comunLabel" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+			<xsl:param name="workid"/>
 			<xsl:param name="class"/>
-			<xsl:call-template name="genid"/>
+			<xsl:call-template name="genid">
+				<xsl:with-param name="workid" select="$workid"/>
+			</xsl:call-template>
 			<xsl:call-template name="style">
 				<xsl:with-param name="class">xforms-label <xsl:value-of select="$class"/></xsl:with-param>
 			</xsl:call-template>

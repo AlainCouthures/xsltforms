@@ -1,7 +1,7 @@
 ﻿<cm:component xmlns:cm="http://www.agencexml.com/cm" name="html.xsl">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-08</cm:creationdate>
-	<cm:lastupdate>2010-04-16</cm:lastupdate>
+	<cm:lastupdate>2012-06-27</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2011 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
@@ -295,25 +295,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 </xsl:text>
 						<xsl:text>}
 </xsl:text>
-						<xsl:for-each select="//xforms:switch/xforms:case">
-							<xsl:variable name="noselected" select="count(../xforms:case[@selected='true']) = 0"/>
-							<xsl:variable name="otherselected" select="count(preceding-sibling::xforms:case[@selected='true']) != 0"/>
-							<xsl:if test="not((not($noselected) and (not(@selected) or @selected != 'true')) or ($noselected and (position() != 1 or @selected)) or $otherselected)">
-								<xsl:variable name="rid">
-									<xsl:choose>
-										<xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
-										<xsl:otherwise>
-											<xsl:value-of select="$jsid_pf"/>
-											<xsl:text>case-</xsl:text>
-											<xsl:value-of select="count(preceding::xforms:case|ancestor::xforms:case)"/>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:variable>
-								<xsl:text>XsltForms_xmlevents.dispatch(document.getElementById('</xsl:text>
-								<xsl:value-of select="$rid"/>
-								<xsl:text>'), "xforms-select");
-</xsl:text>
-							</xsl:if>
+						<xsl:for-each select="$script/collect/case">
+							<xsl:value-of select="."/>
 						</xsl:for-each>
 						<xsl:text>} catch (e) {
 </xsl:text>
@@ -367,11 +350,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</xsl:if>
 					<xsl:copy-of select="xhtml:body/@*[name() != 'onload'] | body/@*[name() != 'onload']"/>
 					<xsl:comment>XsltForms_MagicSeparator</xsl:comment>
-					<xsl:apply-templates select=".//xforms:message|.//ajx:confirm"/>
-					<xsl:if test="//xforms:dialog">
+					<xsl:for-each select="$script/collect/message">
+						<xsl:copy-of select="*"/>
+					</xsl:for-each>
+					<xsl:if test="$script/collect/dialog">
 						<div id="xforms-dialog-surround">&#160;<xsl:text/></div>
 					</xsl:if>
-					<xsl:apply-templates select="xhtml:body/node() | body/node()"/>
+					<xsl:variable name="bodyworkid">
+						<xsl:for-each select="node()">
+							<xsl:if test="self::xhtml:body or self::body">
+								<xsl:value-of select="concat(position(),'_')"/>
+							</xsl:if>
+						</xsl:for-each>
+						<xsl:for-each select="/node()">
+							<xsl:if test="self::xhtml:html or self::html">
+								<xsl:value-of select="concat(position(),'_')"/>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:apply-templates select="xhtml:body/node() | body/node()">
+						<xsl:with-param name="parentworkid" select="$bodyworkid"/>
+					</xsl:apply-templates>
 					<div id="xsltforms_console">&#160;<xsl:text/></div>
 					<div id="statusPanel"><xsl:value-of select="$script/config/properties/status"/>&#160;<xsl:text/></div>
 					<xsl:comment>XsltForms_MagicSeparator</xsl:comment>
