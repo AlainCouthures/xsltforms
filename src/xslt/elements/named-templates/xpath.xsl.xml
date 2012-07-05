@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 	  <xsl:template name="xpath" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:param name="xp"/>
+			<xsl:param name="nms"/>
 			<xsl:param name="main"/>
 			<xsl:variable name="xp2jsres"><xsl:call-template name="xp2js"><xsl:with-param name="xp" select="$xp"/></xsl:call-template></xsl:variable>
 			<xsl:variable name="xp2jsres2">
@@ -35,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:otherwise>"Unrecognized expression '<xsl:value-of select="$xp"/>'"</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
-			<xsl:variable name="result">XsltForms_xpath.create(<xsl:value-of select="$vn_subform"/>,"<xsl:call-template name="toXPathExpr"><xsl:with-param name="p" select="$xp"/></xsl:call-template>",<xsl:call-template name="unordered"><xsl:with-param name="js" select="$xp2jsres"/></xsl:call-template>,<xsl:value-of select="$xp2jsres2"/><xsl:call-template name="js2ns"><xsl:with-param name="js" select="$xp2jsres"/></xsl:call-template>);</xsl:variable>
+			<xsl:variable name="result">XsltForms_xpath.create(<xsl:value-of select="$vn_subform"/>,"<xsl:call-template name="toXPathExpr"><xsl:with-param name="p" select="$xp"/></xsl:call-template>",<xsl:call-template name="unordered"><xsl:with-param name="js" select="$xp2jsres"/></xsl:call-template>,<xsl:value-of select="$xp2jsres2"/><xsl:call-template name="js2ns"><xsl:with-param name="js" select="$xp2jsres"/><xsl:with-param name="nms" select="$nms"/></xsl:call-template>);</xsl:variable>
 			<xsl:value-of select="$result"/><xsl:text>
 </xsl:text>
 	  </xsl:template>

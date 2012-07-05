@@ -26,10 +26,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 		<xsl:template name="xps" xmlns="" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:param name="ps"/>
+			<xsl:variable name="nms">
+				<xsl:for-each select="$ps/namespace">
+					<xsl:value-of select="concat('~~',@name,':',.)"/>
+				</xsl:for-each>
+				<xsl:text>~~</xsl:text>
+			</xsl:variable>
 			<xsl:for-each select="$ps/xexpr">
 				<xsl:sort select="."/>
 				<xsl:if test="not(preceding-sibling::xexpr = .)">
-					<xsl:call-template name="xpath"><xsl:with-param name="xp" select="."/></xsl:call-template>
+					<xsl:call-template name="xpath"><xsl:with-param name="xp" select="."/><xsl:with-param name="nms" select="$nms"/></xsl:call-template>
 				</xsl:if>
 			</xsl:for-each>
 		</xsl:template>

@@ -1,4 +1,4 @@
-/* Rev. 548
+/* Rev. 549
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "548",
-	fileVersionNumber: 548,
+	fileVersion: "549",
+	fileVersionNumber: 549,
 
 	language: "navigator",
 	debugMode: false,

@@ -26,9 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 		<xsl:template name="js2ns" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:param name="js"/>
+			<xsl:param name="nms"/>
 			<xsl:if test="contains($js,&quot;,new XsltForms_nodeTestName(&apos;&quot;)">
 				<xsl:variable name="js2" select="substring-after($js,',new XsltForms_nodeTestName(')"/>
-				<xsl:if test="string-length(substring-before($js2,',')) != 2">
+				<xsl:if test="string-length(substring-before($js2,',')) != 2 and not(starts-with($js2,'null'))">
 					<xsl:text>,</xsl:text>
 					<xsl:value-of select="substring-before($js2,',')"/>
 					<xsl:text>,'</xsl:text>
@@ -36,8 +37,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:variable name="pmin" select="translate($p,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"/>
 					<xsl:choose>
 						<xsl:when test="$p = 'xml'">http://www.w3.org/XML/1998/namespace</xsl:when>
+						<xsl:when test="contains($nms,concat('~~',$p,':'))">
+							<xsl:value-of select="substring-before(substring-after($nms,concat('~~',$p,':')),'~~')"/>
+						</xsl:when>
 						<xsl:when test="system-property('xsl:vendor')='Transformiix'">
 							<xsl:choose>
+								<xsl:when test="$main/*/@*[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))]">
+									<xsl:value-of select="namespace-uri($main/*/@*[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))][1])"/>
+								</xsl:when>
+								<xsl:when test="$main/xhtml:html/xhtml:body/*/@*[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))]">
+									<xsl:value-of select="namespace-uri($main/xhtml:html/xhtml:body/*/@*[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))][1])"/>
+								</xsl:when>
 								<xsl:when test="($main/descendant::*|$main/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))]">
 									<xsl:value-of select="namespace-uri(($main/descendant::*|$main/descendant::*/@*)[starts-with(translate(name(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),concat($pmin,':'))][1])"/>
 								</xsl:when>
@@ -69,6 +79,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</xsl:if>
 				<xsl:call-template name="js2ns">
 					<xsl:with-param name="js" select="substring-after($js2,')')"/>
+					<xsl:with-param name="nms" select="$nms"/>
 				</xsl:call-template>
 			</xsl:if>
 		</xsl:template>
