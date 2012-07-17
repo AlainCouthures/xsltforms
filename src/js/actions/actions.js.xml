@@ -39,6 +39,7 @@ The XFAbstractAction is the parent class for all action classes.</cm:wiki>
 		<cm:import-components path="XFMessage.js.xml"/>
 		<cm:import-components path="XFScript.js.xml"/>
 		<cm:import-components path="XFSetindex.js.xml"/>
+		<cm:import-components path="XFSetnode.js.xml"/>
 		<cm:import-components path="XFSetvalue.js.xml"/>
 		<cm:import-components path="XFToggle.js.xml"/>
 		<cm:import-components path="XFUnload.js.xml"/>

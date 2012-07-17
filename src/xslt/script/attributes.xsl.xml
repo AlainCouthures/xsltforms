@@ -24,7 +24,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
-		<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform" match="@at | @calculate | @constraint | @context | @if | @index | @iterate | @nodeset | @origin | @readonly | @ref | @relevant | @required | @target | @targetref | @value | @while" mode="scriptattr" priority="1">
+		<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform" match="@at | @calculate | @constraint | @context | @if | @index | @inner | @iterate | @nodeset | @origin | @outer | @readonly | @ref | @relevant | @required | @target | @targetref | @value | @while" mode="scriptattr" priority="1">
 			<xexpr xmlns=""><xsl:value-of select="."/></xexpr>
 		</xsl:template>
 		<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform" match="@model[not(../@ref)]" mode="scriptattr" priority="1">

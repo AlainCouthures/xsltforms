@@ -1,4 +1,4 @@
-/* Rev. 549
+/* Rev. 550
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "549",
-	fileVersionNumber: 549,
+	fileVersion: "550",
+	fileVersionNumber: 550,
 
 	language: "navigator",
 	debugMode: false,
@@ -4807,6 +4807,51 @@ XsltForms_setindex.prototype.run = function(element, ctx) {
 	XsltForms_browser.debugConsole.write("setIndex " + index);
 	if (!isNaN(index)) {
 		repeat.xfElement.setIndex(index);
+	}
+};
+
+	
+		
+		
+		
+function XsltForms_setnode(subform, binding, value, inout, context, ifexpr, whileexpr, iterateexpr) {
+	this.subform = subform;
+	this.binding = binding;
+	this.value = value? XsltForms_xpath.get(value) : null;
+	this.inout = inout;
+	this.context = XsltForms_xpath.get(context);
+	this.init(ifexpr, whileexpr, iterateexpr);
+}
+
+XsltForms_setnode.prototype = new XsltForms_abstractAction();
+
+
+		
+
+XsltForms_setnode.prototype.run = function(element, ctx) {
+	var node = this.binding.evaluate(ctx)[0];
+	if (node) {
+		if (this.context) {
+			ctx = this.context.evaluate(ctx)[0];
+		}
+		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.evaluate(ctx, ctx) : this.value.evaluate(node, ctx)) : this.literal;
+		XsltForms_globals.openAction();
+		if (this.inout) {
+			while (node.firstChild) {
+				node.removeChild(node.firstChild);
+			}
+			var tempnode = node.ownerDocument.createTextNode("temp");
+			node.appendChild(tempnode);
+			XsltForms_browser.loadXML(tempnode, value || "");
+		} else {
+			XsltForms_browser.loadXML(node, value || "");
+		}
+		var model = document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement;
+		XsltForms_globals.addChange(model);
+		XsltForms_browser.debugConsole.write("Setnode " + node.nodeName + (this.inout ? " inner" : " outer") + " = " + value); 
+		XsltForms_xmlevents.dispatch(model, "xforms-rebuild");
+		XsltForms_globals.refresh();
+		XsltForms_globals.closeAction();
 	}
 };
 

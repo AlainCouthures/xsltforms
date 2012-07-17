@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</xsl:choose>
 			</xsl:variable>
 			<xsl:for-each select="node()">
-				<xsl:if test="namespace-uri() = 'http://www.w3.org/2002/xforms' and contains(':setvalue:insert:load:delete:action:toggle:send:setfocus:dispatch:message:show:hide:script:unload:',concat(':',local-name(),':'))">
+				<xsl:if test="namespace-uri() = 'http://www.w3.org/2002/xforms' and contains(':setvalue:insert:load:delete:action:toggle:send:setfocus:setnode:dispatch:message:show:hide:script:unload:',concat(':',local-name(),':'))">
 					<js xmlns="">
 						<xsl:text>new XsltForms_listener(document.getElementById(</xsl:text>
 						<xsl:choose>

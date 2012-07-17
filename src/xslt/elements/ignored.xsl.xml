@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<xsl:template match="comment()" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"/>
 		<xsl:template match="text()" mode="item" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"/>
 		<xsl:template match="xforms:setvalue|xforms:insert|xforms:delete|xforms:dispatch|xforms:action|xforms:load|xforms:toggle|xforms:send|xforms:setfocus" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2"/>
-		<xsl:template match="xforms:setindex|xforms:reset|xforms:refresh|xforms:rebuild|xforms:recalculate|xforms:revalidate|xforms:unload" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2"/>
+		<xsl:template match="xforms:setindex|xforms:setnode|xforms:reset|xforms:refresh|xforms:rebuild|xforms:recalculate|xforms:revalidate|xforms:unload" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2"/>
 		<xsl:template match="xforms:hint|xforms:alert|xforms:help|xforms:value|xforms:item|xforms:itemset" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2"/>
 		<xsl:template match="xforms:model|xforms:show|xforms:hide" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2"/>
 		<xsl:template match="xforms:*" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="1">
