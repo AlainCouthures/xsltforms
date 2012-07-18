@@ -1,4 +1,4 @@
-/* Rev. 550
+/* Rev. 551
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "550",
-	fileVersionNumber: 550,
+	fileVersion: "551",
+	fileVersionNumber: 551,
 
 	language: "navigator",
 	debugMode: false,
@@ -4835,6 +4835,8 @@ XsltForms_setnode.prototype.run = function(element, ctx) {
 			ctx = this.context.evaluate(ctx)[0];
 		}
 		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.evaluate(ctx, ctx) : this.value.evaluate(node, ctx)) : this.literal;
+		var modelid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model");
+		var instanceid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "instance");
 		XsltForms_globals.openAction();
 		if (this.inout) {
 			while (node.firstChild) {
@@ -4845,8 +4847,10 @@ XsltForms_setnode.prototype.run = function(element, ctx) {
 			XsltForms_browser.loadXML(tempnode, value || "");
 		} else {
 			XsltForms_browser.loadXML(node, value || "");
+			XsltForms_browser.setMeta(node.ownerDocument.documentElement, "model", modelid);
+			XsltForms_browser.setMeta(node.ownerDocument.documentElement, "instance", instanceid);
 		}
-		var model = document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement;
+		var model = document.getElementById(modelid).xfElement;
 		XsltForms_globals.addChange(model);
 		XsltForms_browser.debugConsole.write("Setnode " + node.nodeName + (this.inout ? " inner" : " outer") + " = " + value); 
 		XsltForms_xmlevents.dispatch(model, "xforms-rebuild");
@@ -11270,12 +11274,12 @@ var XsltForms_xpathCoreFunctions = {
 		
 
 	"http://www.w3.org/2002/xforms transform" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
-		function(nodeSet, xslhref) {
-			if (arguments.length !== 2) {
+		function(nodeSet, xslhref, inline) {
+			if (arguments.length >= 4) {
 				throw XsltForms_xpathFunctionExceptions.transformInvalidArgumentsNumber;
 			}
 			xslhref = XsltForms_globals.stringValue(xslhref);
-			return nodeSet.length === 0? "" : XsltForms_browser.transformText(XsltForms_browser.saveXML(nodeSet[0]), xslhref, false);
+			return nodeSet.length === 0? "" : XsltForms_browser.transformText(XsltForms_browser.saveXML(nodeSet[0]), xslhref, XsltForms_globals.booleanValue(inline));
 		} ),
 
 		

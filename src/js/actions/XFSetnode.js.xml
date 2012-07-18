@@ -51,6 +51,8 @@ XsltForms_setnode.prototype.run = function(element, ctx) {
 			ctx = this.context.evaluate(ctx)[0];
 		}
 		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.evaluate(ctx, ctx) : this.value.evaluate(node, ctx)) : this.literal;
+		var modelid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model");
+		var instanceid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "instance");
 		XsltForms_globals.openAction();
 		if (this.inout) {
 			while (node.firstChild) {
@@ -61,8 +63,10 @@ XsltForms_setnode.prototype.run = function(element, ctx) {
 			XsltForms_browser.loadXML(tempnode, value || "");
 		} else {
 			XsltForms_browser.loadXML(node, value || "");
+			XsltForms_browser.setMeta(node.ownerDocument.documentElement, "model", modelid);
+			XsltForms_browser.setMeta(node.ownerDocument.documentElement, "instance", instanceid);
 		}
-		var model = document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement;
+		var model = document.getElementById(modelid).xfElement;
 		XsltForms_globals.addChange(model);
 		XsltForms_browser.debugConsole.write("Setnode " + node.nodeName + (this.inout ? " inner" : " outer") + " = " + value); 
 		XsltForms_xmlevents.dispatch(model, "xforms-rebuild");

@@ -1196,15 +1196,15 @@ var XsltForms_xpathCoreFunctions = {
 		} ),
 ]]>
 		<cm:wiki>
-* '''transform(node, stylesheet)'''</cm:wiki>
+* '''transform(node, stylesheet, inline?)'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2002/xforms transform" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
-		function(nodeSet, xslhref) {
-			if (arguments.length !== 2) {
+		function(nodeSet, xslhref, inline) {
+			if (arguments.length >= 4) {
 				throw XsltForms_xpathFunctionExceptions.transformInvalidArgumentsNumber;
 			}
 			xslhref = XsltForms_globals.stringValue(xslhref);
-			return nodeSet.length === 0? "" : XsltForms_browser.transformText(XsltForms_browser.saveXML(nodeSet[0]), xslhref, false);
+			return nodeSet.length === 0? "" : XsltForms_browser.transformText(XsltForms_browser.saveXML(nodeSet[0]), xslhref, XsltForms_globals.booleanValue(inline));
 		} ),
 ]]>
 		<cm:wiki>
