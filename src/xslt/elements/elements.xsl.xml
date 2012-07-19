@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:import-components path="document.xsl.xml"/>
 		<cm:import-components path="html.xsl.xml"/>
 		<cm:import-components path="avt.xsl.xml"/>
+		<cm:import-components path="choices.xsl.xml"/>
 		<cm:import-components path="dialog.xsl.xml"/>
 		<cm:import-components path="group.xsl.xml"/>
 		<cm:import-components path="ignored.xsl.xml"/>
