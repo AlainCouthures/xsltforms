@@ -84,7 +84,7 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 		}
 		XsltForms_browser.debugConsole.write("insert " + node.nodeName + " in " + parent.nodeName + " at " + index + " - " + ctx.nodeName);
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
-			XsltForms_browser.setAttributeNS(parent, node.namespaceURI, (node.prefix ? node.prefix+":" : "")+node.nodeName, node.nodeValue);
+			XsltForms_browser.setAttributeNS(parent, node.namespaceURI, node.nodeName, node.nodeValue);
 		} else {
 			var clone = node.cloneNode(true);
 			if (parent.nodeType === XsltForms_nodeType.DOCUMENT) {

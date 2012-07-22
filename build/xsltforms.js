@@ -1,4 +1,4 @@
-/* Rev. 553
+/* Rev. 554
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "553",
-	fileVersionNumber: 553,
+	fileVersion: "554",
+	fileVersionNumber: 554,
 
 	language: "navigator",
 	debugMode: false,
@@ -4518,7 +4518,7 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 		}
 		XsltForms_browser.debugConsole.write("insert " + node.nodeName + " in " + parent.nodeName + " at " + index + " - " + ctx.nodeName);
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
-			XsltForms_browser.setAttributeNS(parent, node.namespaceURI, (node.prefix ? node.prefix+":" : "")+node.nodeName, node.nodeValue);
+			XsltForms_browser.setAttributeNS(parent, node.namespaceURI, node.nodeName, node.nodeValue);
 		} else {
 			var clone = node.cloneNode(true);
 			if (parent.nodeType === XsltForms_nodeType.DOCUMENT) {
