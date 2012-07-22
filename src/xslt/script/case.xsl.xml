@@ -34,15 +34,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:call-template name="listeners"/>
 			<case xmlns="">
 				<xsl:variable name="noselected" select="count(../xforms:case[@selected='true']) = 0"/>
-				<xsl:variable name="otherselected" select="count(preceding-sibling::xforms:case[@selected='true']) != 0"/>
-				<xsl:if test="not((not($noselected) and (not(@selected) or @selected != 'true')) or ($noselected and (position() != 1 or @selected)) or $otherselected)">
+				<xsl:variable name="nopreviousselected" select="count(preceding-sibling::xforms:case[@selected='true']) = 0"/>
+				<xsl:if test="($noselected and count(preceding-sibling::xforms:case) = 0) or (@selected = 'true' and $nopreviousselected)">
 					<xsl:variable name="rid">
 						<xsl:choose>
 							<xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
 							<xsl:otherwise>
 								<xsl:value-of select="$jsid_pf"/>
 								<xsl:text>case-</xsl:text>
-								<xsl:value-of select="count(preceding::xforms:case|ancestor::xforms:case)"/>
+								<xsl:value-of select="$workid"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
