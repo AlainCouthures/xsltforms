@@ -605,11 +605,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectSingleNode = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext();
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.ANY_TYPE, null).iterateNext();
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext();
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.ANY_TYPE, null).iterateNext();
 			}
 		} catch (e) {
 			return null;
@@ -617,11 +616,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectSingleNodeText = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.ANY_TYPE, null).iterateNext().textContent;
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.ANY_TYPE, null).iterateNext().textContent;
 			}
 		} catch (e) {
 			if (node.nodeName === "properties") {
@@ -636,11 +634,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectNodesLength = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
 			}
 		} catch (e) {
 			var res = 0;
@@ -689,11 +686,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectNodes = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 			}
 		} catch (e) {
 		}

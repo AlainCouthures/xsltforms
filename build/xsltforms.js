@@ -1,4 +1,4 @@
-/* Rev. 554
+/* Rev. 555
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "554",
-	fileVersionNumber: 554,
+	fileVersion: "555",
+	fileVersionNumber: 555,
 
 	language: "navigator",
 	debugMode: false,
@@ -1292,11 +1292,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectSingleNode = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext();
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.ANY_TYPE, null).iterateNext();
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext();
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.ANY_TYPE, null).iterateNext();
 			}
 		} catch (e) {
 			return null;
@@ -1304,11 +1303,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectSingleNodeText = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.ANY_TYPE, null).iterateNext().textContent;
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.ANY_TYPE, null).iterateNext().textContent;
 			}
 		} catch (e) {
 			if (node.nodeName === "properties") {
@@ -1323,11 +1321,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectNodesLength = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
 			}
 		} catch (e) {
 			var res = 0;
@@ -1376,11 +1373,10 @@ if (XsltForms_browser.isIE) {
 	};
 	XsltForms_browser.selectNodes = function(xpath, node) {
 		try {
-			var nsResolver = document.createNSResolver(node);
 			if (node.evaluate) {
-				return node.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 			} else {
-				return node.ownerDocument.evaluate(xpath, node, nsResolver, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+				return node.ownerDocument.evaluate(xpath, node, node.ownerDocument.createNSResolver(node), XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 			}
 		} catch (e) {
 		}
@@ -3516,7 +3512,7 @@ function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, 
 	}
 	var model = parent.model || parent;
 	if (type === "xsd:ID") {
-		XsltForms_globals.IDstr = nodeset;
+		XsltForms_globals.IDstr = nodeset.split('/').pop();
 		return;
 	}
 	this.init(subform, id, parent, "xforms-bind");

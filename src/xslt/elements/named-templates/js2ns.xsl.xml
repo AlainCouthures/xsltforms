@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="nms"/>
 			<xsl:if test="contains($js,&quot;,new XsltForms_nodeTestName(&apos;&quot;)">
 				<xsl:variable name="js2" select="substring-after($js,',new XsltForms_nodeTestName(')"/>
-				<xsl:if test="string-length(substring-before($js2,',')) != 2 and not(starts-with($js2,'null'))">
+				<xsl:if test="string-length(substring-before($js2,',')) != 2 and not(starts-with($js2,'null')) and substring($js2,2,1) != '*'">
 					<xsl:text>,</xsl:text>
 					<xsl:value-of select="substring-before($js2,',')"/>
 					<xsl:text>,'</xsl:text>
