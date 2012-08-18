@@ -1016,7 +1016,7 @@ if( strpos($s, "filename=\"") ) {
 	$s = substr($s, strpos($s, "filename=\"")+10);
 	$attfn = substr($s, 0, strpos($s, "\""));
 	$s = substr($s, strpos($s, "\"")+1);
-			header('Content-Disposition: attachment; filename="'.$attfn.'"');
+	header('Content-Disposition: attachment; filename="'.$attfn.'"');
 }
 $s = substr($s, strpos($s, "\"")+1);
 $format = substr($s, 0, strpos($s, "\""));
@@ -1081,11 +1081,52 @@ switch($format) {
 			$content = html_entity_decode($content);
 		}
 	default:
-		header("Content-Type: ".$ctype);
-		if( $attfn != "" ) {
-			//header('Content-Disposition: attachment; filename="'.$attfn.'"');
+		if( strpos($content, "<?xslt-engine ") ) {
+			$xsltengine = substr($content, strpos($content,"<?xslt-engine ")+14, strpos(substr($content, strpos($content,"<?xslt-engine ")+14),"?>"));
+			$xsltpo = substr($content, strpos($content,"<?xml-stylesheet ")+17, strpos(substr($content, strpos($content,"<?xslt-xml-stylesheet ")+17),"?>"));
+			$xslthref = substr($content, strpos($content,'href="')+6, strpos(substr($content, strpos($content,'href="')+6),'"'));
+			$xslturi = 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER["REQUEST_URI"])."/".$xslthref;
+			$c = curl_init();
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($c, CURLOPT_URL, $xslturi);
+			$xsltsheet = curl_exec($c);
+			curl_close($c);
+			$ctype = "text/html";
+			if($xsltengine === "php") {
+				$xml = new DOMDocument();
+				$xml->loadXML($content);
+				$xsl = new DOMDocument();
+				$xsl->loadXML($xsltsheet);
+				$xslp = new xsltProcessor();
+				$xslp->importStyleSheet($xsl);
+				$result = $xslp->transformToXml($xml);
+			} else {
+				$xmlfile = tempnam(sys_get_temp_dir(), 'txs');
+				file_put_contents($xmlfile, $content);
+				$xsltfile = tempnam(sys_get_temp_dir(), 'txs');
+				file_put_contents($xsltfile, $xsltsheet);
+				$resultfile = tempnam(sys_get_temp_dir(), 'txs');
+				$cmdfile = "xslt-".$xsltengine.(PHP_OS === "WINNT" ? ".bat" : ".sh");
+				if(is_file($cmdfile)) {
+					exec($cmdfile." ".$xmlfile." ".$xsltfile." ".$resultfile);
+					$result = file_get_contents($resultfile);
+				} else {
+					$result = $content;
+					$ctype = "text/xml";
+				}
+				unlink($xmlfile);
+				unlink($xsltfile);
+				unlink($resultfile);
+			}
+			header("Content-Type: ".$ctype);
+			echo $result;
+		} else {
+			header("Content-Type: ".$ctype);
+			if( $attfn != "" ) {
+				//header('Content-Disposition: attachment; filename="'.$attfn.'"');
+			}
+			echo $content;
 		}
-		echo $content;
 		break;
 }
 ?>

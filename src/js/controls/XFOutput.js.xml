@@ -81,7 +81,7 @@ XsltForms_output.prototype.dispose = function() {
 XsltForms_output.prototype.setValue = function(value) {
 	var node = this.element.node;
 	var element = this.valueElement;
-	if (element.nodeName.toLowerCase() === "span" || element.nodeName.toLowerCase() === "tspan") {
+	if (element.nodeName.toLowerCase() === "span" || element.nodeName.toLowerCase() === "tspan" || element.nodeName.toLowerCase() === "label") {
 		if (this.mediatype === "application/xhtml+xml") {
 			while (element.firstChild) {
 				element.removeChild(element.firstChild);

@@ -29,6 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<optgroup label="{xforms:label/text()}">
+				<xsl:call-template name="genid">
+					<xsl:with-param name="workid" select="$workid"/>
+				</xsl:call-template>
 				<xsl:apply-templates select="node()" mode="item">
 					<xsl:with-param name="parentworkid" select="$workid"/>
 				</xsl:apply-templates>

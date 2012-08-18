@@ -32,26 +32,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:with-param name="parentworkid" select="$workid"/>
 			</xsl:apply-templates>
 			<xsl:call-template name="listeners"/>
-			<case xmlns="">
-				<xsl:variable name="noselected" select="count(../xforms:case[@selected='true']) = 0"/>
-				<xsl:variable name="nopreviousselected" select="count(preceding-sibling::xforms:case[@selected='true']) = 0"/>
-				<xsl:if test="($noselected and count(preceding-sibling::xforms:case) = 0) or (@selected = 'true' and $nopreviousselected)">
-					<xsl:variable name="rid">
-						<xsl:choose>
-							<xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
-							<xsl:otherwise>
-								<xsl:value-of select="$jsid_pf"/>
-								<xsl:text>case-</xsl:text>
-								<xsl:value-of select="$workid"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					<xsl:text>XsltForms_xmlevents.dispatch(document.getElementById('</xsl:text>
-					<xsl:value-of select="$rid"/>
-					<xsl:text>'), "xforms-select");
+			<xsl:if test="parent::xforms:switch">
+				<case xmlns="">
+					<xsl:variable name="noselected" select="count(../xforms:case[@selected='true']) = 0"/>
+					<xsl:variable name="nopreviousselected" select="count(preceding-sibling::xforms:case[@selected='true']) = 0"/>
+					<xsl:if test="($noselected and count(preceding-sibling::xforms:case) = 0) or (@selected = 'true' and $nopreviousselected)">
+						<xsl:variable name="rid">
+							<xsl:choose>
+								<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="$jsid_pf"/>
+									<xsl:text>case-</xsl:text>
+									<xsl:value-of select="$workid"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<xsl:text>XsltForms_xmlevents.dispatch(document.getElementById(</xsl:text>
+						<xsl:value-of select="$rid"/>
+						<xsl:text>"), "xforms-select");
 </xsl:text>
-				</xsl:if>
-			</case>
+					</xsl:if>
+				</case>
+			</xsl:if>
 		</xsl:template>
 	</cm:source>
 </cm:component>

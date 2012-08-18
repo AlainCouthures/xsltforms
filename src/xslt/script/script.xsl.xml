@@ -1,7 +1,7 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="xsltforms.xsl">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-08</cm:creationdate>
-	<cm:lastupdate>2012-04-06</cm:lastupdate>
+	<cm:lastupdate>2012-07-25</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:import-components path="attributes.xsl.xml"/>
 		<cm:import-components path="bind.xsl.xml"/>
 		<cm:import-components path="case.xsl.xml"/>
+		<cm:import-components path="choices.xsl.xml"/>
 		<cm:import-components path="delete.xsl.xml"/>
 		<cm:import-components path="dialog.xsl.xml"/>
 		<cm:import-components path="dispatch.xsl.xml"/>

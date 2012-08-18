@@ -1,0 +1,1 @@
+java -cp /xalan-j_2_7_1/xalan.jar;/xalan-j_2_7_1/serializer.jar;/xalan-j_2_7_1/xercesImpl.jar;/xalan-j_2_7_1/xml-apis.jar org.apache.xalan.xslt.Process -in %1 -xsl %2 -out %3

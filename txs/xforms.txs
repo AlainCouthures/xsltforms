@@ -13,14 +13,13 @@
 			</xsl:variable>
 			<xsl:variable name="delta">
 				<xsl:choose>
-					<xsl:when test="string(/req:params/req:options) != ''">3</xsl:when>
+					<xsl:when test="string(/req:params/req:transform) != ''">3</xsl:when>
 					<xsl:otherwise>0</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
 			<txs:transform stylesheet="#{$sheet}">
 				<txs:with-param name="resourcesdir" value="{substring('../../../../../../../../../../../../../../../../../../../../../../../../',1,string-length(translate(/req:params/req:file,'/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. +','/'))*3 + $delta)}"/>
-				<txs:with-param name="opt" value="{/req:params/req:options}"/>
-				<txs:with-param name="lopt" value="http://{concat(/req:params/req:httphost,substring-before(/req:params/req:requesturi,concat('/',/req:params/req:file)),'.xml')}"/>
+				<txs:with-param name="transfengine" value="{/req:params/req:transform}"/>
 				<txs:with-param name="f" value="{$f}"/>
 				<txs:with-param name="sf" value="{/req:params/req:file}"/>
 				<txs:input>
@@ -31,16 +30,13 @@
 	</xsl:stylesheet>
 	<xsl:stylesheet txs:name="xsltforms" version="1.0" xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:txs="http://www.agencexml.com/txs" xmlns:req="http://www.agencexml.com/requests">
 		<xsl:param name="resourcesdir"/>
-		<xsl:param name="opt"/>
-		<xsl:param name="lopt"/>
+		<xsl:param name="transfengine"/>
 		<xsl:param name="f"/>
 		<xsl:template match="/">
 			<txs:return contenttype="text/xml">
 				<txs:processing-instruction name="xml-stylesheet">type="text/xsl" href="<xsl:value-of select="$resourcesdir"/>xsltforms.xsl"</txs:processing-instruction>
-				<xsl:if test="string($opt) != ''">
-					<xsl:for-each select="document($lopt)//processing-instruction()">
-						<txs:processing-instruction name="{name()}"><xsl:value-of select="."/></txs:processing-instruction>
-					</xsl:for-each>
+				<xsl:if test="string($transfengine) != ''">
+					<txs:processing-instruction name="xslt-engine"><xsl:value-of select="string($transfengine)"/></txs:processing-instruction>
 				</xsl:if>
 				<xsl:apply-templates />
 			</txs:return>

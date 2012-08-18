@@ -1,6 +1,6 @@
-<cm:component xmlns:cm="http://www.agencexml.com/cm" name="output.xsl">
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="choices.xsl">
 	<cm:author>Alain Couthures</cm:author>
-	<cm:creationdate>2009-04-08</cm:creationdate>
+	<cm:creationdate>2012-07-25</cm:creationdate>
 	<cm:lastupdate>2012-07-25</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
@@ -24,13 +24,13 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
-		<xsl:template match="xforms:output | xforms:label[(@ref or @bind) and not(parent::xforms:item) and not(parent::xforms:itemset) and not(parent::xforms:choices)]" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+		<xsl:template match="xforms:choices[xforms:label[@ref or @bind]]" mode="script" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:apply-templates select="@*" mode="scriptattr"/>
 			<js xmlns="">
 				<xsl:variable name="lname" select="local-name()"/>
-				<xsl:text>new XsltForms_output(</xsl:text>
+				<xsl:text>new XsltForms_label(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,</xsl:text>
 				<xsl:choose>
@@ -43,14 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</xsl:otherwise>
 				</xsl:choose>
 				<xsl:text>",</xsl:text>
-				<xsl:choose>
-					<xsl:when test="xforms:label/node()">1</xsl:when>
-					<xsl:otherwise>0</xsl:otherwise>
-				</xsl:choose>
-				<xsl:text>,</xsl:text>
-				<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@ref"/></xsl:call-template>
-				<xsl:text>,</xsl:text>
-				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@mediatype"/></xsl:call-template>
+				<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="xforms:label/@ref | xforms:label/@bind"/></xsl:call-template>
 				<xsl:text>);</xsl:text>
 			</js>
 			<xsl:apply-templates select="node()" mode="script">
@@ -59,6 +52,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:call-template name="listeners">
 				<xsl:with-param name="workid" select="$workid"/>
 			</xsl:call-template>
-		</xsl:template>
+		</xsl:template>	    
 	</cm:source>
 </cm:component>

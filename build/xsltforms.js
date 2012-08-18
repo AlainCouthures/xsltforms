@@ -1,4 +1,4 @@
-/* Rev. 555
+/* Rev. 556
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "555",
-	fileVersionNumber: 555,
+	fileVersion: "556",
+	fileVersionNumber: 556,
 
 	language: "navigator",
 	debugMode: false,
@@ -4646,8 +4646,11 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
 				scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
 				scriptelt.setAttribute("type", "text/javascript");
-				var scripttxt = document.createTextNode(subjs);
-				scriptelt.appendChild(scripttxt);
+				if (XsltForms_browser.isIE) {
+					scriptelt.text = subjs;
+				} else {
+					scriptelt.appendChild(document.createTextNode(subjs));
+				}
 				var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
 				body.insertBefore(scriptelt, body.firstChild);
 				XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", true);
@@ -5680,7 +5683,7 @@ XsltForms_input.prototype.setValue = function(value) {
 		this.initInput(type);
 		this.changeReadonly();
 	}
-	XsltForms_browser.debugConsole.write(this.input.id+": setValue("+value+")");
+//	XsltForms_browser.debugConsole.write(this.input.id+": setValue("+value+")");
 //	if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) === undefined) {
 //		XsltForms_browser.debugConsole.write(this.input.id+" is undefined");
 //	}
@@ -6151,7 +6154,7 @@ XsltForms_label.prototype.build_ = function(ctx) {
 XsltForms_label.prototype.refresh = function() {
 	var node = this.element.node;
 	var value = node? XsltForms_browser.getValue(node, true) : "";
-	XsltForms_browser.setValue(this.element, value);
+	XsltForms_browser.setValue(this.element.getAttributeNode("label") ? this.element.getAttributeNode("label") : this.element, value);
 };
     
 	
@@ -6207,7 +6210,7 @@ XsltForms_output.prototype.dispose = function() {
 XsltForms_output.prototype.setValue = function(value) {
 	var node = this.element.node;
 	var element = this.valueElement;
-	if (element.nodeName.toLowerCase() === "span" || element.nodeName.toLowerCase() === "tspan") {
+	if (element.nodeName.toLowerCase() === "span" || element.nodeName.toLowerCase() === "tspan" || element.nodeName.toLowerCase() === "label") {
 		if (this.mediatype === "application/xhtml+xml") {
 			while (element.firstChild) {
 				element.removeChild(element.firstChild);

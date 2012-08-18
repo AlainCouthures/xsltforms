@@ -173,7 +173,7 @@ XsltForms_input.prototype.setValue = function(value) {
 		this.initInput(type);
 		this.changeReadonly();
 	}
-	XsltForms_browser.debugConsole.write(this.input.id+": setValue("+value+")");
+//	XsltForms_browser.debugConsole.write(this.input.id+": setValue("+value+")");
 //	if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) === undefined) {
 //		XsltForms_browser.debugConsole.write(this.input.id+" is undefined");
 //	}

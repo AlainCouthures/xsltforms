@@ -74,7 +74,7 @@ XsltForms_label.prototype.build_ = function(ctx) {
 XsltForms_label.prototype.refresh = function() {
 	var node = this.element.node;
 	var value = node? XsltForms_browser.getValue(node, true) : "";
-	XsltForms_browser.setValue(this.element, value);
+	XsltForms_browser.setValue(this.element.getAttributeNode("label") ? this.element.getAttributeNode("label") : this.element, value);
 };
     ]]>
 	</cm:source>

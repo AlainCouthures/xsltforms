@@ -119,8 +119,11 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
 				scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
 				scriptelt.setAttribute("type", "text/javascript");
-				var scripttxt = document.createTextNode(subjs);
-				scriptelt.appendChild(scripttxt);
+				if (XsltForms_browser.isIE) {
+					scriptelt.text = subjs;
+				} else {
+					scriptelt.appendChild(document.createTextNode(subjs));
+				}
 				var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
 				body.insertBefore(scriptelt, body.firstChild);
 				XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", true);
