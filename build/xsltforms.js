@@ -1,4 +1,4 @@
-/* Rev. 556
+/* Rev. 557
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "556",
-	fileVersionNumber: 556,
+	fileVersion: "557",
+	fileVersionNumber: 557,
 
 	language: "navigator",
 	debugMode: false,
@@ -3349,7 +3349,7 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 
 		
 
-XsltForms_browser.jsoninst = function(json) {
+var jsoninst = function(json) {
 	XsltForms_browser.jsoninstobj.setDoc(XsltForms_browser.json2xml("", json, true, false));
 	XsltForms_globals.addChange(XsltForms_browser.jsoninstobj.model);
 	XsltForms_xmlevents.dispatch(XsltForms_browser.jsoninstobj.model, "xforms-rebuild");

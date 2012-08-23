@@ -1,0 +1,51 @@
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:xf="http://www.w3.org/2002/xforms"
+ xmlns:ev="http://www.w3.org/2001/xml-events">
+  <head>
+    <title>WIKIPEDIA OpenSearch Test Form</title>
+    <xf:model>
+			<xf:instance id="isearch">
+				<root xmlns="">
+					<search/>
+				</root>
+			</xf:instance>
+			<xf:instance id="iresults">
+				<root xmlns=""/>
+			</xf:instance>
+			<xf:bind nodeset="search" constraint="instance('iresults')/*[2]/*[translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = translate(current(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')]"/>
+			<xf:submission id="s1" method="get" replace="instance" instance="iresults" serialization="none" mode="synchronous" mediatype="text/jsonp">
+				<xf:resource value="concat('http://en.wikipedia.org/w/api.php?action=opensearch&amp;format=json&amp;search=',search)"/>
+			</xf:submission>
+			<xf:setfocus ev:event="xforms-ready" control="search"/>
+		</xf:model>
+		<style type="text/css">
+			#search label { float: left; width: 4em; }
+			#results { border:1px solid black; width: 15em; margin-left: 4em;}
+			#results .xforms-value:hover { background-color: #418ad5; }
+		</style>
+  </head>
+  <body>
+		<h1>WIKIPEDIA OpenSearch Test Form</h1>
+		<p>Please enter a subject in the following field. The value is not case sensitive but it has to exist in the results of the corresponding search.</p>
+   <xf:input id="search" ref="search" incremental="true" delay="500">
+      <xf:label>Subject : </xf:label>
+      <xf:send submission = "s1" ev:event="xforms-value-changed"/>
+      <xf:toggle ev:event="DOMFocusIn" case="show-autocompletion" />
+    </xf:input>
+    <xf:switch>
+      <xf:case id="show-autocompletion">
+        <xf:repeat id="results" nodeset="instance('iresults')/*[2]/*">
+          <xf:trigger appearance="minimal">
+            <xf:label><xf:output value="."/></xf:label>
+            <xf:action ev:event="DOMActivate">
+              <xf:setvalue ref="instance('isearch')/search" value="instance('iresults')/*[2]/*[index('results')]" />
+              <xf:toggle case="hide-autocompletion" />
+            </xf:action>
+          </xf:trigger>
+        </xf:repeat>
+      </xf:case>
+      <xf:case id="hide-autocompletion" />
+    </xf:switch>
+	</body>
+</html>
