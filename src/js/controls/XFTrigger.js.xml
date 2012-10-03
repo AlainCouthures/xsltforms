@@ -80,9 +80,9 @@ XsltForms_trigger.prototype.dispose = function() {
 		<cm:wiki>
 * '''click''' method : dispatches a "DOMActivate" event</cm:wiki>
 <![CDATA[
-XsltForms_trigger.prototype.click = function () {
+XsltForms_trigger.prototype.click = function (target, evcontext) {
 	XsltForms_globals.openAction();
-	XsltForms_xmlevents.dispatch(this, "DOMActivate");
+	XsltForms_xmlevents.dispatch(this, "DOMActivate", null, null, null, null, evcontext);
 	XsltForms_globals.closeAction();
 };
 

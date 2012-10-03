@@ -60,7 +60,7 @@ XsltForms_control.prototype.dispose = function() {
 		<cm:wiki>
 * '''focus''' method : manages focus and dispatches the "DOMFocusIn" event</cm:wiki>
 <![CDATA[
-XsltForms_control.prototype.focus = function(focusEvent) {
+XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 	if (this.isOutput) {
 		return;
 	}
@@ -77,7 +77,7 @@ XsltForms_control.prototype.focus = function(focusEvent) {
 			}
 			parent = parent.parentNode;
 		}
-		XsltForms_xmlevents.dispatch(XsltForms_globals.focus, "DOMFocusIn");
+		XsltForms_xmlevents.dispatch(XsltForms_globals.focus, "DOMFocusIn", null, null, null, null, evcontext);
 		XsltForms_globals.closeAction();
 		if (this.full && !focusEvent) { // select full
 			this.focusFirst();
@@ -193,8 +193,8 @@ XsltForms_control.prototype.valueChanged = function(value) {
 		XsltForms_globals.openAction();
 		XsltForms_browser.setValue(node, value);
 		model.addChange(node);
-		//XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
-		//XsltForms_globals.refresh();
+		XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
+		XsltForms_globals.refresh();
 		XsltForms_globals.closeAction();
 	}
 };

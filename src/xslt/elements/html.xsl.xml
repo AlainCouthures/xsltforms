@@ -122,6 +122,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<script id="xsltforms-generatedscript" type="text/javascript">
 						<xsl:text>/* XsltForms_MagicSeparator */
 </xsl:text>
+						<xsl:text>function </xsl:text>
+						<xsl:value-of select="$vn_pf"/>
+						<xsl:text>initImpl() {
+</xsl:text>
 						<xsl:text>XsltForms_globals.language = "</xsl:text>
 						<xsl:choose>
 							<xsl:when test="$lang != ''">
@@ -144,10 +148,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise>
 						</xsl:choose>
 						<xsl:text>";
-</xsl:text>
-						<xsl:text>function </xsl:text>
-						<xsl:value-of select="$vn_pf"/>
-						<xsl:text>initImpl() {
 </xsl:text>
 						<xsl:text>XsltForms_globals.debugMode = </xsl:text>
 						<xsl:value-of select="$displaydebug"/>

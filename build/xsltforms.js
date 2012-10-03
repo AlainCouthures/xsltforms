@@ -1,4 +1,4 @@
-/* Rev. 557
+/* Rev. 558
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "557",
-	fileVersionNumber: 557,
+	fileVersion: "558",
+	fileVersionNumber: 558,
 
 	language: "navigator",
 	debugMode: false,
@@ -392,10 +392,10 @@ var XsltForms_globals = {
 				if (xf) {
 					if(typeof parent.node !== "undefined" && parent.node && xf.focus && !XsltForms_browser.getBoolMeta(parent.node, "readonly")) {
 						var name = target.nodeName.toLowerCase();
-						xf.focus(name === "input" || name === "textarea");
+						xf.focus(name === "input" || name === "textarea", evt);
 					}
 					if(xf.click && xf.input && !xf.input.disabled) {
-						xf.click(target);
+						xf.click(target, evt);
 						break;
 					}
 				}
@@ -1031,7 +1031,13 @@ if (XsltForms_browser.isIE) {
 			xsltProcessor.importStylesheet(xsltDoc);
 			try {
 				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
-				return serializer.serializeToString(resultDocument);
+				var s = "";
+				if (XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") {
+					s = resultDocument.documentElement.textContent;
+				} else {
+					s = serializer.serializeToString(resultDocument);
+				}
+				return s;
 			} catch (e2) {
 				return "";
 			}
@@ -1525,14 +1531,10 @@ XsltForms_browser.getType = function(node) {
 XsltForms_browser.getNil = function(node) {
 	if (node.nodeType === XsltForms_nodeType.ELEMENT) {
 		if (node.getAttributeNS) {
-			return XsltForms_globals.booleanValue(node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "nil"));
+			return node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "nil") === "true";
 		} else {
 			var att = node.selectSingleNode("@*[local-name()='nil' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
-			if (att && att.value !== "") {
-				return att.value !== "false";
-			} else {
-				return false;
-			}
+			return att && att.value === "true";
 		}
 	} else {
 		return false;
@@ -2425,6 +2427,7 @@ XsltForms_browser.setValue = function(node, value) {
 		
 
 XsltForms_browser.run = function(action, element, evt, synch, propagate) {
+	XsltForms_xmlevents.EventContexts.push(evt);
 	if (synch) {
 		XsltForms_browser.dialog.show("statusPanel", null, false);
 		setTimeout(function() { 
@@ -5262,7 +5265,7 @@ XsltForms_control.prototype.dispose = function() {
 
 		
 
-XsltForms_control.prototype.focus = function(focusEvent) {
+XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 	if (this.isOutput) {
 		return;
 	}
@@ -5279,7 +5282,7 @@ XsltForms_control.prototype.focus = function(focusEvent) {
 			}
 			parent = parent.parentNode;
 		}
-		XsltForms_xmlevents.dispatch(XsltForms_globals.focus, "DOMFocusIn");
+		XsltForms_xmlevents.dispatch(XsltForms_globals.focus, "DOMFocusIn", null, null, null, null, evcontext);
 		XsltForms_globals.closeAction();
 		if (this.full && !focusEvent) { // select full
 			this.focusFirst();
@@ -5391,8 +5394,8 @@ XsltForms_control.prototype.valueChanged = function(value) {
 		XsltForms_globals.openAction();
 		XsltForms_browser.setValue(node, value);
 		model.addChange(node);
-		//XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
-		//XsltForms_globals.refresh();
+		XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
+		XsltForms_globals.refresh();
 		XsltForms_globals.closeAction();
 	}
 };
@@ -5704,7 +5707,12 @@ XsltForms_input.prototype.setValue = function(value) {
 		
 
 XsltForms_input.prototype.changeReadonly = function() {
+	var node = this.element.node;
+	var type = node ? XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string") : XsltForms_schema.getType("xsd_:string");
 	if (this.input) {
+		if (type["class"] === "boolean") {
+			this.input.disabled = this.readonly;
+		}
 		this.input.readOnly = this.readonly;
 		if (this.calendarButton) {
 			this.calendarButton.style.display = this.readonly ? "none" : "";
@@ -6999,9 +7007,9 @@ XsltForms_trigger.prototype.dispose = function() {
 
 		
 
-XsltForms_trigger.prototype.click = function () {
+XsltForms_trigger.prototype.click = function (target, evcontext) {
 	XsltForms_globals.openAction();
-	XsltForms_xmlevents.dispatch(this, "DOMActivate");
+	XsltForms_xmlevents.dispatch(this, "DOMActivate", null, null, null, null, evcontext);
 	XsltForms_globals.closeAction();
 };
 

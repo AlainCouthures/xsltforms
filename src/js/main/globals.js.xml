@@ -398,10 +398,10 @@ var XsltForms_globals = {
 				if (xf) {
 					if(typeof parent.node !== "undefined" && parent.node && xf.focus && !XsltForms_browser.getBoolMeta(parent.node, "readonly")) {
 						var name = target.nodeName.toLowerCase();
-						xf.focus(name === "input" || name === "textarea");
+						xf.focus(name === "input" || name === "textarea", evt);
 					}
 					if(xf.click && xf.input && !xf.input.disabled) {
-						xf.click(target);
+						xf.click(target, evt);
 						break;
 					}
 				}

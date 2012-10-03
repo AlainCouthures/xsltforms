@@ -195,7 +195,12 @@ XsltForms_input.prototype.setValue = function(value) {
 * '''changeReadonly''' method : changes the read only state of this input control</cm:wiki>
 <![CDATA[
 XsltForms_input.prototype.changeReadonly = function() {
+	var node = this.element.node;
+	var type = node ? XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string") : XsltForms_schema.getType("xsd_:string");
 	if (this.input) {
+		if (type["class"] === "boolean") {
+			this.input.disabled = this.readonly;
+		}
 		this.input.readOnly = this.readonly;
 		if (this.calendarButton) {
 			this.calendarButton.style.display = this.readonly ? "none" : "";

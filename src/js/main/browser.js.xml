@@ -338,7 +338,13 @@ if (XsltForms_browser.isIE) {
 			xsltProcessor.importStylesheet(xsltDoc);
 			try {
 				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
-				return serializer.serializeToString(resultDocument);
+				var s = "";
+				if (XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") {
+					s = resultDocument.documentElement.textContent;
+				} else {
+					s = serializer.serializeToString(resultDocument);
+				}
+				return s;
 			} catch (e2) {
 				return "";
 			}
@@ -838,14 +844,10 @@ XsltForms_browser.getType = function(node) {
 XsltForms_browser.getNil = function(node) {
 	if (node.nodeType === XsltForms_nodeType.ELEMENT) {
 		if (node.getAttributeNS) {
-			return XsltForms_globals.booleanValue(node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "nil"));
+			return node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "nil") === "true";
 		} else {
 			var att = node.selectSingleNode("@*[local-name()='nil' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
-			if (att && att.value !== "") {
-				return att.value !== "false";
-			} else {
-				return false;
-			}
+			return att && att.value === "true";
 		}
 	} else {
 		return false;
@@ -1769,6 +1771,7 @@ XsltForms_browser.setValue = function(node, value) {
 * '''run''' function : executes an action (called by generated Javascript instructions)</cm:wiki>
 <![CDATA[
 XsltForms_browser.run = function(action, element, evt, synch, propagate) {
+	XsltForms_xmlevents.EventContexts.push(evt);
 	if (synch) {
 		XsltForms_browser.dialog.show("statusPanel", null, false);
 		setTimeout(function() { 
