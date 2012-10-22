@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:with-param name="class">xforms-switch</xsl:with-param>
 				</xsl:call-template>
 				<xsl:variable name="noselected" select="count(xforms:case[@selected='true']) = 0"/>
+				<xsl:variable name="caseref" select="@caseref != ''"/>
 				<xsl:for-each select="node()">
 					<xsl:if test="self::xforms:case">
 						<xsl:variable name="nopreviousselected" select="count(preceding-sibling::xforms:case[@selected='true']) = 0"/>
@@ -54,7 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:call-template name="style">
 								<xsl:with-param name="class">xforms-case</xsl:with-param>
 							</xsl:call-template>
-							<xsl:if test="not(($noselected and count(preceding-sibling::xforms:case) = 0) or (@selected = 'true' and $nopreviousselected))">
+							<xsl:if test="$caseref or not(($noselected and count(preceding-sibling::xforms:case) = 0) or (@selected = 'true' and $nopreviousselected))">
 								<xsl:attribute name="style">display:none;</xsl:attribute>
 							</xsl:if>
 							<xsl:apply-templates select="node()">

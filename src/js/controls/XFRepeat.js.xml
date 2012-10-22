@@ -116,7 +116,13 @@ XsltForms_repeat.prototype.insertNode = function(node, nodeAfter) {
 * '''build_''' method : recreates every nodes within this repeat control and sets the current index at 1</cm:wiki>
 <![CDATA[
 XsltForms_repeat.prototype.build_ = function(ctx) {
-	var nodes = this.evaluateBinding(this.binding, ctx);
+	var nodes0 = this.evaluateBinding(this.binding, ctx);
+	var nodes = [];
+	for (var n = 0, ln = nodes0.length; n < ln; n++) {
+		if (!XsltForms_browser.getBoolMeta(nodes0[n], "notrelevant")) {
+			nodes.push(nodes0[n]);
+		}
+	}
 	var r = this.root;
 	this.nodes = nodes;
 	var n = nodes.length;

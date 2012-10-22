@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Group Element Class
 * constructor function : sets specific properties</cm:wiki>
 		<![CDATA[
-function XsltForms_group(subform, id, binding) {
+function XsltForms_group(subform, id, binding, casebinding) {
 	XsltForms_globals.counters.group++;
 	this.init(subform, id);
 	if (binding) {
@@ -38,6 +38,7 @@ function XsltForms_group(subform, id, binding) {
 	} else {
 		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
 	}
+	this.casebinding = casebinding;
 }
 
 XsltForms_group.prototype = new XsltForms_element();
@@ -56,7 +57,7 @@ XsltForms_group.prototype.dispose = function() {
 * '''clone''' method : creates a new group with the given id</cm:wiki>
 <![CDATA[
 XsltForms_group.prototype.clone = function(id) { 
-	return new XsltForms_group(this.subform, id, this.binding);
+	return new XsltForms_group(this.subform, id, this.binding, this.casebinding);
 };
 
 ]]>
@@ -67,6 +68,12 @@ XsltForms_group.prototype.build_ = function(ctx) {
 	var nodes = this.evaluateBinding(this.binding, ctx);
 	this.element.node = nodes[0];
 	this.depsNodesRefresh.push(nodes[0]);
+	if (this.casebinding) {
+		var caseref = this.evaluateBinding(this.casebinding, nodes[0]);
+		if (caseref) {
+			XsltForms_toggle.toggle(XsltForms_globals.stringValue(caseref));
+		}
+	}
 };
 
 ]]>

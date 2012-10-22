@@ -60,6 +60,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:when test="$baseuri != ''">
 						<xsl:value-of select="$baseuri"/>
 					</xsl:when>
+					<xsl:when test="$xsltforms_home != ''">
+						<xsl:value-of select="$xsltforms_home"/>
+					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="substring-before($href, 'xsltforms.xsl')"/>
 					</xsl:otherwise>
@@ -315,7 +318,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:text>} /* XsltForms_MagicSeparator */ };
 </xsl:text>
 						<xsl:if test="$xsltforms_caller = 'true'">
-							<xsl:value-of select="$vn_pf"/><xsl:text>init();if (window.xf_user_init) xf_user_init();</xsl:text>
+							<xsl:value-of select="$vn_pf"/><xsl:text>initImpl();if (window.xf_user_init) xf_user_init();</xsl:text>
 							<xsl:value-of select="$initdebug"/>
 							<xsl:value-of select="xhtml:body/@onload"/>
 							<xsl:value-of select="body/@onload"/>
@@ -374,6 +377,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<div id="xsltforms_console">&#160;<xsl:text/></div>
 					<div id="statusPanel"><xsl:value-of select="$script/config/properties/status"/>&#160;<xsl:text/></div>
 					<xsl:comment>XsltForms_MagicSeparator</xsl:comment>
+					<xsl:if test="$xsltforms_chain = 'true'">
+						<script id="xsltforms-chain" type="text/javascript">
+							<xsl:text>if (XsltForms_browser.isMozilla) {</xsl:text>
+							<xsl:value-of select="$vn_pf"/><xsl:text>init();if (window.xf_user_init) xf_user_init();</xsl:text>
+							<xsl:value-of select="$initdebug"/>
+							<xsl:value-of select="xhtml:body/@onload"/>
+							<xsl:value-of select="body/@onload"/>
+							<xsl:text>;}
+</xsl:text>
+						</script>
+					</xsl:if>
 				</body>
 			</html>
 		</xsl:template>

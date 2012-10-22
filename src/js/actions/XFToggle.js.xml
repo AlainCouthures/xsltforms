@@ -58,7 +58,7 @@ XsltForms_toggle.toggle = function(caseId, ctx) {
 		caseId = XsltForms_globals.stringValue(caseId.xpath.evaluate(ctx));
 	}
 	var element = XsltForms_idManager.find(caseId);
-	var childs = element.parentNode.childNodes;
+	var childs = element ? element.parentNode.childNodes : [];
 	var ul;
 	var index = -1;
 	if (childs.length > 0 && childs[0].nodeName.toLowerCase() === "ul") {
@@ -78,13 +78,15 @@ XsltForms_toggle.toggle = function(caseId, ctx) {
 			XsltForms_xmlevents.dispatch(child, "xforms-deselect");
 		}
 	}
-	if (element.style.display === "none") {
+	if (element && element.style.display === "none") {
 		element.style.display = "block";
 		if (ul) {
 			XsltForms_browser.setClass(ul.childNodes[index], "ajx-tab-selected", true);
 		}
 	}
-	XsltForms_xmlevents.dispatch(element, "xforms-select");
+	if (element) {
+		XsltForms_xmlevents.dispatch(element, "xforms-select");
+	}
 	XsltForms_globals.closeAction();
 };
 ]]>
