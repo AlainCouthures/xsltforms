@@ -50,7 +50,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:text>,</xsl:text>
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@incremental"/></xsl:call-template>
 				<xsl:text>,</xsl:text>
-				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@filename"/></xsl:call-template>
+				<xsl:choose>
+					<xsl:when test="xforms:filename">
+						<xsl:for-each select="xforms:filename[1]">
+							<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@ref"/></xsl:call-template>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:otherwise>null</xsl:otherwise>
+				</xsl:choose>
 				<xsl:text>,</xsl:text>
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@mediatype"/></xsl:call-template>
 				<xsl:text>,</xsl:text>

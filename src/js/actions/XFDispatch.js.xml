@@ -29,10 +29,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Dispatch Action Class
 * constructor function : stores specific properties</cm:wiki>
 		<![CDATA[
-function XsltForms_dispatch(subform, name, target, ifexpr, whileexpr, iterateexpr, delay) {
+function XsltForms_dispatch(subform, name, target, properties, ifexpr, whileexpr, iterateexpr, delay) {
 	this.subform = subform;
 	this.name = name;
 	this.target = target;
+	this.properties = properties;
 	this.init(ifexpr, whileexpr, iterateexpr);
 	this.delay = delay;
 }
@@ -64,6 +65,12 @@ XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 	} else {
 		target = typeof target === "string"? document.getElementById(target) : target;
 	}
+	var evtctx = {};
+	for (var prop in this.properties) {
+		if (prop !== "" && this.properties.hasOwnProperty(prop)) {
+			evtctx[prop] = this.properties[prop].evaluate ? this.properties[prop].evaluate() : this.properties[prop];
+		}
+	}
 	var delay = 0;
 	if (this.delay) {
 		if (this.delay.evaluate) {
@@ -75,7 +82,7 @@ XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 	if (delay > 0 ) {
 		window.setTimeout("XsltForms_xmlevents.dispatch(document.getElementById('"+target.id+"'),'"+name+"')", delay);
 	} else {
-		XsltForms_xmlevents.dispatch(target, name);
+		XsltForms_xmlevents.dispatch(target, name, null, null, null, null, evtctx);
 	}
 };
     ]]>

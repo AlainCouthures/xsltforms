@@ -37,6 +37,7 @@ var XsltForms_typeDefs = {
 		this.init("http://www.w3.org/2001/XMLSchema", this.Default);
 		this.init("http://www.w3.org/2002/xforms", this.XForms);
 		this.init("http://www.agencexml.com/xsltforms", this.XSLTForms);
+		this.init("http://purl.org/dc/terms/", this.DublinCore);
 	},
 ]]>
 		<cm:wiki>
@@ -1066,6 +1067,20 @@ XsltForms_typeDefs.XSLTForms = {
 		"nsuri" : "http://www.agencexml.com/xsltforms",
 		"base" : "xsltforms:decimal",
 		"eval" : "xsd:unsignedLong"
+	}
+};
+]]>
+		<cm:wiki>
+* '''DublinCore''' associative array : every default type definition for Dublin Core types</cm:wiki>
+<![CDATA[
+XsltForms_typeDefs.DublinCore = {
+]]>
+		<cm:wiki>
+** '''dcterms:W3CDTF'''</cm:wiki>
+<![CDATA[
+	"W3CDTF" : {
+		"nsuri" : "http://purl.org/dc/terms/",
+		"base" : "xsd_:dateTime"
 	}
 };
 

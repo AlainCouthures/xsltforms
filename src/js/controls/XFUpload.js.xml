@@ -110,16 +110,31 @@ XsltForms_upload.prototype.directclick = function() {
 		alert("Unexpected type for upload control: " + this.type.nsuri + " " + this.type.name);
 		throw "Error";
 	} else {
+		var filename = "unselected";
 		this.value = XsltForms_browser.readFile("", "ISO-8859-1", this.type.name, "XSLTForms Java Upload");
 		if (document.applets.xsltforms) {
-			this.input.value = document.applets.xsltforms.lastChosenFileName;
+			filename = document.applets.xsltforms.lastChosenFileName;
 		} else {
 			if( document.getElementById("xsltforms_applet") ) {
-				this.input.value = document.getElementById("xsltforms_applet").xsltforms.lastChosenFileName;
+				filename = document.getElementById("xsltforms_applet").xsltforms.lastChosenFileName;
 			}
 		}
+		filename = filename.split('\\').pop();
+		this.input.value = filename;
 		if (this.incremental) {
 			this.valueChanged(this.value);
+		}
+		if(this.filename.evaluate) {
+			var filenameref = this.filename.evaluate(this.element.node)[0];
+			if (filenameref) {
+				XsltForms_globals.openAction();
+				XsltForms_browser.setValue(filenameref, filename || "");
+				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
+				model.addChange(filenameref);
+				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
+				XsltForms_globals.refresh();
+				XsltForms_globals.closeAction();
+			}
 		}
 	}
 	return false;
@@ -134,10 +149,13 @@ XsltForms_upload.prototype.change = function() {
 		alert("Unexpected type for upload control: " + this.type.nsuri + " " + this.type.name);
 		throw "Error";
 	} else {
+		var filename = "unselected";
 		if (this.type.name === "anyURI") {
-			this.value = this.input.value;
+			filename = this.input.value;
+			filename = filename.split('\\').pop();
+			this.value = filename;
 			if (this.incremental) {
-				this.valueChanged(this.value);
+				this.valueChanged(filename);
 			}
 		} else {
 			var value = "";
@@ -149,6 +167,7 @@ XsltForms_upload.prototype.change = function() {
 					alert("No file!?!");
 					return;
 				}
+				filename = file.name;
 				if( xf.type.name === "hexBinary" ) {
 					fr.onload = function(e) {
 						var bytes = new Uint8Array(e.target.result);
@@ -192,6 +211,18 @@ XsltForms_upload.prototype.change = function() {
 				if (xf.incremental) {
 					xf.valueChanged(xf.value);
 				}
+			}
+		}
+		if(this.filename.evaluate) {
+			var filenameref = this.filename.evaluate(this.element.node)[0];
+			if (filenameref) {
+				XsltForms_globals.openAction();
+				XsltForms_browser.setValue(filenameref, filename || "");
+				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
+				model.addChange(filenameref);
+				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
+				XsltForms_globals.refresh();
+				XsltForms_globals.closeAction();
 			}
 		}
 	}

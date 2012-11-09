@@ -35,11 +35,14 @@ function XsltForms_exprContext(node, position, nodelist, parent, nsresolver, cur
 	if(!position) {
 		var repeat = node && node.nodeType ? XsltForms_browser.getMeta(node, "repeat") : null;
 		if(repeat) {
-			var xrepeat = document.getElementById(repeat).xfElement;
-			var len;
-			for(position = 1, len = xrepeat.nodes.length; position <= len; position++) {
-				if(node === xrepeat.nodes[position-1]) {
-					break;
+			var eltrepeat = document.getElementById(repeat);
+			if (eltrepeat) {
+				var xrepeat = eltrepeat.xfElement;
+				var len;
+				for(position = 1, len = xrepeat.nodes.length; position <= len; position++) {
+					if(node === xrepeat.nodes[position-1]) {
+						break;
+					}
 				}
 			}
 		}

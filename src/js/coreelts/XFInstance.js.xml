@@ -50,6 +50,9 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML
 		case "text/vcard":
 			this.srcXML = XsltForms_browser.vcard2xcard(XsltForms_browser.unescape(srcXML));
 			break;
+		case "application/zip":
+			this.srcXML = "<dummy/>";
+			break;
 		default:
 			alert("Unsupported mediatype '" + mediatype + "' for instance #" + id);
 			return;
@@ -145,11 +148,54 @@ XsltForms_instance.prototype.construct = function(subform) {
 						try {
 							var req = XsltForms_browser.openRequest("GET", this.src, false);
 							XsltForms_browser.debugConsole.write("Loading " + this.src);
+							if (this.mediatype === "application/zip" && req.overrideMimeType) {
+								req.overrideMimeType('text/plain; charset=x-user-defined');
+							}
 							req.send(null);
 							if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
 								throw { message: "Request error: " + req.status };
 							}
-							this.setDoc(req.responseText);
+							var srcXML = req.responseText;
+							switch(this.mediatype) {
+								case "text/json":
+								case "application/json":
+									var json;
+									eval("json = " + srcXML);
+									srcXML = XsltForms_browser.json2xml("", json, true, false);
+									break;
+								case "text/vcard":
+									srcXML = XsltForms_browser.vcard2xcard(srcXML);
+									break;
+								case "application/zip":
+									var arch;
+									if (XsltForms_browser.isIE) {
+									    var convertResponseBodyToText = function (binary) {
+											if (!XsltForms_browser.byteMapping) {
+												var byteMapping = {};
+												for (var i = 0; i < 256; i++) {
+													for (var j = 0; j < 256; j++) {
+														byteMapping[String.fromCharCode(i + j * 256)] = String.fromCharCode(i) + String.fromCharCode(j);
+													}
+												}
+												XsltForms_browser.byteMapping = byteMapping;
+											}
+											var rawBytes = XsltForms_browser_BinaryToArray_ByteStr(binary);
+											var lastChr = XsltForms_browser_BinaryToArray_ByteStr_Last(binary);
+											return rawBytes.replace(/[\s\S]/g, function (match) { return XsltForms_browser.byteMapping[match]; }) + lastChr;
+										};
+										arch = XsltForms_browser.zip2xml(convertResponseBodyToText(req.responseBody));
+									} else {
+										arch = XsltForms_browser.zip2xml(srcXML);
+									}
+									srcXML = arch.srcXML;
+									delete arch.srcXML;
+									this.archive = arch;
+									break;
+								default:
+									alert("Unsupported mediatype '" + mediatype + "' for instance #" + this.element.id);
+									return;
+							}
+							this.setDoc(srcXML);
 						} catch(e) {
 							XsltForms_globals.error(this.element, "xforms-link-exception", "Fatal error loading " + this.src, e.toString());
 						}
@@ -480,7 +526,7 @@ XsltForms_browser.vcard2xcard = function(v) {
 	return s + "</vcards>";
 };
 
-XsltForms_browser.xml2csv = function(s) {
+XsltForms_browser.xml2csv = function(s, sep) {
 	var d = XsltForms_browser.createXMLDocument(s);
 	var n0 = d.documentElement.firstChild;
 	while (n0 && n0.nodeType !== XsltForms_nodeType.ELEMENT) {
@@ -490,7 +536,7 @@ XsltForms_browser.xml2csv = function(s) {
 	d.documentElement.insertBefore(h, n0);
 	var n = h;
 	var r = "";
-	var sep = ",";
+	sep = sep || ",";
 	while (n) {
 		if (n.nodeType === XsltForms_nodeType.ELEMENT) {
 			var m = n.firstChild;
@@ -512,6 +558,155 @@ XsltForms_browser.xml2csv = function(s) {
 	}
 	return r;
 };
+
+XsltForms_browser.zip2xml = function(z) {
+	var arch = {};
+	var r = "<exml:archive xmlns:exml=\"http://www.agencexml.com/exml\">";
+	var offset = z.lastIndexOf("PK\x05\x06")+16;
+	var r2 = function(z, offset) {
+		return ((z.charCodeAt(offset+1) & 0xFF)<< 8) | z.charCodeAt(offset) & 0xFF;
+	}
+	var r4 = function(z, offset) {
+		return ((((((z.charCodeAt(offset+3) & 0xFF)<< 8) | z.charCodeAt(offset+2) & 0xFF)<< 8) | z.charCodeAt(offset+1) & 0xFF)<< 8) | z.charCodeAt(offset) & 0xFF;
+	}
+	offset = r4(z, offset);
+	while (z.charCodeAt(offset) === 80 && z.charCodeAt(offset+1) === 75 && z.charCodeAt(offset+2) === 1 && z.charCodeAt(offset+3) === 2) {
+		var f = {};
+		offset += 4;
+		f.versionMadeBy = r2(z, offset);
+		offset += 2;
+		f.versionNeeded = r2(z, offset);
+		offset += 2;
+		f.bitFlag = r2(z, offset);
+		offset += 2;
+		f.compressionMethod = r2(z, offset);
+		offset += 2;
+		f.date = r4(z, offset);
+		offset += 4;
+		f.crc32 = r4(z, offset);
+		offset += 4;
+		f.compressedSize = r4(z, offset);
+		offset += 4;
+		f.uncompressedSize = r4(z, offset);
+		offset += 4;
+		f.fileNameLength = r2(z, offset);
+		offset += 2;
+		f.extraFieldsLength = r2(z, offset);
+		offset += 2;
+		f.fileCommentLength = r2(z, offset);
+		offset += 2;
+		f.diskNumber = r2(z, offset);
+		offset += 2;
+		f.internalFileAttributes = r2(z, offset);
+		offset += 2;
+		f.externalFileAttributes = r4(z, offset);
+		offset += 4;
+		f.localHeaderOffset = r4(z, offset);
+		offset += 4;
+		var fileName = z.substr(offset, f.fileNameLength);
+		offset += f.fileNameLength;
+		f.extraFields = z.substr(offset, f.extraFieldsLength);
+		offset += f.extraFieldsLength;
+		f.fileComment = z.substr(offset, f.fileCommentLength);
+		offset += f.fileCommentLength;
+		//f.dir = f.externalFileAttributes & 0x00000010 ? true : false;
+		var loffset = f.localHeaderOffset + 28;
+		f.lextraFieldsLength = r2(z, loffset);
+		loffset += 2 + f.fileNameLength;
+		f.lextraFields = z.substr(loffset, f.lextraFieldsLength);
+		loffset += f.lextraFieldsLength;
+		f.compressedFileData = z.substr(loffset, f.compressedSize);
+		r += '<exml:file name="' + fileName + '"/>';
+		arch[fileName] = f;
+	}
+	r += "</exml:archive>";
+	arch.srcXML = r;
+	return arch;
+}
+
+XsltForms_browser.xml2zip = function(arch) {
+	var z = "";
+	var fn, f;
+	var fcount = 0;
+	var w2 = function(v) {
+		return String.fromCharCode(v & 0xFF) + String.fromCharCode((v >>> 8) & 0xFF);
+	}
+	var w4 = function(v) {
+		return String.fromCharCode(v & 0xFF) + String.fromCharCode((v >>> 8) & 0xFF) + String.fromCharCode((v >>> 16) & 0xFF) + String.fromCharCode((v >>> 24) & 0xFF);
+	}
+	for (fn in arch) {
+		if (arch.hasOwnProperty(fn)) {
+			f = arch[fn];
+			f.localHeaderOffset = z.length;
+			if (f.doc) {
+				var ser = XsltForms_browser.utf8encode(XsltForms_browser.saveXML(f.doc));
+				var rattr = f.doc.documentElement.attributes;
+				for (var ri = 0, li = rattr.length; ri < li; ri++) {
+					if (rattr[ri].localName === "Ignorable" && rattr[ri].namespaceURI === "http://schemas.openxmlformats.org/markup-compatibility/2006") {
+						ser = ser.substr(0, ser.indexOf(" ")) + ' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"' + ser.substr(ser.indexOf(" "));
+						break;
+					}
+				}
+				ser = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + ser;
+				f.crc32 = XsltForms_browser.crc32(ser);
+				f.uncompressedSize = ser.length;
+				f.compressedFileData = zip_deflate(ser);
+				f.compressedSize = f.compressedFileData.length;
+			}
+			z += "PK\x03\x04";
+			z += w2(f.versionNeeded);
+			z += w2(f.bitFlag);
+			z += w2(f.compressionMethod);
+			z += w4(f.date);
+			z += w4(f.crc32);
+			z += w4(f.compressedSize);
+			z += w4(f.uncompressedSize);
+			z += w2(f.fileNameLength);
+			z += w2(f.lextraFieldsLength);
+			z += fn;
+			z += f.lextraFields;
+			z += f.compressedFileData;
+			fcount++;
+		}
+	}
+	var diroffset = z.length;
+	for (fn in arch) {
+		if (arch.hasOwnProperty(fn)) {
+			f = arch[fn];
+			z += "PK\x01\x02";
+			z += w2(f.versionMadeBy);
+			z += w2(f.versionNeeded);
+			z += w2(f.bitFlag);
+			z += w2(f.compressionMethod);
+			z += w4(f.date);
+			z += w4(f.crc32);
+			z += w4(f.compressedSize);
+			z += w4(f.uncompressedSize);
+			z += w2(f.fileNameLength);
+			z += w2(f.extraFieldsLength);
+			z += w2(f.fileCommentLength);
+			z += w2(f.diskNumber);
+			z += w2(f.internalFileAttributes);
+			z += w4(f.externalFileAttributes);
+			z += w4(f.localHeaderOffset);
+			z += fn;
+			z += f.extraFields;
+			z += f.fileComment;
+		}
+	}
+	var endoffset = z.length;
+	z += "PK\x05\x06";
+	z += w2(0);
+	z += w2(0);
+	z += w2(fcount);
+	z += w2(fcount);
+	z += w4(endoffset - diroffset);
+	z += w4(diroffset);
+	var comment = "generated by XSLTForms - http://www.agencexml.com";
+	z += w2(comment.length);
+	z += comment;
+	return z;
+}
 ]]>
 	</cm:source>
 </cm:component>

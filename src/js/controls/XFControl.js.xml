@@ -161,15 +161,12 @@ XsltForms_control.prototype.refresh = function() {
 * '''changeProp''' method : changes a property, such as '''required''', '''relevant''', '''readonly''' and '''valid''', of this control</cm:wiki>
 <![CDATA[
 XsltForms_control.prototype.changeProp = function(node, prop, onTrue, onFalse, changed, nvalue) {
-	var value = XsltForms_browser.getBoolMeta(node, prop);
+	var value = (prop === "notvalid" && nvalue === "" && !XsltForms_globals.validationError) ? false : XsltForms_browser.getBoolMeta(node, prop);
 	if (changed || value !== this[prop]) {
 		if (!this.nodeChanged && !this.isTrigger) {
 			XsltForms_xmlevents.dispatch(this.element, (value? onTrue : onFalse));
 		}
 		this[prop] = value;
-		if (prop === "notvalid" && nvalue === "") {
-			value = false;
-		}
 		XsltForms_browser.setClass(this.element, onTrue, value);
 		XsltForms_browser.setClass(this.element, onFalse, !value);
 		if(prop === "readonly" && this.changeReadonly) {

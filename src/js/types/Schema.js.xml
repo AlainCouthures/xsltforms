@@ -137,7 +137,8 @@ XsltForms_schema.prefixes = {
 	"xform" : "http://www.w3.org/2002/xforms",
 	"xforms" : "http://www.w3.org/2002/xforms",
 	"xsltforms" : "http://www.agencexml.com/xsltforms",
-	"rte" : "http://www.agencexml.com/xsltforms/rte"
+	"rte" : "http://www.agencexml.com/xsltforms/rte",
+	"dcterms" : "http://purl.org/dc/terms/"
 };
 
 ]]>

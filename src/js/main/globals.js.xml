@@ -70,6 +70,7 @@ var XsltForms_globals = {
 	inittime: 0,
 	refreshtime: 0,
 	refreshcount: 0,
+	validationError: false,
 	counters: {
 		group: 0,
 		input: 0,
@@ -218,12 +219,34 @@ var XsltForms_globals = {
 					case "xsltforms-tracelog":
 						return XsltForms_browser.saveXML(XsltForms_browser.debugConsole.doc_.documentElement, true);
 					default:
-						var instance = document.getElementById(resource);
-						if (!instance) {
-							return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+						var slash = resource.indexOf("/");
+						if (slash === -1 ) {
+							var instance = document.getElementById(resource);
+							if (!instance) {
+								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+							}
+							var ser = XsltForms_browser.saveXML(instance.xfElement.doc.documentElement, true);
+							return ser;
+						} else {
+							var filename = resource.substr(slash+1);
+							var instance = document.getElementById(resource.substr(0, slash));
+							if (!instance) {
+								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+							}
+							var f = instance.xfElement.archive[filename];
+							if (!f) {
+								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+							}
+							if (!f.doc) {
+								f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
+								var modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
+								XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
+								XsltForms_browser.setMeta(f.doc.documentElement, "instance", idRef);
+								XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
+							}
+							var ser = XsltForms_browser.saveXML(f.doc.documentElement, true);
+							return ser;
 						}
-						var ser = XsltForms_browser.saveXML(instance.xfElement.doc.documentElement, true);
-						return ser;
 				}
 				break;
 			case "put":
@@ -277,6 +300,20 @@ var XsltForms_globals = {
 					if (XsltForms_globals.models[m].instances.hasOwnProperty(id)) {
 						var count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].doc);
 						s += '<xsltforms:instance id="' + id + '">' + count + '</xsltforms:instance>';
+						if (XsltForms_globals.models[m].instances[id].archive) {
+							for (var fn in XsltForms_globals.models[m].instances[id].archive) {
+								if (XsltForms_globals.models[m].instances[id].archive.hasOwnProperty(fn)) {
+									if (!XsltForms_globals.models[m].instances[id].archive[fn].doc) {
+										XsltForms_globals.models[m].instances[id].archive[fn].doc = XsltForms_browser.createXMLDocument("<dummy/>");
+										XsltForms_browser.loadXML(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(XsltForms_globals.models[m].instances[id].archive[fn].compressedFileData)));
+										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "instance", id);
+										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "model", m);
+									}
+									count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].archive[fn].doc);
+									s += '<xsltforms:instance id="' + id + '/' + fn + '">' + count + '</xsltforms:instance>';
+								}
+							}
+						}
 						pos++;
 					}
 				}

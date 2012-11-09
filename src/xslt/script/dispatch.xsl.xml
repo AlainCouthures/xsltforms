@@ -63,7 +63,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@targetid"/></xsl:call-template>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:text>,</xsl:text>
+				<xsl:text>,{</xsl:text>
+				<xsl:for-each select="xforms:property">
+					<xsl:text>"</xsl:text>
+					<xsl:value-of select="@name"/>
+					<xsl:text>":</xsl:text>
+					<xsl:choose>
+						<xsl:when test="@value">
+							<xsl:call-template name="toScriptBinding"></xsl:call-template>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="normalize-space(text())"/></xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:if test="position() != last()">
+						<xsl:text>,</xsl:text>
+					</xsl:if>
+				</xsl:for-each>
+				<xsl:text>},</xsl:text>
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@if"/></xsl:call-template>
 				<xsl:text>,</xsl:text>
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@while"/></xsl:call-template>

@@ -98,6 +98,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</config>
 			</script>
 		</xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="xsltformspivalue" select="translate(normalize-space(/processing-instruction('xsltforms-options')[1]), ' ', '')" />
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="required-position">
+			<xsl:choose>
+				<xsl:when test="$configdoc/properties/required-position">
+					<xsl:value-of select="$configdoc/config/properties/required-position"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="requiredquote" select="substring(substring-after($xsltformspivalue, 'required-position='), 1, 1)"/>
+					<xsl:value-of select="substring-before(substring-after($xsltformspivalue, concat('required-position=', $requiredquote)), $requiredquote)"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="main" select="/"/>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="profiler">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xsltforms="http://www.agencexml.com/xsltforms">

@@ -676,14 +676,31 @@ var XsltForms_xpathCoreFunctions = {
 * '''instance(string?)'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2002/xforms instance" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, true,
-		function(ctx, idRef) {
-			if (arguments.length > 2) {
+		function(ctx, idRef, filename, mediatype) {
+			if (arguments.length > 4) {
 				throw XsltForms_xpathFunctionExceptions.instanceInvalidArgumentsNumber;
 			}
 			var name = idRef ? XsltForms_globals.stringValue(idRef) : "";
 			if (name !== "") {
 				var instance = document.getElementById(name);
-				if (!instance) { throw {name: "instance " + name + " not found"}; }
+				if (!instance) {
+					throw {name: "instance " + name + " not found"};
+				}
+				if (filename && instance.xfElement.archive) {
+					filename = XsltForms_globals.stringValue(filename);
+					var f = instance.xfElement.archive[filename];
+					if (!f) {
+						throw {name: "file " + filename + " not found in instance " + name};
+					}
+					if (!f.doc) {
+						f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
+						var modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
+						XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
+						XsltForms_browser.setMeta(f.doc.documentElement, "instance", idRef);
+						XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
+					}
+					return [f.doc.documentElement];
+				}
 				return [instance.xfElement.doc.documentElement];
 			} else {
 				return [ctx.node.ownerDocument.documentElement];
@@ -1229,12 +1246,13 @@ var XsltForms_xpathCoreFunctions = {
 			if (arguments.length !== 1) {
 				throw XsltForms_xpathFunctionExceptions.eventInvalidArgumentsNumber;
 			}
-			var context = XsltForms_xmlevents.EventContexts[XsltForms_xmlevents.EventContexts.length - 1];
-			if (context) {
-				return context[attribute];
-			} else {
-				return null;
+			for (var i = XsltForms_xmlevents.EventContexts.length - 1; i >= 0 ; i--) {
+				var context = XsltForms_xmlevents.EventContexts[i];
+				if (context[attribute]) {
+					return context[attribute];
+				}
 			}
+			return null;
 		} ),
 ]]>
 		<cm:wiki>

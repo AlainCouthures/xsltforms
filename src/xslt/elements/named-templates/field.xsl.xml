@@ -84,107 +84,112 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:if>
+						<xsl:if test="local-name() != 'output' and $required-position = 'left' and xforms:label/node()">
+							<span class="xforms-required-icon">*</span>
+						</xsl:if>
 						<span class="value">
 							<xsl:copy-of select="$body"/>
 						</span>
 						<xsl:if test="@ajx:aid-button = 'true'">
 							<button type="button" class="aid-button">...</button>
 						</xsl:if>
-						<xsl:if test="local-name() != 'output'">
+						<xsl:if test="local-name() != 'output' and not($required-position = 'left' and xforms:label/node())">
 							<span class="xforms-required-icon">*</span>
 						</xsl:if>
-						<span class="xforms-alert">
-							<span class="xforms-alert-icon">
+						<xsl:if test="local-name() != 'output'">
+							<span class="xforms-alert">
+								<span class="xforms-alert-icon">
+									<xsl:if test="xforms:alert">
+										<xsl:attribute name="onmouseover">XsltForms_browser.show(this, null, true)</xsl:attribute>
+										<xsl:attribute name="onmouseout">XsltForms_browser.show(this, null, false)</xsl:attribute>
+									</xsl:if>
+									<xsl:text>&#160;</xsl:text>
+								</span>
 								<xsl:if test="xforms:alert">
-									<xsl:attribute name="onmouseover">XsltForms_browser.show(this, null, true)</xsl:attribute>
-									<xsl:attribute name="onmouseout">XsltForms_browser.show(this, null, false)</xsl:attribute>
+									<xsl:variable name="aid">
+										<xsl:choose>
+											<xsl:when test="xforms:alert/@id"><xsl:value-of select="xforms:alert/@id"/></xsl:when>
+											<xsl:otherwise>
+												<xsl:for-each select="node()">
+													<xsl:if test="self::xforms:alert and not(preceding-sibling::xforms:alert)">
+														<xsl:value-of select="concat($id_pf,'alert-',position(),'_',$workid)"/>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:variable name="alertworkid">
+										<xsl:for-each select="node()">
+											<xsl:if test="self::xforms:alert and not(preceding-sibling::xforms:alert)">
+												<xsl:value-of select="concat(position(),'_',$workid)"/>
+											</xsl:if>
+										</xsl:for-each>
+									</xsl:variable>
+									<span class="xforms-alert-value" id="{$aid}">
+										<xsl:apply-templates select="xforms:alert/node()">
+											<xsl:with-param name="parentworkid" select="$alertworkid"/>
+										</xsl:apply-templates>
+									</span>
 								</xsl:if>
-								<xsl:text>&#160;</xsl:text>
 							</span>
-							<xsl:if test="xforms:alert">
-								<xsl:variable name="aid">
-									<xsl:choose>
-										<xsl:when test="xforms:alert/@id"><xsl:value-of select="xforms:alert/@id"/></xsl:when>
-										<xsl:otherwise>
-											<xsl:for-each select="node()">
-												<xsl:if test="self::xforms:alert and not(preceding-sibling::xforms:alert)">
-													<xsl:value-of select="concat($id_pf,'alert-',position(),'_',$workid)"/>
-												</xsl:if>
-											</xsl:for-each>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:variable>
-								<xsl:variable name="alertworkid">
-									<xsl:for-each select="node()">
-										<xsl:if test="self::xforms:alert and not(preceding-sibling::xforms:alert)">
-											<xsl:value-of select="concat(position(),'_',$workid)"/>
-										</xsl:if>
-									</xsl:for-each>
-								</xsl:variable>
-								<span class="xforms-alert-value" id="{$aid}">
-									<xsl:apply-templates select="xforms:alert/node()">
-										<xsl:with-param name="parentworkid" select="$alertworkid"/>
-									</xsl:apply-templates>
+							<xsl:if test="xforms:hint">
+								<span class="xforms-hint">
+									<span class="xforms-hint-icon" onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)">&#160;<xsl:text/></span>
+									<xsl:variable name="hid">
+										<xsl:choose>
+											<xsl:when test="xforms:hint/@id"><xsl:value-of select="xforms:hint/@id"/></xsl:when>
+											<xsl:otherwise>
+												<xsl:for-each select="node()">
+													<xsl:if test="self::xforms:hint and not(preceding-sibling::xforms:hint)">
+														<xsl:value-of select="concat($id_pf,'hint-',position(),'_',$workid)"/>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:variable name="hintworkid">
+										<xsl:for-each select="node()">
+											<xsl:if test="self::xforms:hint and not(preceding-sibling::xforms:hint)">
+												<xsl:value-of select="concat(position(),'_',$workid)"/>
+											</xsl:if>
+										</xsl:for-each>
+									</xsl:variable>
+									<span class="xforms-hint-value" id="{$hid}">
+										<xsl:apply-templates select="xforms:hint/node()">
+											<xsl:with-param name="parentworkid" select="$hintworkid"/>
+										</xsl:apply-templates>
+									</span>
 								</span>
 							</xsl:if>
-						</span>
-						<xsl:if test="xforms:hint">
-							<span class="xforms-hint">
-								<span class="xforms-hint-icon" onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)">&#160;<xsl:text/></span>
-								<xsl:variable name="hid">
-									<xsl:choose>
-										<xsl:when test="xforms:hint/@id"><xsl:value-of select="xforms:hint/@id"/></xsl:when>
-										<xsl:otherwise>
-											<xsl:for-each select="node()">
-												<xsl:if test="self::xforms:hint and not(preceding-sibling::xforms:hint)">
-													<xsl:value-of select="concat($id_pf,'hint-',position(),'_',$workid)"/>
-												</xsl:if>
-											</xsl:for-each>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:variable>
-								<xsl:variable name="hintworkid">
-									<xsl:for-each select="node()">
-										<xsl:if test="self::xforms:hint and not(preceding-sibling::xforms:hint)">
-											<xsl:value-of select="concat(position(),'_',$workid)"/>
-										</xsl:if>
-									</xsl:for-each>
-								</xsl:variable>
-								<span class="xforms-hint-value" id="{$hid}">
-									<xsl:apply-templates select="xforms:hint/node()">
-										<xsl:with-param name="parentworkid" select="$hintworkid"/>
-									</xsl:apply-templates>
+							<xsl:if test="xforms:help[not(@appearance='minimal')]">
+								<span class="xforms-help">
+									<span class="xforms-help-icon" onmouseover="XsltForms_browser.show(this, 'help', true)" onmouseout="XsltForms_browser.show(this, 'help', false)">&#160;<xsl:text/></span>
+									<xsl:variable name="hid">
+										<xsl:choose>
+											<xsl:when test="xforms:help/@id"><xsl:value-of select="xforms:help/@id"/></xsl:when>
+											<xsl:otherwise>
+												<xsl:for-each select="node()">
+													<xsl:if test="self::xforms:help and not(preceding-sibling::xforms:help)">
+														<xsl:value-of select="concat($id_pf,'help-',position(),'_',$workid)"/>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:variable name="helpworkid">
+										<xsl:for-each select="node()">
+											<xsl:if test="self::xforms:help and not(preceding-sibling::xforms:help)">
+												<xsl:value-of select="concat(position(),'_',$workid)"/>
+											</xsl:if>
+										</xsl:for-each>
+									</xsl:variable>
+									<span class="xforms-help-value" id="{$hid}">
+										<xsl:apply-templates select="xforms:help/node()">
+											<xsl:with-param name="parentworkid" select="$helpworkid"/>
+										</xsl:apply-templates>
+									</span>
 								</span>
-							</span>
-						</xsl:if>
-						<xsl:if test="xforms:help[not(@appearance='minimal')]">
-							<span class="xforms-help">
-								<span class="xforms-help-icon" onmouseover="XsltForms_browser.show(this, 'help', true)" onmouseout="XsltForms_browser.show(this, 'help', false)">&#160;<xsl:text/></span>
-								<xsl:variable name="hid">
-									<xsl:choose>
-										<xsl:when test="xforms:help/@id"><xsl:value-of select="xforms:help/@id"/></xsl:when>
-										<xsl:otherwise>
-											<xsl:for-each select="node()">
-												<xsl:if test="self::xforms:help and not(preceding-sibling::xforms:help)">
-													<xsl:value-of select="concat($id_pf,'help-',position(),'_',$workid)"/>
-												</xsl:if>
-											</xsl:for-each>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:variable>
-								<xsl:variable name="helpworkid">
-									<xsl:for-each select="node()">
-										<xsl:if test="self::xforms:help and not(preceding-sibling::xforms:help)">
-											<xsl:value-of select="concat(position(),'_',$workid)"/>
-										</xsl:if>
-									</xsl:for-each>
-								</xsl:variable>
-								<span class="xforms-help-value" id="{$hid}">
-									<xsl:apply-templates select="xforms:help/node()">
-										<xsl:with-param name="parentworkid" select="$helpworkid"/>
-									</xsl:apply-templates>
-								</span>
-							</span>
+							</xsl:if>
 						</xsl:if>
 					</span>
 				</xsl:otherwise>
