@@ -133,13 +133,13 @@ XsltForms_xpath.create = function(subform, expression, unordered, compiled) {
 <![CDATA[
 XsltForms_xpath.prototype.dispose = function(subform) {
 	if (subform && this.nbsubforms !== 1) {
-		this.subforms[subform] = null;
+		delete this.subforms[subform];
 		this.nbsubforms--;
 		return;
 	}
-	this.compiled = null;
-	this.nsresolver = null;
-	XsltForms_xpath.expressions[this.expression] = null;
+	//this.compiled = null;
+	//this.nsresolver = null;
+	delete XsltForms_xpath.expressions[this.expression];
 };
 ]]>
 		<cm:wiki>

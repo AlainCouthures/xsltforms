@@ -134,7 +134,7 @@ XsltForms_xmlevents.dispatch = function(target, name, type, bubbles, cancelable,
 			target.fireEvent("onerrorupdate" , event);
 			// Bubble phase.
 			if (!bubbles) {
-				canceler = new XsltForms_listener(target, null, name, "default", function(event) { event.cancelBubble = true; });
+				canceler = new XsltForms_listener(null, target, null, name, "default", function(event) { event.cancelBubble = true; });
 			}
 			event = document.createEventObject();
 			event.trueName = name;

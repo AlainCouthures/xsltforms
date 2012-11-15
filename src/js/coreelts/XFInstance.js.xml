@@ -51,6 +51,8 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML
 			this.srcXML = XsltForms_browser.vcard2xcard(XsltForms_browser.unescape(srcXML));
 			break;
 		case "application/zip":
+		case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+		case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
 			this.srcXML = "<dummy/>";
 			break;
 		default:
@@ -148,7 +150,7 @@ XsltForms_instance.prototype.construct = function(subform) {
 						try {
 							var req = XsltForms_browser.openRequest("GET", this.src, false);
 							XsltForms_browser.debugConsole.write("Loading " + this.src);
-							if (this.mediatype === "application/zip" && req.overrideMimeType) {
+							if ((this.mediatype === "application/zip" || this.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )&& req.overrideMimeType) {
 								req.overrideMimeType('text/plain; charset=x-user-defined');
 							}
 							req.send(null);
@@ -167,6 +169,8 @@ XsltForms_instance.prototype.construct = function(subform) {
 									srcXML = XsltForms_browser.vcard2xcard(srcXML);
 									break;
 								case "application/zip":
+								case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+								case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
 									var arch;
 									if (XsltForms_browser.isIE) {
 									    var convertResponseBodyToText = function (binary) {
@@ -183,13 +187,15 @@ XsltForms_instance.prototype.construct = function(subform) {
 											var lastChr = XsltForms_browser_BinaryToArray_ByteStr_Last(binary);
 											return rawBytes.replace(/[\s\S]/g, function (match) { return XsltForms_browser.byteMapping[match]; }) + lastChr;
 										};
-										arch = XsltForms_browser.zip2xml(convertResponseBodyToText(req.responseBody));
+										arch = XsltForms_browser.zip2xml(convertResponseBodyToText(req.responseBody), this.mediatype, this.element.id, this.model.element.id);
 									} else {
-										arch = XsltForms_browser.zip2xml(srcXML);
+										arch = XsltForms_browser.zip2xml(srcXML, this.mediatype, this.element.id, this.model.element.id);
 									}
 									srcXML = arch.srcXML;
 									delete arch.srcXML;
 									this.archive = arch;
+									break;
+								case "application/xml":
 									break;
 								default:
 									alert("Unsupported mediatype '" + mediatype + "' for instance #" + this.element.id);
@@ -559,8 +565,35 @@ XsltForms_browser.xml2csv = function(s, sep) {
 	return r;
 };
 
-XsltForms_browser.zip2xml = function(z) {
+XsltForms_browser.xsltsharedsrc = '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ss="http://schemas.openxmlformats.org/spreadsheetml/2006/main" version="1.0">';
+XsltForms_browser.xsltsharedsrc += '	<xsl:output method="text"/>';
+XsltForms_browser.xsltsharedsrc += '	<xsl:template match="ss:si">';
+XsltForms_browser.xsltsharedsrc += '		<xsl:value-of select="concat(\'|\',position() - 1,\':\',ss:t)"/>';
+XsltForms_browser.xsltsharedsrc += '	</xsl:template>';
+XsltForms_browser.xsltsharedsrc += '</xsl:stylesheet>';
+
+XsltForms_browser.xsltinlinesrc = '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ss="http://schemas.openxmlformats.org/spreadsheetml/2006/main" version="1.0">';
+XsltForms_browser.xsltinlinesrc += '	<xsl:output method="xml" omit-xml-declaration="yes"/>';
+XsltForms_browser.xsltinlinesrc += '	<xsl:param name="shared"/>';
+XsltForms_browser.xsltinlinesrc += '	<xsl:template match="ss:c[@t=\'s\']" priority="1">';
+XsltForms_browser.xsltinlinesrc += '		<xsl:copy>';
+XsltForms_browser.xsltinlinesrc += '			<xsl:attribute name="t">inlineStr</xsl:attribute>';
+XsltForms_browser.xsltinlinesrc += '			<xsl:apply-templates select="@*|node()"/>';
+XsltForms_browser.xsltinlinesrc += '			<ss:is><ss:t><xsl:value-of select="substring-before(substring-after($shared,concat(\'|\',ss:v,\':\')),\'|\')"/></ss:t></ss:is>';
+XsltForms_browser.xsltinlinesrc += '		</xsl:copy>';
+XsltForms_browser.xsltinlinesrc += '	</xsl:template>';
+XsltForms_browser.xsltinlinesrc += '	<xsl:template match="@t[parent::ss:c and . = \'s\']" priority="1"/>';
+XsltForms_browser.xsltinlinesrc += '	<xsl:template match="ss:v[parent::ss:c/@t = \'s\']" priority="1"/>';
+XsltForms_browser.xsltinlinesrc += '	<xsl:template match="@*|node()" priority="0">';
+XsltForms_browser.xsltinlinesrc += '		<xsl:copy>';
+XsltForms_browser.xsltinlinesrc += '			<xsl:apply-templates select="@*|node()"/>';
+XsltForms_browser.xsltinlinesrc += '		</xsl:copy>';
+XsltForms_browser.xsltinlinesrc += '	</xsl:template>';
+XsltForms_browser.xsltinlinesrc += '</xsl:stylesheet>';
+
+XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 	var arch = {};
+	var f;
 	var r = "<exml:archive xmlns:exml=\"http://www.agencexml.com/exml\">";
 	var offset = z.lastIndexOf("PK\x05\x06")+16;
 	var r2 = function(z, offset) {
@@ -571,7 +604,7 @@ XsltForms_browser.zip2xml = function(z) {
 	}
 	offset = r4(z, offset);
 	while (z.charCodeAt(offset) === 80 && z.charCodeAt(offset+1) === 75 && z.charCodeAt(offset+2) === 1 && z.charCodeAt(offset+3) === 2) {
-		var f = {};
+		f = {};
 		offset += 4;
 		f.versionMadeBy = r2(z, offset);
 		offset += 2;
@@ -616,15 +649,35 @@ XsltForms_browser.zip2xml = function(z) {
 		f.lextraFields = z.substr(loffset, f.lextraFieldsLength);
 		loffset += f.lextraFieldsLength;
 		f.compressedFileData = z.substr(loffset, f.compressedSize);
+		if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+			f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
+			XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
+			XsltForms_browser.setMeta(f.doc.documentElement, "instance", instid);
+			XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
+		}
 		r += '<exml:file name="' + fileName + '"/>';
 		arch[fileName] = f;
 	}
 	r += "</exml:archive>";
+	if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+		var shared = XsltForms_browser.transformText(XsltForms_browser.saveXML(arch["xl/sharedStrings.xml"].doc), XsltForms_browser.xsltsharedsrc, true) + "|";
+		for (var fn in arch) {
+			if (arch.hasOwnProperty(fn)) {
+				f = arch[fn];
+				if (f.doc.documentElement.localName === "worksheet") {
+					var inlineStr = XsltForms_browser.transformText(XsltForms_browser.saveXML(f.doc), XsltForms_browser.xsltinlinesrc, true, "shared", shared);
+					XsltForms_browser.loadXML(f.doc.documentElement, inlineStr);
+					XsltForms_browser.setMeta(f.doc.documentElement, "instance", instid);
+					XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
+				}
+			}
+		}
+	}
 	arch.srcXML = r;
 	return arch;
 }
 
-XsltForms_browser.xml2zip = function(arch) {
+XsltForms_browser.xml2zip = function(arch, mediatype) {
 	var z = "";
 	var fn, f;
 	var fcount = 0;
@@ -640,11 +693,13 @@ XsltForms_browser.xml2zip = function(arch) {
 			f.localHeaderOffset = z.length;
 			if (f.doc) {
 				var ser = XsltForms_browser.utf8encode(XsltForms_browser.saveXML(f.doc));
-				var rattr = f.doc.documentElement.attributes;
-				for (var ri = 0, li = rattr.length; ri < li; ri++) {
-					if (rattr[ri].localName === "Ignorable" && rattr[ri].namespaceURI === "http://schemas.openxmlformats.org/markup-compatibility/2006") {
-						ser = ser.substr(0, ser.indexOf(" ")) + ' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"' + ser.substr(ser.indexOf(" "));
-						break;
+				if (mediatype.indexOf("application/vnd.openxmlformats-officedocument.") === 0) {
+					var rattr = f.doc.documentElement.attributes;
+					for (var ri = 0, li = rattr.length; ri < li; ri++) {
+						if (rattr[ri].localName === "Ignorable" && rattr[ri].namespaceURI === "http://schemas.openxmlformats.org/markup-compatibility/2006") {
+							ser = ser.substr(0, ser.indexOf(" ")) + ' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"' + ser.substr(ser.indexOf(" "));
+							break;
+						}
 					}
 				}
 				ser = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + ser;

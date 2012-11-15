@@ -29,13 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Listener  Class
 * constructor function : creates a Listener object to an observer element and attaches a standard callback function</cm:wiki>
 		<![CDATA[
-function XsltForms_listener(observer, evtTarget, name, phase, handler) {
+function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) {
 	phase = phase || "default";
 	if (phase !== "default" && phase !== "capture") {
 		XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-compute-exception", 
 			"Unknown event-phase(" + phase +") for event(" + name + ")"+(observer ? " on element(" + observer.id + ")":"") + "!");
 		return;
 	}
+	this.subform = subform;
 	this.observer = observer;
 	this.evtTarget = evtTarget;
 	this.name = name;
@@ -43,7 +44,13 @@ function XsltForms_listener(observer, evtTarget, name, phase, handler) {
 	this.phase = phase;
 	this.handler = handler;
 	XsltForms_browser.assert(observer);
-	if (!observer.listeners) {
+	if (observer.listeners && name === "xforms-subform-ready") {
+		for (var i = 0, l = observer.listeners.length; i < l; i++) {
+			if (observer.listeners[i].name === name) {
+				return;
+			}
+		}
+	} else {
 		observer.listeners = [];
 	}
 	observer.listeners.push(this);
@@ -100,6 +107,7 @@ function XsltForms_listener(observer, evtTarget, name, phase, handler) {
 		}
 	};
 	this.attach();
+	subform.listeners.push(this);
 }
 
 ]]>
@@ -120,6 +128,12 @@ XsltForms_listener.prototype.attach = function() {
 * '''detach''' method : detaches the event according to the current phase</cm:wiki>
 <![CDATA[
 XsltForms_listener.prototype.detach = function() {
+	for (var i = 0, l = this.observer.listeners.length; i < l; i++) {
+		if (this.observer.listeners[i] === this) {
+			this.observer.listeners.splice(i, 1);
+			break;
+		}
+	}
 	XsltForms_browser.events.detach(this.observer, this.evtName, this.callback, this.phase === "capture");
 };
 
@@ -128,7 +142,7 @@ XsltForms_listener.prototype.detach = function() {
 * '''clone''' method : creates a new listener for the given element</cm:wiki>
 <![CDATA[
 XsltForms_listener.prototype.clone = function(element) {
-	var unused = new XsltForms_listener(element, this.evtTarget, this.name, this.phase, this.handler);
+	var unused = new XsltForms_listener(this.subform, element, this.evtTarget, this.name, this.phase, this.handler);
 };
 ]]>
 	</cm:source>

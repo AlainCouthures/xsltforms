@@ -69,7 +69,7 @@ function XsltForms_submission(subform, id, model, ref, bind, action, method, ver
 					break;
 			}
 		}
-		if (this.mediatype === "application/zip") {
+		if (this.mediatype === "application/zip" || this.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
 			this.charset = "x-user-defined-binary";
 		}
 	}
@@ -153,11 +153,13 @@ XsltForms_submission.prototype.submit = function() {
 			ser = XsltForms_browser.xml2csv(ser, this.separator);
 			break;
 		case "application/zip":
+		case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+		case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
 			var instance = document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement;
 			if (!instance.archive) {
 				alert("Not an archive!");
 			}
-			ser = XsltForms_browser.xml2zip(instance.archive);
+			ser = XsltForms_browser.xml2zip(instance.archive, this.mediatype);
 	}
 	var instance = this.instance;
 	if (action.substr(0, 7) === "file://" || action.substr(0, 9) === "opener://" || action.substr(0, 8) === "local://") {

@@ -86,7 +86,6 @@ XsltForms_load.prototype.run = function(element, ctx) {
 					return;
 				}
 				XsltForms_submission.requesteventlog(evcontext, req);
-				//XsltForms_xmlevents.dispatch(this, "xforms-load-done", null, null, null, null, evcontext);
 				XsltForms_globals.closeAction();
 				var resp = req.responseText;
 				var piindex = resp.indexOf("<?xml-stylesheet", 0);
@@ -111,6 +110,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 					subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
 					imain = subbody.indexOf(' id="xsltforms-mainform');
 				}
+				var targetxf = targetelt.xfElement;
 				if (targetelt.xfElement) {
 					targetelt = targetelt.children[targetelt.children.length - 1];
 				}
@@ -127,6 +127,9 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
 				body.insertBefore(scriptelt, body.firstChild);
 				XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", true);
+				if (targetxf) {
+					XsltForms_xmlevents.dispatch(targetxf, "xforms-load-done", null, null, null, null, evcontext);
+				}
 				XsltForms_globals.nbsubforms++;
 			} catch(e2) {
 				XsltForms_browser.debugConsole.write(e2.message || e2);

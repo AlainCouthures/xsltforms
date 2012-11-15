@@ -38,6 +38,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<type xmlns=""><xsl:value-of select="."/></type>
 			</xsl:if>
 		</xsl:template>
+		<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform" match="@class | @style" mode="scriptattr" priority="1">
+			<xsl:param name="workid"/>
+			<xsl:apply-templates select="." mode="script">
+				<xsl:with-param name="workid" select="$workid"/>
+			</xsl:apply-templates>
+		</xsl:template>
 		<xsl:template xmlns:xsl="http://www.w3.org/1999/XSL/Transform" match="@name[../@targetNamespace]" mode="script" priority="1">
 			<namespace xmlns="" name="{.}"><xsl:value-of select="../@targetNamespace"/></namespace>
 		</xsl:template>

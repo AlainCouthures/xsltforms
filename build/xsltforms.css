@@ -1,4 +1,4 @@
-/* Rev. 560
+/* Rev. 561
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -147,6 +147,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	padding				: 0px;
 	background-color	: #dddddd;
 	width				: 100%;
+}
+	
+		
+.xforms-choices {
+	font-weight: bold;
+	font-style: italic;
 }
 	
 		

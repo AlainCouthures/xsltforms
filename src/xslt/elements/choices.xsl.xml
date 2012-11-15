@@ -28,14 +28,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="type" select="false()" /> 
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
-			<optgroup label="{xforms:label/text()}">
-				<xsl:call-template name="genid">
-					<xsl:with-param name="workid" select="$workid"/>
-				</xsl:call-template>
-				<xsl:apply-templates select="node()" mode="item">
-					<xsl:with-param name="parentworkid" select="$workid"/>
-				</xsl:apply-templates>
-			</optgroup>
+			<xsl:choose>
+				<xsl:when test="parent::*/@appearance = 'full'">
+					<div>
+						<xsl:call-template name="genid">
+							<xsl:with-param name="workid" select="$workid"/>
+						</xsl:call-template>
+						<xsl:call-template name="style">
+							<xsl:with-param name="class">xforms-choices</xsl:with-param>
+						</xsl:call-template>
+						<xsl:value-of select="xforms:label/text()"/>
+					</div>
+					<xsl:apply-templates select="node()" mode="item">
+						<xsl:with-param name="parentworkid" select="$workid"/>
+						<xsl:with-param name="type" select="$type" />
+					</xsl:apply-templates>
+				</xsl:when>
+				<xsl:otherwise>
+					<optgroup label="{xforms:label/text()}">
+						<xsl:call-template name="genid">
+							<xsl:with-param name="workid" select="$workid"/>
+						</xsl:call-template>
+						<xsl:apply-templates select="node()" mode="item">
+							<xsl:with-param name="parentworkid" select="$workid"/>
+							<xsl:with-param name="type" select="$type" />
+						</xsl:apply-templates>
+					</optgroup>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:template>
 	</cm:source>
 </cm:component>

@@ -336,8 +336,8 @@ if (XsltForms_browser.isIE) {
 			for (var i = 3, len = arguments.length-1; i < len ; i += 2) {
 				xsltProcessor.setParameter(null, arguments[i], arguments[i+1]);
 			}
-			xsltProcessor.importStylesheet(xsltDoc);
 			try {
+				xsltProcessor.importStylesheet(xsltDoc);
 				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
 				var s = "";
 				if (XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") {
@@ -347,6 +347,7 @@ if (XsltForms_browser.isIE) {
 				}
 				return s;
 			} catch (e2) {
+				alert(e2);
 				return "";
 			}
 	};

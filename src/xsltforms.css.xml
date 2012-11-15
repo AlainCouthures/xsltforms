@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="text/css">
 		<cm:import-components path="css/aid.css.xml"/>
 		<cm:import-components path="css/calendar.css.xml"/>
+		<cm:import-components path="css/choices.css.xml"/>
 		<cm:import-components path="css/console.css.xml"/>
 		<cm:import-components path="css/dialog.css.xml"/>
 		<cm:import-components path="css/disabled.css.xml"/>

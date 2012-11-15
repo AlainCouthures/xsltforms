@@ -1,10 +1,13 @@
-<cm:config xmlns:cm="http://www.agencexml.com/cm">
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="choices.css">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2012-11-10</cm:creationdate>
+	<cm:lastupdate>2012-11-10</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
-Contact at : xsltforms@agencexml.com
+Copyright (C) 2008-2012 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
 
 Copyright (C) 2006 AJAXForms S.L.
-Contact at: info@ajaxforms.com
+Contact at: &lt;info@ajaxforms.com&gt;
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -20,7 +23,10 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
-	<cm:version>561</cm:version>
-	<cm:versionNumber>561</cm:versionNumber>
-	<cm:year>2012</cm:year>
-</cm:config>
+	<cm:source type="text/css">
+.xforms-choices {
+	font-weight: bold;
+	font-style: italic;
+}
+	</cm:source>
+</cm:component>
