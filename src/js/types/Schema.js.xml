@@ -107,8 +107,10 @@ XsltForms_schema.getTypeNS = function(ns, name) {
 	}
 	var type = schema.types[name];	
 	if (!type) {
-		alert("Type " + name + " not defined in namespace " + ns);
-		throw "Error";
+		if (XsltForms_globals.debugMode) {
+			alert("Type " + name + " not defined in namespace " + ns);
+		}
+		type = XsltForms_schema.getTypeNS("http://www.w3.org/2001/XMLSchema", "string");
 	}
 	return type;
 };

@@ -33,7 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:apply-templates select="node()" mode="script">
 				<xsl:with-param name="parentworkid" select="$workid"/>
 			</xsl:apply-templates>
-			<xsl:call-template name="listeners"/>
+			<xsl:call-template name="listeners">
+				<xsl:with-param name="workid" select="$workid"/>
+			</xsl:call-template>
 			<xsl:if test="parent::xforms:switch and not(parent::xforms:switch/@caseref)">
 				<case xmlns="">
 					<xsl:variable name="noselected" select="count(../xforms:case[@selected='true']) = 0"/>

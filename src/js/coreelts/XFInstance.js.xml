@@ -157,51 +157,7 @@ XsltForms_instance.prototype.construct = function(subform) {
 							if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
 								throw { message: "Request error: " + req.status };
 							}
-							var srcXML = req.responseText;
-							switch(this.mediatype) {
-								case "text/json":
-								case "application/json":
-									var json;
-									eval("json = " + srcXML);
-									srcXML = XsltForms_browser.json2xml("", json, true, false);
-									break;
-								case "text/vcard":
-									srcXML = XsltForms_browser.vcard2xcard(srcXML);
-									break;
-								case "application/zip":
-								case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-								case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-									var arch;
-									if (XsltForms_browser.isIE) {
-									    var convertResponseBodyToText = function (binary) {
-											if (!XsltForms_browser.byteMapping) {
-												var byteMapping = {};
-												for (var i = 0; i < 256; i++) {
-													for (var j = 0; j < 256; j++) {
-														byteMapping[String.fromCharCode(i + j * 256)] = String.fromCharCode(i) + String.fromCharCode(j);
-													}
-												}
-												XsltForms_browser.byteMapping = byteMapping;
-											}
-											var rawBytes = XsltForms_browser_BinaryToArray_ByteStr(binary);
-											var lastChr = XsltForms_browser_BinaryToArray_ByteStr_Last(binary);
-											return rawBytes.replace(/[\s\S]/g, function (match) { return XsltForms_browser.byteMapping[match]; }) + lastChr;
-										};
-										arch = XsltForms_browser.zip2xml(convertResponseBodyToText(req.responseBody), this.mediatype, this.element.id, this.model.element.id);
-									} else {
-										arch = XsltForms_browser.zip2xml(srcXML, this.mediatype, this.element.id, this.model.element.id);
-									}
-									srcXML = arch.srcXML;
-									delete arch.srcXML;
-									this.archive = arch;
-									break;
-								case "application/xml":
-									break;
-								default:
-									alert("Unsupported mediatype '" + mediatype + "' for instance #" + this.element.id);
-									return;
-							}
-							this.setDoc(srcXML);
+							this.setDocFromReq(req, this.mediatype);
 						} catch(e) {
 							XsltForms_globals.error(this.element, "xforms-link-exception", "Fatal error loading " + this.src, e.toString());
 						}
@@ -249,6 +205,59 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 	if (instid === XsltForms_browser.idPf + "instance-config") {
 		XsltForms_browser.config = this.doc.documentElement;
 	}
+};
+        
+]]>
+		<cm:wiki>
+* '''setDocFromReq''' method : sets a document for this instance from a request</cm:wiki>
+<![CDATA[
+XsltForms_instance.prototype.setDocFromReq = function(req, mediatype, isReset, preserveOld) {
+	var srcXML = req.responseText;
+	this.mediatype = mediatype;
+	switch(this.mediatype) {
+		case "text/json":
+		case "application/json":
+			var json;
+			eval("json = " + srcXML);
+			srcXML = XsltForms_browser.json2xml("", json, true, false);
+			break;
+		case "text/vcard":
+			srcXML = XsltForms_browser.vcard2xcard(srcXML);
+			break;
+		case "application/zip":
+		case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+		case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+			var arch;
+			if (XsltForms_browser.isIE) {
+				var convertResponseBodyToText = function (binary) {
+					if (!XsltForms_browser.byteMapping) {
+						var byteMapping = {};
+						for (var i = 0; i < 256; i++) {
+							for (var j = 0; j < 256; j++) {
+								byteMapping[String.fromCharCode(i + j * 256)] = String.fromCharCode(i) + String.fromCharCode(j);
+							}
+						}
+						XsltForms_browser.byteMapping = byteMapping;
+					}
+					var rawBytes = XsltForms_browser_BinaryToArray_ByteStr(binary);
+					var lastChr = XsltForms_browser_BinaryToArray_ByteStr_Last(binary);
+					return rawBytes.replace(/[\s\S]/g, function (match) { return XsltForms_browser.byteMapping[match]; }) + lastChr;
+				};
+				arch = XsltForms_browser.zip2xml(convertResponseBodyToText(req.responseBody), this.mediatype, this.element.id, this.model.element.id);
+			} else {
+				arch = XsltForms_browser.zip2xml(srcXML, this.mediatype, this.element.id, this.model.element.id);
+			}
+			srcXML = arch.srcXML;
+			delete arch.srcXML;
+			this.archive = arch;
+			break;
+		case "application/xml":
+			break;
+		default:
+			alert("Unsupported mediatype '" + this.mediatype + "' for instance #" + this.element.id);
+			return;
+	}
+	this.setDoc(srcXML, isReset, preserveOld);
 };
         
 ]]>
