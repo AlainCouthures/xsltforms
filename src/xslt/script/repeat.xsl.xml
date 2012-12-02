@@ -59,15 +59,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:text> = new XsltForms_repeat(</xsl:text>
 				<xsl:value-of select="$vn_subform"/>
 				<xsl:text>,</xsl:text>
-				<xsl:choose>
-					<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="$jsid_pf"/>
-						<xsl:text>repeat-</xsl:text>
-						<xsl:value-of select="$workid"/>
-					</xsl:otherwise>
-				</xsl:choose>
-				<xsl:text>",</xsl:text>
+				<xsl:variable name="repeatid">
+					<xsl:choose>
+						<xsl:when test="self::*[count(xhtml:tr | tr | xhtml:td | td) &lt; 2 and not(parent::*[local-name() = 'tr'] and ancestor::*[2][local-name() = 'repeat' and namespace-uri() = 'http://www.w3.org/2002/xforms']) and ((not(following-sibling::*) and not(preceding-sibling::*)) or not(xhtml:tr | tr | xhtml:td | td))]">
+							<xsl:choose>
+								<xsl:when test="@id">"<xsl:value-of select="@id"/>",0</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="$jsid_pf"/>
+									<xsl:text>repeat-</xsl:text>
+									<xsl:value-of select="$workid"/>
+									<xsl:text>",0</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$jsid_pf"/>
+							<xsl:for-each select="node()">
+								<xsl:if test="self::* and not(preceding-sibling::*)">
+									<xsl:value-of select="local-name()"/>
+									<xsl:text>-</xsl:text>
+									<xsl:value-of select="concat(position(),'_',$workid)"/>
+									<xsl:text>",</xsl:text>
+								</xsl:if>
+							</xsl:for-each>
+							<xsl:value-of select="count(*)"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<xsl:value-of select="$repeatid"/>
+				<xsl:text>,</xsl:text>
 				<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="$nodeset"/></xsl:call-template>
 				<xsl:text>);</xsl:text>
 			</js>

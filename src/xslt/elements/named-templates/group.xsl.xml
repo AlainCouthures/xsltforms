@@ -76,27 +76,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:variable name="itemns">
 							<xsl:if test="$mainelt = 'g'">http://www.w3.org/2000/svg</xsl:if>
 						</xsl:variable>
-						<xsl:choose>
-							<xsl:when test="$itemelt = 'tr' and */xforms:repeat">
-								<xsl:apply-templates select="node()">
-									<xsl:with-param name="parentworkid" select="$workid"/>
-									<xsl:with-param name="appearance">
-										<xsl:if test="$appearance = 'minimal'">minimal</xsl:if>
-									</xsl:with-param>
-								</xsl:apply-templates>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:element name="{$itemelt}" namespace="{$itemns}">
-									<xsl:attribute name="class">xforms-repeat-item</xsl:attribute>
-									<xsl:apply-templates select="node()">
-										<xsl:with-param name="parentworkid" select="$workid"/>
-										<xsl:with-param name="appearance">
-											<xsl:if test="$appearance = 'minimal'">minimal</xsl:if>
-										</xsl:with-param>
-									</xsl:apply-templates>
-								</xsl:element>
-							</xsl:otherwise>
-						</xsl:choose>
+						<xsl:element name="{$itemelt}" namespace="{$itemns}">
+							<xsl:attribute name="class">xforms-repeat-item</xsl:attribute>
+							<xsl:apply-templates select="node()">
+								<xsl:with-param name="parentworkid" select="$workid"/>
+								<xsl:with-param name="appearance">
+									<xsl:if test="$appearance = 'minimal'">minimal</xsl:if>
+								</xsl:with-param>
+							</xsl:apply-templates>
+						</xsl:element>
 						<xsl:if test="parent::*[local-name()='table']">
 							<xsl:apply-templates select="following-sibling::node()">
 								<xsl:with-param name="parentworkid" select="substring-after($workid,'_')"/>

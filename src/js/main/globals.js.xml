@@ -593,7 +593,7 @@ var XsltForms_globals = {
 <![CDATA[
 	build : function(element, ctx, selected) {
 		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
-			return;
+			return {ctx: ctx, hasXFElement: false};
 		}
 		var xf = element.xfElement;
 		var hasXFElement = !!xf;
@@ -613,16 +613,40 @@ var XsltForms_globals = {
 				}
 			}
 		}
-		ctx = element.node || ctx;
+		var newctx = element.node || ctx;
 		var childs = element.children || element.childNodes;
 		var sel = element.selected;
 		if (typeof sel !== "undefined") {
 			selected = sel;
 		}
 		if (!xf || (xf instanceof Array) || !xf.isRepeat || xf.nodes.length > 0) {
+			var nbsiblings = 1, isiblings = 1;
+			var nodes = [], nbnodes = 0;
 			for (var i = 0; i < childs.length && this.building; i++) {
 				if (childs[i].nodeType !== XsltForms_nodeType.TEXT) {
-					hasXFElement = (!childs[i].getAttribute("cloned") ? this.build(childs[i], ctx, selected) : false) || hasXFElement;
+					var curctx;
+					if (isiblings !== 1) {
+						curctx = nodes[inodes];
+						isiblings--;
+					} else if (nbnodes !== 0) {
+						nbnodes--;
+						inodes++;
+						curctx = nodes[inodes];
+						isiblings = nbsiblings;
+					} else {
+						curctx = newctx;
+					}
+					if (!childs[i].getAttribute("cloned")) {
+						var br = this.build(childs[i], curctx, selected);
+						if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
+							nbsiblings = childs[i].xfElement.nbsiblings;
+							nodes = childs[i].xfElement.nodes;
+							nbnodes = nodes.length;
+							inodes = 0;
+							isiblings = nbsiblings;
+						}
+						hasXFElement = br.hasXFElement || hasXFElement;
+					}
 				}
 			}
 		}
@@ -644,7 +668,7 @@ var XsltForms_globals = {
 				element.hasXFElement = hasXFElement;
 			}
 		}
-		return hasXFElement;
+		return {ctx: newctx, hasXFElement: hasXFElement};
 	},
 ]]>
 		<cm:wiki>

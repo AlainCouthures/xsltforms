@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:value-of select="$workid"/>
 						</xsl:otherwise>
 					</xsl:choose>
-					<xsl:text>",</xsl:text>
+					<xsl:text>",0,</xsl:text>
 					<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@nodeset | @ref"/></xsl:call-template>
 					<xsl:text>);
 </xsl:text>

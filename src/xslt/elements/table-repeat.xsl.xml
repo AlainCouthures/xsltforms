@@ -27,14 +27,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<xsl:template match="xhtml:thead[count(xforms:repeat) = 1] | thead[count(xforms:repeat) = 1] | xhtml:tbody[count(xforms:repeat) = 1] | tbody[count(xforms:repeat) = 1] | xhtml:tfoot[count(xforms:repeat) = 1] | tfoot[count(xforms:repeat) = 1] | xhtml:tr[count(xforms:repeat) = 1 and not(parent::xforms:repeat)] | tr[count(xforms:repeat) = 1 and not(parent::xforms:repeat)]" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
-			<xsl:apply-templates select="node()">
-				<xsl:with-param name="parentworkid" select="$workid"/>
-			</xsl:apply-templates>
+			<xsl:choose>
+				<xsl:when test="xforms:repeat[count(xhtml:tr | tr | xhtml:td | td) &lt; 2 and not(parent::*[local-name() = 'tr'] and ancestor::*[2][local-name() = 'repeat' and namespace-uri() = 'http://www.w3.org/2002/xforms']) and ((not(following-sibling::*) and not(preceding-sibling::*)) or not(xhtml:tr | tr | xhtml:td | td))]">
+					<xsl:apply-templates select="@* | node()">
+						<xsl:with-param name="parentworkid" select="$workid"/>
+					</xsl:apply-templates>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:copy>
+						<xsl:apply-templates select="@*"/>
+						<xsl:apply-templates select="node()">
+							<xsl:with-param name="parentworkid" select="$workid"/>
+						</xsl:apply-templates>
+					</xsl:copy>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:template>
 		<xsl:template match="xhtml:table[count(xforms:repeat) = 1] | table[count(xforms:repeat) = 1]" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<table>
+				<xsl:apply-templates select="@*"/>
 				<xsl:apply-templates select="node()">
 					<xsl:with-param name="parentworkid" select="$workid"/>
 				</xsl:apply-templates>

@@ -1,4 +1,4 @@
-/* Rev. 562
+/* Rev. 563
 
 Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "562",
-	fileVersionNumber: 562,
+	fileVersion: "563",
+	fileVersionNumber: 563,
 
 	language: "navigator",
 	debugMode: false,
@@ -580,7 +580,7 @@ var XsltForms_globals = {
 
 	build : function(element, ctx, selected) {
 		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
-			return;
+			return {ctx: ctx, hasXFElement: false};
 		}
 		var xf = element.xfElement;
 		var hasXFElement = !!xf;
@@ -600,16 +600,40 @@ var XsltForms_globals = {
 				}
 			}
 		}
-		ctx = element.node || ctx;
+		var newctx = element.node || ctx;
 		var childs = element.children || element.childNodes;
 		var sel = element.selected;
 		if (typeof sel !== "undefined") {
 			selected = sel;
 		}
 		if (!xf || (xf instanceof Array) || !xf.isRepeat || xf.nodes.length > 0) {
+			var nbsiblings = 1, isiblings = 1;
+			var nodes = [], nbnodes = 0;
 			for (var i = 0; i < childs.length && this.building; i++) {
 				if (childs[i].nodeType !== XsltForms_nodeType.TEXT) {
-					hasXFElement = (!childs[i].getAttribute("cloned") ? this.build(childs[i], ctx, selected) : false) || hasXFElement;
+					var curctx;
+					if (isiblings !== 1) {
+						curctx = nodes[inodes];
+						isiblings--;
+					} else if (nbnodes !== 0) {
+						nbnodes--;
+						inodes++;
+						curctx = nodes[inodes];
+						isiblings = nbsiblings;
+					} else {
+						curctx = newctx;
+					}
+					if (!childs[i].getAttribute("cloned")) {
+						var br = this.build(childs[i], curctx, selected);
+						if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
+							nbsiblings = childs[i].xfElement.nbsiblings;
+							nodes = childs[i].xfElement.nodes;
+							nbnodes = nodes.length;
+							inodes = 0;
+							isiblings = nbsiblings;
+						}
+						hasXFElement = br.hasXFElement || hasXFElement;
+					}
 				}
 			}
 		}
@@ -631,7 +655,7 @@ var XsltForms_globals = {
 				element.hasXFElement = hasXFElement;
 			}
 		}
-		return hasXFElement;
+		return {ctx: newctx, hasXFElement: hasXFElement};
 	},
 
 		
@@ -6864,9 +6888,10 @@ XsltForms_range.prototype.blur = function(target) {
 		
 		
 		
-function XsltForms_repeat(subform, id, binding, clone) {
+function XsltForms_repeat(subform, id, nbsiblings, binding, clone) {
 	XsltForms_globals.counters.repeat++;
 	this.init(subform, id);
+	this.nbsiblings = nbsiblings;
 	this.binding = binding;
 	this.index = 1;
 	var el = this.element;
@@ -6953,30 +6978,81 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 			nodes.push(nodes0[n]);
 		}
 	}
-	var r = this.root;
 	this.nodes = nodes;
-	var n = nodes.length;
-	while (r.firstChild.nodeType === XsltForms_nodeType.TEXT) {
-		r.removeChild(r.firstChild);
-	}
-	var r0 = r.children ? r.children[0] : r.childNodes[0];
-	XsltForms_repeat.forceOldId(r0);
-	var l = r.children ? r.children.length : r.childNodes.length;
-	for (var i = l; i < n; i++) {
-		var child = r0.cloneNode(true);
-		r.appendChild(child);
-		XsltForms_repeat.initClone(child);
-	}
-	for (var j = n; j < l && r.childNodes.length > 1; j++) {
-		XsltForms_globals.dispose(r.lastChild);
-		r.removeChild(r.lastChild);
-	}
-	for (var k = 0; k < n; k++) {
-		XsltForms_browser.setMeta(nodes[k], "repeat", this.element.id);
-		if (r.children) {
-			r.children[k].node = nodes[k];
-		} else {
-			r.childNodes[k].node = nodes[k];
+	n = nodes.length;
+	if (this.nbsiblings === 0) {
+		var r = this.root;
+		while (r.firstChild.nodeType === XsltForms_nodeType.TEXT) {
+			r.removeChild(r.firstChild);
+		}
+		var r0 = r.children ? r.children[0] : r.childNodes[0];
+		XsltForms_repeat.forceOldId(r0);
+		var l = r.children ? r.children.length : r.childNodes.length;
+		for (var i = l; i < n; i++) {
+			var child = r0.cloneNode(true);
+			r.appendChild(child);
+			XsltForms_repeat.initClone(child);
+		}
+		for (var j = n; j < l && r.childNodes.length > 1; j++) {
+			XsltForms_globals.dispose(r.lastChild);
+			r.removeChild(r.lastChild);
+		}
+		for (var k = 0; k < n; k++) {
+			XsltForms_browser.setMeta(nodes[k], "repeat", this.element.id);
+			if (r.children) {
+				r.children[k].node = nodes[k];
+			} else {
+				r.childNodes[k].node = nodes[k];
+			}
+		}
+	} else {
+		var r0 = this.root;
+		XsltForms_repeat.forceOldId(r0);
+		var r = r0.parentNode;
+		var cc = r.firstChild;
+		var i0 = 0;
+		while (cc) {
+			if (cc === r0) {
+				break;
+			}
+			i0++;
+			cc = cc.nextSibling;
+		}
+		var l = 1;
+		var rl = r.childNodes[i0 + this.nbsiblings];
+		while (rl && (rl.id === this.element.id || rl.oldid === this.element.id)) {
+			l++;
+			rl = r.childNodes[i0 + l*this.nbsiblings];
+		}
+		for (var i = l; i < n; i++) {
+			var child = r0.cloneNode(true);
+			r.insertBefore(child, rl);
+			XsltForms_repeat.initClone(child);
+			delete child.xfElement;
+			var r0s = r0.nextSibling;
+			for (var isb = 1; isb < this.nbsiblings; isb++, r0s = r0s.nextSibling) {
+				child = r0s.cloneNode(true)
+				r.insertBefore(child, rl);
+				XsltForms_repeat.initClone(child);
+			}
+		}
+		for (var j = n; j < l; j++) {
+			var rj = r.childNodes[i0 + (n+1)*this.nbsiblings];
+			if (!(rj && (rj.id === this.element.id || rj.oldid === this.element.id))) {
+				break;
+			}
+			for (var jsb = 0; jsb < this.nbsiblings; jsb++) {
+				XsltForms_globals.dispose(r.children[i0 + n*this.nbsiblings]);
+				r.removeChild(r.children[i0 + n*this.nbsiblings]);
+			}
+		}
+		for (var k = 0; k < n; k++) {
+			XsltForms_browser.setMeta(nodes[k], "repeat", this.element.id);
+			if (r.children) {
+				r.children[i0 + k*this.nbsiblings].node = nodes[k];
+			} else {
+				r.childNodes[i0 + k*this.nbsiblings].node = nodes[k];
+			}
 		}
 	}
 	if (this.index > n) {
@@ -7005,7 +7081,7 @@ XsltForms_repeat.prototype.refresh = function(selected) {
 		
 
 XsltForms_repeat.prototype.clone = function(id) { 
-	return new XsltForms_repeat(this.subform, id, this.binding, true);
+	return new XsltForms_repeat(this.subform, id, this.nbsiblings, this.binding, true);
 };
 
 
