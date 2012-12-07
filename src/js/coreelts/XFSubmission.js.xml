@@ -369,9 +369,24 @@ XsltForms_submission.prototype.submit = function() {
 								piindex = resp.indexOf("<?xml-stylesheet", 0);
 							}
 							if( subm.show === "new" ) {
-								var w = window.open("about:blank","_blank");
-								w.document.write(resp);
-								w.document.close();
+								if (req.getResponseHeader("Content-Type") === "application/octet-stream") {
+									var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+									var res = "";
+									for (var bi = 0, bl = resp.length; bi < bl; bi += 3) {
+										var c1 = resp.charCodeAt(bi);
+										var c2 = bi + 1 < bl ? resp.charCodeAt(bi + 1) : 0;
+										var c3 = bi + 2 < bl ? resp.charCodeAt(bi + 2) : 0;
+										res += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (bi + 1 < bl ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (bi + 2 < bl ? b64.charAt(c3 & 63) : "=");
+									}
+									var w = window.open("about:blank","_blank");
+									w.document.write(res);
+									w.document.close();
+									//location.href ="data:application/octet-stream;base64," + res;
+								} else {
+									var w = window.open("about:blank","_blank");
+									w.document.write(resp);
+									w.document.close();
+								}
 							} else {
 								XsltForms_browser.dialog.hide("statusPanel", false);
 								XsltForms_globals.close();

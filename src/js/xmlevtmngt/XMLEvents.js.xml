@@ -62,7 +62,9 @@ var XsltForms_xmlevents = {
 		if (!evcontext) {
 			evcontext = {};
 		}
-		evcontext.type = type;
+		if (!evcontext.type) {
+			evcontext.type = type;
+		}
 		evcontext.targetid = targetid;
 		evcontext.bubbles = bubbles;
 		evcontext.cancelable = cancelable;

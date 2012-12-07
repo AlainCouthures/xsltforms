@@ -68,6 +68,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:variable name="itemelt">
 							<xsl:choose>
 								<xsl:when test="parent::*[local-name()='table' or local-name()='thead' or local-name()='tbody' or local-name()='tfoot']">tr</xsl:when>
+								<xsl:when test="parent::*[local-name()='tr'] and ancestor::*[2][local-name()='thead']">th</xsl:when>
 								<xsl:when test="parent::*[local-name()='tr']">td</xsl:when>
 								<xsl:when test="ancestor::*[namespace-uri() = 'http://www.w3.org/2000/svg']">g</xsl:when>
 								<xsl:otherwise>div</xsl:otherwise>
