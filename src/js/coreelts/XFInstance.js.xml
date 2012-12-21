@@ -704,7 +704,7 @@ XsltForms_browser.xml2zip = function(arch, mediatype) {
 			f.localHeaderOffset = z.length;
 			if (f.doc) {
 				var ser = XsltForms_browser.utf8encode(XsltForms_browser.saveXML(f.doc));
-				if (mediatype.indexOf("application/vnd.openxmlformats-officedocument.") === 0) {
+				if (mediatype.indexOf("application/vnd.openxmlformats-officedocument.") === 0 && ser.indexOf(' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"') === -1) {
 					var rattr = f.doc.documentElement.attributes;
 					for (var ri = 0, li = rattr.length; ri < li; ri++) {
 						if (rattr[ri].localName === "Ignorable" && rattr[ri].namespaceURI === "http://schemas.openxmlformats.org/markup-compatibility/2006") {

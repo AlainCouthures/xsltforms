@@ -174,5 +174,32 @@ XsltForms_load.prototype.issueLoadException_ = function(evcontext, req, ex) {
 	XsltForms_xmlevents.dispatch(document.getElementById(this.targetid), "xforms-link-exception", null, null, null, null, evcontext);
 };
 ]]>
+		<cm:wiki>
+* '''subform''' method : loads a subform directly from Javascript instruction</cm:wiki>
+<![CDATA[
+XsltForms_load.subform = function(resource, targetid, ref) {
+	if (ref) {
+		var parent = ref;
+		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			if (XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
+				XsltForms_repeat.selectItem(parent);
+			}
+			parent = parent.parentNode;
+		}
+	}
+	var targetelt = XsltForms_idManager.find(targetid);
+	var subform = null;
+	parent = targetelt;
+	while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+		if (parent.xfSubform) {
+			subform = parent.xfSubform;
+			break;
+		}
+		parent = parent.parentNode;
+	}
+	var a = new XsltForms_load(subform, null, resource, "embed", targetid);
+	a.run();
+}
+]]>
 	</cm:source>
 </cm:component>

@@ -15,10 +15,12 @@
 	echo "<pre>$posteddata</pre>";
 	echo "<h1>Environment variables</h1>";
 	echo "<pre>";
-	$env = array_merge($_SERVER, $_ENV);
+	$env = $_ENV;
 	ksort($env);
 	foreach($env as $key => $value) {
-		echo "$key=$value\n";
+		if(substr($key,0,8) == "CONTENT_" || substr($key,0,5) == "HTTP_" || substr($key,0,8) == "REQUEST_" || $key == "QUERY_STRING") {
+			echo "$key=$value\n";
+		}
 	}
 	echo "</pre>";
 	echo "</body>";

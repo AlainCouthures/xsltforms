@@ -34,6 +34,9 @@ function XsltForms_subform(subform, id, eltid) {
 	this.eltid = eltid;
 	if (eltid) {
 		document.getElementById(eltid).xfSubform = this;
+	} else {
+		var b = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+		b.xfSubform = this;
 	}
 	this.models = [];
 	this.schemas = [];

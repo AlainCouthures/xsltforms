@@ -54,5 +54,32 @@ XsltForms_unload.prototype.run = function(element, ctx) {
 	XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", false);
 };
 ]]>
+		<cm:wiki>
+* '''subform''' method : unloads a subform directly from Javascript instruction</cm:wiki>
+<![CDATA[
+XsltForms_unload.subform = function(targetid, ref) {
+	if (ref) {
+		var parent = ref;
+		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			if (XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
+				XsltForms_repeat.selectItem(parent);
+			}
+			parent = parent.parentNode;
+		}
+	}
+	var targetelt = XsltForms_idManager.find(targetid);
+	var subform = null;
+	parent = targetelt;
+	while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+		if (parent.xfSubform) {
+			subform = parent.xfSubform;
+			break;
+		}
+		parent = parent.parentNode;
+	}
+	var a = new XsltForms_unload(subform, targetid);
+	a.run();
+}
+]]>
 	</cm:source>
 </cm:component>
