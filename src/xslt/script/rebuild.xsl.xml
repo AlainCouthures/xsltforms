@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:value-of select="$vn_subform"/>
 						<xsl:text>,"xforms-rebuild",</xsl:text>
 						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@model"/></xsl:call-template>
-						<xsl:text>,</xsl:text>
+						<xsl:text>,null,</xsl:text>
 						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@if"/></xsl:call-template>
 						<xsl:text>,</xsl:text>
 						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@while"/></xsl:call-template>

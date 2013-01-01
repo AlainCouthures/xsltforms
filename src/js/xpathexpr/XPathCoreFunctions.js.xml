@@ -206,6 +206,19 @@ var XsltForms_xpathCoreFunctions = {
 		} ),
 ]]>
 		<cm:wiki>
+* '''ends-with(string, string)'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions ends-with" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(string, postfix) {   
+			if (arguments.length !== 2) {
+				throw XsltForms_xpathFunctionExceptions.endsWithInvalidArgumentsNumber;
+			}
+			var s = XsltForms_globals.stringValue(string);
+			var p = XsltForms_globals.stringValue(postfix);
+			return s.substr(s.length - p.length, p.length) === p;
+		} ),
+]]>
+		<cm:wiki>
 * '''contains(string, string)'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2005/xpath-functions contains" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
@@ -1545,6 +1558,10 @@ var XsltForms_xpathFunctionExceptions = {
 	startsWithInvalidArgumentsNumber : {
 		name : "starts-with() : Invalid number of arguments",
 		message : "starts-with() function must have two arguments exactly"
+	},
+	endsWithInvalidArgumentsNumber : {
+		name : "ends-with() : Invalid number of arguments",
+		message : "ends-with() function must have two arguments exactly"
 	},
 	containsInvalidArgumentsNumber : {
 		name : "contains() : Invalid number of arguments",

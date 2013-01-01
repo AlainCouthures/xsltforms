@@ -354,7 +354,7 @@ var XsltForms_globals = {
 		s += '<xsltforms:xpaths>';
 		if (exprtab.length > 0) {
 			for (var i = 0; i < exprtab.length && i < 20; i++) {
-				s += '<xsltforms:xpath expr="' + XsltForms_browser.escape(exprtab[i].expr) + '">' + exprtab[i].evaltime + '</xsltforms:xpath>';
+				s += '<xsltforms:xpath expr="' + XsltForms_browser.escape(exprtab[i].expr).replace(/\"/g, "&quot;") + '">' + exprtab[i].evaltime + '</xsltforms:xpath>';
 				top += exprtab[i].evaltime;
 			}
 			if (exprtab.length > 20) {
@@ -621,7 +621,7 @@ var XsltForms_globals = {
 		}
 		if (!xf || (xf instanceof Array) || !xf.isRepeat || xf.nodes.length > 0) {
 			var nbsiblings = 1, isiblings = 1;
-			var nodes = [], nbnodes = 0;
+			var nodes = [], nbnodes = 0, inodes = 0;
 			for (var i = 0; i < childs.length && this.building; i++) {
 				if (childs[i].nodeType !== XsltForms_nodeType.TEXT) {
 					var curctx;

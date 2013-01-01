@@ -166,7 +166,7 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 		}
 		var l = 1;
 		var rl = r.childNodes[i0 + this.nbsiblings];
-		while (rl && (rl.id === this.element.id || rl.oldid === this.element.id)) {
+		while (rl && (rl.id === this.element.id || rl.attributes.oldid.value === this.element.id)) {
 			l++;
 			rl = r.childNodes[i0 + l*this.nbsiblings];
 		}
@@ -184,7 +184,7 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 		}
 		for (var j = n; j < l; j++) {
 			var rj = r.childNodes[i0 + (n+1)*this.nbsiblings];
-			if (!(rj && (rj.id === this.element.id || rj.oldid === this.element.id))) {
+			if (!(rj && (rj.id === this.element.id || rj.attributes.oldid.value === this.element.id))) {
 				break;
 			}
 			for (var jsb = 0; jsb < this.nbsiblings; jsb++) {
@@ -213,13 +213,24 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 <![CDATA[
 XsltForms_repeat.prototype.refresh = function(selected) {
 	var empty = this.nodes.length === 0;
+	if (this.nbsiblings !== 0) {
+		var n0 = this.element;
+		for (var i0 = 0, l0 = this.nodes.length; i0 < l0; i0++) {
+			XsltForms_browser.setClass(n0, "xforms-disabled", empty);
+			for (var i1 = 0, l1 = this.nbsiblings; i1 < l1; i1++) {
+				n0 = n0.nextSibling;
+			}
+		}
+	}
 	XsltForms_browser.setClass(this.element, "xforms-disabled", empty);
 	if (!empty && !this.isItemset) {
-		var childs = this.root.children || this.root.childNodes;
-		for (var i = 0, len = childs.length; i < len; i++) {
-			var sel = selected && (this.index === i + 1);
-			childs[i].selected = sel;
-			XsltForms_browser.setClass(childs[i], "xforms-repeat-item-selected", sel);
+		if (this.nbsiblings === 0) {
+			var childs = this.root.children || this.root.childNodes;
+			for (var i = 0, len = childs.length; i < len; i++) {
+				var sel = selected && (this.index === i + 1);
+				childs[i].selected = sel;
+				XsltForms_browser.setClass(childs[i], "xforms-repeat-item-selected", sel);
+			}
 		}
 	}
 };
@@ -300,12 +311,24 @@ XsltForms_repeat.selectItem = function(element) {
 	var par = element.parentNode;
 	if (par) {
 		var repeat = par.xfElement? par : par.parentNode;
-		var childs = par.children;
-		XsltForms_browser.assert(repeat.xfElement, element.nodeName +  " - " + repeat.nodeName);
-		for (var i = 0, len = childs.length; i < len; i++) {
-			if (childs[i] === element) {
-				repeat.xfElement.setIndex(i + 1);
-				break;
+		if (repeat.xfElement) {
+			var childs = par.children;
+			XsltForms_browser.assert(repeat.xfElement, element.nodeName +  " - " + repeat.nodeName);
+			for (var i = 0, len = childs.length; i < len; i++) {
+				if (childs[i] === element) {
+					repeat.xfElement.setIndex(i + 1);
+					break;
+				}
+			}
+		} else {
+			var n = element;
+			var d = 1;
+			while (n && !n.xfElement) {
+				n = n.previousSibling;
+				d++;
+			}
+			if (n && n.xfElement && n.xfElement.nbsiblings > 0) {
+				n.xfElement.setIndex(d / n.xfElement.nbsiblings);
 			}
 		}
 	}

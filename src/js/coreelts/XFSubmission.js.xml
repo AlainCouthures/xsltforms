@@ -477,7 +477,11 @@ XsltForms_submission.prototype.submit = function() {
 					}
 					if ((subm.mediatype === "application/zip" || subm.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )&& req.overrideMimeType) {
 						req.overrideMimeType('text/plain; charset=x-user-defined');
-					}
+					};
+					if ((subm.mediatype === "text/csv" )&& req.overrideMimeType) {
+						req.overrideMimeType('text/csv; charset=ISO-8859-1');
+					};
+					req.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2005 00:00:00 GMT");
 					req.send(null);
 				} else {
 					req.setRequestHeader("Content-Type", mt);

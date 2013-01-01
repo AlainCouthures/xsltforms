@@ -47,6 +47,9 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML
 			eval("json = " + XsltForms_browser.unescape(srcXML));
 			this.srcXML = XsltForms_browser.json2xml("", json, true, false);
 			break;
+		case "text/csv":
+			this.srcXML = XsltForms_browser.csv2xml(XsltForms_browser.unescape(srcXML));
+			break;
 		case "text/vcard":
 			this.srcXML = XsltForms_browser.vcard2xcard(XsltForms_browser.unescape(srcXML));
 			break;
@@ -221,6 +224,9 @@ XsltForms_instance.prototype.setDocFromReq = function(req, mediatype, isReset, p
 				var json;
 				eval("json = " + srcXML);
 				srcXML = XsltForms_browser.json2xml("", json, true, false);
+				break;
+			case "text/csv":
+				srcXML = XsltForms_browser.csv2xml(srcXML, ";");
 				break;
 			case "text/vcard":
 				srcXML = XsltForms_browser.vcard2xcard(srcXML);
@@ -576,6 +582,63 @@ XsltForms_browser.xml2csv = function(s, sep) {
 	return r;
 };
 
+XsltForms_browser.csv2xml = function(s, sep) {
+	var r = "<exml:anonymous xmlns:exml=\"http://www.agencexml.com/exml\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:exsi=\"http://www.agencexml.com/exi\" xmlns=\"\">";
+	s = s.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
+	if (s.substr(s.length - 1, 1) !== "\n") {
+		s += "\n";
+	}
+	var headers = [];
+	var first = true;
+	var col = 0;
+	var rowcat = "";
+	var row = "";
+	for (var i = 0, l = s.length; i < l; ) {
+		var v = "";
+		if (s.substr(i, 1) === '"') {
+			i++;
+			do {
+				if (s.substr(i, 1) !== '"') {
+					v += s.substr(i, 1);
+					i++;
+				} else {
+					if (s.substr(i, 2) === '""') {
+						v += '"';
+						i += 2;
+					} else {
+						i++;
+						break;
+					}
+				}
+			} while (i < l);
+		} else {
+			while (s.substr(i, 1) !== sep && s.substr(i, 1) !== "\n") {
+				v += s.substr(i, 1);
+				i++;
+			}
+		}
+		if (first) {
+			headers.push(v);
+		} else {
+			rowcat += v;
+			row += "<" + headers[col] + ">" + XsltForms_browser.escape(v) + "</" + headers[col] + ">";
+		}
+		if (s.substr(i, 1) === "\n") {
+			if (!first && rowcat !== "") {
+				r += "<exml:anonymous>" + row + "</exml:anonymous>";
+			}
+			first = false;
+			col = 0;
+			row = "";
+			rowcat = "";
+		} else {
+			col++;
+		}
+		i++;
+	}
+	return r + "</exml:anonymous>";
+};
+
 XsltForms_browser.xsltsharedsrc = '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ss="http://schemas.openxmlformats.org/spreadsheetml/2006/main" version="1.0">';
 XsltForms_browser.xsltsharedsrc += '	<xsl:output method="text"/>';
 XsltForms_browser.xsltsharedsrc += '	<xsl:template match="ss:si">';
@@ -670,12 +733,12 @@ XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 		arch[fileName] = f;
 	}
 	r += "</exml:archive>";
-	if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+	if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" && arch.hasOwnProperty("xl/sharedStrings.xml")) {
 		var shared = XsltForms_browser.transformText(XsltForms_browser.saveXML(arch["xl/sharedStrings.xml"].doc), XsltForms_browser.xsltsharedsrc, true) + "|";
 		for (var fn in arch) {
 			if (arch.hasOwnProperty(fn)) {
 				f = arch[fn];
-				if (f.doc.documentElement.localName === "worksheet") {
+				if ((f.doc.documentElement.localName ? f.doc.documentElement.localName : f.doc.documentElement.baseName) === "worksheet") {
 					var inlineStr = XsltForms_browser.transformText(XsltForms_browser.saveXML(f.doc), XsltForms_browser.xsltinlinesrc, true, "shared", shared);
 					XsltForms_browser.loadXML(f.doc.documentElement, inlineStr);
 					XsltForms_browser.setMeta(f.doc.documentElement, "instance", instid);
@@ -704,12 +767,15 @@ XsltForms_browser.xml2zip = function(arch, mediatype) {
 			f.localHeaderOffset = z.length;
 			if (f.doc) {
 				var ser = XsltForms_browser.utf8encode(XsltForms_browser.saveXML(f.doc));
-				if (mediatype.indexOf("application/vnd.openxmlformats-officedocument.") === 0 && ser.indexOf(' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"') === -1) {
+				if (mediatype.indexOf("application/vnd.openxmlformats-officedocument.") === 0) {
+					var x14ac = ser.indexOf(' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"');
 					var rattr = f.doc.documentElement.attributes;
 					for (var ri = 0, li = rattr.length; ri < li; ri++) {
 						if (rattr[ri].localName === "Ignorable" && rattr[ri].namespaceURI === "http://schemas.openxmlformats.org/markup-compatibility/2006") {
-							ser = ser.substr(0, ser.indexOf(" ")) + ' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"' + ser.substr(ser.indexOf(" "));
-							break;
+							if (x14ac === -1 || x14ac > ser.indexOf("Ignorable")) {
+								ser = ser.substr(0, ser.indexOf(" ")) + ' xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"' + ser.substr(ser.indexOf(" "));
+								break;
+							}
 						}
 					}
 				}
