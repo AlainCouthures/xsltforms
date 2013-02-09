@@ -1,6 +1,6 @@
-/* Rev. 566
+/* Rev. 567
 
-Copyright (C) 2008-2012 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "566",
-	fileVersionNumber: 566,
+	fileVersion: "567",
+	fileVersionNumber: 567,
 
 	language: "navigator",
 	debugMode: false,
@@ -960,16 +960,14 @@ var XsltForms_browser = {
 
 	getWindowSize : function() {
 		var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
-		if( typeof( window.innerWidth ) === "number" ) {
-			//Non-IE
+		if (!XsltForms_browser.isIE) {
 			myWidth = document.documentElement.clientWidth;
 			myHeight = document.documentElement.clientHeight;
 			myOffsetX = document.body ? Math.max(document.documentElement.clientWidth, document.body.clientWidth) : document.documentElement.clientWidth; // body margins ?
 			myOffsetY = document.body ? Math.max(document.documentElement.clientHeight, document.body.clientHeight) : document.documentElement.clientHeight; // body margins ?
 			myScrollX = window.scrollX;
 			myScrollY = window.scrollY;
-		} else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-			//IE 6+ in 'standards compliant mode'
+		} else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
 			myWidth = document.documentElement.clientWidth;
 			myHeight = document.documentElement.clientHeight;
 			myOffsetX = Math.max(document.documentElement.clientWidth, document.body.clientWidth); // body margins ?
@@ -1635,7 +1633,11 @@ XsltForms_browser.getType = function(node) {
 		if (node.ownerElement) {
 			return node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
 		} else {
-			return node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
+			try {
+				return node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
+			} catch (e) {
+				return null;
+			}
 		}
 	}
 };
@@ -3027,6 +3029,13 @@ XsltForms_model.prototype.findInstance = function(node) {
 			if (doc === inst.doc) {
 				return inst;
 			}
+			for (var fn in inst.archive) {
+				if (inst.archive.hasOwnProperty(fn)) {
+					if (doc === inst.archive[fn].doc) {
+						return inst;
+					}
+				}
+			}
 		}
 	}
 	return null;
@@ -3333,7 +3342,25 @@ XsltForms_instance.prototype.setDocFromReq = function(req, mediatype, isReset, p
 				srcXML = XsltForms_browser.json2xml("", json, true, false);
 				break;
 			case "text/csv":
-				srcXML = XsltForms_browser.csv2xml(srcXML, ";");
+				if (XsltForms_browser.isIE) {
+					var convertResponseBodyToText = function (binary) {
+						if (!XsltForms_browser.byteMapping) {
+							var byteMapping = {};
+							for (var i = 0; i < 256; i++) {
+								for (var j = 0; j < 256; j++) {
+									byteMapping[String.fromCharCode(i + j * 256)] = String.fromCharCode(i) + String.fromCharCode(j);
+								}
+							}
+							XsltForms_browser.byteMapping = byteMapping;
+						}
+						var rawBytes = XsltForms_browser_BinaryToArray_ByteStr(binary);
+						var lastChr = XsltForms_browser_BinaryToArray_ByteStr_Last(binary);
+						return rawBytes.replace(/[\s\S]/g, function (match) { return XsltForms_browser.byteMapping[match]; }) + lastChr;
+					};
+					srcXML = XsltForms_browser.csv2xml(convertResponseBodyToText(req.responseBody), ";");
+				} else {
+					srcXML = XsltForms_browser.csv2xml(srcXML, ";");
+				}
 				break;
 			case "text/vcard":
 				srcXML = XsltForms_browser.vcard2xcard(srcXML);
@@ -3663,6 +3690,9 @@ XsltForms_browser.xml2csv = function(s, sep) {
 	var n = h;
 	var r = "";
 	sep = sep || ",";
+	var seps = sep.split(" ");
+	var fsep = seps[0];
+	var decsep = seps[1];
 	while (n) {
 		if (n.nodeType === XsltForms_nodeType.ELEMENT) {
 			var m = n.firstChild;
@@ -3671,10 +3701,12 @@ XsltForms_browser.xml2csv = function(s, sep) {
 			while (m) {
 				if (m.nodeType === XsltForms_nodeType.ELEMENT) {
 					var v = n === h ? m.getAttribute("fullname") || m.localName : m.text !== undefined ? m.text : m.textContent;
-					if (v.indexOf("\n") !== -1 || v.indexOf(sep) !== -1) {
+					if (v.indexOf("\n") !== -1 || v.indexOf(fsep) !== -1) {
 						v = '"' + v.replace(/"/gm, '""') + '"';
+					} else if (decsep && v.match(/^[\-+]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$/)) {
+						v = v.replace(/\./, decsep);
 					}
-					l += sep + v;
+					l += fsep + v;
 				}
 				m = m.nextSibling;
 			}
@@ -4855,6 +4887,9 @@ XsltForms_delete.prototype.run = function(element, ctx) {
 		var node = nodes[i];
 		XsltForms_mipbinding.nodedispose(node);
 		var repeat = XsltForms_browser.getMeta(node, "repeat");
+		if (repeat) {
+			document.getElementById(repeat).xfElement.deleteNode(node);
+		}
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
 			if (node.ownerElement) {
 				node.ownerElement.removeAttributeNS(node.namespaceURI, node.nodeName);
@@ -4863,9 +4898,6 @@ XsltForms_delete.prototype.run = function(element, ctx) {
 			}
 		} else {
 			node.parentNode.removeChild(node);
-		}
-		if (repeat) {
-			document.getElementById(repeat).xfElement.deleteNode(node);
 		}
 	}
 	if (nodes.length > 0) {
@@ -4992,10 +5024,10 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 			}
 		}
 		XsltForms_browser.debugConsole.write("insert " + node.nodeName + " in " + parent.nodeName + " at " + index + " - " + ctx.nodeName);
+		var clone = node.cloneNode(true);
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
 			XsltForms_browser.setAttributeNS(parent, node.namespaceURI, node.nodeName, node.nodeValue);
 		} else {
-			var clone = node.cloneNode(true);
 			if (parent.nodeType === XsltForms_nodeType.DOCUMENT) {
 				var first = parent.documentElement;
 				var prevmodel = XsltForms_browser.getMeta(first, "model");
@@ -5122,6 +5154,14 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				}
 				targetelt.innerHTML = subbody;
 				targetelt.hasXFElement = null;
+				var parent = targetelt.parentNode;
+				while (parent) {
+					if (parent.hasXFElement !== false) {
+						break;
+					}
+					parent.hasXFElement = null;
+					parent = parent.parentNode;
+				}
 				var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
 				scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
 				scriptelt.setAttribute("type", "text/javascript");
@@ -6138,7 +6178,9 @@ XsltForms_input.prototype.initInput = function(type) {
 	} else if (input.nodeName.toLowerCase() === "textarea") {
 		this.type = type;
 		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
-			input.id = this.element.id + "_textarea";
+			if (!input.id) {
+				input.id = this.element.id + "_textarea";
+			}
 			XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
 			if (!XsltForms_globals.tinyMCEinit) {
 				var initinfo;
@@ -6231,9 +6273,11 @@ XsltForms_input.prototype.setValue = function(value) {
 		this.input.checked = value === "true";
 	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce") { // && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
 		this.input.value = value || "";
-		//tinymce.get(this.input.id).setContent(value);
-		//this.input.value = tinymce.get(this.input.id).getContent() || "";
-		//XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		//if (tinymce.get(this.input.id)) {
+		//	tinymce.get(this.input.id).setContent(value);
+		//	this.input.value = tinymce.get(this.input.id).getContent() || "";
+		//	XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		//}
 		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";
@@ -9507,10 +9551,12 @@ XsltForms_listener.prototype.attach = function() {
 		
 
 XsltForms_listener.prototype.detach = function() {
-	for (var i = 0, l = this.observer.listeners.length; i < l; i++) {
-		if (this.observer.listeners[i] === this) {
-			this.observer.listeners.splice(i, 1);
-			break;
+	if( this.observer.listeners ) {
+		for (var i = 0, l = this.observer.listeners.length; i < l; i++) {
+			if (this.observer.listeners[i] === this) {
+				this.observer.listeners.splice(i, 1);
+				break;
+			}
 		}
 	}
 	XsltForms_browser.events.detach(this.observer, this.evtName, this.callback, this.phase === "capture");

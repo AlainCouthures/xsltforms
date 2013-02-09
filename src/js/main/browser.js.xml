@@ -195,16 +195,14 @@ var XsltForms_browser = {
 <![CDATA[
 	getWindowSize : function() {
 		var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
-		if( typeof( window.innerWidth ) === "number" ) {
-			//Non-IE
+		if (!XsltForms_browser.isIE) {
 			myWidth = document.documentElement.clientWidth;
 			myHeight = document.documentElement.clientHeight;
 			myOffsetX = document.body ? Math.max(document.documentElement.clientWidth, document.body.clientWidth) : document.documentElement.clientWidth; // body margins ?
 			myOffsetY = document.body ? Math.max(document.documentElement.clientHeight, document.body.clientHeight) : document.documentElement.clientHeight; // body margins ?
 			myScrollX = window.scrollX;
 			myScrollY = window.scrollY;
-		} else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-			//IE 6+ in 'standards compliant mode'
+		} else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
 			myWidth = document.documentElement.clientWidth;
 			myHeight = document.documentElement.clientHeight;
 			myOffsetX = Math.max(document.documentElement.clientWidth, document.body.clientWidth); // body margins ?
@@ -878,7 +876,11 @@ XsltForms_browser.getType = function(node) {
 		if (node.ownerElement) {
 			return node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
 		} else {
-			return node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
+			try {
+				return node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_type");
+			} catch (e) {
+				return null;
+			}
 		}
 	}
 };

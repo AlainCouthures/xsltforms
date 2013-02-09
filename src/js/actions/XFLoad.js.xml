@@ -116,6 +116,14 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				}
 				targetelt.innerHTML = subbody;
 				targetelt.hasXFElement = null;
+				var parent = targetelt.parentNode;
+				while (parent) {
+					if (parent.hasXFElement !== false) {
+						break;
+					}
+					parent.hasXFElement = null;
+					parent = parent.parentNode;
+				}
 				var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
 				scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
 				scriptelt.setAttribute("type", "text/javascript");

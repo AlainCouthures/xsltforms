@@ -128,10 +128,12 @@ XsltForms_listener.prototype.attach = function() {
 * '''detach''' method : detaches the event according to the current phase</cm:wiki>
 <![CDATA[
 XsltForms_listener.prototype.detach = function() {
-	for (var i = 0, l = this.observer.listeners.length; i < l; i++) {
-		if (this.observer.listeners[i] === this) {
-			this.observer.listeners.splice(i, 1);
-			break;
+	if( this.observer.listeners ) {
+		for (var i = 0, l = this.observer.listeners.length; i < l; i++) {
+			if (this.observer.listeners[i] === this) {
+				this.observer.listeners.splice(i, 1);
+				break;
+			}
 		}
 	}
 	XsltForms_browser.events.detach(this.observer, this.evtName, this.callback, this.phase === "capture");

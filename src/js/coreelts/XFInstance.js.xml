@@ -226,7 +226,25 @@ XsltForms_instance.prototype.setDocFromReq = function(req, mediatype, isReset, p
 				srcXML = XsltForms_browser.json2xml("", json, true, false);
 				break;
 			case "text/csv":
-				srcXML = XsltForms_browser.csv2xml(srcXML, ";");
+				if (XsltForms_browser.isIE) {
+					var convertResponseBodyToText = function (binary) {
+						if (!XsltForms_browser.byteMapping) {
+							var byteMapping = {};
+							for (var i = 0; i < 256; i++) {
+								for (var j = 0; j < 256; j++) {
+									byteMapping[String.fromCharCode(i + j * 256)] = String.fromCharCode(i) + String.fromCharCode(j);
+								}
+							}
+							XsltForms_browser.byteMapping = byteMapping;
+						}
+						var rawBytes = XsltForms_browser_BinaryToArray_ByteStr(binary);
+						var lastChr = XsltForms_browser_BinaryToArray_ByteStr_Last(binary);
+						return rawBytes.replace(/[\s\S]/g, function (match) { return XsltForms_browser.byteMapping[match]; }) + lastChr;
+					};
+					srcXML = XsltForms_browser.csv2xml(convertResponseBodyToText(req.responseBody), ";");
+				} else {
+					srcXML = XsltForms_browser.csv2xml(srcXML, ";");
+				}
 				break;
 			case "text/vcard":
 				srcXML = XsltForms_browser.vcard2xcard(srcXML);
@@ -560,6 +578,9 @@ XsltForms_browser.xml2csv = function(s, sep) {
 	var n = h;
 	var r = "";
 	sep = sep || ",";
+	var seps = sep.split(" ");
+	var fsep = seps[0];
+	var decsep = seps[1];
 	while (n) {
 		if (n.nodeType === XsltForms_nodeType.ELEMENT) {
 			var m = n.firstChild;
@@ -568,10 +589,12 @@ XsltForms_browser.xml2csv = function(s, sep) {
 			while (m) {
 				if (m.nodeType === XsltForms_nodeType.ELEMENT) {
 					var v = n === h ? m.getAttribute("fullname") || m.localName : m.text !== undefined ? m.text : m.textContent;
-					if (v.indexOf("\n") !== -1 || v.indexOf(sep) !== -1) {
+					if (v.indexOf("\n") !== -1 || v.indexOf(fsep) !== -1) {
 						v = '"' + v.replace(/"/gm, '""') + '"';
+					} else if (decsep && v.match(/^[\-+]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$/)) {
+						v = v.replace(/\./, decsep);
 					}
-					l += sep + v;
+					l += fsep + v;
 				}
 				m = m.nextSibling;
 			}

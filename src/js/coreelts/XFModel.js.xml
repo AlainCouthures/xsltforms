@@ -191,6 +191,13 @@ XsltForms_model.prototype.findInstance = function(node) {
 			if (doc === inst.doc) {
 				return inst;
 			}
+			for (var fn in inst.archive) {
+				if (inst.archive.hasOwnProperty(fn)) {
+					if (doc === inst.archive[fn].doc) {
+						return inst;
+					}
+				}
+			}
 		}
 	}
 	return null;

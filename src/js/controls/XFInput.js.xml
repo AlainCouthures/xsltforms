@@ -87,7 +87,9 @@ XsltForms_input.prototype.initInput = function(type) {
 	} else if (input.nodeName.toLowerCase() === "textarea") {
 		this.type = type;
 		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
-			input.id = this.element.id + "_textarea";
+			if (!input.id) {
+				input.id = this.element.id + "_textarea";
+			}
 			XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
 			if (!XsltForms_globals.tinyMCEinit) {
 				var initinfo;
@@ -181,9 +183,11 @@ XsltForms_input.prototype.setValue = function(value) {
 		this.input.checked = value === "true";
 	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce") { // && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
 		this.input.value = value || "";
-		//tinymce.get(this.input.id).setContent(value);
-		//this.input.value = tinymce.get(this.input.id).getContent() || "";
-		//XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		//if (tinymce.get(this.input.id)) {
+		//	tinymce.get(this.input.id).setContent(value);
+		//	this.input.value = tinymce.get(this.input.id).getContent() || "";
+		//	XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		//}
 		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";
