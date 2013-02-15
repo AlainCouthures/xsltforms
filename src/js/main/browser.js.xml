@@ -232,7 +232,7 @@ if (XsltForms_browser.isIE) {
 	} catch(e) {
 		XsltForms_browser.MSXMLver = "3.0";
 	}
-    document.write("<script type='text/vbscript'>\r\nFunction XsltForms_browser_BinaryToArray_ByteStr(Binary)\r\nXsltForms_browser_BinaryToArray_ByteStr = CStr(Binary)\r\nEnd Function\r\nFunction XsltForms_browser_BinaryToArray_ByteStr_Last(Binary)\r\nDim lastIndex\r\nlastIndex = LenB(Binary)\r\nif lastIndex mod 2 Then\r\nXsltForms_browser_BinaryToArray_ByteStr_Last = Chr(AscB(MidB(Binary,lastIndex,1)))\r\nElse\r\nXsltForms_browser_BinaryToArray_ByteStr_Last = "+'""'+"\r\nEnd If\r\nEnd Function\r\n</script>\r\n");
+    document.write("<script type='text/vbscript'>Function XsltForms_browser_BinaryToArray_ByteStr(Binary)\r\nXsltForms_browser_BinaryToArray_ByteStr = CStr(Binary)\r\nEnd Function\r\nFunction XsltForms_browser_BinaryToArray_ByteStr_Last(Binary)\r\nDim lastIndex\r\nlastIndex = LenB(Binary)\r\nif lastIndex mod 2 Then\r\nXsltForms_browser_BinaryToArray_ByteStr_Last = Chr(AscB(MidB(Binary,lastIndex,1)))\r\nElse\r\nXsltForms_browser_BinaryToArray_ByteStr_Last = "+'""'+"\r\nEnd If\r\nEnd Function\r\n</script>\r\n");
 }
 if (!XsltForms_browser.isIE) {
 	XsltForms_browser.openRequest = function(method, uri, async) {
@@ -263,6 +263,20 @@ if (!XsltForms_browser.isIE) {
 		req.open(method, XsltForms_browser.constructURI(uri), async);
 		return req;
 	};
+	XsltForms_browser.StringToBinary = function(s) {
+		var b = function(v) {
+			return String.fromCharCode(v > 9 ? v + 55 : v + 48); 
+		}
+		var s2 = "";
+		for (var i = 0, l = s.length; i < l; i++) {
+			s2 += b((s.charCodeAt(i) & 0xF0) >> 4) + b(s.charCodeAt(i) & 0xF);
+		}
+		var doc = new ActiveXObject("Msxml2.DOMDocument." + XsltForms_browser.MSXMLver);
+		var elt = doc.createElement("dummy");
+		elt.dataType = "bin.hex";
+		elt.text = s2;
+		return elt.nodeTypedValue;
+	}
 } else {
 	throw new Error("This browser does not support XHRs(Ajax)! \n Enable Javascript or ActiveX controls (on IE) or lower security restrictions.");
 }
