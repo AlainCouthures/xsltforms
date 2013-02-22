@@ -5,28 +5,12 @@ $k = 0;
 while ($data = fread($inputdata, 1024)) {
 	$s .= $data;
 	$k++;
-	if ($k == 20) {
+	if ($k == 200) {
 		header("HTTP/1.0 403 Forbidden");
 		exit();
 	}
 }
 fclose($inputdata);
-$r = "";
-for ($i = 0; $i < strlen($s);) {
-	$c = ord($s[$i]);
-	if ($c < 128) {
-		$r .= chr($c);
-		$i++;
-	} else {
-		if(($c > 191) && ($c < 224)) {
-			$r .= chr((($c & 31) << 6) | (ord($s[$i+1]) & 63));
-			$i += 2;
-		} else {
-			$r .= chr((($c & 15) << 12) | ((ord($s[$i+1]) & 63) << 6) | (ord($s[$i+2]) & 63));
-			$i += 3;
-		}
-	}
-}
 $dir = opendir("c:/www/zip");
 $files = array();
 while ($file = readdir($dir)) {
@@ -48,7 +32,7 @@ parse_str($_SERVER['QUERY_STRING'], $param);
 $sname = uniqid()."-".$param['filename'];
 $name = "/zip/".$sname;
 $outputdata = fopen("c:/www".$name, "w");
-fwrite($outputdata, $r);
+fwrite($outputdata, $s);
 fclose($outputdata);
 ?>
 <html>

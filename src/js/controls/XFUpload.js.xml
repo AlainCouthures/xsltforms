@@ -56,6 +56,8 @@ function XsltForms_upload(subform, id, valoff, binding, incremental, filename, m
 
 XsltForms_upload.prototype = new XsltForms_control();
 
+XsltForms_upload.contents = {};
+
 ]]>
 		<cm:wiki>
 * '''clone''' method : creates a new upload with the given id</cm:wiki>
@@ -103,7 +105,7 @@ XsltForms_upload.prototype.blur = function(target) {
 * '''directclick'' method : directly manages the click event</cm:wiki>
 <![CDATA[
 XsltForms_upload.prototype.directclick = function() {
-	if (window.FileReader || this.type.name === "anyURI") {
+	if (window.FileReader) {
 		return true;
 	}
 	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
@@ -111,7 +113,7 @@ XsltForms_upload.prototype.directclick = function() {
 		throw "Error";
 	} else {
 		var filename = "unselected";
-		this.value = XsltForms_browser.readFile("", "ISO-8859-1", this.type.name, "XSLTForms Java Upload");
+		var content = XsltForms_browser.readFile("", "ISO-8859-1", this.type.name, "XSLTForms Java Upload");
 		if (document.applets.xsltforms) {
 			filename = document.applets.xsltforms.lastChosenFileName;
 		} else {
@@ -120,6 +122,12 @@ XsltForms_upload.prototype.directclick = function() {
 			}
 		}
 		filename = filename.split('\\').pop();
+		if (this.type.name === "anyURI") {
+			this.value = "file://" + filename + "?id=" + this.element.id;
+			XsltForms_upload.contents[this.element.id] = content;
+		} else {
+			this.value = content;
+		}
 		this.input.value = filename;
 		if (this.incremental) {
 			this.valueChanged(this.value);
@@ -150,67 +158,72 @@ XsltForms_upload.prototype.change = function() {
 		throw "Error";
 	} else {
 		var filename = "unselected";
-		if (this.type.name === "anyURI") {
-			filename = this.input.value;
-			filename = filename.split('\\').pop();
-			this.value = filename;
-			if (this.incremental) {
-				this.valueChanged(filename);
+		var content = "";
+		var xf = this;
+		try {
+			var fr = new FileReader();
+			var file = xf.input.files[0];
+			if (!file) {
+				alert("No file!?!");
+				return;
 			}
-		} else {
-			var value = "";
-			var xf = this;
-			try {
-				var fr = new FileReader();
-				var file = xf.input.files[0];
-				if( !file ) {
-					alert("No file!?!");
-					return;
-				}
-				filename = file.name;
-				if( xf.type.name === "hexBinary" ) {
-					fr.onload = function(e) {
-						var bytes = new Uint8Array(e.target.result);
-						for( var i = 0, len = bytes.length; i < len; i++) {
-							var c = bytes[i] >> 4;
-							var d = bytes[i] & 0xF;
-							value += String.fromCharCode(c > 9 ? c + 55 : c + 48, d > 9 ? d + 55 : d + 48);
-						}
-						xf.value = value;
-						if (xf.incremental) {
-							xf.valueChanged(value);
-						}
+			filename = file.name;
+			if (xf.type.name === "hexBinary") {
+				fr.onload = function(e) {
+					var bytes = new Uint8Array(e.target.result);
+					for( var i = 0, len = bytes.length; i < len; i++) {
+						var c = bytes[i] >> 4;
+						var d = bytes[i] & 0xF;
+						content += String.fromCharCode(c > 9 ? c + 55 : c + 48, d > 9 ? d + 55 : d + 48);
 					}
-				} else {
-					fr.onload = function(e) {
-						var bytes = new Uint8Array(e.target.result);
-						var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-						var len = bytes.length;
-						bytes[len] = bytes[len+1] = 0;
-						for( var i = 0; i < len; i += 3) {
-							var c1 = bytes[i] >> 2;
-							var c2 = ((bytes[i] & 3) << 4) | (bytes[i+1] >> 4);
-							var c3 = ((bytes[i+1] & 15) << 2) | (bytes[i+2] >> 6);
-							var c4 = bytes[i+2] & 63;
-							if( i === len - 1) {
-								c3 = c4 = 64;
-							} else if( i === len -2) {
-								c4 = 64;
-							}
-							value += b64.charAt(c1) + b64.charAt(c2) + b64.charAt(c3) + b64.charAt(c4);
-						}
-						xf.value = value;
-						if (xf.incremental) {
-							xf.valueChanged(value);
-						}
+					xf.value = content;
+					if (xf.incremental) {
+						xf.valueChanged(content);
 					}
-				}
-				fr.readAsArrayBuffer(file);
-			} catch (e) {
-				xf.value = XsltForms_browser.readFile(xf.input.value, "ISO-8859-1", xf.type.name, "");
-				if (xf.incremental) {
-					xf.valueChanged(xf.value);
-				}
+				};
+			} else if (xf.type.name === "base64Binary") {
+				fr.onload = function(e) {
+					var bytes = new Uint8Array(e.target.result);
+					var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+					var len = bytes.length;
+					bytes[len] = bytes[len+1] = 0;
+					for( var i = 0; i < len; i += 3) {
+						var c1 = bytes[i] >> 2;
+						var c2 = ((bytes[i] & 3) << 4) | (bytes[i+1] >> 4);
+						var c3 = ((bytes[i+1] & 15) << 2) | (bytes[i+2] >> 6);
+						var c4 = bytes[i+2] & 63;
+						if( i === len - 1) {
+							c3 = c4 = 64;
+						} else if( i === len -2) {
+							c4 = 64;
+						}
+						content += b64.charAt(c1) + b64.charAt(c2) + b64.charAt(c3) + b64.charAt(c4);
+					}
+					xf.value = content;
+					if (xf.incremental) {
+						xf.valueChanged(content);
+					}
+				};
+			} else {
+				fr.onload = function(e) {
+					XsltForms_upload.contents[xf.element.id] = e.target.result;
+					xf.value = "file://" + filename + "?id=" + xf.element.id;
+					if (xf.incremental) {
+						xf.valueChanged(xf.value);
+					}
+				};
+			}
+			fr.readAsArrayBuffer(file);
+		} catch (e) {
+			content = XsltForms_browser.readFile(xf.input.value, "ISO-8859-1", xf.type.name, "");
+			if (xf.type.name === "anyURI") {
+				xf.value = "file://" + filename + "?id=" + xf.element.id;
+				XsltForms_upload.contents[xf.element.id] = content;
+			} else {
+				xf.value = content;
+			}
+			if (xf.incremental) {
+				xf.valueChanged(xf.value);
 			}
 		}
 		if(this.filename.evaluate) {

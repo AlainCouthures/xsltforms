@@ -5,7 +5,7 @@ $k = 0;
 while ($data = fread($inputdata, 1024)) {
 	$s .= $data;
 	$k++;
-	if ($k == 20) {
+	if ($k == 200) {
 		header("HTTP/1.0 403 Forbidden");
 		exit();
 	}
