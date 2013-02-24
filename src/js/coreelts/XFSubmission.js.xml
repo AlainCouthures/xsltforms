@@ -526,35 +526,38 @@ XsltForms_submission.SOAP_ = "application/soap+xml";
 * '''requesteventlog''' method : Prepares the event-context for a request.</cm:wiki>
 <![CDATA[
 XsltForms_submission.requesteventlog = function(evcontext, req) {
-	evcontext["response-status-code"] = req.status;
-	evcontext["response-reason-phrase"] = req.statusText;
-	evcontext["response-headers"] = [];
-	var rheads = req.getAllResponseHeaders();
-	var rheaderselts = "";
-	if (rheads) {
-		rheads = rheads.replace(/\r/, "").split("\n");
-		for (var i = 0, len = rheads.length; i < len; i++) {
-			var colon = rheads[i].indexOf(":");
-			if (colon !== -1) {
-				var name = rheads[i].substring(0, colon).replace(/^\s+|\s+$/, "");
-				var value = rheads[i].substring(colon+1).replace(/^\s+|\s+$/, "");
-				rheaderselts += "<header><name>"+XsltForms_browser.escape(name)+"</name><value>"+XsltForms_browser.escape(value)+"</value></header>";
+	try {
+		evcontext["response-status-code"] = req.status;
+		evcontext["response-reason-phrase"] = req.statusText;
+		evcontext["response-headers"] = [];
+		var rheads = req.getAllResponseHeaders();
+		var rheaderselts = "";
+		if (rheads) {
+			rheads = rheads.replace(/\r/, "").split("\n");
+			for (var i = 0, len = rheads.length; i < len; i++) {
+				var colon = rheads[i].indexOf(":");
+				if (colon !== -1) {
+					var name = rheads[i].substring(0, colon).replace(/^\s+|\s+$/, "");
+					var value = rheads[i].substring(colon+1).replace(/^\s+|\s+$/, "");
+					rheaderselts += "<header><name>"+XsltForms_browser.escape(name)+"</name><value>"+XsltForms_browser.escape(value)+"</value></header>";
+				}
 			}
 		}
-	}
-	evcontext.rheadsdoc = XsltForms_browser.createXMLDocument("<data>"+rheaderselts+"</data>");
-	if (evcontext.rheadsdoc.documentElement.firstChild) {
-		var rh = evcontext.rheadsdoc.documentElement.firstChild;
-		evcontext["response-headers"] = [rh];
-		while (rh.nextSibling) {
-			rh = rh.nextSibling;
-			evcontext["response-headers"].push(rh);
+		evcontext.rheadsdoc = XsltForms_browser.createXMLDocument("<data>"+rheaderselts+"</data>");
+		if (evcontext.rheadsdoc.documentElement.firstChild) {
+			var rh = evcontext.rheadsdoc.documentElement.firstChild;
+			evcontext["response-headers"] = [rh];
+			while (rh.nextSibling) {
+				rh = rh.nextSibling;
+				evcontext["response-headers"].push(rh);
+			}
 		}
-	}
-	if (req.responseXML) {
-		evcontext["response-body"] = [XsltForms_browser.createXMLDocument(req.responseText)];
-	} else {
-		evcontext["response-body"] = req.responseText || "";
+		if (req.responseXML) {
+			evcontext["response-body"] = [XsltForms_browser.createXMLDocument(req.responseText)];
+		} else {
+			evcontext["response-body"] = req.responseText || "";
+		}
+	} catch (e) {
 	}
 };
 ]]>

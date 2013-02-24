@@ -124,10 +124,8 @@ var XsltForms_browser = {
 			alert("File not found: " + uri);
 		}
 		if (req.status === 200 || req.status === 0) {
-			if (req.responseXML.xml === "") {
-				req.responseXML.loadXML(req.responseText);
-			}
-			var n = req.responseXML.documentElement;
+			var ndoc = XsltForms_browser.createXMLDocument(req.responseText);
+			var n = ndoc.documentElement;
 			while (n) {
 				if (n.nodeName === "properties") {
 					break;
@@ -253,12 +251,16 @@ if (!XsltForms_browser.isIE) {
 	XsltForms_browser.openRequest = function(method, uri, async) {
 		var req;
 		try {
-			req = new ActiveXObject("Msxml2.XMLHTTP." + XsltForms_browser.MSXMLver); 
+			req = new XMLHttpRequest();
 		} catch (e0) {
 			try {
-				req = new ActiveXObject("Msxml2.XMLHTTP");
-			} catch (e) {
-				throw new Error("This browser does not support XHRs(Ajax)! \n Cause: " + (e.message || e.description || e) + " \n Enable Javascript or ActiveX controls (on IE) or lower security restrictions.");
+				req = new ActiveXObject("Msxml2.XMLHTTP." + XsltForms_browser.MSXMLver); 
+			} catch (e1) {
+				try {
+					req = new ActiveXObject("Msxml2.XMLHTTP");
+				} catch (e) {
+					throw new Error("This browser does not support XHRs(Ajax)! \n Cause: " + (e.message || e.description || e) + " \n Enable Javascript or ActiveX controls (on IE) or lower security restrictions.");
+				}
 			}
 		}
 		req.open(method, XsltForms_browser.constructURI(uri), async);
@@ -708,7 +710,13 @@ if (XsltForms_browser.isIE) {
 					var boundary = "xsltformsrev" + XsltForms_globals.fileVersionNumber;
 					z = "--" + boundary + "\r\nContent-Type: application/xml; charset=UTF-8\r\nContent-ID: <xsltforms_main>\r\n\r\n" + z + "\r\n--" + boundary + "\r\n";
 					for (var icid = 0, lcid = cids.length; icid < lcid; icid++) {
-						z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n" + XsltForms_upload.contents[cids[icid]] + "\r\n--" + boundary + "\r\n";
+						z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n";
+						if (XsltForms_upload.contents[cids[icid]] instanceof ArrayBuffer) {
+							z += String.fromCharCode.apply(null, new Uint8Array(XsltForms_upload.contents[cids[icid]]));
+						} else {
+							z += XsltForms_upload.contents[cids[icid]];
+						}
+						z += "\r\n--" + boundary + "\r\n";
 					}
 					var data = [];
 					for( var di = 0, dl = z.length; di < dl; di++) {

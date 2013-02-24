@@ -132,7 +132,7 @@ XsltForms_upload.prototype.directclick = function() {
 		if (this.incremental) {
 			this.valueChanged(this.value);
 		}
-		if(this.filename.evaluate) {
+		if(this.filename && this.filename.evaluate) {
 			var filenameref = this.filename.evaluate(this.element.node)[0];
 			if (filenameref) {
 				XsltForms_globals.openAction();
@@ -226,7 +226,7 @@ XsltForms_upload.prototype.change = function() {
 				xf.valueChanged(xf.value);
 			}
 		}
-		if(this.filename.evaluate) {
+		if(this.filename && this.filename.evaluate) {
 			var filenameref = this.filename.evaluate(this.element.node)[0];
 			if (filenameref) {
 				XsltForms_globals.openAction();
