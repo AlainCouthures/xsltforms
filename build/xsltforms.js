@@ -1,4 +1,4 @@
-/* Rev. 569
+/* Rev. 571
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "569",
-	fileVersionNumber: 569,
+	fileVersion: "571",
+	fileVersionNumber: 571,
 
 	language: "navigator",
 	debugMode: false,
@@ -1469,11 +1469,14 @@ if (XsltForms_browser.isIE) {
 					for (var icid = 0, lcid = cids.length; icid < lcid; icid++) {
 						z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n";
 						if (XsltForms_upload.contents[cids[icid]] instanceof ArrayBuffer) {
-							z += String.fromCharCode.apply(null, new Uint8Array(XsltForms_upload.contents[cids[icid]]));
+							var zc0 = new Uint8Array(XsltForms_upload.contents[cids[icid]]);
+							for (var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
+								z += String.fromCharCode(zc0[zci]);
+							}
 						} else {
 							z += XsltForms_upload.contents[cids[icid]];
 						}
-						z += "\r\n--" + boundary + "\r\n";
+						z += "\r\n--" + boundary + (icid === lcid-1 ? "--\r\n" : "\r\n");
 					}
 					var data = [];
 					for( var di = 0, dl = z.length; di < dl; di++) {
@@ -1671,7 +1674,7 @@ if (XsltForms_browser.isIE) {
 							var zc = "";
 							if (XsltForms_browser.isSafari) {
 								var zc0 = XsltForms_upload.contents[cids[icid]];
-								for( var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
+								for (var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
 									var zcc = zc0.charCodeAt(zci);
 									if (zcc < 128) {
 										zc += String.fromCharCode(zcc);
@@ -1684,9 +1687,12 @@ if (XsltForms_browser.isIE) {
 									}
 								}
 							} else {
-								zc = String.fromCharCode.apply(null, new Uint8Array(XsltForms_upload.contents[cids[icid]]));
+								var zc0 = new Uint8Array(XsltForms_upload.contents[cids[icid]]);
+								for (var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
+									zc += String.fromCharCode(zc0[zci]);
+								}
 							}
-							z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n" + zc + "\r\n--" + boundary + "\r\n";
+							z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n" + zc + "\r\n--" + boundary +  (icid === lcid-1 ? "--\r\n" : "\r\n");
 						}
 						var data = [];
 						for( var di = 0, dl = z.length; di < dl; di++) {
@@ -4594,7 +4600,7 @@ XsltForms_submission.prototype.submit = function() {
 			var req = null;
 			try {
 				evcontext["resource-uri"] = action;
-				req = XsltForms_browser.openRequest(method, action, !synchr);
+				req = XsltForms_browser.openRequest(method.split("-").pop(), action, !synchr);
 				var func = function() {
 					if (!synchr && req.readyState !== 4) {
 						return;
@@ -4674,7 +4680,7 @@ XsltForms_submission.prototype.submit = function() {
 				var media = this.mediatype;
 				var mt;
 				if (method === "multipart-post") {
-					mt = "multipart/related; boundary=xsltformsrev" + XsltForms_globals.fileVersionNumber + '; type=application/xml; start="<xsltforms_main>"';
+					mt = "multipart/related; boundary=xsltformsrev" + XsltForms_globals.fileVersionNumber + '; type="application/xml"; start="<xsltforms_main>"';
 				} else {
 					mt = (media || "application/xml") + (this.charset? ";charset=" + this.charset : "");
 				}

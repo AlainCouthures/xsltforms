@@ -333,7 +333,7 @@ XsltForms_submission.prototype.submit = function() {
 			var req = null;
 			try {
 				evcontext["resource-uri"] = action;
-				req = XsltForms_browser.openRequest(method, action, !synchr);
+				req = XsltForms_browser.openRequest(method.split("-").pop(), action, !synchr);
 				var func = function() {
 					if (!synchr && req.readyState !== 4) {
 						return;
@@ -413,7 +413,7 @@ XsltForms_submission.prototype.submit = function() {
 				var media = this.mediatype;
 				var mt;
 				if (method === "multipart-post") {
-					mt = "multipart/related; boundary=xsltformsrev" + XsltForms_globals.fileVersionNumber + '; type=application/xml; start="<xsltforms_main>"';
+					mt = "multipart/related; boundary=xsltformsrev" + XsltForms_globals.fileVersionNumber + '; type="application/xml"; start="<xsltforms_main>"';
 				} else {
 					mt = (media || "application/xml") + (this.charset? ";charset=" + this.charset : "");
 				}

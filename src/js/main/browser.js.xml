@@ -712,11 +712,14 @@ if (XsltForms_browser.isIE) {
 					for (var icid = 0, lcid = cids.length; icid < lcid; icid++) {
 						z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n";
 						if (XsltForms_upload.contents[cids[icid]] instanceof ArrayBuffer) {
-							z += String.fromCharCode.apply(null, new Uint8Array(XsltForms_upload.contents[cids[icid]]));
+							var zc0 = new Uint8Array(XsltForms_upload.contents[cids[icid]]);
+							for (var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
+								z += String.fromCharCode(zc0[zci]);
+							}
 						} else {
 							z += XsltForms_upload.contents[cids[icid]];
 						}
-						z += "\r\n--" + boundary + "\r\n";
+						z += "\r\n--" + boundary + (icid === lcid-1 ? "--\r\n" : "\r\n");
 					}
 					var data = [];
 					for( var di = 0, dl = z.length; di < dl; di++) {
@@ -914,7 +917,7 @@ if (XsltForms_browser.isIE) {
 							var zc = "";
 							if (XsltForms_browser.isSafari) {
 								var zc0 = XsltForms_upload.contents[cids[icid]];
-								for( var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
+								for (var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
 									var zcc = zc0.charCodeAt(zci);
 									if (zcc < 128) {
 										zc += String.fromCharCode(zcc);
@@ -927,9 +930,12 @@ if (XsltForms_browser.isIE) {
 									}
 								}
 							} else {
-								zc = String.fromCharCode.apply(null, new Uint8Array(XsltForms_upload.contents[cids[icid]]));
+								var zc0 = new Uint8Array(XsltForms_upload.contents[cids[icid]]);
+								for (var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
+									zc += String.fromCharCode(zc0[zci]);
+								}
 							}
-							z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n" + zc + "\r\n--" + boundary + "\r\n";
+							z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n" + zc + "\r\n--" + boundary +  (icid === lcid-1 ? "--\r\n" : "\r\n");
 						}
 						var data = [];
 						for( var di = 0, dl = z.length; di < dl; di++) {
