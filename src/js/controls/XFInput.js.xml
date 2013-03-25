@@ -67,6 +67,13 @@ XsltForms_input.prototype.clone = function(id) {
 * '''dispose''' method : clears properties of this element and calls the parent dispose() method</cm:wiki>
 <![CDATA[
 XsltForms_input.prototype.dispose = function() {
+	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
+		try {
+		tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+		} catch(e) {
+			alert(e);
+		}
+	}
 	this.cell = null;
 	this.calendarButton = null;
 	XsltForms_globals.counters.input--;
@@ -87,9 +94,7 @@ XsltForms_input.prototype.initInput = function(type) {
 	} else if (input.nodeName.toLowerCase() === "textarea") {
 		this.type = type;
 		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
-			if (!input.id) {
-				input.id = this.element.id + "_textarea";
-			}
+			input.id = this.element.id + "_textarea";
 			XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
 			if (!XsltForms_globals.tinyMCEinit) {
 				var initinfo;
@@ -181,13 +186,13 @@ XsltForms_input.prototype.setValue = function(value) {
 //	}
 	if (type["class"] === "boolean") {
 		this.input.checked = value === "true";
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce") { // && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
 		this.input.value = value || "";
-		//if (tinymce.get(this.input.id)) {
-		//	tinymce.get(this.input.id).setContent(value);
-		//	this.input.value = tinymce.get(this.input.id).getContent() || "";
-		//	XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
-		//}
+		if (tinymce.get(this.input.id)) {
+			tinymce.get(this.input.id).setContent(value);
+			this.input.value = tinymce.get(this.input.id).getContent() || "";
+			XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		}
 		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";

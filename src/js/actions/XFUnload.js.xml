@@ -44,7 +44,9 @@ XsltForms_unload.prototype = new XsltForms_abstractAction();
 XsltForms_unload.prototype.run = function(element, ctx) {
 	var targetid = this.targetid || this.subform.eltid;
 	var targetelt = XsltForms_idManager.find(targetid);
-	targetelt.xfSubform.dispose();
+	if (targetelt.xfSubform) {
+		targetelt.xfSubform.dispose();
+	}
 	targetelt.xfSubform = null;
 	if (targetelt.xfElement) {
 		targetelt = targetelt.children[targetelt.children.length - 1];
@@ -52,6 +54,7 @@ XsltForms_unload.prototype.run = function(element, ctx) {
 	targetelt.innerHTML = "";
 	targetelt.hasXFElement = null;
 	XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", false);
+	XsltForms_browser.debugConsole.write("unload-done");
 };
 ]]>
 		<cm:wiki>

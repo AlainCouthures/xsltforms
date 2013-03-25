@@ -373,9 +373,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:apply-templates select="xhtml:body/node() | body/node()">
 						<xsl:with-param name="parentworkid" select="$bodyworkid"/>
 					</xsl:apply-templates>
+					<xsl:comment>XsltForms_MagicSeparator</xsl:comment>
 					<div id="xsltforms_console">&#160;<xsl:text/></div>
 					<div id="statusPanel"><xsl:value-of select="$script/config/properties/status"/>&#160;<xsl:text/></div>
-					<xsl:comment>XsltForms_MagicSeparator</xsl:comment>
 					<xsl:if test="$xsltforms_chain = 'true'">
 						<script id="xsltforms-chain" type="text/javascript">
 							<xsl:text>if (XsltForms_browser.isMozilla) {</xsl:text>

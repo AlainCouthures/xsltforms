@@ -96,7 +96,7 @@ XsltForms_subform.prototype.dispose = function() {
 	}
 	this.xpaths = null;
 	this.binds = null;
-	XsltForms_globals.dispose(this.eltid);
+	XsltForms_globals.dispose(document.getElementById(this.eltid));
 	XsltForms_subform.subforms[this.id] = null;
 	var parentform = this.subform;
 	if (parentform) {
