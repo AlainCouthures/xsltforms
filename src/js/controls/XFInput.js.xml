@@ -307,6 +307,14 @@ XsltForms_input.keyDownActivate = function(a) {
 <![CDATA[
 XsltForms_input.keyPressActivate = function(a) {
 	this.keyPressCode = a.keyCode;
+	if (a.keyCode === 13) {
+		if (a.stopPropagation) {
+			a.stopPropagation();
+			a.preventDefault();
+		} else {
+			a.cancelBubble = true;
+		}
+	}
 };
 
 ]]>

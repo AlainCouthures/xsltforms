@@ -1362,7 +1362,7 @@ XsltForms_browser.debugConsole = {
 * '''clear''' method : clears the Debug Console</cm:wiki>
 <![CDATA[
 	clear : function() {
-		if (false && this.isOpen()) {
+		if (this.isOpen()) {
 			while (this.element_.firstChild) {
 				this.element_.removeChild(this.element_.firstChild);
 			}

@@ -688,13 +688,13 @@ var XsltForms_globals = {
 		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console") {
 			return;
 		}
-		element.listeners = null;
-		element.node = null;
-		element.hasXFElement = null;
 		var xf = element.xfElement;
 		if (xf && xf.dispose !== undefined) {
 			xf.dispose();
 		}
+		element.listeners = null;
+		element.node = null;
+		element.hasXFElement = null;
 		var childs = element.childNodes;
 		for (var i = 0; i < childs.length; i++) {
 			this.dispose(childs[i]);

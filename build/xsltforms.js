@@ -1,4 +1,4 @@
-/* Rev. 572
+/* Rev. 573
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "572",
-	fileVersionNumber: 572,
+	fileVersion: "573",
+	fileVersionNumber: 573,
 
 	language: "navigator",
 	debugMode: false,
@@ -673,13 +673,13 @@ var XsltForms_globals = {
 		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console") {
 			return;
 		}
-		element.listeners = null;
-		element.node = null;
-		element.hasXFElement = null;
 		var xf = element.xfElement;
 		if (xf && xf.dispose !== undefined) {
 			xf.dispose();
 		}
+		element.listeners = null;
+		element.node = null;
+		element.hasXFElement = null;
 		var childs = element.childNodes;
 		for (var i = 0; i < childs.length; i++) {
 			this.dispose(childs[i]);
@@ -756,10 +756,7 @@ XsltForms_subform.prototype.dispose = function() {
 		this.subforms[h].dispose();
 	}
 	this.subforms = null;
-	for (var i = 0, len = this.models.length; i < len; i++) {
-		this.models[i].dispose(this);
-	}
-	this.models = null;
+	XsltForms_globals.dispose(document.getElementById(this.eltid));
 	for (var i0 = 0, len0 = this.schemas.length; i0 < len0; i0++) {
 		this.schemas[i0].dispose(this);
 	}
@@ -768,12 +765,15 @@ XsltForms_subform.prototype.dispose = function() {
 		this.instances[j].dispose(this);
 	}
 	this.instances = null;
+	for (var i = 0, len = this.models.length; i < len; i++) {
+		this.models[i].dispose(this);
+	}
+	this.models = null;
 	for (var k = 0, len3 = this.xpaths.length; k < len3; k++) {
 		this.xpaths[k].dispose(this);
 	}
 	this.xpaths = null;
 	this.binds = null;
-	XsltForms_globals.dispose(document.getElementById(this.eltid));
 	XsltForms_subform.subforms[this.id] = null;
 	var parentform = this.subform;
 	if (parentform) {
@@ -2115,7 +2115,7 @@ XsltForms_browser.debugConsole = {
 		
 
 	clear : function() {
-		if (false && this.isOpen()) {
+		if (this.isOpen()) {
 			while (this.element_.firstChild) {
 				this.element_.removeChild(this.element_.firstChild);
 			}
@@ -4550,6 +4550,9 @@ XsltForms_submission.prototype.submit = function() {
 		return;
 	}
 	var synchr = this.synchr;
+	if (synchr) {
+		XsltForms_browser.dialog.show("statusPanel", null, false);
+	}
 	var body;
 	if(method === "xml-urlencoded-post") {
 		var outForm = document.getElementById("xsltforms_form");
@@ -4775,8 +4778,10 @@ XsltForms_submission.prototype.submit = function() {
 				}
 				if (synchr) {
 					func();
+					XsltForms_browser.dialog.hide("statusPanel", null, false);
 				}
 			} catch(e) {
+				XsltForms_browser.dialog.hide("statusPanel", null, false);
 				XsltForms_browser.debugConsole.write(e.message || e);
 				evcontext["error-type"] = "resource-error";
 				subm.issueSubmitException_(evcontext, req, e);
@@ -6615,6 +6620,14 @@ XsltForms_input.keyDownActivate = function(a) {
 
 XsltForms_input.keyPressActivate = function(a) {
 	this.keyPressCode = a.keyCode;
+	if (a.keyCode === 13) {
+		if (a.stopPropagation) {
+			a.stopPropagation();
+			a.preventDefault();
+		} else {
+			a.cancelBubble = true;
+		}
+	}
 };
 
 
