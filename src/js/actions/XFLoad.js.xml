@@ -96,19 +96,24 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				}
 				XsltForms_browser.dialog.hide("statusPanel", false);
 				var sp = XsltForms_globals.stringSplit(resp, "XsltForms_MagicSeparator");
-				var subjs = "/* xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[2] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " */";
-				var imain = subjs.indexOf('"xsltforms-mainform"');
+				var subbody, subjs;
 				var targetelt = XsltForms_idManager.find(this.targetid);
-				var targetsubform = targetelt.xfSubform;
-				if (targetsubform) {
-					targetsubform.dispose();
-				}
-				subjs = '(function(){var xsltforms_subform_eltid = "' + targetelt.id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '"' + subjs.substring(imain + 20) + "})();";
-				var subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->"
-				imain = subbody.indexOf(' id="xsltforms-mainform');
-				while (imain !== -1) {
-					subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
+				if (sp.length === 1) {
+					subbody = resp;
+				} else {
+					subjs = "/* xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[2] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " */";
+					var imain = subjs.indexOf('"xsltforms-mainform"');
+					var targetsubform = targetelt.xfSubform;
+					if (targetsubform) {
+						targetsubform.dispose();
+					}
+					subjs = '(function(){var xsltforms_subform_eltid = "' + targetelt.id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '"' + subjs.substring(imain + 20) + "})();";
+					subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->"
 					imain = subbody.indexOf(' id="xsltforms-mainform');
+					while (imain !== -1) {
+						subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
+						imain = subbody.indexOf(' id="xsltforms-mainform');
+					}
 				}
 				var targetxf = targetelt.xfElement;
 				if (targetelt.xfElement) {
@@ -124,16 +129,18 @@ XsltForms_load.prototype.run = function(element, ctx) {
 					parent.hasXFElement = null;
 					parent = parent.parentNode;
 				}
-				var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
-				scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
-				scriptelt.setAttribute("type", "text/javascript");
-				if (XsltForms_browser.isIE) {
-					scriptelt.text = subjs;
-				} else {
-					scriptelt.appendChild(document.createTextNode(subjs));
+				if (sp.length !== 1) {
+					var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+					scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
+					scriptelt.setAttribute("type", "text/javascript");
+					if (XsltForms_browser.isIE) {
+						scriptelt.text = subjs;
+					} else {
+						scriptelt.appendChild(document.createTextNode(subjs));
+					}
+					var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+					body.insertBefore(scriptelt, body.firstChild);
 				}
-				var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
-				body.insertBefore(scriptelt, body.firstChild);
 				XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", true);
 				if (targetxf) {
 					XsltForms_xmlevents.dispatch(targetxf, "xforms-load-done", null, null, null, null, evcontext);

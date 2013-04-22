@@ -925,6 +925,22 @@ XsltForms_typeDefs.XForms = {
 XsltForms_typeDefs.XSLTForms = {
 ]]>
 		<cm:wiki>
+** '''xsltforms:shortDate'''</cm:wiki>
+<![CDATA[
+	"shortDate" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"patterns" : [ "^(([12][0-9]{3})(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01]))?$" ],
+		"class" : "date",
+		"displayLength" : 10,
+		"format" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value, "yyyyMMdd"), null, true);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value), "yyyyMMdd", true);
+		}
+	},
+]]>
+		<cm:wiki>
 ** '''xsltforms:decimal'''</cm:wiki>
 <![CDATA[
 	"decimal" : {

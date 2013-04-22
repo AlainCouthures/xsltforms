@@ -1,4 +1,4 @@
-/* Rev. 573
+/* Rev. 574
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "573",
-	fileVersionNumber: 573,
+	fileVersion: "574",
+	fileVersionNumber: 574,
 
 	language: "navigator",
 	debugMode: false,
@@ -3354,9 +3354,9 @@ XsltForms_model.prototype.additext = function(itext) {
 function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML) {
 	this.init(subform, id, model, "xforms-instance");
 	this.readonly = readonly;
-	this.mediatype = mediatype;
+	this.mediatype = mediatype.split(";")[0];
 	this.src = XsltForms_browser.unescape(src);
-	switch(mediatype) {
+	switch(this.mediatype) {
 		case "application/xml":
 			this.srcXML = XsltForms_browser.unescape(srcXML);
 			if (this.srcXML.substring(0, 1) === "&") {
@@ -3531,7 +3531,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
-	this.mediatype = req.getResponseHeader('Content-Type');
+	this.mediatype = req.getResponseHeader('Content-Type').split(";")[0];
 	switch(this.mediatype) {
 		case "text/json":
 		case "application/json":
@@ -5361,19 +5361,24 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				}
 				XsltForms_browser.dialog.hide("statusPanel", false);
 				var sp = XsltForms_globals.stringSplit(resp, "XsltForms_MagicSeparator");
-				var subjs = "/* xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[2] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " */";
-				var imain = subjs.indexOf('"xsltforms-mainform"');
+				var subbody, subjs;
 				var targetelt = XsltForms_idManager.find(this.targetid);
-				var targetsubform = targetelt.xfSubform;
-				if (targetsubform) {
-					targetsubform.dispose();
-				}
-				subjs = '(function(){var xsltforms_subform_eltid = "' + targetelt.id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '"' + subjs.substring(imain + 20) + "})();";
-				var subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->"
-				imain = subbody.indexOf(' id="xsltforms-mainform');
-				while (imain !== -1) {
-					subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
+				if (sp.length === 1) {
+					subbody = resp;
+				} else {
+					subjs = "/* xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[2] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " */";
+					var imain = subjs.indexOf('"xsltforms-mainform"');
+					var targetsubform = targetelt.xfSubform;
+					if (targetsubform) {
+						targetsubform.dispose();
+					}
+					subjs = '(function(){var xsltforms_subform_eltid = "' + targetelt.id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '"' + subjs.substring(imain + 20) + "})();";
+					subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->"
 					imain = subbody.indexOf(' id="xsltforms-mainform');
+					while (imain !== -1) {
+						subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
+						imain = subbody.indexOf(' id="xsltforms-mainform');
+					}
 				}
 				var targetxf = targetelt.xfElement;
 				if (targetelt.xfElement) {
@@ -5389,16 +5394,18 @@ XsltForms_load.prototype.run = function(element, ctx) {
 					parent.hasXFElement = null;
 					parent = parent.parentNode;
 				}
-				var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
-				scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
-				scriptelt.setAttribute("type", "text/javascript");
-				if (XsltForms_browser.isIE) {
-					scriptelt.text = subjs;
-				} else {
-					scriptelt.appendChild(document.createTextNode(subjs));
+				if (sp.length !== 1) {
+					var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+					scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
+					scriptelt.setAttribute("type", "text/javascript");
+					if (XsltForms_browser.isIE) {
+						scriptelt.text = subjs;
+					} else {
+						scriptelt.appendChild(document.createTextNode(subjs));
+					}
+					var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+					body.insertBefore(scriptelt, body.firstChild);
 				}
-				var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
-				body.insertBefore(scriptelt, body.firstChild);
 				XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", true);
 				if (targetxf) {
 					XsltForms_xmlevents.dispatch(targetxf, "xforms-load-done", null, null, null, null, evcontext);
@@ -5751,12 +5758,16 @@ XsltForms_unload.prototype.run = function(element, ctx) {
 		targetelt.xfSubform.dispose();
 	}
 	targetelt.xfSubform = null;
-	if (targetelt.xfElement) {
+	var targetxf = targetelt.xfElement;
+	if (targetxf) {
 		targetelt = targetelt.children[targetelt.children.length - 1];
 	}
 	targetelt.innerHTML = "";
 	targetelt.hasXFElement = null;
 	XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", false);
+	if (targetxf) {
+		XsltForms_xmlevents.dispatch(targetxf, "xforms-unload-done");
+	}
 	XsltForms_browser.debugConsole.write("unload-done");
 };
 
@@ -6391,7 +6402,8 @@ XsltForms_input.prototype.clone = function(id) {
 XsltForms_input.prototype.dispose = function() {
 	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
 		try {
-		tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
 		} catch(e) {
 			alert(e);
 		}
@@ -9561,6 +9573,21 @@ XsltForms_typeDefs.XSLTForms = {
 
 		
 
+	"shortDate" : {
+		"nsuri" : "http://www.agencexml.com/xsltforms",
+		"patterns" : [ "^(([12][0-9]{3})(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01]))?$" ],
+		"class" : "date",
+		"displayLength" : 10,
+		"format" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value, "yyyyMMdd"), null, true);
+		},
+		"parse" : function(value) {
+			return XsltForms_browser.i18n.format(XsltForms_browser.i18n.parse(value), "yyyyMMdd", true);
+		}
+	},
+
+		
+
 	"decimal" : {
 		"nsuri" : "http://www.agencexml.com/xsltforms",
 		"patterns" : [ "^[\\-+]?\\(*[\\-+]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)(([+-/]|\\*)\\(*([0-9]+(\\.[0-9]*)?|\\.[0-9]+)\\)*)*$" ],
@@ -10115,6 +10142,10 @@ XsltForms_xmlevents.define("xforms-load-done", true, false);
 		
 
 XsltForms_xmlevents.define("xforms-load-error", true, false);
+
+		
+
+XsltForms_xmlevents.define("xforms-unload-done", true, false);
 
 	
 	

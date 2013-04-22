@@ -482,5 +482,13 @@ XsltForms_xmlevents.define("xforms-load-done", true, false);
 <![CDATA[
 XsltForms_xmlevents.define("xforms-load-error", true, false);
 ]]>
+		<cm:wiki>
+** '''xforms-unload-done''' : fired by the unload method
+*** bubbles : yes
+*** cancelable : false
+*** default handler : empty</cm:wiki>
+<![CDATA[
+XsltForms_xmlevents.define("xforms-unload-done", true, false);
+]]>
 	</cm:source>
 </cm:component>

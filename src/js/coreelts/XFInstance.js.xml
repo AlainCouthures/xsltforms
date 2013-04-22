@@ -32,9 +32,9 @@ Instance Class
 function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML) {
 	this.init(subform, id, model, "xforms-instance");
 	this.readonly = readonly;
-	this.mediatype = mediatype;
+	this.mediatype = mediatype.split(";")[0];
 	this.src = XsltForms_browser.unescape(src);
-	switch(mediatype) {
+	switch(this.mediatype) {
 		case "application/xml":
 			this.srcXML = XsltForms_browser.unescape(srcXML);
 			if (this.srcXML.substring(0, 1) === "&") {
@@ -216,7 +216,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 <![CDATA[
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
-	this.mediatype = req.getResponseHeader('Content-Type');
+	this.mediatype = req.getResponseHeader('Content-Type').split(";")[0];
 	switch(this.mediatype) {
 		case "text/json":
 		case "application/json":

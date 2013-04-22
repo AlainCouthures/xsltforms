@@ -69,7 +69,8 @@ XsltForms_input.prototype.clone = function(id) {
 XsltForms_input.prototype.dispose = function() {
 	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
 		try {
-		tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
 		} catch(e) {
 			alert(e);
 		}
