@@ -39,6 +39,7 @@ XsltForms_coreElement.prototype.init = function(subform, id, parent, className) 
 	this.subforms = [];
 	this.subforms[subform] = true;
 	this.nbsubforms = 1;
+	this.subform = subform;
 	parent = parent? parent.element : XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "head")[0]: document.getElementsByTagName("head")[0];
 	this.element = XsltForms_browser.createElement("span", parent, null, className);
 	this.element.id = id;

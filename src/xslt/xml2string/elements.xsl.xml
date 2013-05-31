@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			</xsl:choose>
 			<xsl:apply-templates select="@*" mode="xml2string"/>
 			<xsl:choose>
-				<xsl:when test="node()">&gt;<xsl:apply-templates select="node()" mode="xml2string"><xsl:with-param name="root" select="false()"/></xsl:apply-templates>&lt;/<xsl:value-of select="name()"/>&gt;</xsl:when>
+				<xsl:when test="node()">&gt;<xsl:apply-templates select="node()" mode="xml2string"><xsl:with-param name="root" select="false()"/></xsl:apply-templates>&lt;<xsl:if test="name() = 'script'">\</xsl:if>/<xsl:value-of select="name()"/>&gt;</xsl:when>
 				<xsl:otherwise>/&gt;</xsl:otherwise>
 			</xsl:choose>
 			<xsl:text></xsl:text>

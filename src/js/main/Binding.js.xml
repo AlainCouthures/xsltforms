@@ -45,7 +45,10 @@ function XsltForms_binding(type, xpath, model, bind) {
 		<cm:wiki>
 * '''evaluate''' method : evaluates the binding</cm:wiki>
 <![CDATA[
-XsltForms_binding.prototype.evaluate = function(ctx, depsNodes, depsId, depsElements) {
+XsltForms_binding.prototype.evaluate = function() {
+	alert("Error");
+}
+XsltForms_binding.prototype.bind_evaluate = function(subform, ctx, depsNodes, depsId, depsElements) {
 	var result = null;
 	if( typeof this.model === "string" ) {
 		this.model = document.getElementById(this.model).xfElement;
@@ -63,9 +66,9 @@ XsltForms_binding.prototype.evaluate = function(ctx, depsNodes, depsId, depsElem
 		XsltForms_browser.copyArray(this.bind.depsNodes, depsNodes);
 		XsltForms_browser.copyArray(this.bind.depsElements, depsElements);
 	} else {
-		var exprCtx = new XsltForms_exprContext(!ctx || (this.model && this.model !== document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement) ? this.model ? this.model.getInstanceDocument().documentElement : XsltForms_globals.defaultModel.getInstanceDocument().documentElement : ctx,
+		var exprCtx = new XsltForms_exprContext(subform, !ctx || (this.model && this.model !== document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement) ? this.model ? this.model.getInstanceDocument().documentElement : XsltForms_globals.defaultModel.getInstanceDocument().documentElement : ctx,
 			null, null, null, null, ctx, depsNodes, depsId, depsElements, this.model);
-		result = this.xpath.evaluate(exprCtx);
+		result = this.xpath.xpath_evaluate(exprCtx);
 	}
 	XsltForms_browser.assert(this.type || !result || typeof result === "object", "Binding evaluation didn't returned a nodeset but '"+(typeof result === "object" ? "" : result)+"' for " + (this.bind ? "bind: " + this.bind : "XPath expression: " + this.xpath.expression));
 	switch (this.type) {

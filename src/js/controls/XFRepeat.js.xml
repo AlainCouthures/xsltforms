@@ -62,12 +62,12 @@ XsltForms_repeat.prototype.setIndex = function(index) {
 	if (this.index !== index) {
 		var node = this.nodes[index - 1];
 		if (node) {    
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_repeat.prototype.setIndex");
 			this.index = index;
 			this.element.node = node;
 			XsltForms_globals.addChange(this);
 			XsltForms_globals.addChange(document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement);
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_repeat.prototype.setIndex");
 		}
 	}
 };
@@ -270,6 +270,14 @@ XsltForms_repeat.initClone = function(element) {
 				listeners[i].clone(element);
 			}
 		}
+	}
+	var parentXF = element.parentNode.xfElement;
+	if (parentXF && parentXF.isComponent && parentXF.valueElement === element) {
+		if (parentXF.evaljs) {
+			eval(parentXF.subjs);
+			parentXF.evaljs = false;
+		}
+		return;
 	}
 	var next = element.firstChild;
 	while (next) {

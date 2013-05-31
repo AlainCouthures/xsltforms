@@ -334,6 +334,18 @@ var XsltForms_xpathCoreFunctions = {
 		} ),
 ]]>
 		<cm:wiki>
+* '''replace(string, pattern, replacement)'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions replace" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(string, pattern, replacement) {
+			if (arguments.length !== 3) {
+				throw XsltForms_xpathFunctionExceptions.replaceInvalidArgumentsNumber;
+			}
+			string = XsltForms_globals.stringValue(string);
+			return string.replace(new RegExp(XsltForms_globals.stringValue(pattern), "g"), XsltForms_globals.stringValue(replacement));
+		} ),
+]]>
+		<cm:wiki>
 * '''boolean(object)'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2005/xpath-functions boolean" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
@@ -718,6 +730,29 @@ var XsltForms_xpathCoreFunctions = {
 			} else {
 				return [ctx.node.ownerDocument.documentElement];
 			}
+		} ),
+]]>
+		<cm:wiki>
+* '''subform-instance()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions subform-instance" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, true,
+		function(ctx) {
+			if (arguments.length > 1) {
+				throw XsltForms_xpathFunctionExceptions.subformInstanceInvalidArgumentsNumber;
+			}
+			return [ctx.subform.instances[0].doc.documentElement];
+		} ),
+]]>
+		<cm:wiki>
+* '''subform-context()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions subform-context" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, true,
+		function(ctx) {
+			if (arguments.length > 1) {
+				throw XsltForms_xpathFunctionExceptions.subformContextInvalidArgumentsNumber;
+			}
+			var b = document.getElementById(ctx.subform.eltid).xfElement.boundnodes;
+			return b ? [b[0]] : [];
 		} ),
 ]]>
 		<cm:wiki>
@@ -1571,6 +1606,10 @@ var XsltForms_xpathFunctionExceptions = {
 		name : "substring-before() : Invalid number of arguments",
 		message : "substring-before() function must have two arguments exactly"
 	},
+	replaceInvalidArgumentsNumber : {
+		name : "replace() : Invalid number of arguments",
+		message : "replace() function must have three arguments exactly"
+	},
 	substringAfterInvalidArgumentsNumber : {
 		name : "substring-after() : Invalid number of arguments",
 		message : "substring-after() function must have two arguments exactly"
@@ -1714,6 +1753,14 @@ var XsltForms_xpathFunctionExceptions = {
 	instanceInvalidArgumentsNumber : {
 		name : "instance() : Invalid number of arguments",
 		message : "instance() function must have zero or one argument"
+	},
+	subformInstanceInvalidArgumentsNumber : {
+		name : "subform-instance() : Invalid number of arguments",
+		message : "subform-instance() function must have no argument"
+	},
+	subformContextInvalidArgumentsNumber : {
+		name : "subform-context() : Invalid number of arguments",
+		message : "subform-context() function must have no argument"
 	},
 	nowInvalidArgumentsNumber : {
 		name : "now() : Invalid number of arguments",

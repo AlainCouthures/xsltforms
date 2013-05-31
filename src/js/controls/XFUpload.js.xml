@@ -135,13 +135,13 @@ XsltForms_upload.prototype.directclick = function() {
 		if(this.filename && this.filename.evaluate) {
 			var filenameref = this.filename.evaluate(this.element.node)[0];
 			if (filenameref) {
-				XsltForms_globals.openAction();
+				XsltForms_globals.openAction("XsltForms_upload.prototype.directclick");
 				XsltForms_browser.setValue(filenameref, filename || "");
 				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
 				model.addChange(filenameref);
 				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 				XsltForms_globals.refresh();
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_upload.prototype.directclick");
 			}
 		}
 	}
@@ -229,13 +229,13 @@ XsltForms_upload.prototype.change = function() {
 		if(this.filename && this.filename.evaluate) {
 			var filenameref = this.filename.evaluate(this.element.node)[0];
 			if (filenameref) {
-				XsltForms_globals.openAction();
+				XsltForms_globals.openAction("XsltForms_upload.prototype.change");
 				XsltForms_browser.setValue(filenameref, filename || "");
 				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
 				model.addChange(filenameref);
 				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 				XsltForms_globals.refresh();
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_upload.prototype.change");
 			}
 		}
 	}

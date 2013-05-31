@@ -47,10 +47,14 @@ XsltForms_load.prototype = new XsltForms_abstractAction();
 <![CDATA[
 XsltForms_load.prototype.run = function(element, ctx) {
 	var href = this.resource;
+	var node;
 	if (this.binding) {
-		var node = this.binding.evaluate(ctx)[0];
+		node = this.binding.bind_evaluate(this.subform, ctx)[0];
 		if (node) {
-			href = XsltForms_browser.getValue(node);
+			var t = XsltForms_browser.getType(node);
+			if (t === "xsd:anyURI") {
+				href = XsltForms_browser.getValue(node);
+			}
 		}
 	} else {
 		if (href && typeof href === 'object') {
@@ -71,7 +75,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 		} else if (this.show === "new") {
 			window.open(href);
 		} else if (this.show === "embed") {
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_load.prototype.run");
 			var req = null;
 			var method = "get";
 			var evcontext = {"method": method, "resource-uri": href};
@@ -82,11 +86,11 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
 					evcontext["error-type"] = "resource-error";
 					this.issueLoadException_(evcontext, req, null);
-					XsltForms_globals.closeAction();
+					XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 					return;
 				}
 				XsltForms_submission.requesteventlog(evcontext, req);
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 				var resp = req.responseText;
 				var piindex = resp.indexOf("<?xml-stylesheet", 0);
 				while ( piindex !== -1) {
@@ -150,24 +154,23 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				XsltForms_browser.debugConsole.write(e2.message || e2);
 				evcontext["error-type"] = "resource-error";
 				this.issueLoadException_(evcontext, req, e2);
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 			}
 		} else {
 			location.href = href;
 		}
 	} else {
-		if (this.instance) {
-			var instance = document.getElementById(this.instance);
-			if (!instance) { throw {name: "instance " + this.instance + " not found"}; }
-			var ser = XsltForms_browser.saveXML(instance.xfElement.doc.documentElement);
+		if (node) {
+			var v = XsltForms_browser.getValue(node).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 			var lw;
 			if (this.show === "new") {
-				lw = window.open('data:text/xml,' + ser, this.instance);
+				lw = window.open("about:blank","_blank");
+				lw.document.write(v);
 				lw.document.close();
 			} else {
 				if (this.show === "replace") {
-					lw = window.open("about:blank", _self);
-					lw.document.write(ser);
+					lw = window.open("about:blank", "_self");
+					lw.document.write(v);
 					lw.document.close();
 				}
 			}

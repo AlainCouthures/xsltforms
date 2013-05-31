@@ -33,6 +33,7 @@ function XsltForms_xpath(subform, expression, unordered, compiled, ns) {
 	this.subforms = [];
 	this.subforms[subform] = true;
 	this.nbsubforms = 1;
+	this.subform = subform;
 	subform.xpaths.push(this);
 	this.expression = expression;
 	this.unordered = unordered;
@@ -61,12 +62,15 @@ function XsltForms_xpath(subform, expression, unordered, compiled, ns) {
 		<cm:wiki>
 * '''evaluate''' method : evaluates the complete XPath expression et catches occuring exceptions</cm:wiki>
 <![CDATA[
-XsltForms_xpath.prototype.evaluate = function(ctx, current) {
+XsltForms_xpath.prototype.evaluate = function() {
+	alert("XPath error");
+}
+XsltForms_xpath.prototype.xpath_evaluate = function(ctx, current, subform) {
 	var d1 = new Date();
 	XsltForms_browser.assert(ctx);
 //	alert("XPath evaluate \""+this.expression+"\"");
 	if (!ctx.node) {
-		ctx = new XsltForms_exprContext(ctx, null, null, null, this.nsresolver, current);
+		ctx = new XsltForms_exprContext(subform, ctx, null, null, null, this.nsresolver, current);
 	} else if (!ctx.nsresolver) {
 		ctx.nsresolver = this.nsresolver;
 	}

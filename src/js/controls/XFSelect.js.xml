@@ -174,7 +174,7 @@ XsltForms_select.prototype.changeReadonly = function() {
 XsltForms_select.prototype.itemClick = function(value) {
 	var inputs = XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input");
 	var input;
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_select.prototype.itemClick");
 	if (this.multiple) {
 		var newValue = null;
 		for (var i = 0, len = inputs.length; i < len; i++) {
@@ -191,7 +191,7 @@ XsltForms_select.prototype.itemClick = function(value) {
 		var old = this.value || XsltForms_browser.getValue(this.element.node);
 		var inputSelected = null;
 		if (old === value) {
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_select.prototype.itemClick");
 			return;
 		}
 		for (var j = 0, len1 = inputs.length; j < len1; j++) {
@@ -210,7 +210,7 @@ XsltForms_select.prototype.itemClick = function(value) {
 	} else {
 		this.value = value || "";
 	}
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_select.prototype.itemClick");
 };
 
 ]]>
@@ -219,9 +219,9 @@ XsltForms_select.prototype.itemClick = function(value) {
 <![CDATA[
 XsltForms_select.prototype.blur = function(evt) {
 	if (this.value) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_select.prototype.blur");
 		this.valueChanged(this.value);
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_select.prototype.blur");
 		this.value = null;
 	}
 };
@@ -236,7 +236,7 @@ XsltForms_select.normalChange = function(evt) {
 	var value = "";
 	var old = xf.getSelected();
 	var opts = this.options;
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_select.normalChange");
 	for (var i = 0, len = old.length; i < len; i++) {
 		if (old[i].selected) {
 			news.push(old[i]);
@@ -262,7 +262,7 @@ XsltForms_select.normalChange = function(evt) {
 	}
 	xf.value = value;
 	xf.selectedOptions = news;
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_select.normalChange");
 };
 
 ]]>
@@ -271,10 +271,10 @@ XsltForms_select.normalChange = function(evt) {
 <![CDATA[
 XsltForms_select.incrementalChange = function(evt) {
 	var xf = XsltForms_control.getXFElement(this);
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_select.incrementalChange");
 	XsltForms_select.normalChange.call(this, evt);
 	xf.valueChanged(xf.value);
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_select.incrementalChange");
 };
 
 ]]>

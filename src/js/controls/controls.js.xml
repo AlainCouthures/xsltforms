@@ -32,6 +32,7 @@ The XFElement is the parent class for all action classes, having the XFControl c
 		<cm:import-components path="XFElement.js.xml"/>
 		<cm:import-components path="XFControl.js.xml"/>
 		<cm:import-components path="XFAVT.js.xml"/>
+		<cm:import-components path="XFComponent.js.xml"/>
 		<cm:import-components path="XFGroup.js.xml"/>
 		<cm:import-components path="XFInput.js.xml"/>
 		<cm:import-components path="XFItem.js.xml"/>

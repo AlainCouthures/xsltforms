@@ -287,11 +287,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 </xsl:text>
 						<xsl:text>xsltforms_subform.construct();
 </xsl:text>
+						<xsl:text>var sf = document.getElementById(xsltforms_subform_eltid).xfElement;
+</xsl:text>
+						<xsl:text>if (!sf || !sf.isComponent) {</xsl:text>
 						<xsl:text>XsltForms_globals.openAction();
 </xsl:text>
 						<xsl:text>XsltForms_globals.refresh();
 </xsl:text>
 						<xsl:text>XsltForms_globals.closeAction();
+</xsl:text>
+						<xsl:text>}
 </xsl:text>
 						<xsl:text>XsltForms_browser.dialog.hide('statusPanel');
 </xsl:text>

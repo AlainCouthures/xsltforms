@@ -142,12 +142,12 @@ XsltForms_element.prototype.build = function(ctx) {
 * '''evaluateBinding''' method : evaluates the spec'ed binding and gathers any errors</cm:wiki>
 <![CDATA[
 XsltForms_element.prototype.evaluateBinding = function(binding, ctx) {
-	var nodes = null;
+	this.boundnodes = null;
 	var errmsg = null;
 	if (binding) {
-		nodes = binding.evaluate(ctx, this.depsNodesBuild, this.depsIdB, this.depsElements);
-		if (nodes || nodes === "") {
-			return nodes;
+		this.boundnodes = binding.bind_evaluate(this.subform, ctx, this.depsNodesBuild, this.depsIdB, this.depsElements);
+		if (this.boundnodes || this.boundnodes === "") {
+			return this.boundnodes;
 		}
 		// A 'null' binding means bind-ID was not found.
 		errmsg = "non-existent bind-ID("+ binding.bind + ") on element(" + this.element.id + ")!";
@@ -160,11 +160,11 @@ XsltForms_element.prototype.evaluateBinding = function(binding, ctx) {
 		// Do not fail here, to keep on searching for more errors.
 		XsltForms_globals.bindErrMsgs.push(errmsg);
 		XsltForms_xmlevents.dispatch(this.element, "xforms-binding-exception");
-		nodes = [];
+		this.nodes = [];
 	} else {
 		XsltForms_globals.error(this.element, "xforms-binding-exception", errmsg);
 	}
-	return nodes;
+	return this.boundnodes;
 };
 ]]>
 	</cm:source>

@@ -216,7 +216,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 <![CDATA[
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
-	this.mediatype = req.getResponseHeader('Content-Type').split(";")[0];
+	this.mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type').split(";")[0] : "application/xml";
 	switch(this.mediatype) {
 		case "text/json":
 		case "application/json":
@@ -347,7 +347,7 @@ XsltForms_instance.prototype.validate_ = function(node, readonly, notrelevant) {
 				XsltForms_browser.rmValueMeta(bind.depsNodes[j], "depfor", bind.depsId);
 			}
 			bind.depsNodes.length = 0;
-			var ctx = new XsltForms_exprContext(node, i2, nodes, null, null, null, [], bind.depsId);
+			var ctx = new XsltForms_exprContext(this.subform, node, i2, nodes, null, null, null, [], bind.depsId);
 			if (bind.required) {
 				this.setProperty_(node, "required", bind.required.evaluate(ctx, node));
 			}
@@ -447,6 +447,7 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 * '''jsoninst''' function : replaces instance data from json content</cm:wiki>
 <![CDATA[
 var jsoninst = function(json) {
+	XsltForms_browser.dialog.hide("statusPanel", false);
 	XsltForms_browser.jsoninstobj.setDoc(XsltForms_browser.json2xml("", json, true, false));
 	XsltForms_globals.addChange(XsltForms_browser.jsoninstobj.model);
 	XsltForms_xmlevents.dispatch(XsltForms_browser.jsoninstobj.model, "xforms-rebuild");

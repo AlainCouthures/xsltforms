@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Model Binding Class
 * constructor function : resolve all the properties and attach this object to the model</cm:wiki>
 		<![CDATA[
-function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, relevant, calculate, constraint) {
+function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, relevant, calculate, constraint, changed) {
 	if (document.getElementById(id)) {
 		return;
 	}
@@ -47,6 +47,7 @@ function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, 
 	this.relevant = relevant;
 	this.calculate = calculate;
 	this.constraint = constraint;
+	this.changed = changed;
 	this.depsNodes = [];
 	this.depsElements = [];
 	this.nodes = [];
@@ -81,7 +82,7 @@ XsltForms_bind.prototype.refresh = function(ctx, index) {
 		this.clear();
 	}
 	ctx = ctx || (this.model ? this.model.getInstanceDocument() ? this.model.getInstanceDocument().documentElement : null : null);
-	XsltForms_browser.copyArray(this.binding.evaluate(ctx, this.depsNodes, this.depsId, this.depsElements), this.nodes);
+	XsltForms_browser.copyArray(this.binding.bind_evaluate(this.subform, ctx, this.depsNodes, this.depsId, this.depsElements), this.nodes);
 	var el = this.element;
 	for (var i2 = 0, len2 = this.nodes.length; i2 < len2; i2++) {
 		var node = this.nodes[i2];
@@ -126,7 +127,7 @@ XsltForms_bind.prototype.recalculate = function() {
 	if (this.calculate) {
 		for (var i = 0, len = this.nodes.length; i < len; i++) {
 			var node = this.nodes[i];
-			var ctx = new XsltForms_exprContext(node, i + 1, this.nodes);
+			var ctx = new XsltForms_exprContext(this.subform, node, i + 1, this.nodes);
 			var value = XsltForms_globals.stringValue(this.calculate.evaluate(ctx, node));
 			value = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").normalize(value);
 			XsltForms_browser.setValue(node, value);
@@ -136,6 +137,27 @@ XsltForms_bind.prototype.recalculate = function() {
 	}
 	for (var j = 0, len1 = el.childNodes.length; j < len1; j++) {
 		el.childNodes[j].xfElement.recalculate();
+	}
+};
+]]>
+		<cm:wiki>
+* '''propagate''' method : propagate change to component content</cm:wiki>
+<![CDATA[
+XsltForms_bind.prototype.propagate = function() {
+	var el = this.element;
+	if (this.changed) {
+		for (var i = 0, len = this.nodes.length; i < len; i++) {
+			var node = this.nodes[i];
+			var ctx = new XsltForms_exprContext(this.subform, node, i + 1, this.nodes);
+			var value = XsltForms_globals.stringValue(this.changed.evaluate(ctx, node));
+			value = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").normalize(value);
+			XsltForms_browser.setValue(node, value);
+			//this.model.addChange(node);
+			XsltForms_browser.debugConsole.write("Propagate " + node.nodeName + " " + value);
+		}
+	}
+	for (var j = 0, len1 = el.childNodes.length; j < len1; j++) {
+		el.childNodes[j].xfElement.propagate();
 	}
 };
 ]]>

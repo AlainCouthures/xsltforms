@@ -45,17 +45,17 @@ XsltForms_setvalue.prototype = new XsltForms_abstractAction();
 * '''run''' method : sets the value of a node and records it in the changes collection</cm:wiki>
 <![CDATA[
 XsltForms_setvalue.prototype.run = function(element, ctx) {
-	var node = this.binding.evaluate(ctx)[0];
+	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx)[0];
 	if (node) {
 		if (this.context) {
-			ctx = this.context.evaluate(ctx)[0];
+			ctx = this.context.bind_evaluate(element.xfElement.subform, ctx)[0];
 		}
-		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.evaluate(ctx, ctx) : this.value.evaluate(node, ctx)) : this.literal;
-		XsltForms_globals.openAction();
+		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform)) : this.literal;
+		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
 		XsltForms_browser.setValue(node, value || "");
 		document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement.addChange(node);
 		XsltForms_browser.debugConsole.write("Setvalue " + node.nodeName + " = " + value); 
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_setvalue.prototype.run");
 	}
 };
 ]]>

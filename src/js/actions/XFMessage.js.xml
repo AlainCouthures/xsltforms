@@ -46,7 +46,7 @@ XsltForms_message.prototype = new XsltForms_abstractAction();
 XsltForms_message.prototype.run = function(element, ctx) {
 	var text;
 	if (this.binding) {
-		var node = this.binding.evaluate(ctx)[0];
+		var node = this.binding.bind_evaluate(this.subform, ctx)[0];
 		if (node) {
 			text = XsltForms_browser.getValue(node);
 		}

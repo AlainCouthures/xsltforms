@@ -55,12 +55,12 @@ XsltForms_abstractAction.prototype.execute = function(element, ctx, evt) {
 		if (this.whileexpr) {
 			XsltForms_globals.error(this.element, "xforms-compute-exception", "@iterate cannot be used with @while");
 		}
-		var nodes = this.iterateexpr.evaluate(ctx);
+		var nodes = this.iterateexpr.xpath_evaluate(ctx);
 		for (var i = 0, len = nodes.length; i < len; i++) {
 			this.exec_(element, nodes[i], evt);
 		}
 	} else if (this.whileexpr) {
-		while (XsltForms_globals.booleanValue(this.whileexpr.evaluate(ctx))) {
+		while (XsltForms_globals.booleanValue(this.whileexpr.xpath_evaluate(ctx))) {
 			if (!this.exec_(element, ctx, evt)) {
 				break;
 			}
@@ -76,7 +76,7 @@ XsltForms_abstractAction.prototype.execute = function(element, ctx, evt) {
 <![CDATA[
 XsltForms_abstractAction.prototype.exec_ = function(element, ctx, evt) {
 	if (this.ifexpr) {
-		if (XsltForms_globals.booleanValue(this.ifexpr.evaluate(ctx))) {
+		if (XsltForms_globals.booleanValue(this.ifexpr.xpath_evaluate(ctx))) {
 			this.run(element, ctx, evt);
 		} else {
 			return false;

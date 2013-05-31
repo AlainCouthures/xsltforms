@@ -50,7 +50,7 @@ XsltForms_toggle.prototype.run = function(element, ctx) {
 * '''toggle''' method : toggles on the element according to its id and dispatches the "xforms-deselect" event</cm:wiki>
 <![CDATA[
 XsltForms_toggle.toggle = function(caseId, ctx) {
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_toggle.toggle");
 	if (typeof caseId === 'object') {
 		if (!ctx) {
 			ctx = XsltForms_globals.defaultModel.getInstanceDocument() ? XsltForms_globals.defaultModel.getInstanceDocument().documentElement : null;
@@ -87,7 +87,7 @@ XsltForms_toggle.toggle = function(caseId, ctx) {
 	if (element) {
 		XsltForms_xmlevents.dispatch(element, "xforms-select");
 	}
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_toggle.toggle");
 };
 ]]>
 	</cm:source>

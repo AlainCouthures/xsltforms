@@ -1,4 +1,4 @@
-/* Rev. 574
+/* Rev. 576
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "574",
-	fileVersionNumber: 574,
+	fileVersion: "576",
+	fileVersionNumber: 576,
 
 	language: "navigator",
 	debugMode: false,
@@ -71,6 +71,7 @@ var XsltForms_globals = {
 	refreshcount: 0,
 	validationError: false,
 	counters: {
+		component: 0,
 		group: 0,
 		input: 0,
 		item: 0,
@@ -83,6 +84,7 @@ var XsltForms_globals = {
 		upload: 0
 	},
 	nbsubforms: 0,
+	componentLoads: [],
 
 		
 
@@ -442,10 +444,13 @@ var XsltForms_globals = {
 		XsltForms_browser.events.onunload = function() {
 			XsltForms_globals.close();
 		};
-		this.openAction();
+		this.openAction("XsltForms_globals.init");
 		XsltForms_xmlevents.dispatchList(this.models, "xforms-model-construct");
+		for (var i = 0, l = this.componentLoads.length; i < l; i++) {
+			eval(this.componentLoads[i]);
+		}
 		this.refresh();
-		this.closeAction();
+		this.closeAction("XsltForms_globals.init");
 		this.ready = true;
 		XsltForms_browser.dialog.hide("statusPanel", false);
 	},
@@ -454,12 +459,12 @@ var XsltForms_globals = {
 
 	close : function() {
 		if (XsltForms_globals.body) {
-			this.openAction();
+			this.openAction("XsltForms_globals.close");
 			//XsltForms_xmlevents.dispatchList(XsltForms_globals.models, "xforms-model-destruct");
 			for (var i = 0, len = XsltForms_listener.destructs.length; i < len; i++) {
 				XsltForms_listener.destructs[i].callback({target: XsltForms_listener.destructs[i].observer});
 			}
-			this.closeAction();
+			this.closeAction("XsltForms_globals.close");
 			XsltForms_idManager.clear();
 			this.defaultModel = null;
 			this.changes = [];
@@ -486,7 +491,9 @@ var XsltForms_globals = {
 
 		
 
-	openAction : function() {
+	openActions : [],
+	openAction : function(action) {
+		this.openActions.push(action);
 		if (this.cont++ === 0) {
 			XsltForms_browser.debugConsole.clear();
 		}
@@ -494,7 +501,11 @@ var XsltForms_globals = {
 
 		
 
-	closeAction : function() {
+	closeAction : function(action) {
+		var lastaction = this.openActions.pop();
+		if (lastaction !== action) {
+			alert("Action mismatch: '" + lastaction + "' was expected instead of '" + action + "'");
+		}
 		if (this.cont === 1) {
 			this.closeChanges();
 		}
@@ -691,11 +702,15 @@ var XsltForms_globals = {
 	blur : function(direct) {
 		if ((direct || this.posibleBlur) && this.focus) {
 			if (this.focus.element) {
-				this.openAction();
+				this.openAction("XsltForms_globals.blur");
 				XsltForms_xmlevents.dispatch(this.focus, "DOMFocusOut");
 				XsltForms_browser.setClass(this.focus.element, "xforms-focus", false);
-				this.focus.blur();
-				this.closeAction();
+				try {
+					this.focus.blur();
+				} catch (e){
+					alert("Blur?");
+				}
+				this.closeAction("XsltForms_globals.blur");
 			}
 			this.posibleBlur = false;
 			this.focus = null;
@@ -808,8 +823,9 @@ var XsltForms_browser = {
 	isIE : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/),
 	isIE9 : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/) && window.addEventListener,
 	isIE6 : navigator.userAgent.match(/\bMSIE 6\.0/),
-    isMozilla : navigator.userAgent.match(/\bGecko\b/),
+	isMozilla : navigator.userAgent.match(/\bGecko\b/),
 	isSafari : navigator.userAgent.match(/\bAppleWebKit/) && !window.FileReader,
+	isChrome : navigator.userAgent.match(/\bAppleWebKit/),
 	isFF2 : navigator.userAgent.match(/\bFirefox[\/\s]2\.\b/),
 	isXhtml : false, // document.documentElement.namespaceURI === "http://www.w3.org/1999/xhtml",
 	setClass : function(element, className, value) {
@@ -1054,10 +1070,12 @@ if (XsltForms_browser.isIE) {
 	XsltForms_browser.transformText = function(xml, xslt, inline) {
 		var xmlDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		xmlDoc.setProperty("AllowDocumentFunction", true);
+		xmlDoc.preserveWhiteSpace = true;
 		xmlDoc.validateOnParse = false;
 		xmlDoc.loadXML(xml);
 		var xslDoc = new ActiveXObject("MSXML2.FreeThreadedDOMDocument." + XsltForms_browser.MSXMLver);
 		xslDoc.setProperty("AllowDocumentFunction", true);
+		xslDoc.preserveWhiteSpace = true;
 		xslDoc.validateOnParse = false;
 		if (inline) {
 			xslDoc.loadXML(xslt);
@@ -1118,8 +1136,11 @@ if (XsltForms_browser.isIE) {
 				xsltProcessor.importStylesheet(xsltDoc);
 				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
 				var s = "";
-				if (XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") {
+				if ((XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") ||
+				     (XsltForms_browser.isOpera && resultDocument.documentElement.nodeName === "result")) {
 					s = resultDocument.documentElement.textContent;
+				} else if (XsltForms_browser.isChrome && resultDocument.documentElement.nodeName === "html" && resultDocument.documentElement.children[1].children[0].nodeName === "pre") {
+					s = resultDocument.documentElement.children[1].children[0].textContent;
 				} else {
 					s = serializer.serializeToString(resultDocument);
 				}
@@ -2744,21 +2765,21 @@ XsltForms_browser.run = function(action, element, evt, synch, propagate) {
 	if (synch) {
 		XsltForms_browser.dialog.show("statusPanel", null, false);
 		setTimeout(function() { 
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_browser.run#1");
 			action.execute(XsltForms_idManager.find(element), null, evt);
 			XsltForms_browser.dialog.hide("statusPanel", false);
 			if (!propagate) {
 				evt.stopPropagation();
 			}
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_browser.run#1");
 		}, 1 );
 	} else {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_browser.run#2");
 		action.execute(XsltForms_idManager.find(element), null, evt);
 		if (!propagate) {
 			evt.stopPropagation();
 		}
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_browser.run#2");
 	}
 };
 
@@ -2839,7 +2860,10 @@ function XsltForms_binding(type, xpath, model, bind) {
 
 		
 
-XsltForms_binding.prototype.evaluate = function(ctx, depsNodes, depsId, depsElements) {
+XsltForms_binding.prototype.evaluate = function() {
+	alert("Error");
+}
+XsltForms_binding.prototype.bind_evaluate = function(subform, ctx, depsNodes, depsId, depsElements) {
 	var result = null;
 	if( typeof this.model === "string" ) {
 		this.model = document.getElementById(this.model).xfElement;
@@ -2857,9 +2881,9 @@ XsltForms_binding.prototype.evaluate = function(ctx, depsNodes, depsId, depsElem
 		XsltForms_browser.copyArray(this.bind.depsNodes, depsNodes);
 		XsltForms_browser.copyArray(this.bind.depsElements, depsElements);
 	} else {
-		var exprCtx = new XsltForms_exprContext(!ctx || (this.model && this.model !== document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement) ? this.model ? this.model.getInstanceDocument().documentElement : XsltForms_globals.defaultModel.getInstanceDocument().documentElement : ctx,
+		var exprCtx = new XsltForms_exprContext(subform, !ctx || (this.model && this.model !== document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement) ? this.model ? this.model.getInstanceDocument().documentElement : XsltForms_globals.defaultModel.getInstanceDocument().documentElement : ctx,
 			null, null, null, null, ctx, depsNodes, depsId, depsElements, this.model);
-		result = this.xpath.evaluate(exprCtx);
+		result = this.xpath.xpath_evaluate(exprCtx);
 	}
 	XsltForms_browser.assert(this.type || !result || typeof result === "object", "Binding evaluation didn't returned a nodeset but '"+(typeof result === "object" ? "" : result)+"' for " + (this.bind ? "bind: " + this.bind : "XPath expression: " + this.xpath.expression));
 	switch (this.type) {
@@ -2931,7 +2955,7 @@ XsltForms_mipbinding.prototype.evaluate = function(ctx, node) {
 		// alert("Evaluate \"" + this.binding.xpath.expression + "\"");
 		depsN.length = 0;
 		deps.length = 0;
-		this.nodes[curn].result = this.binding.evaluate(ctx.node, this.nodes[curn].depsN, null, this.nodes[curn].deps);
+		this.nodes[curn].result = this.binding.bind_evaluate(ctx.subform, ctx.node, this.nodes[curn].depsN, null, this.nodes[curn].deps);
 		return this.nodes[curn].result;
 	} else {
 		return this.nodes[curn].result;
@@ -3052,6 +3076,7 @@ XsltForms_coreElement.prototype.init = function(subform, id, parent, className) 
 	this.subforms = [];
 	this.subforms[subform] = true;
 	this.nbsubforms = 1;
+	this.subform = subform;
 	parent = parent? parent.element : XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "head")[0]: document.getElementsByTagName("head")[0];
 	this.element = XsltForms_browser.createElement("span", parent, null, className);
 	this.element.id = id;
@@ -3531,7 +3556,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
-	this.mediatype = req.getResponseHeader('Content-Type').split(";")[0];
+	this.mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type').split(";")[0] : "application/xml";
 	switch(this.mediatype) {
 		case "text/json":
 		case "application/json":
@@ -3661,7 +3686,7 @@ XsltForms_instance.prototype.validate_ = function(node, readonly, notrelevant) {
 				XsltForms_browser.rmValueMeta(bind.depsNodes[j], "depfor", bind.depsId);
 			}
 			bind.depsNodes.length = 0;
-			var ctx = new XsltForms_exprContext(node, i2, nodes, null, null, null, [], bind.depsId);
+			var ctx = new XsltForms_exprContext(this.subform, node, i2, nodes, null, null, null, [], bind.depsId);
 			if (bind.required) {
 				this.setProperty_(node, "required", bind.required.evaluate(ctx, node));
 			}
@@ -3759,6 +3784,7 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 		
 
 var jsoninst = function(json) {
+	XsltForms_browser.dialog.hide("statusPanel", false);
 	XsltForms_browser.jsoninstobj.setDoc(XsltForms_browser.json2xml("", json, true, false));
 	XsltForms_globals.addChange(XsltForms_browser.jsoninstobj.model);
 	XsltForms_xmlevents.dispatch(XsltForms_browser.jsoninstobj.model, "xforms-rebuild");
@@ -4187,7 +4213,7 @@ XsltForms_browser.xml2zip = function(arch, mediatype) {
 		
 		
 		
-function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, relevant, calculate, constraint) {
+function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, relevant, calculate, constraint, changed) {
 	if (document.getElementById(id)) {
 		return;
 	}
@@ -4205,6 +4231,7 @@ function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, 
 	this.relevant = relevant;
 	this.calculate = calculate;
 	this.constraint = constraint;
+	this.changed = changed;
 	this.depsNodes = [];
 	this.depsElements = [];
 	this.nodes = [];
@@ -4238,7 +4265,7 @@ XsltForms_bind.prototype.refresh = function(ctx, index) {
 		this.clear();
 	}
 	ctx = ctx || (this.model ? this.model.getInstanceDocument() ? this.model.getInstanceDocument().documentElement : null : null);
-	XsltForms_browser.copyArray(this.binding.evaluate(ctx, this.depsNodes, this.depsId, this.depsElements), this.nodes);
+	XsltForms_browser.copyArray(this.binding.bind_evaluate(this.subform, ctx, this.depsNodes, this.depsId, this.depsElements), this.nodes);
 	var el = this.element;
 	for (var i2 = 0, len2 = this.nodes.length; i2 < len2; i2++) {
 		var node = this.nodes[i2];
@@ -4282,7 +4309,7 @@ XsltForms_bind.prototype.recalculate = function() {
 	if (this.calculate) {
 		for (var i = 0, len = this.nodes.length; i < len; i++) {
 			var node = this.nodes[i];
-			var ctx = new XsltForms_exprContext(node, i + 1, this.nodes);
+			var ctx = new XsltForms_exprContext(this.subform, node, i + 1, this.nodes);
 			var value = XsltForms_globals.stringValue(this.calculate.evaluate(ctx, node));
 			value = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").normalize(value);
 			XsltForms_browser.setValue(node, value);
@@ -4292,6 +4319,26 @@ XsltForms_bind.prototype.recalculate = function() {
 	}
 	for (var j = 0, len1 = el.childNodes.length; j < len1; j++) {
 		el.childNodes[j].xfElement.recalculate();
+	}
+};
+
+		
+
+XsltForms_bind.prototype.propagate = function() {
+	var el = this.element;
+	if (this.changed) {
+		for (var i = 0, len = this.nodes.length; i < len; i++) {
+			var node = this.nodes[i];
+			var ctx = new XsltForms_exprContext(this.subform, node, i + 1, this.nodes);
+			var value = XsltForms_globals.stringValue(this.changed.evaluate(ctx, node));
+			value = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").normalize(value);
+			XsltForms_browser.setValue(node, value);
+			//this.model.addChange(node);
+			XsltForms_browser.debugConsole.write("Propagate " + node.nodeName + " " + value);
+		}
+	}
+	for (var j = 0, len1 = el.childNodes.length; j < len1; j++) {
+		el.childNodes[j].xfElement.propagate();
 	}
 };
 
@@ -4394,18 +4441,18 @@ XsltForms_submission.prototype.xml2data = function(node, method) {
 		
 
 XsltForms_submission.prototype.submit = function() {
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_submission.prototype.submit");
 	var node = this.eval_();
 	var action = "error";
-	if(this.action.evaluate) {
-		action = XsltForms_globals.stringValue(this.action.evaluate());
+	if(this.action.bind_evaluate) {
+		action = XsltForms_globals.stringValue(this.action.bind_evaluate(this.subform));
 	} else {
 		action = this.action;
 	}
 	var method = "post";
 	var subm = this;
-	if(this.method.evaluate) {
-		method = XsltForms_globals.stringValue(this.method.evaluate());
+	if(this.method.bind_evaluate) {
+		method = XsltForms_globals.stringValue(this.method.bind_evaluate(this.subform));
 	} else {
 		method = this.method;
 	}
@@ -4413,7 +4460,7 @@ XsltForms_submission.prototype.submit = function() {
 	if (action.subst && action.subst(0, 8) === "local://" && (typeof(localStorage) === 'undefined')) {
 		evcontext["error-type"] = "validation-error";
 		this.issueSubmitException_(evcontext, null, {message: "local:// submission not supported"});
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 		return;
 	}
 	if (node) {
@@ -4424,7 +4471,7 @@ XsltForms_submission.prototype.submit = function() {
 			XsltForms_globals.refresh();
 			evcontext["error-type"] = "validation-error";
 			this.issueSubmitException_(evcontext, null, null);
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 			return;
 		}
 		if ((method === "get" || method === "delete") && this.serialization !== "none" && action.substr(0, 9) !== "opener://" && action.substr(0, 8) !== "local://") {
@@ -4450,7 +4497,7 @@ XsltForms_submission.prototype.submit = function() {
 				window.opener.XsltForms_globals.xmlrequest('put', action.substr(9), ser);
 			} catch (e) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 				return;
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
@@ -4459,7 +4506,7 @@ XsltForms_submission.prototype.submit = function() {
 				window.localStorage.setItem(action.substr(8), ser);
 			} catch (e) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 				return;
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
@@ -4468,7 +4515,7 @@ XsltForms_submission.prototype.submit = function() {
 				window.localStorage.removeItem(action.substr(8));
 			} catch (e) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 				return;
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
@@ -4480,7 +4527,7 @@ XsltForms_submission.prototype.submit = function() {
 					ser = window.localStorage.getItem(action.substr(8));
 				} catch (e) {
 					XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
-					XsltForms_globals.closeAction();
+					XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 					return;
 				} 
 			} else if (action.substr(0, 9) === "opener://") {
@@ -4488,7 +4535,7 @@ XsltForms_submission.prototype.submit = function() {
 					ser = window.opener.XsltForms_globals.xmlrequest('get', action.substr(9));
 				} catch (e) {
 					XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
-					XsltForms_globals.closeAction();
+					XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 					return;
 				} 
 			} else {
@@ -4497,7 +4544,7 @@ XsltForms_submission.prototype.submit = function() {
 			if (ser !== "" && (subm.replace === "instance" || (subm.targetref && subm.replace === "text"))) {
 				var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
 				if (subm.targetref) {
-					var targetnode = subm.targetref.evaluate(ctxnode);
+					var targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
 					if (targetnode && targetnode[0]) {
 						if (subm.replace === "instance") {
 							XsltForms_browser.loadXML(targetnode[0], ser);
@@ -4517,7 +4564,7 @@ XsltForms_submission.prototype.submit = function() {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 			}
 		}
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 		return;
 	}
 	if (action.substr(0,11) === "javascript:") {
@@ -4526,7 +4573,7 @@ XsltForms_submission.prototype.submit = function() {
 			if (ser !== "" && (subm.replace === "instance" || (subm.targetref && subm.replace === "text"))) {
 				var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
 				if (subm.targetref) {
-					var targetnode = subm.targetref.evaluate(ctxnode);
+					var targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
 					if (targetnode && targetnode[0]) {
 						if (subm.replace === "instance") {
 							XsltForms_browser.loadXML(targetnode[0], ser);
@@ -4546,7 +4593,7 @@ XsltForms_submission.prototype.submit = function() {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 			}
 		}
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 		return;
 	}
 	var synchr = this.synchr;
@@ -4572,7 +4619,7 @@ XsltForms_submission.prototype.submit = function() {
 			body.insertBefore(outForm, body.firstChild);
 		}
 		outForm.submit();
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 	} else {
 		/*
 		var cross = false;
@@ -4592,7 +4639,7 @@ XsltForms_submission.prototype.submit = function() {
 			body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
 			body.insertBefore(scriptelt, body.firstChild);
 			XsltForms_xmlevents.dispatch(this, "xforms-submit-done");
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 		} else {
 			// TODO: Validate binding target is not empty
 			if (!node && (method !== "get" || method !== "delete")) {
@@ -4612,13 +4659,13 @@ XsltForms_submission.prototype.submit = function() {
 						if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
 							evcontext["error-type"] = "resource-error";
 							subm.issueSubmitException_(evcontext, req, null);
-							XsltForms_globals.closeAction();
+							XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 							return;
 						}
 						if (subm.replace === "instance" || (subm.targetref && subm.replace === "text")) {
 							if (subm.targetref) {
 								var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
-								var targetnode = subm.targetref.evaluate(ctxnode);
+								var targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
 								if (targetnode && targetnode[0]) {
 									if (subm.replace === "instance") {
 										XsltForms_browser.loadXML(targetnode[0], req.responseText);
@@ -4636,7 +4683,7 @@ XsltForms_submission.prototype.submit = function() {
 						}
 						XsltForms_submission.requesteventlog(evcontext, req);
 						XsltForms_xmlevents.dispatch(subm, "xforms-submit-done", null, null, null, null, evcontext);
-						XsltForms_globals.closeAction();
+						XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 						if (subm.replace === "all") {
 							var resp = req.responseText;
 							var piindex = resp.indexOf("<?xml-stylesheet", 0);
@@ -4674,7 +4721,7 @@ XsltForms_submission.prototype.submit = function() {
 						XsltForms_browser.debugConsole.write(e || e.message);
 						evcontext["error-type"] = "parse-error";
 						subm.issueSubmitException_(evcontext, req, e);
-						XsltForms_globals.closeAction();
+						XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 					}
 				};
 				if (!synchr) {
@@ -4694,7 +4741,7 @@ XsltForms_submission.prototype.submit = function() {
 					for (var i = 0, len0 = this.headers.length; i < len0; i++) {
 						var nodes = [];
 						if (this.headers[i].nodeset) {
-							nodes = this.headers[i].nodeset.evaluate();
+							nodes = this.headers[i].nodeset.bind_evaluate(this.subform);
 						} else {
 							nodes = [subm.model.getInstanceDocument().documentElement];
 						}
@@ -4763,7 +4810,7 @@ XsltForms_submission.prototype.submit = function() {
 					if ((subm.mediatype === "text/csv" )&& req.overrideMimeType) {
 						req.overrideMimeType('text/csv; charset=ISO-8859-1');
 					};
-					req.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2005 00:00:00 GMT");
+					//req.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2005 00:00:00 GMT");
 					req.send(null);
 				} else {
 					req.setRequestHeader("Content-Type", mt);
@@ -4785,7 +4832,7 @@ XsltForms_submission.prototype.submit = function() {
 				XsltForms_browser.debugConsole.write(e.message || e);
 				evcontext["error-type"] = "resource-error";
 				subm.issueSubmitException_(evcontext, req, e);
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 			}
 		}
 	}
@@ -5008,12 +5055,12 @@ XsltForms_abstractAction.prototype.execute = function(element, ctx, evt) {
 		if (this.whileexpr) {
 			XsltForms_globals.error(this.element, "xforms-compute-exception", "@iterate cannot be used with @while");
 		}
-		var nodes = this.iterateexpr.evaluate(ctx);
+		var nodes = this.iterateexpr.xpath_evaluate(ctx);
 		for (var i = 0, len = nodes.length; i < len; i++) {
 			this.exec_(element, nodes[i], evt);
 		}
 	} else if (this.whileexpr) {
-		while (XsltForms_globals.booleanValue(this.whileexpr.evaluate(ctx))) {
+		while (XsltForms_globals.booleanValue(this.whileexpr.xpath_evaluate(ctx))) {
 			if (!this.exec_(element, ctx, evt)) {
 				break;
 			}
@@ -5028,7 +5075,7 @@ XsltForms_abstractAction.prototype.execute = function(element, ctx, evt) {
 
 XsltForms_abstractAction.prototype.exec_ = function(element, ctx, evt) {
 	if (this.ifexpr) {
-		if (XsltForms_globals.booleanValue(this.ifexpr.evaluate(ctx))) {
+		if (XsltForms_globals.booleanValue(this.ifexpr.xpath_evaluate(ctx))) {
 			this.run(element, ctx, evt);
 		} else {
 			return false;
@@ -5091,14 +5138,14 @@ XsltForms_delete.prototype = new XsltForms_abstractAction();
 
 XsltForms_delete.prototype.run = function(element, ctx) {
 	if (this.context) {
-		ctx = this.context.evaluate(ctx)[0];
+		ctx = this.context.bind_evaluate(this.subform, ctx)[0];
 	}
 	if (!ctx) {
 		return;
 	}
-	var nodes = this.binding.evaluate(ctx);
+	var nodes = this.binding.bind_evaluate(this.subform, ctx);
 	if(this.at) {
-		var index = XsltForms_globals.numberValue(this.at.evaluate(new XsltForms_exprContext(ctx, 1, nodes)));
+		var index = XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes)));
 		if(!nodes[index - 1]) {
 			return;
 		}
@@ -5154,12 +5201,12 @@ XsltForms_dispatch.prototype = new XsltForms_abstractAction();
 
 XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 	var name = this.name;
-	if (name.evaluate) {
-		name = XsltForms_globals.stringValue(name.evaluate());
+	if (name.bind_evaluate) {
+		name = XsltForms_globals.stringValue(name.bind_evaluate(this.subform));
 	}
 	var target = this.target;
-	if (target && target.evaluate) {
-		target = XsltForms_globals.stringValue(target.evaluate());
+	if (target && target.bind_evaluate) {
+		target = XsltForms_globals.stringValue(target.bind_evaluate(this.subform));
 	}
 	if (!target) {
 		switch (name) {
@@ -5176,13 +5223,13 @@ XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 	var evtctx = {};
 	for (var prop in this.properties) {
 		if (prop !== "" && this.properties.hasOwnProperty(prop)) {
-			evtctx[prop] = this.properties[prop].evaluate ? this.properties[prop].evaluate() : this.properties[prop];
+			evtctx[prop] = this.properties[prop].bind_evaluate ? this.properties[prop].bind_evaluate(this.subform) : this.properties[prop];
 		}
 	}
 	var delay = 0;
 	if (this.delay) {
-		if (this.delay.evaluate) {
-			delay = XsltForms_globals.numberValue(this.delay.evaluate());
+		if (this.delay.bind_evaluate) {
+			delay = XsltForms_globals.numberValue(this.delay.bind_evaluate(this.subform));
 		} else {
 			delay = XsltForms_globals.numberValue(this.delay);
 		}
@@ -5215,14 +5262,14 @@ XsltForms_insert.prototype = new XsltForms_abstractAction();
 
 XsltForms_insert.prototype.run = function(element, ctx) {
 	if (this.context) {
-		ctx = this.context.evaluate(ctx)[0];
+		ctx = this.context.xpath_evaluate(ctx)[0];
 	}
 	if (!ctx) {
 		return;
 	}
 	var nodes = [];
 	if( this.binding.bind || this.binding.xpath ) {
-		nodes = this.binding.evaluate(ctx);
+		nodes = this.binding.bind_evaluate(this.subform, ctx);
 	}
 	var index = 0;
 	var node = null;
@@ -5231,7 +5278,7 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 	var pos = this.position === "after"? 1 : 0;
 	var res = 0;
 	if (this.origin) {
-		originNodes = this.origin.evaluate(ctx);
+		originNodes = this.origin.xpath_evaluate(ctx);
 	}
 	if (originNodes.length === 0) {
 		if (nodes.length === 0) {
@@ -5246,7 +5293,7 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 		} else {
 			parent = nodes[0].nodeType === XsltForms_nodeType.DOCUMENT? nodes[0] : nodes[0].nodeType === XsltForms_nodeType.ATTRIBUTE? nodes[0].ownerDocument ? nodes[0].ownerDocument : nodes[0].selectSingleNode("..") : nodes[0].parentNode;
 			if (parent.nodeType !== XsltForms_nodeType.DOCUMENT && node.nodeType !== XsltForms_nodeType.ATTRIBUTE) {
-				res = this.at ? Math.round(XsltForms_globals.numberValue(this.at.evaluate(new XsltForms_exprContext(ctx, 1, nodes)))) + i - 1: nodes.length - 1;
+				res = this.at ? Math.round(XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes)))) + i - 1: nodes.length - 1;
 				index = isNaN(res)? nodes.length : res + pos;
 			}
 		}
@@ -5312,10 +5359,14 @@ XsltForms_load.prototype = new XsltForms_abstractAction();
 
 XsltForms_load.prototype.run = function(element, ctx) {
 	var href = this.resource;
+	var node;
 	if (this.binding) {
-		var node = this.binding.evaluate(ctx)[0];
+		node = this.binding.bind_evaluate(this.subform, ctx)[0];
 		if (node) {
-			href = XsltForms_browser.getValue(node);
+			var t = XsltForms_browser.getType(node);
+			if (t === "xsd:anyURI") {
+				href = XsltForms_browser.getValue(node);
+			}
 		}
 	} else {
 		if (href && typeof href === 'object') {
@@ -5336,7 +5387,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 		} else if (this.show === "new") {
 			window.open(href);
 		} else if (this.show === "embed") {
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_load.prototype.run");
 			var req = null;
 			var method = "get";
 			var evcontext = {"method": method, "resource-uri": href};
@@ -5347,11 +5398,11 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
 					evcontext["error-type"] = "resource-error";
 					this.issueLoadException_(evcontext, req, null);
-					XsltForms_globals.closeAction();
+					XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 					return;
 				}
 				XsltForms_submission.requesteventlog(evcontext, req);
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 				var resp = req.responseText;
 				var piindex = resp.indexOf("<?xml-stylesheet", 0);
 				while ( piindex !== -1) {
@@ -5415,24 +5466,23 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				XsltForms_browser.debugConsole.write(e2.message || e2);
 				evcontext["error-type"] = "resource-error";
 				this.issueLoadException_(evcontext, req, e2);
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 			}
 		} else {
 			location.href = href;
 		}
 	} else {
-		if (this.instance) {
-			var instance = document.getElementById(this.instance);
-			if (!instance) { throw {name: "instance " + this.instance + " not found"}; }
-			var ser = XsltForms_browser.saveXML(instance.xfElement.doc.documentElement);
+		if (node) {
+			var v = XsltForms_browser.getValue(node).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 			var lw;
 			if (this.show === "new") {
-				lw = window.open('data:text/xml,' + ser, this.instance);
+				lw = window.open("about:blank","_blank");
+				lw.document.write(v);
 				lw.document.close();
 			} else {
 				if (this.show === "replace") {
-					lw = window.open("about:blank", _self);
-					lw.document.write(ser);
+					lw = window.open("about:blank", "_self");
+					lw.document.write(v);
 					lw.document.close();
 				}
 			}
@@ -5499,7 +5549,7 @@ XsltForms_message.prototype = new XsltForms_abstractAction();
 XsltForms_message.prototype.run = function(element, ctx) {
 	var text;
 	if (this.binding) {
-		var node = this.binding.evaluate(ctx)[0];
+		var node = this.binding.bind_evaluate(this.subform, ctx)[0];
 		if (node) {
 			text = XsltForms_browser.getValue(node);
 		}
@@ -5539,13 +5589,13 @@ XsltForms_script.prototype.run = function(element, ctx) {
 	switch (this.stype) {
 		case "text/javascript":
 			if (this.binding) {
-				var node = this.binding.evaluate(ctx)[0];
+				var node = this.binding.bind_evaluate(this.subform, ctx)[0];
 				if (node) {
 					script = XsltForms_browser.getValue(node);
 				}
 			} else {
 				if (typeof script === 'object') {
-					script = XsltForms_globals.stringValue(this.script.xpath.evaluate(ctx));
+					script = XsltForms_globals.stringValue(this.script.xpath.xpath_evaluate(ctx));
 				} else {
 					if (typeof script === 'string') {
 						script = XsltForms_browser.unescape(script); 
@@ -5561,7 +5611,7 @@ XsltForms_script.prototype.run = function(element, ctx) {
 			}
 			break;
 		case "application/xquery":
-			this.script.xpath.evaluate(ctx);
+			this.script.xpath.xpath_evaluate(ctx);
 			break;
 	}
 };
@@ -5584,7 +5634,7 @@ XsltForms_setindex.prototype = new XsltForms_abstractAction();
 
 XsltForms_setindex.prototype.run = function(element, ctx) {
 	var repeat = XsltForms_idManager.find(this.repeat);
-	var index = XsltForms_globals.numberValue(this.index.evaluate(ctx));
+	var index = XsltForms_globals.numberValue(this.index.xpath_evaluate(ctx));
 	XsltForms_browser.debugConsole.write("setIndex " + index);
 	if (!isNaN(index)) {
 		repeat.xfElement.setIndex(index);
@@ -5610,15 +5660,15 @@ XsltForms_setnode.prototype = new XsltForms_abstractAction();
 		
 
 XsltForms_setnode.prototype.run = function(element, ctx) {
-	var node = this.binding.evaluate(ctx)[0];
+	var node = this.binding.bind_evaluate(this.subform, ctx)[0];
 	if (node) {
 		if (this.context) {
-			ctx = this.context.evaluate(ctx)[0];
+			ctx = this.context.xpath_evaluate(ctx)[0];
 		}
-		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.evaluate(ctx, ctx) : this.value.evaluate(node, ctx)) : this.literal;
+		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx) : this.value.xpath_evaluate(node, ctx)) : this.literal;
 		var modelid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model");
 		var instanceid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "instance");
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_setnode.prototype.run");
 		if (this.inout) {
 			while (node.firstChild) {
 				node.removeChild(node.firstChild);
@@ -5636,7 +5686,7 @@ XsltForms_setnode.prototype.run = function(element, ctx) {
 		XsltForms_browser.debugConsole.write("Setnode " + node.nodeName + (this.inout ? " inner" : " outer") + " = " + value); 
 		XsltForms_xmlevents.dispatch(model, "xforms-rebuild");
 		XsltForms_globals.refresh();
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_setnode.prototype.run");
 	}
 };
 
@@ -5659,17 +5709,17 @@ XsltForms_setvalue.prototype = new XsltForms_abstractAction();
 		
 
 XsltForms_setvalue.prototype.run = function(element, ctx) {
-	var node = this.binding.evaluate(ctx)[0];
+	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx)[0];
 	if (node) {
 		if (this.context) {
-			ctx = this.context.evaluate(ctx)[0];
+			ctx = this.context.bind_evaluate(element.xfElement.subform, ctx)[0];
 		}
-		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.evaluate(ctx, ctx) : this.value.evaluate(node, ctx)) : this.literal;
-		XsltForms_globals.openAction();
+		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform)) : this.literal;
+		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
 		XsltForms_browser.setValue(node, value || "");
 		document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement.addChange(node);
 		XsltForms_browser.debugConsole.write("Setvalue " + node.nodeName + " = " + value); 
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_setvalue.prototype.run");
 	}
 };
 
@@ -5696,7 +5746,7 @@ XsltForms_toggle.prototype.run = function(element, ctx) {
 		
 
 XsltForms_toggle.toggle = function(caseId, ctx) {
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_toggle.toggle");
 	if (typeof caseId === 'object') {
 		if (!ctx) {
 			ctx = XsltForms_globals.defaultModel.getInstanceDocument() ? XsltForms_globals.defaultModel.getInstanceDocument().documentElement : null;
@@ -5733,7 +5783,7 @@ XsltForms_toggle.toggle = function(caseId, ctx) {
 	if (element) {
 		XsltForms_xmlevents.dispatch(element, "xforms-select");
 	}
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_toggle.toggle");
 };
 
 	
@@ -6022,12 +6072,12 @@ XsltForms_element.prototype.build = function(ctx) {
 		
 
 XsltForms_element.prototype.evaluateBinding = function(binding, ctx) {
-	var nodes = null;
+	this.boundnodes = null;
 	var errmsg = null;
 	if (binding) {
-		nodes = binding.evaluate(ctx, this.depsNodesBuild, this.depsIdB, this.depsElements);
-		if (nodes || nodes === "") {
-			return nodes;
+		this.boundnodes = binding.bind_evaluate(this.subform, ctx, this.depsNodesBuild, this.depsIdB, this.depsElements);
+		if (this.boundnodes || this.boundnodes === "") {
+			return this.boundnodes;
 		}
 		// A 'null' binding means bind-ID was not found.
 		errmsg = "non-existent bind-ID("+ binding.bind + ") on element(" + this.element.id + ")!";
@@ -6040,11 +6090,11 @@ XsltForms_element.prototype.evaluateBinding = function(binding, ctx) {
 		// Do not fail here, to keep on searching for more errors.
 		XsltForms_globals.bindErrMsgs.push(errmsg);
 		XsltForms_xmlevents.dispatch(this.element, "xforms-binding-exception");
-		nodes = [];
+		this.nodes = [];
 	} else {
 		XsltForms_globals.error(this.element, "xforms-binding-exception", errmsg);
 	}
-	return nodes;
+	return this.boundnodes;
 };
 
 	
@@ -6084,7 +6134,7 @@ XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 		return;
 	}
 	if (XsltForms_globals.focus !== this) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_control.prototype.focus");
 		XsltForms_globals.blur(true);
 		XsltForms_globals.focus = this;
 		XsltForms_browser.setClass(this.element, "xforms-focus", true);
@@ -6097,7 +6147,7 @@ XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 			parent = parent.parentNode;
 		}
 		XsltForms_xmlevents.dispatch(XsltForms_globals.focus, "DOMFocusIn", null, null, null, null, evcontext);
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_control.prototype.focus");
 		if (this.full && !focusEvent) { // select full
 			this.focusFirst();
 		}
@@ -6147,7 +6197,7 @@ XsltForms_control.prototype.refresh = function() {
 	var node = element.node;
 	if (node) {
 		var value = XsltForms_browser.getValue(node, true, this.complex);
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_control.prototype.refresh");
 		var changed = value !== this.currentValue || this.nodeChanged;
 		if (this.relevant) {
 			XsltForms_browser.setClass(element, "xforms-disabled", false);
@@ -6163,7 +6213,7 @@ XsltForms_control.prototype.refresh = function() {
 				XsltForms_xmlevents.dispatch(element, "xforms-value-changed");
 			}
 		}
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_control.prototype.refresh");
 	} else if (this.outputValue !== undefined) {
 		this.setValue(this.outputValue);
 		XsltForms_browser.setClass(element, "xforms-disabled", false);
@@ -6202,12 +6252,12 @@ XsltForms_control.prototype.valueChanged = function(value) {
 		try { value = schtyp.parse(value); } catch(e) { }
 	}
 	if (value !== XsltForms_browser.getValue(node)) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_control.prototype.valueChanged");
 		XsltForms_browser.setValue(node, value);
 		model.addChange(node);
 		XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 		XsltForms_globals.refresh();
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_control.prototype.valueChanged");
 	}
 };
 
@@ -6290,6 +6340,123 @@ XsltForms_avt.prototype.setValue = function(value) {
 
 XsltForms_avt.prototype.getValue = function(value) {
 	return this.element.getAttribute(this.attrname);
+};
+
+	
+		
+		
+		
+function XsltForms_component(subform, id, valoff, binding, href) {
+	XsltForms_globals.counters.component++;
+	this.init(subform, id);
+	this.valoff = valoff;
+	var children = this.element.children || this.element.childNodes;
+	if (children.length !== 0) {
+		var cells = children;
+		this.valueElement = cells[valoff];
+	} else {
+		this.valueElement = this.element;
+	}
+	this.hasBinding = true;
+	this.binding = binding;
+	this.resource = href;
+	this.isComponent = true;
+	if (this.binding && this.binding.type) {
+		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
+	}
+	//this.subformid = "xsltforms-subform-" + XsltForms_globals.nbsubforms;
+	var req = null;
+	var method = "get";
+	var evcontext = {"method": method, "resource-uri": href};
+	try {
+		req = XsltForms_browser.openRequest(method, href, false);
+		XsltForms_browser.debugConsole.write("Load Component " + href);
+		req.send(null);
+		if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
+			return;
+		}
+		var resp = req.responseText;
+		var piindex = resp.indexOf("<?xml-stylesheet", 0);
+		while ( piindex !== -1) {
+			var xslhref = resp.substr(piindex, resp.substr(piindex).indexOf("?>")).replace(/^.*href=\"([^\"]*)\".*$/, "$1");
+			resp = XsltForms_browser.transformText(resp, xslhref, false);
+			piindex = resp.indexOf("<?xml-stylesheet", 0);
+		}
+		var sp = XsltForms_globals.stringSplit(resp, "XsltForms_MagicSeparator");
+		var subbody, subjs;
+		var targetelt = this.valueElement;
+		if (sp.length === 1) {
+			subbody = resp;
+		} else {
+			subjs = "/* xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[2] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " */";
+			var imain = subjs.indexOf('"xsltforms-mainform"');
+			var targetsubform = targetelt.xfSubform;
+			if (targetsubform) {
+				targetsubform.dispose();
+			}
+			subjs = '(function(){var xsltforms_subform_eltid = "' + id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '"' + subjs.substring(imain + 20) + "})();";
+			imain = subjs.indexOf('"xsltforms-mainform-instance-default"');
+			while (imain !== -1) {
+				subjs = subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '-instance-default"' + subjs.substring(imain + 37);
+				imain = subjs.indexOf('"xsltforms-mainform-instance-default"');
+			}
+			subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->"
+			imain = subbody.indexOf(' id="xsltforms-mainform');
+			while (imain !== -1) {
+				subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
+				imain = subbody.indexOf(' id="xsltforms-mainform');
+			}
+		}
+		targetelt.innerHTML = subbody;
+		targetelt.hasXFElement = null;
+		var parent = targetelt.parentNode;
+		while (parent) {
+			if (parent.hasXFElement !== false) {
+				break;
+			}
+			parent.hasXFElement = null;
+			parent = parent.parentNode;
+		}
+		if (sp.length !== 1) {
+			XsltForms_globals.componentLoads.push(subjs);
+			this.subjs = subjs;
+			this.evaljs = true;
+		}
+		XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", true);
+		XsltForms_globals.nbsubforms++;
+	} catch(e2) {
+		XsltForms_browser.debugConsole.write(e2.message || e2);
+	}
+}
+
+XsltForms_component.prototype = new XsltForms_control();
+
+
+		
+
+XsltForms_component.prototype.clone = function(id) { 
+	return new XsltForms_component(this.subform, id, this.valoff, this.binding, this.resource);
+};
+
+
+		
+
+XsltForms_component.prototype.dispose = function() {
+	this.valueElement = null;
+	XsltForms_globals.counters.component--;
+	XsltForms_control.prototype.dispose.call(this);
+};
+
+
+		
+
+XsltForms_component.prototype.blur = function () { };
+
+
+		
+
+XsltForms_component.prototype.setValue = function(value) {
+	XsltForms_browser.forEach(this.valueElement.children[0].xfElement.subform.binds, "propagate");
 };
 
 	
@@ -6599,14 +6766,14 @@ XsltForms_input.prototype.blur = function(target) {
 
 XsltForms_input.prototype.click = function(target) {
 	if (target === this.aidButton) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.prototype.click#1");
 		XsltForms_xmlevents.dispatch(this, "ajx-aid");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.prototype.click#1");
 	} else if (target === this.input && this.type["class"] === "boolean") {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.prototype.click#2");
 		this.valueChanged(target.checked? "true" : "false");
 		XsltForms_xmlevents.dispatch(this, "DOMActivate");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.prototype.click#2");
 	} else if (target === this.calendarButton) {
 		XsltForms_calendar.show(target.previousSibling, this.type["class"] === "datetime"? XsltForms_calendar.SECONDS : XsltForms_calendar.ONLY_DATE);
 	}
@@ -6648,10 +6815,10 @@ XsltForms_input.keyPressActivate = function(a) {
 XsltForms_input.keyUpActivate = function(a) {
 	var xf = XsltForms_control.getXFElement(this);
 	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.keyUpActivate");
 		xf.valueChanged(this.value || "");
 		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.keyUpActivate");
 	}
 	this.keyDownCode = this.keyPressCode = null;
 };
@@ -6662,20 +6829,20 @@ XsltForms_input.keyUpActivate = function(a) {
 XsltForms_input.keyUpIncrementalActivate = function(a) {
 	var xf = XsltForms_control.getXFElement(this);
 	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.keyUpIncrementalActivate#1");
 		xf.valueChanged(this.value || "");
 		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.keyUpIncrementalActivate#1");
 	} else {
 		if (xf.delay && xf.delay > 0) {
 			if (xf.timer) {
 				window.clearTimeout(xf.timer);
 			}
-			xf.timer = window.setTimeout("XsltForms_globals.openAction();document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction();", xf.delay);
+			xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncrementalActivate#2');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncrementalActivate#2');", xf.delay);
 		} else {
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_input.keyUpIncrementalActivate#3");
 			xf.valueChanged(this.value || "");
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_input.keyUpIncrementalActivate#3");
 		}
 	}
 	this.keyDownCode = this.keyPressCode = null;
@@ -6690,11 +6857,11 @@ XsltForms_input.keyUpIncremental = function() {
 		if (xf.timer) {
 			window.clearTimeout(xf.timer);
 		}
-		xf.timer = window.setTimeout("XsltForms_globals.openAction();document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction();", xf.delay);
+		xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncremental#1');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncremental#1');", xf.delay);
 	} else {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.keyUpIncremental#2");
 		xf.valueChanged(this.value || "");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.keyUpIncremental#2");
 	}
 };
 
@@ -7185,9 +7352,9 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 				}
 				xf.setValue(value);
 				if (xf.incremental) {
-					XsltForms_globals.openAction();
+					XsltForms_globals.openAction("XsltForms_range#1");
 					xf.valueChanged(xf.value + "");
-					XsltForms_globals.closeAction();
+					XsltForms_globals.closeAction("XsltForms_range#1");
 				}
 				if (!document.activeElement || !document.activeElement !== xf.cursor) {
 					xf.cursor.focus();
@@ -7230,9 +7397,9 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 							}
 							xf.setValue(value);
 							if (xf.incremental) {
-								XsltForms_globals.openAction();
+								XsltForms_globals.openAction("XsltForms_range#2");
 								xf.valueChanged(xf.value + "");
-								XsltForms_globals.closeAction();
+								XsltForms_globals.closeAction("XsltForms_range#2");
 							}
 							if (!document.activeElement || !document.activeElement !== xf.cursor) {
 								xf.cursor.focus();
@@ -7350,12 +7517,12 @@ XsltForms_repeat.prototype.setIndex = function(index) {
 	if (this.index !== index) {
 		var node = this.nodes[index - 1];
 		if (node) {    
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_repeat.prototype.setIndex");
 			this.index = index;
 			this.element.node = node;
 			XsltForms_globals.addChange(this);
 			XsltForms_globals.addChange(document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement);
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_repeat.prototype.setIndex");
 		}
 	}
 };
@@ -7552,6 +7719,14 @@ XsltForms_repeat.initClone = function(element) {
 				listeners[i].clone(element);
 			}
 		}
+	}
+	var parentXF = element.parentNode.xfElement;
+	if (parentXF && parentXF.isComponent && parentXF.valueElement === element) {
+		if (parentXF.evaljs) {
+			eval(parentXF.subjs);
+			parentXF.evaljs = false;
+		}
+		return;
 	}
 	var next = element.firstChild;
 	while (next) {
@@ -7757,7 +7932,7 @@ XsltForms_select.prototype.changeReadonly = function() {
 XsltForms_select.prototype.itemClick = function(value) {
 	var inputs = XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input");
 	var input;
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_select.prototype.itemClick");
 	if (this.multiple) {
 		var newValue = null;
 		for (var i = 0, len = inputs.length; i < len; i++) {
@@ -7774,7 +7949,7 @@ XsltForms_select.prototype.itemClick = function(value) {
 		var old = this.value || XsltForms_browser.getValue(this.element.node);
 		var inputSelected = null;
 		if (old === value) {
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_select.prototype.itemClick");
 			return;
 		}
 		for (var j = 0, len1 = inputs.length; j < len1; j++) {
@@ -7793,7 +7968,7 @@ XsltForms_select.prototype.itemClick = function(value) {
 	} else {
 		this.value = value || "";
 	}
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_select.prototype.itemClick");
 };
 
 
@@ -7801,9 +7976,9 @@ XsltForms_select.prototype.itemClick = function(value) {
 
 XsltForms_select.prototype.blur = function(evt) {
 	if (this.value) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_select.prototype.blur");
 		this.valueChanged(this.value);
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_select.prototype.blur");
 		this.value = null;
 	}
 };
@@ -7817,7 +7992,7 @@ XsltForms_select.normalChange = function(evt) {
 	var value = "";
 	var old = xf.getSelected();
 	var opts = this.options;
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_select.normalChange");
 	for (var i = 0, len = old.length; i < len; i++) {
 		if (old[i].selected) {
 			news.push(old[i]);
@@ -7843,7 +8018,7 @@ XsltForms_select.normalChange = function(evt) {
 	}
 	xf.value = value;
 	xf.selectedOptions = news;
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_select.normalChange");
 };
 
 
@@ -7851,10 +8026,10 @@ XsltForms_select.normalChange = function(evt) {
 
 XsltForms_select.incrementalChange = function(evt) {
 	var xf = XsltForms_control.getXFElement(this);
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_select.incrementalChange");
 	XsltForms_select.normalChange.call(this, evt);
 	xf.valueChanged(xf.value);
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_select.incrementalChange");
 };
 
 
@@ -7925,9 +8100,9 @@ XsltForms_trigger.prototype.dispose = function() {
 		
 
 XsltForms_trigger.prototype.click = function (target, evcontext) {
-	XsltForms_globals.openAction();
+	XsltForms_globals.openAction("XsltForms_trigger.prototype.click");
 	XsltForms_xmlevents.dispatch(this, "DOMActivate", null, null, null, null, evcontext);
-	XsltForms_globals.closeAction();
+	XsltForms_globals.closeAction("XsltForms_trigger.prototype.click");
 };
 
 
@@ -8040,13 +8215,13 @@ XsltForms_upload.prototype.directclick = function() {
 		if(this.filename && this.filename.evaluate) {
 			var filenameref = this.filename.evaluate(this.element.node)[0];
 			if (filenameref) {
-				XsltForms_globals.openAction();
+				XsltForms_globals.openAction("XsltForms_upload.prototype.directclick");
 				XsltForms_browser.setValue(filenameref, filename || "");
 				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
 				model.addChange(filenameref);
 				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 				XsltForms_globals.refresh();
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_upload.prototype.directclick");
 			}
 		}
 	}
@@ -8133,13 +8308,13 @@ XsltForms_upload.prototype.change = function() {
 		if(this.filename && this.filename.evaluate) {
 			var filenameref = this.filename.evaluate(this.element.node)[0];
 			if (filenameref) {
-				XsltForms_globals.openAction();
+				XsltForms_globals.openAction("XsltForms_upload.prototype.change");
 				XsltForms_browser.setValue(filenameref, filename || "");
 				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
 				model.addChange(filenameref);
 				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 				XsltForms_globals.refresh();
-				XsltForms_globals.closeAction();
+				XsltForms_globals.closeAction("XsltForms_upload.prototype.change");
 			}
 		}
 	}
@@ -10308,7 +10483,8 @@ XsltForms_binaryExpr.prototype.evaluate = function(ctx) {
 		
 		
 		
-function XsltForms_exprContext(node, position, nodelist, parent, nsresolver, current, depsNodes, depsId, depsElements) {
+function XsltForms_exprContext(subform, node, position, nodelist, parent, nsresolver, current, depsNodes, depsId, depsElements) {
+	this.subform = subform;
 	this.node = node;
 	this.current = current || node;
 	if(!position) {
@@ -10339,7 +10515,7 @@ function XsltForms_exprContext(node, position, nodelist, parent, nsresolver, cur
 		
 
 XsltForms_exprContext.prototype.clone = function(node, position, nodelist) {
-	return new XsltForms_exprContext(node || this.node, 
+	return new XsltForms_exprContext(this.subform, node || this.node, 
 		typeof position === "undefined" ? this.position : position,
 		nodelist || this.nodelist, this, this.nsresolver, this.current,
 		this.depsNodes, this.depsId, this.depsElements);
@@ -11019,6 +11195,7 @@ function XsltForms_xpath(subform, expression, unordered, compiled, ns) {
 	this.subforms = [];
 	this.subforms[subform] = true;
 	this.nbsubforms = 1;
+	this.subform = subform;
 	subform.xpaths.push(this);
 	this.expression = expression;
 	this.unordered = unordered;
@@ -11046,12 +11223,15 @@ function XsltForms_xpath(subform, expression, unordered, compiled, ns) {
 
 		
 
-XsltForms_xpath.prototype.evaluate = function(ctx, current) {
+XsltForms_xpath.prototype.evaluate = function() {
+	alert("XPath error");
+}
+XsltForms_xpath.prototype.xpath_evaluate = function(ctx, current, subform) {
 	var d1 = new Date();
 	XsltForms_browser.assert(ctx);
 //	alert("XPath evaluate \""+this.expression+"\"");
 	if (!ctx.node) {
-		ctx = new XsltForms_exprContext(ctx, null, null, null, this.nsresolver, current);
+		ctx = new XsltForms_exprContext(subform, ctx, null, null, null, this.nsresolver, current);
 	} else if (!ctx.nsresolver) {
 		ctx.nsresolver = this.nsresolver;
 	}
@@ -11472,6 +11652,17 @@ var XsltForms_xpathCoreFunctions = {
 
 		
 
+	"http://www.w3.org/2005/xpath-functions replace" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(string, pattern, replacement) {
+			if (arguments.length !== 3) {
+				throw XsltForms_xpathFunctionExceptions.replaceInvalidArgumentsNumber;
+			}
+			string = XsltForms_globals.stringValue(string);
+			return string.replace(new RegExp(XsltForms_globals.stringValue(pattern), "g"), XsltForms_globals.stringValue(replacement));
+		} ),
+
+		
+
 	"http://www.w3.org/2005/xpath-functions boolean" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(object) {
 			if (arguments.length !== 1) {
@@ -11832,6 +12023,27 @@ var XsltForms_xpathCoreFunctions = {
 			} else {
 				return [ctx.node.ownerDocument.documentElement];
 			}
+		} ),
+
+		
+
+	"http://www.w3.org/2005/xpath-functions subform-instance" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, true,
+		function(ctx) {
+			if (arguments.length > 1) {
+				throw XsltForms_xpathFunctionExceptions.subformInstanceInvalidArgumentsNumber;
+			}
+			return [ctx.subform.instances[0].doc.documentElement];
+		} ),
+
+		
+
+	"http://www.w3.org/2005/xpath-functions subform-context" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, true,
+		function(ctx) {
+			if (arguments.length > 1) {
+				throw XsltForms_xpathFunctionExceptions.subformContextInvalidArgumentsNumber;
+			}
+			var b = document.getElementById(ctx.subform.eltid).xfElement.boundnodes;
+			return b ? [b[0]] : [];
 		} ),
 
 		
@@ -12648,6 +12860,10 @@ var XsltForms_xpathFunctionExceptions = {
 		name : "substring-before() : Invalid number of arguments",
 		message : "substring-before() function must have two arguments exactly"
 	},
+	replaceInvalidArgumentsNumber : {
+		name : "replace() : Invalid number of arguments",
+		message : "replace() function must have three arguments exactly"
+	},
 	substringAfterInvalidArgumentsNumber : {
 		name : "substring-after() : Invalid number of arguments",
 		message : "substring-after() function must have two arguments exactly"
@@ -12791,6 +13007,14 @@ var XsltForms_xpathFunctionExceptions = {
 	instanceInvalidArgumentsNumber : {
 		name : "instance() : Invalid number of arguments",
 		message : "instance() function must have zero or one argument"
+	},
+	subformInstanceInvalidArgumentsNumber : {
+		name : "subform-instance() : Invalid number of arguments",
+		message : "subform-instance() function must have no argument"
+	},
+	subformContextInvalidArgumentsNumber : {
+		name : "subform-context() : Invalid number of arguments",
+		message : "subform-context() function must have no argument"
 	},
 	nowInvalidArgumentsNumber : {
 		name : "now() : Invalid number of arguments",

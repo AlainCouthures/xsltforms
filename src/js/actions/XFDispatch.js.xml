@@ -46,12 +46,12 @@ XsltForms_dispatch.prototype = new XsltForms_abstractAction();
 <![CDATA[
 XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 	var name = this.name;
-	if (name.evaluate) {
-		name = XsltForms_globals.stringValue(name.evaluate());
+	if (name.bind_evaluate) {
+		name = XsltForms_globals.stringValue(name.bind_evaluate(this.subform));
 	}
 	var target = this.target;
-	if (target && target.evaluate) {
-		target = XsltForms_globals.stringValue(target.evaluate());
+	if (target && target.bind_evaluate) {
+		target = XsltForms_globals.stringValue(target.bind_evaluate(this.subform));
 	}
 	if (!target) {
 		switch (name) {
@@ -68,13 +68,13 @@ XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 	var evtctx = {};
 	for (var prop in this.properties) {
 		if (prop !== "" && this.properties.hasOwnProperty(prop)) {
-			evtctx[prop] = this.properties[prop].evaluate ? this.properties[prop].evaluate() : this.properties[prop];
+			evtctx[prop] = this.properties[prop].bind_evaluate ? this.properties[prop].bind_evaluate(this.subform) : this.properties[prop];
 		}
 	}
 	var delay = 0;
 	if (this.delay) {
-		if (this.delay.evaluate) {
-			delay = XsltForms_globals.numberValue(this.delay.evaluate());
+		if (this.delay.bind_evaluate) {
+			delay = XsltForms_globals.numberValue(this.delay.bind_evaluate(this.subform));
 		} else {
 			delay = XsltForms_globals.numberValue(this.delay);
 		}

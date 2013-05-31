@@ -1,7 +1,7 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="browser.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2011-10-31</cm:lastupdate>
+	<cm:lastupdate>2013-05-19</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2011 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
@@ -38,8 +38,9 @@ var XsltForms_browser = {
 	isIE : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/),
 	isIE9 : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/) && window.addEventListener,
 	isIE6 : navigator.userAgent.match(/\bMSIE 6\.0/),
-    isMozilla : navigator.userAgent.match(/\bGecko\b/),
+	isMozilla : navigator.userAgent.match(/\bGecko\b/),
 	isSafari : navigator.userAgent.match(/\bAppleWebKit/) && !window.FileReader,
+	isChrome : navigator.userAgent.match(/\bAppleWebKit/),
 	isFF2 : navigator.userAgent.match(/\bFirefox[\/\s]2\.\b/),
 	isXhtml : false, // document.documentElement.namespaceURI === "http://www.w3.org/1999/xhtml",
 	setClass : function(element, className, value) {
@@ -291,10 +292,12 @@ if (XsltForms_browser.isIE) {
 	XsltForms_browser.transformText = function(xml, xslt, inline) {
 		var xmlDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		xmlDoc.setProperty("AllowDocumentFunction", true);
+		xmlDoc.preserveWhiteSpace = true;
 		xmlDoc.validateOnParse = false;
 		xmlDoc.loadXML(xml);
 		var xslDoc = new ActiveXObject("MSXML2.FreeThreadedDOMDocument." + XsltForms_browser.MSXMLver);
 		xslDoc.setProperty("AllowDocumentFunction", true);
+		xslDoc.preserveWhiteSpace = true;
 		xslDoc.validateOnParse = false;
 		if (inline) {
 			xslDoc.loadXML(xslt);
@@ -355,8 +358,11 @@ if (XsltForms_browser.isIE) {
 				xsltProcessor.importStylesheet(xsltDoc);
 				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
 				var s = "";
-				if (XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") {
+				if ((XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") ||
+				     (XsltForms_browser.isOpera && resultDocument.documentElement.nodeName === "result")) {
 					s = resultDocument.documentElement.textContent;
+				} else if (XsltForms_browser.isChrome && resultDocument.documentElement.nodeName === "html" && resultDocument.documentElement.children[1].children[0].nodeName === "pre") {
+					s = resultDocument.documentElement.children[1].children[0].textContent;
 				} else {
 					s = serializer.serializeToString(resultDocument);
 				}
@@ -2018,21 +2024,21 @@ XsltForms_browser.run = function(action, element, evt, synch, propagate) {
 	if (synch) {
 		XsltForms_browser.dialog.show("statusPanel", null, false);
 		setTimeout(function() { 
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_browser.run#1");
 			action.execute(XsltForms_idManager.find(element), null, evt);
 			XsltForms_browser.dialog.hide("statusPanel", false);
 			if (!propagate) {
 				evt.stopPropagation();
 			}
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_browser.run#1");
 		}, 1 );
 	} else {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_browser.run#2");
 		action.execute(XsltForms_idManager.find(element), null, evt);
 		if (!propagate) {
 			evt.stopPropagation();
 		}
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_browser.run#2");
 	}
 };
 

@@ -44,7 +44,7 @@ XsltForms_setindex.prototype = new XsltForms_abstractAction();
 <![CDATA[
 XsltForms_setindex.prototype.run = function(element, ctx) {
 	var repeat = XsltForms_idManager.find(this.repeat);
-	var index = XsltForms_globals.numberValue(this.index.evaluate(ctx));
+	var index = XsltForms_globals.numberValue(this.index.xpath_evaluate(ctx));
 	XsltForms_browser.debugConsole.write("setIndex " + index);
 	if (!isNaN(index)) {
 		repeat.xfElement.setIndex(index);

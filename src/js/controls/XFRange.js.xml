@@ -80,9 +80,9 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 				}
 				xf.setValue(value);
 				if (xf.incremental) {
-					XsltForms_globals.openAction();
+					XsltForms_globals.openAction("XsltForms_range#1");
 					xf.valueChanged(xf.value + "");
-					XsltForms_globals.closeAction();
+					XsltForms_globals.closeAction("XsltForms_range#1");
 				}
 				if (!document.activeElement || !document.activeElement !== xf.cursor) {
 					xf.cursor.focus();
@@ -125,9 +125,9 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 							}
 							xf.setValue(value);
 							if (xf.incremental) {
-								XsltForms_globals.openAction();
+								XsltForms_globals.openAction("XsltForms_range#2");
 								xf.valueChanged(xf.value + "");
-								XsltForms_globals.closeAction();
+								XsltForms_globals.closeAction("XsltForms_range#2");
 							}
 							if (!document.activeElement || !document.activeElement !== xf.cursor) {
 								xf.cursor.focus();

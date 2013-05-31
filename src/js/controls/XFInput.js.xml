@@ -272,14 +272,14 @@ XsltForms_input.prototype.blur = function(target) {
 <![CDATA[
 XsltForms_input.prototype.click = function(target) {
 	if (target === this.aidButton) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.prototype.click#1");
 		XsltForms_xmlevents.dispatch(this, "ajx-aid");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.prototype.click#1");
 	} else if (target === this.input && this.type["class"] === "boolean") {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.prototype.click#2");
 		this.valueChanged(target.checked? "true" : "false");
 		XsltForms_xmlevents.dispatch(this, "DOMActivate");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.prototype.click#2");
 	} else if (target === this.calendarButton) {
 		XsltForms_calendar.show(target.previousSibling, this.type["class"] === "datetime"? XsltForms_calendar.SECONDS : XsltForms_calendar.ONLY_DATE);
 	}
@@ -325,10 +325,10 @@ XsltForms_input.keyPressActivate = function(a) {
 XsltForms_input.keyUpActivate = function(a) {
 	var xf = XsltForms_control.getXFElement(this);
 	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.keyUpActivate");
 		xf.valueChanged(this.value || "");
 		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.keyUpActivate");
 	}
 	this.keyDownCode = this.keyPressCode = null;
 };
@@ -340,20 +340,20 @@ XsltForms_input.keyUpActivate = function(a) {
 XsltForms_input.keyUpIncrementalActivate = function(a) {
 	var xf = XsltForms_control.getXFElement(this);
 	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.keyUpIncrementalActivate#1");
 		xf.valueChanged(this.value || "");
 		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.keyUpIncrementalActivate#1");
 	} else {
 		if (xf.delay && xf.delay > 0) {
 			if (xf.timer) {
 				window.clearTimeout(xf.timer);
 			}
-			xf.timer = window.setTimeout("XsltForms_globals.openAction();document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction();", xf.delay);
+			xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncrementalActivate#2');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncrementalActivate#2');", xf.delay);
 		} else {
-			XsltForms_globals.openAction();
+			XsltForms_globals.openAction("XsltForms_input.keyUpIncrementalActivate#3");
 			xf.valueChanged(this.value || "");
-			XsltForms_globals.closeAction();
+			XsltForms_globals.closeAction("XsltForms_input.keyUpIncrementalActivate#3");
 		}
 	}
 	this.keyDownCode = this.keyPressCode = null;
@@ -369,11 +369,11 @@ XsltForms_input.keyUpIncremental = function() {
 		if (xf.timer) {
 			window.clearTimeout(xf.timer);
 		}
-		xf.timer = window.setTimeout("XsltForms_globals.openAction();document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction();", xf.delay);
+		xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncremental#1');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncremental#1');", xf.delay);
 	} else {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_input.keyUpIncremental#2");
 		xf.valueChanged(this.value || "");
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_input.keyUpIncremental#2");
 	}
 };
 

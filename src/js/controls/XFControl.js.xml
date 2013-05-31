@@ -65,7 +65,7 @@ XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 		return;
 	}
 	if (XsltForms_globals.focus !== this) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_control.prototype.focus");
 		XsltForms_globals.blur(true);
 		XsltForms_globals.focus = this;
 		XsltForms_browser.setClass(this.element, "xforms-focus", true);
@@ -78,7 +78,7 @@ XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 			parent = parent.parentNode;
 		}
 		XsltForms_xmlevents.dispatch(XsltForms_globals.focus, "DOMFocusIn", null, null, null, null, evcontext);
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_control.prototype.focus");
 		if (this.full && !focusEvent) { // select full
 			this.focusFirst();
 		}
@@ -130,7 +130,7 @@ XsltForms_control.prototype.refresh = function() {
 	var node = element.node;
 	if (node) {
 		var value = XsltForms_browser.getValue(node, true, this.complex);
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_control.prototype.refresh");
 		var changed = value !== this.currentValue || this.nodeChanged;
 		if (this.relevant) {
 			XsltForms_browser.setClass(element, "xforms-disabled", false);
@@ -146,7 +146,7 @@ XsltForms_control.prototype.refresh = function() {
 				XsltForms_xmlevents.dispatch(element, "xforms-value-changed");
 			}
 		}
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_control.prototype.refresh");
 	} else if (this.outputValue !== undefined) {
 		this.setValue(this.outputValue);
 		XsltForms_browser.setClass(element, "xforms-disabled", false);
@@ -187,12 +187,12 @@ XsltForms_control.prototype.valueChanged = function(value) {
 		try { value = schtyp.parse(value); } catch(e) { }
 	}
 	if (value !== XsltForms_browser.getValue(node)) {
-		XsltForms_globals.openAction();
+		XsltForms_globals.openAction("XsltForms_control.prototype.valueChanged");
 		XsltForms_browser.setValue(node, value);
 		model.addChange(node);
 		XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 		XsltForms_globals.refresh();
-		XsltForms_globals.closeAction();
+		XsltForms_globals.closeAction("XsltForms_control.prototype.valueChanged");
 	}
 };
 

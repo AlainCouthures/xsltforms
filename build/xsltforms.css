@@ -1,4 +1,4 @@
-/* Rev. 574
+/* Rev. 576
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -67,7 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 }
 
 .calendar .title input {
-	width				: 4em;
+	width				: 3em;
 	-moz-box-sizing		: border-box;
 	box-sizing			: border-box;
 	background			: #f8f8f8;

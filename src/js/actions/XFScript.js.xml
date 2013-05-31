@@ -48,13 +48,13 @@ XsltForms_script.prototype.run = function(element, ctx) {
 	switch (this.stype) {
 		case "text/javascript":
 			if (this.binding) {
-				var node = this.binding.evaluate(ctx)[0];
+				var node = this.binding.bind_evaluate(this.subform, ctx)[0];
 				if (node) {
 					script = XsltForms_browser.getValue(node);
 				}
 			} else {
 				if (typeof script === 'object') {
-					script = XsltForms_globals.stringValue(this.script.xpath.evaluate(ctx));
+					script = XsltForms_globals.stringValue(this.script.xpath.xpath_evaluate(ctx));
 				} else {
 					if (typeof script === 'string') {
 						script = XsltForms_browser.unescape(script); 
@@ -70,7 +70,7 @@ XsltForms_script.prototype.run = function(element, ctx) {
 			}
 			break;
 		case "application/xquery":
-			this.script.xpath.evaluate(ctx);
+			this.script.xpath.xpath_evaluate(ctx);
 			break;
 	}
 };

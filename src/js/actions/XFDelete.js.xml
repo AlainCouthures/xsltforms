@@ -46,14 +46,14 @@ XsltForms_delete.prototype = new XsltForms_abstractAction();
 <![CDATA[
 XsltForms_delete.prototype.run = function(element, ctx) {
 	if (this.context) {
-		ctx = this.context.evaluate(ctx)[0];
+		ctx = this.context.bind_evaluate(this.subform, ctx)[0];
 	}
 	if (!ctx) {
 		return;
 	}
-	var nodes = this.binding.evaluate(ctx);
+	var nodes = this.binding.bind_evaluate(this.subform, ctx);
 	if(this.at) {
-		var index = XsltForms_globals.numberValue(this.at.evaluate(new XsltForms_exprContext(ctx, 1, nodes)));
+		var index = XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes)));
 		if(!nodes[index - 1]) {
 			return;
 		}

@@ -72,6 +72,7 @@ var XsltForms_globals = {
 	refreshcount: 0,
 	validationError: false,
 	counters: {
+		component: 0,
 		group: 0,
 		input: 0,
 		item: 0,
@@ -84,6 +85,7 @@ var XsltForms_globals = {
 		upload: 0
 	},
 	nbsubforms: 0,
+	componentLoads: [],
 ]]>
 		<cm:wiki>
 * '''debugging''' method : toggles debug mode</cm:wiki>
@@ -448,10 +450,13 @@ var XsltForms_globals = {
 		XsltForms_browser.events.onunload = function() {
 			XsltForms_globals.close();
 		};
-		this.openAction();
+		this.openAction("XsltForms_globals.init");
 		XsltForms_xmlevents.dispatchList(this.models, "xforms-model-construct");
+		for (var i = 0, l = this.componentLoads.length; i < l; i++) {
+			eval(this.componentLoads[i]);
+		}
 		this.refresh();
-		this.closeAction();
+		this.closeAction("XsltForms_globals.init");
 		this.ready = true;
 		XsltForms_browser.dialog.hide("statusPanel", false);
 	},
@@ -461,12 +466,12 @@ var XsltForms_globals = {
 <![CDATA[
 	close : function() {
 		if (XsltForms_globals.body) {
-			this.openAction();
+			this.openAction("XsltForms_globals.close");
 			//XsltForms_xmlevents.dispatchList(XsltForms_globals.models, "xforms-model-destruct");
 			for (var i = 0, len = XsltForms_listener.destructs.length; i < len; i++) {
 				XsltForms_listener.destructs[i].callback({target: XsltForms_listener.destructs[i].observer});
 			}
-			this.closeAction();
+			this.closeAction("XsltForms_globals.close");
 			XsltForms_idManager.clear();
 			this.defaultModel = null;
 			this.changes = [];
@@ -494,7 +499,9 @@ var XsltForms_globals = {
 		<cm:wiki>
 * '''openAction''' method : simply clears the Debug Console</cm:wiki>
 <![CDATA[
-	openAction : function() {
+	openActions : [],
+	openAction : function(action) {
+		this.openActions.push(action);
 		if (this.cont++ === 0) {
 			XsltForms_browser.debugConsole.clear();
 		}
@@ -503,7 +510,11 @@ var XsltForms_globals = {
 		<cm:wiki>
 * '''closeAction''' method : calls the '''closeChanges()''' method when every action has been performed</cm:wiki>
 <![CDATA[
-	closeAction : function() {
+	closeAction : function(action) {
+		var lastaction = this.openActions.pop();
+		if (lastaction !== action) {
+			alert("Action mismatch: '" + lastaction + "' was expected instead of '" + action + "'");
+		}
 		if (this.cont === 1) {
 			this.closeChanges();
 		}
@@ -707,11 +718,15 @@ var XsltForms_globals = {
 	blur : function(direct) {
 		if ((direct || this.posibleBlur) && this.focus) {
 			if (this.focus.element) {
-				this.openAction();
+				this.openAction("XsltForms_globals.blur");
 				XsltForms_xmlevents.dispatch(this.focus, "DOMFocusOut");
 				XsltForms_browser.setClass(this.focus.element, "xforms-focus", false);
-				this.focus.blur();
-				this.closeAction();
+				try {
+					this.focus.blur();
+				} catch (e){
+					alert("Blur?");
+				}
+				this.closeAction("XsltForms_globals.blur");
 			}
 			this.posibleBlur = false;
 			this.focus = null;
