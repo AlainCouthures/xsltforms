@@ -976,6 +976,7 @@ function replaceJsComment($capture) {
 //function process($capture) {
 //	return $capture[1]."(".$capture[2].");\n";
 //}
+date_default_timezone_set('Europe/Paris');
 if(array_key_exists("exec", $_GET) && $_GET["exec"] != "") {
 	$execfile = $_GET["exec"];
 } else {

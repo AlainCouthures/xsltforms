@@ -1,4 +1,4 @@
-/* Rev. 576
+/* Rev. 577
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "576",
-	fileVersionNumber: 576,
+	fileVersion: "577",
+	fileVersionNumber: 577,
 
 	language: "navigator",
 	debugMode: false,
@@ -503,9 +503,11 @@ var XsltForms_globals = {
 
 	closeAction : function(action) {
 		var lastaction = this.openActions.pop();
+		/*
 		if (lastaction !== action) {
 			alert("Action mismatch: '" + lastaction + "' was expected instead of '" + action + "'");
 		}
+		*/
 		if (this.cont === 1) {
 			this.closeChanges();
 		}
@@ -2844,7 +2846,6 @@ String.prototype.addslashes = function() {
 		
 		
 		
-		
 function XsltForms_binding(type, xpath, model, bind) {
 	this.type = type;
 	this.bind = bind? bind : null;
@@ -3557,6 +3558,19 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
 	this.mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type').split(";")[0] : "application/xml";
+	if (XsltForms_browser.isChrome && this.mediatype === "text/plain") {
+		switch(this.src.substr(this.src.indexOf("."))) {
+			case ".xlsx":
+				this.mediatype = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+				break;
+			case ".docx":
+				this.mediatype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				break;
+			case ".csv":
+				this.mediatype = "text/csv";
+				break;
+		}
+	}
 	switch(this.mediatype) {
 		case "text/json":
 		case "application/json":
@@ -4083,7 +4097,7 @@ XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 		f.lextraFields = z.substr(loffset, f.lextraFieldsLength);
 		loffset += f.lextraFieldsLength;
 		f.compressedFileData = z.substr(loffset, f.compressedSize);
-		if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+		if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" && (fileName.substr(fileName.length - 4) === ".xml" || fileName.substr(fileName.length - 5) === ".rels")) {
 			f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
 			XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
 			XsltForms_browser.setMeta(f.doc.documentElement, "instance", instid);
@@ -4098,7 +4112,7 @@ XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 		for (var fn in arch) {
 			if (arch.hasOwnProperty(fn)) {
 				f = arch[fn];
-				if ((f.doc.documentElement.localName ? f.doc.documentElement.localName : f.doc.documentElement.baseName) === "worksheet") {
+				if (f.doc && (f.doc.documentElement.localName ? f.doc.documentElement.localName : f.doc.documentElement.baseName) === "worksheet") {
 					var inlineStr = XsltForms_browser.transformText(XsltForms_browser.saveXML(f.doc), XsltForms_browser.xsltinlinesrc, true, "shared", shared);
 					XsltForms_browser.loadXML(f.doc.documentElement, inlineStr);
 					XsltForms_browser.setMeta(f.doc.documentElement, "instance", instid);
@@ -4400,7 +4414,7 @@ function XsltForms_submission(subform, id, model, ref, bind, action, method, ver
 	if (ref || bind) {
 		this.binding = new XsltForms_binding(null, ref, model.element, bind);
 		this.eval_ = function() {
-			return this.binding.evaluate()[0];
+			return this.binding.bind_evaluate()[0];
 		};
 	} else {
 		this.eval_ = function() {
@@ -4656,6 +4670,10 @@ XsltForms_submission.prototype.submit = function() {
 						return;
 					}
 					try {
+						if (req.status === 1223) {
+							req.status = 204;
+							req.statusText = "No Content";
+						}
 						if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
 							evcontext["error-type"] = "resource-error";
 							subm.issueSubmitException_(evcontext, req, null);
@@ -4981,7 +4999,7 @@ XsltForms_confirm.prototype = new XsltForms_abstractAction();
 XsltForms_confirm.prototype.run = function(element, ctx, evt) {
 	var text;
 	if (this.binding) {
-		var node = this.binding.evaluate(ctx)[0];
+		var node = this.binding.bind_evaluate(ctx)[0];
 		if (node) {
 			text = XsltForms_browser.getValue(node);
 		}
@@ -5213,7 +5231,11 @@ XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 			case "xforms-submit":
 				target = document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement.defaultSubmission;
 				break;
+			case "xforms-rebuild":
+			case "xforms-recalculate":
+			case "xforms-refresh":
 			case "xforms-reset":
+			case "xforms-revalidate":
 				target = document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement;
 				break;
 		}
@@ -8812,7 +8834,7 @@ XsltForms_atomicType.prototype.validate = function (value) {
 	}
 	if (this.totalDigits || this.fractionDigits) {
 		var index = value.indexOf(".");
-		var integer = parseInt(index !== -1? value.substring(0, index) : value, 10);
+		var integer = "" + Math.abs(parseInt(index !== -1? value.substring(0, index) : value, 10));
 		var decimal = index !== -1? value.substring(index + 1) : "";
 		if (index !== -1) {
 			if (this.fractionDigits === 0) {
@@ -9525,7 +9547,7 @@ XsltForms_typeDefs.XForms = {
 	"positiveInteger" : {
 		"nsuri" : "http://www.w3.org/2002/xforms",
 		"base" : "xforms:integer",
-		"patterns" : [ "^\\+?0*[1-9][0-9]*$" ]
+		"patterns" : [ "^(\\+?0*[1-9][0-9]*)?$" ]
 	},
 
 		
@@ -9735,7 +9757,7 @@ XsltForms_typeDefs.XForms = {
 
 	"amount" : {
 		"nsuri" : "http://www.w3.org/2002/xforms",
-		"base" : "xsd_:decimal",
+		"base" : "xforms:decimal",
 		"format" : function(value) {
 			return XsltForms_browser.i18n.formatNumber(value, 2);
 		}

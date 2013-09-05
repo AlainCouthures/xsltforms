@@ -114,7 +114,7 @@ XsltForms_atomicType.prototype.validate = function (value) {
 	}
 	if (this.totalDigits || this.fractionDigits) {
 		var index = value.indexOf(".");
-		var integer = parseInt(index !== -1? value.substring(0, index) : value, 10);
+		var integer = "" + Math.abs(parseInt(index !== -1? value.substring(0, index) : value, 10));
 		var decimal = index !== -1? value.substring(index + 1) : "";
 		if (index !== -1) {
 			if (this.fractionDigits === 0) {

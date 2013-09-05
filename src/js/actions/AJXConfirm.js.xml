@@ -37,7 +37,7 @@ XsltForms_confirm.prototype = new XsltForms_abstractAction();
 XsltForms_confirm.prototype.run = function(element, ctx, evt) {
 	var text;
 	if (this.binding) {
-		var node = this.binding.evaluate(ctx)[0];
+		var node = this.binding.bind_evaluate(ctx)[0];
 		if (node) {
 			text = XsltForms_browser.getValue(node);
 		}

@@ -676,7 +676,7 @@ XsltForms_typeDefs.XForms = {
 	"positiveInteger" : {
 		"nsuri" : "http://www.w3.org/2002/xforms",
 		"base" : "xforms:integer",
-		"patterns" : [ "^\\+?0*[1-9][0-9]*$" ]
+		"patterns" : [ "^(\\+?0*[1-9][0-9]*)?$" ]
 	},
 ]]>
 		<cm:wiki>
@@ -912,7 +912,7 @@ XsltForms_typeDefs.XForms = {
 <![CDATA[
 	"amount" : {
 		"nsuri" : "http://www.w3.org/2002/xforms",
-		"base" : "xsd_:decimal",
+		"base" : "xforms:decimal",
 		"format" : function(value) {
 			return XsltForms_browser.i18n.formatNumber(value, 2);
 		}

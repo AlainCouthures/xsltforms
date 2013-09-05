@@ -83,7 +83,7 @@ function XsltForms_submission(subform, id, model, ref, bind, action, method, ver
 	if (ref || bind) {
 		this.binding = new XsltForms_binding(null, ref, model.element, bind);
 		this.eval_ = function() {
-			return this.binding.evaluate()[0];
+			return this.binding.bind_evaluate()[0];
 		};
 	} else {
 		this.eval_ = function() {
@@ -342,6 +342,10 @@ XsltForms_submission.prototype.submit = function() {
 						return;
 					}
 					try {
+						if (req.status === 1223) {
+							req.status = 204;
+							req.statusText = "No Content";
+						}
 						if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
 							evcontext["error-type"] = "resource-error";
 							subm.issueSubmitException_(evcontext, req, null);

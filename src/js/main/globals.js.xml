@@ -512,9 +512,11 @@ var XsltForms_globals = {
 <![CDATA[
 	closeAction : function(action) {
 		var lastaction = this.openActions.pop();
+		/*
 		if (lastaction !== action) {
 			alert("Action mismatch: '" + lastaction + "' was expected instead of '" + action + "'");
 		}
+		*/
 		if (this.cont === 1) {
 			this.closeChanges();
 		}

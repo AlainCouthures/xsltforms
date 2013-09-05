@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:import-components path="globals.js.xml"/>
 		<cm:import-components path="subform.js.xml"/>
 		<cm:import-components path="browser.js.xml"/>
-		<cm:import-components path="xforms.js.xml"/>
 		<cm:import-components path="Binding.js.xml"/>
 		<cm:import-components path="MIPBinding.js.xml"/>
 		<cm:import-components path="IdManager.js.xml"/>

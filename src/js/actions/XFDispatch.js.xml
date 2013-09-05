@@ -58,7 +58,11 @@ XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 			case "xforms-submit":
 				target = document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement.defaultSubmission;
 				break;
+			case "xforms-rebuild":
+			case "xforms-recalculate":
+			case "xforms-refresh":
 			case "xforms-reset":
+			case "xforms-revalidate":
 				target = document.getElementById(XsltForms_browser.getMeta(ctx.ownerDocument.documentElement, "model")).xfElement;
 				break;
 		}

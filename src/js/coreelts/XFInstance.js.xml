@@ -217,6 +217,19 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
 	this.mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type').split(";")[0] : "application/xml";
+	if (XsltForms_browser.isChrome && this.mediatype === "text/plain") {
+		switch(this.src.substr(this.src.indexOf("."))) {
+			case ".xlsx":
+				this.mediatype = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+				break;
+			case ".docx":
+				this.mediatype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				break;
+			case ".csv":
+				this.mediatype = "text/csv";
+				break;
+		}
+	}
 	switch(this.mediatype) {
 		case "text/json":
 		case "application/json":
@@ -747,7 +760,7 @@ XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 		f.lextraFields = z.substr(loffset, f.lextraFieldsLength);
 		loffset += f.lextraFieldsLength;
 		f.compressedFileData = z.substr(loffset, f.compressedSize);
-		if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+		if (mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" && (fileName.substr(fileName.length - 4) === ".xml" || fileName.substr(fileName.length - 5) === ".rels")) {
 			f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
 			XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
 			XsltForms_browser.setMeta(f.doc.documentElement, "instance", instid);
@@ -762,7 +775,7 @@ XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 		for (var fn in arch) {
 			if (arch.hasOwnProperty(fn)) {
 				f = arch[fn];
-				if ((f.doc.documentElement.localName ? f.doc.documentElement.localName : f.doc.documentElement.baseName) === "worksheet") {
+				if (f.doc && (f.doc.documentElement.localName ? f.doc.documentElement.localName : f.doc.documentElement.baseName) === "worksheet") {
 					var inlineStr = XsltForms_browser.transformText(XsltForms_browser.saveXML(f.doc), XsltForms_browser.xsltinlinesrc, true, "shared", shared);
 					XsltForms_browser.loadXML(f.doc.documentElement, inlineStr);
 					XsltForms_browser.setMeta(f.doc.documentElement, "instance", instid);
