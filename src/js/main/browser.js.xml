@@ -1117,6 +1117,39 @@ XsltForms_browser.setMeta = function(node, meta, value) {
 	}
 };
 
+XsltForms_browser.clearMeta = function(node) {
+	if (node && node.nodeType) {
+		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
+			var i = 0;
+			while (node.attributes[i]) {
+				var n = node.attributes[i].localName ? node.attributes[i].localName : node.attributes[i].baseName;
+				if (n.substr(0, 10) === "xsltforms_") {
+					node.removeAttribute(n);
+				} else {
+					i++;
+				}
+			}
+			for (var j = 0, l2 = node.children.length; j < l2; j++) {
+				XsltForms_browser.clearMeta(node.children[j]);
+			}
+		} else {
+			var elt = node.ownerElement ? node.ownerElement : node.selectSingleNode("..");
+			if (elt) {
+				var k = 0;
+				var an = "xsltforms_" + (node.localName ? node.localName : node.baseName) + "_";
+				while (elt.attributes[k]) {
+					var n2 = elt.attributes[k].localName ? elt.attributes[k].localName : elt.attributes[k].baseName;
+					if (n2.substr(0, an.length) === an) {
+						elt.removeAttribute(n2);
+					} else {
+						k++;
+					}
+				}
+			}
+		}
+	}
+}
+
 XsltForms_browser.setBoolMeta = function(node, meta, value) {
 	if (node) {
 		if (value) {
