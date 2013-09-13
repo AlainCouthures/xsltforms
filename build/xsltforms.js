@@ -1,4 +1,4 @@
-/* Rev. 578
+/* Rev. 579
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "578",
-	fileVersionNumber: 578,
+	fileVersion: "579",
+	fileVersionNumber: 579,
 
 	language: "navigator",
 	debugMode: false,
@@ -1895,28 +1895,34 @@ XsltForms_browser.clearMeta = function(node) {
 	if (node && node.nodeType) {
 		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
 			var i = 0;
-			while (node.attributes[i]) {
-				var n = node.attributes[i].localName ? node.attributes[i].localName : node.attributes[i].baseName;
-				if (n.substr(0, 10) === "xsltforms_") {
-					node.removeAttribute(n);
-				} else {
-					i++;
+			if (node.attributes) {
+				while (node.attributes[i]) {
+					var n = node.attributes[i].localName ? node.attributes[i].localName : node.attributes[i].baseName;
+					if (n.substr(0, 10) === "xsltforms_") {
+						node.removeAttribute(n);
+					} else {
+						i++;
+					}
 				}
 			}
-			for (var j = 0, l2 = node.children.length; j < l2; j++) {
-				XsltForms_browser.clearMeta(node.children[j]);
+			if (node.children) {
+				for (var j = 0, l2 = node.children.length; j < l2; j++) {
+					XsltForms_browser.clearMeta(node.children[j]);
+				}
 			}
 		} else {
 			var elt = node.ownerElement ? node.ownerElement : node.selectSingleNode("..");
 			if (elt) {
 				var k = 0;
 				var an = "xsltforms_" + (node.localName ? node.localName : node.baseName) + "_";
-				while (elt.attributes[k]) {
-					var n2 = elt.attributes[k].localName ? elt.attributes[k].localName : elt.attributes[k].baseName;
-					if (n2.substr(0, an.length) === an) {
-						elt.removeAttribute(n2);
-					} else {
-						k++;
+				if (elt.attributes) {
+					while (elt.attributes[k]) {
+						var n2 = elt.attributes[k].localName ? elt.attributes[k].localName : elt.attributes[k].baseName;
+						if (n2.substr(0, an.length) === an) {
+							elt.removeAttribute(n2);
+						} else {
+							k++;
+						}
 					}
 				}
 			}
@@ -5426,7 +5432,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 		}
 	} else {
 		if (href && typeof href === 'object') {
-			href = XsltForms_globals.stringValue(this.resource.xpath.evaluate(ctx));
+			href = XsltForms_globals.stringValue(this.resource.xpath.xpath_evaluate(ctx));
 		} else {
 			if (typeof href === 'string') {
 				href = XsltForms_browser.unescape(href); 

@@ -58,7 +58,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 		}
 	} else {
 		if (href && typeof href === 'object') {
-			href = XsltForms_globals.stringValue(this.resource.xpath.evaluate(ctx));
+			href = XsltForms_globals.stringValue(this.resource.xpath.xpath_evaluate(ctx));
 		} else {
 			if (typeof href === 'string') {
 				href = XsltForms_browser.unescape(href); 
