@@ -42,6 +42,55 @@ var XsltForms_mathConstants = {
 var XsltForms_xpathCoreFunctions = {
 ]]>
 		<cm:wiki>
+* '''node()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions node" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(ctx) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.nodeInvalidArgumentsNumber;
+			}
+			return ctx.current.childNodes;
+		} ),
+]]>
+		<cm:wiki>
+* '''comment()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions comment" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(ctx) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.commentInvalidArgumentsNumber;
+			}
+			var result = [];
+			if (ctx.current.childNodes) {
+				for (var i = 0, len = ctx.current.childNodes.length; i < len; i++) {
+					if (ctx.current.childNodes[i].nodeType === XsltForms_nodeType.COMMENT) {
+						result.push(ctx.current.childNodes[i]);
+					}
+				}
+			}
+			return result;
+		} ),
+]]>
+		<cm:wiki>
+* '''text()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions text" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(ctx) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.textInvalidArgumentsNumber;
+			}
+			var result = [];
+			if (ctx.current.childNodes) {
+				for (var i = 0, len = ctx.current.childNodes.length; i < len; i++) {
+					if (ctx.current.childNodes[i].nodeType === XsltForms_nodeType.TEXT) {
+						result.push(ctx.current.childNodes[i]);
+					}
+				}
+			}
+			return result;
+		} ),
+]]>
+		<cm:wiki>
 * '''last()'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2005/xpath-functions last" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, false,
@@ -706,6 +755,7 @@ var XsltForms_xpathCoreFunctions = {
 				throw XsltForms_xpathFunctionExceptions.instanceInvalidArgumentsNumber;
 			}
 			var name = idRef ? XsltForms_globals.stringValue(idRef) : "";
+			var res;
 			if (name !== "") {
 				var instance = document.getElementById(name);
 				if (!instance) {
@@ -724,12 +774,14 @@ var XsltForms_xpathCoreFunctions = {
 						XsltForms_browser.setMeta(f.doc.documentElement, "instance", idRef);
 						XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
 					}
-					return [f.doc.documentElement];
+					res = f.doc.documentElement;
 				}
-				return [instance.xfElement.doc.documentElement];
+				res = instance.xfElement.doc.documentElement;
 			} else {
-				return [ctx.node.ownerDocument.documentElement];
+				res = ctx.node.ownerDocument.documentElement;
 			}
+			ctx.addDepNode(res);
+			return [res];
 		} ),
 ]]>
 		<cm:wiki>

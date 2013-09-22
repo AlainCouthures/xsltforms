@@ -1052,7 +1052,7 @@ XsltForms_browser.crc32 = function (s) {
 };
 
 XsltForms_browser.getMeta = function(node, meta) {
-	return node.nodeType ? node.nodeType === XsltForms_nodeType.ELEMENT ? node.getAttribute("xsltforms_"+meta) : node.ownerElement ? node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : null;
+	return node.nodeType && (node.nodeType === XsltForms_nodeType.ELEMENT || node.nodeType === XsltForms_nodeType.ATTRIBUTE) ? node.nodeType === XsltForms_nodeType.ELEMENT ? node.getAttribute("xsltforms_"+meta) : node.ownerElement ? node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : null;
 };
 
 XsltForms_browser.getBoolMeta = function(node, meta) {
@@ -1104,7 +1104,7 @@ XsltForms_browser.getNil = function(node) {
 };
 
 XsltForms_browser.setMeta = function(node, meta, value) {
-	if (node && node.nodeType) {
+	if (node && node.nodeType && (node.nodeType === XsltForms_nodeType.ELEMENT || node.nodeType === XsltForms_nodeType.ATTRIBUTE)) {
 		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
 			node.setAttribute("xsltforms_"+meta, value);
 		} else {
@@ -1118,7 +1118,7 @@ XsltForms_browser.setMeta = function(node, meta, value) {
 };
 
 XsltForms_browser.clearMeta = function(node) {
-	if (node && node.nodeType) {
+	if (node && node.nodeType && node.nodeType !== XsltForms_nodeType.COMMENT) {
 		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
 			var i = 0;
 			if (node.attributes) {

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<cm:import-components path="pis.xsl.xml"/>
+		<cm:import-components path="comments.xsl.xml"/>
 		<cm:import-components path="elements.xsl.xml"/>
 		<cm:import-components path="text.xsl.xml"/>
 		<cm:import-components path="attributes.xsl.xml"/>
