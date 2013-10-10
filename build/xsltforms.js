@@ -1,4 +1,4 @@
-/* Rev. 580
+/* Rev. 581
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "580",
-	fileVersionNumber: 580,
+	fileVersion: "581",
+	fileVersionNumber: 581,
 
 	language: "navigator",
 	debugMode: false,
@@ -1892,39 +1892,21 @@ XsltForms_browser.setMeta = function(node, meta, value) {
 };
 
 XsltForms_browser.clearMeta = function(node) {
-	if (node && node.nodeType && node.nodeType !== XsltForms_nodeType.COMMENT) {
-		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
-			var i = 0;
-			if (node.attributes) {
-				while (node.attributes[i]) {
-					var n = node.attributes[i].localName ? node.attributes[i].localName : node.attributes[i].baseName;
-					if (n.substr(0, 10) === "xsltforms_") {
-						node.removeAttribute(n);
-					} else {
-						i++;
-					}
+	if (node && node.nodeType && node.nodeType === XsltForms_nodeType.ELEMENT) {
+		var i = 0;
+		if (node.attributes) {
+			while (node.attributes[i]) {
+				var n = node.attributes[i].localName ? node.attributes[i].localName : node.attributes[i].baseName;
+				if (n.substr(0, 10) === "xsltforms_") {
+					node.removeAttribute(n);
+				} else {
+					i++;
 				}
 			}
-			if (node.children) {
-				for (var j = 0, l2 = node.children.length; j < l2; j++) {
-					XsltForms_browser.clearMeta(node.children[j]);
-				}
-			}
-		} else {
-			var elt = node.ownerElement ? node.ownerElement : node.selectSingleNode("..");
-			if (elt) {
-				var k = 0;
-				var an = "xsltforms_" + (node.localName ? node.localName : node.baseName) + "_";
-				if (elt.attributes) {
-					while (elt.attributes[k]) {
-						var n2 = elt.attributes[k].localName ? elt.attributes[k].localName : elt.attributes[k].baseName;
-						if (n2.substr(0, an.length) === an) {
-							elt.removeAttribute(n2);
-						} else {
-							k++;
-						}
-					}
-				}
+		}
+		if (node.children) {
+			for (var j = 0, l2 = node.children.length; j < l2; j++) {
+				XsltForms_browser.clearMeta(node.children[j]);
 			}
 		}
 	}
@@ -4539,12 +4521,28 @@ XsltForms_submission.prototype.submit = function() {
 		ser = this.xml2data(node, method);
 	}
 	var instance = this.instance;
-	if (window.location.href.substr(0, 7) === "file://" || action.substr(0, 7) === "file://" || action.substr(0, 9) === "opener://" || action.substr(0, 8) === "local://") {
+	if ((window.location.href.substr(0, 7) === "file://" && method !== "get") || (action.substr(0, 7) === "file://" && (window.location.href.substr(0, 7) !== "file://" || method !== "get")) || action.substr(0, 9) === "opener://" || action.substr(0, 8) === "local://") {
 		if ((window.location.href.substr(0, 7) === "file://" || action.substr(0, 7) === "file://") && method === "put") {
 			if (!XsltForms_browser.writeFile(window.location.href.substr(0, 7) === "file://" ? action : action.substr(7), subm.encoding, "string", "XSLTForms Java Saver", ser)) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+		} else if (window.location.href.substr(0, 7) === "file://" && method === "get") {
+			var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+			scriptelt.setAttribute("src", action);
+			scriptelt.setAttribute("id", "xsltforms-filereader");
+			scriptelt.setAttribute("type", "application/xml");
+			var scriptLoaded = function() {
+				alert(document.getElementById("xsltforms-filereader").textContent);
+			};
+			scriptelt.onreadystatechange = function () {
+				if (this.readyState == 'complete' || this.readyState == 'loaded') {
+					scriptLoaded();
+				}
+			}
+			scriptelt.onload = scriptLoaded;
+			var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+			body.insertBefore(scriptelt, body.firstChild);
 		} else if (action.substr(0, 9) === "opener://" && method === "put") {
 			try {
 				window.opener.XsltForms_globals.xmlrequest('put', action.substr(9), ser);
@@ -5195,7 +5193,7 @@ XsltForms_delete.prototype = new XsltForms_abstractAction();
 
 XsltForms_delete.prototype.run = function(element, ctx) {
 	if (this.context) {
-		ctx = this.context.bind_evaluate(this.subform, ctx)[0];
+		ctx = this.context.xpath_evaluate(this.subform, ctx)[0];
 	}
 	if (!ctx) {
 		return;
@@ -5774,7 +5772,7 @@ XsltForms_setvalue.prototype.run = function(element, ctx) {
 	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx)[0];
 	if (node) {
 		if (this.context) {
-			ctx = this.context.bind_evaluate(element.xfElement.subform, ctx)[0];
+			ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx)[0];
 		}
 		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform)) : this.literal;
 		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
@@ -12658,11 +12656,20 @@ var XsltForms_xpathCoreFunctions = {
 
 	"http://www.w3.org/2002/xforms transform" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(nodeSet, xslhref, inline) {
-			if (arguments.length >= 4) {
+			if (arguments.length < 3) {
 				throw XsltForms_xpathFunctionExceptions.transformInvalidArgumentsNumber;
 			}
-			xslhref = XsltForms_globals.stringValue(xslhref);
-			return nodeSet.length === 0? "" : XsltForms_browser.transformText(XsltForms_browser.saveXML(nodeSet[0]), xslhref, XsltForms_globals.booleanValue(inline));
+			if (nodeSet.length === 0) {
+				return "";
+			}
+			var args = [];
+			args.push(XsltForms_browser.saveXML(nodeSet[0]));
+			args.push(XsltForms_globals.stringValue(xslhref));
+			args.push(XsltForms_globals.booleanValue(inline));
+			for (var i = 3, len = arguments.length; i < len; i++) {
+				args.push(XsltForms_globals.stringValue(arguments[i]));
+			}
+			return XsltForms_browser.transformText.apply(null, args);
 		} ),
 
 		

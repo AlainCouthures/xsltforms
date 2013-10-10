@@ -48,7 +48,7 @@ XsltForms_setvalue.prototype.run = function(element, ctx) {
 	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx)[0];
 	if (node) {
 		if (this.context) {
-			ctx = this.context.bind_evaluate(element.xfElement.subform, ctx)[0];
+			ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx)[0];
 		}
 		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform)) : this.literal;
 		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");

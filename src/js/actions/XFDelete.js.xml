@@ -46,7 +46,7 @@ XsltForms_delete.prototype = new XsltForms_abstractAction();
 <![CDATA[
 XsltForms_delete.prototype.run = function(element, ctx) {
 	if (this.context) {
-		ctx = this.context.bind_evaluate(this.subform, ctx)[0];
+		ctx = this.context.xpath_evaluate(this.subform, ctx)[0];
 	}
 	if (!ctx) {
 		return;

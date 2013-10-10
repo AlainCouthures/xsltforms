@@ -172,12 +172,28 @@ XsltForms_submission.prototype.submit = function() {
 		ser = this.xml2data(node, method);
 	}
 	var instance = this.instance;
-	if (window.location.href.substr(0, 7) === "file://" || action.substr(0, 7) === "file://" || action.substr(0, 9) === "opener://" || action.substr(0, 8) === "local://") {
+	if ((window.location.href.substr(0, 7) === "file://" && method !== "get") || (action.substr(0, 7) === "file://" && (window.location.href.substr(0, 7) !== "file://" || method !== "get")) || action.substr(0, 9) === "opener://" || action.substr(0, 8) === "local://") {
 		if ((window.location.href.substr(0, 7) === "file://" || action.substr(0, 7) === "file://") && method === "put") {
 			if (!XsltForms_browser.writeFile(window.location.href.substr(0, 7) === "file://" ? action : action.substr(7), subm.encoding, "string", "XSLTForms Java Saver", ser)) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
+		} else if (window.location.href.substr(0, 7) === "file://" && method === "get") {
+			var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+			scriptelt.setAttribute("src", action);
+			scriptelt.setAttribute("id", "xsltforms-filereader");
+			scriptelt.setAttribute("type", "application/xml");
+			var scriptLoaded = function() {
+				alert(document.getElementById("xsltforms-filereader").textContent);
+			};
+			scriptelt.onreadystatechange = function () {
+				if (this.readyState == 'complete' || this.readyState == 'loaded') {
+					scriptLoaded();
+				}
+			}
+			scriptelt.onload = scriptLoaded;
+			var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+			body.insertBefore(scriptelt, body.firstChild);
 		} else if (action.substr(0, 9) === "opener://" && method === "put") {
 			try {
 				window.opener.XsltForms_globals.xmlrequest('put', action.substr(9), ser);

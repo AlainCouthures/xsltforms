@@ -1313,15 +1313,24 @@ var XsltForms_xpathCoreFunctions = {
 		} ),
 ]]>
 		<cm:wiki>
-* '''transform(node, stylesheet, inline?)'''</cm:wiki>
+* '''transform(node, stylesheet, inline?, param?, value?, ...)'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2002/xforms transform" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(nodeSet, xslhref, inline) {
-			if (arguments.length >= 4) {
+			if (arguments.length < 3) {
 				throw XsltForms_xpathFunctionExceptions.transformInvalidArgumentsNumber;
 			}
-			xslhref = XsltForms_globals.stringValue(xslhref);
-			return nodeSet.length === 0? "" : XsltForms_browser.transformText(XsltForms_browser.saveXML(nodeSet[0]), xslhref, XsltForms_globals.booleanValue(inline));
+			if (nodeSet.length === 0) {
+				return "";
+			}
+			var args = [];
+			args.push(XsltForms_browser.saveXML(nodeSet[0]));
+			args.push(XsltForms_globals.stringValue(xslhref));
+			args.push(XsltForms_globals.booleanValue(inline));
+			for (var i = 3, len = arguments.length; i < len; i++) {
+				args.push(XsltForms_globals.stringValue(arguments[i]));
+			}
+			return XsltForms_browser.transformText.apply(null, args);
 		} ),
 ]]>
 		<cm:wiki>
