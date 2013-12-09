@@ -26,7 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 		<xsl:template match="comment()" mode="xml2string" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:text>&lt;!--</xsl:text> 
-			<xsl:value-of select="."/> 
+			<xsl:call-template name="escapeJS">
+				<xsl:with-param name="text" select="."/>
+				<xsl:with-param name="trtext" select="translate(.,'&#10;&#13;&#9;\&quot;','&#10;&#10;&#10;&#10;&#10;')"/>
+			</xsl:call-template> 
 			<xsl:text>--&gt;</xsl:text>
 		</xsl:template>
 	</cm:source>

@@ -38,6 +38,7 @@ var XsltForms_browser = {
 	isIE : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/),
 	isIE9 : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/) && window.addEventListener,
 	isIE6 : navigator.userAgent.match(/\bMSIE 6\.0/),
+	isIE11 : navigator.userAgent.match(/\bTrident\/7\.0/),
 	isMozilla : navigator.userAgent.match(/\bGecko\b/),
 	isSafari : navigator.userAgent.match(/\bAppleWebKit/) && !window.FileReader,
 	isChrome : navigator.userAgent.match(/\bAppleWebKit/),
@@ -224,7 +225,7 @@ var XsltForms_browser = {
 		<cm:wiki>
 * '''openRequest''' method : opens an XMLHttpRequest</cm:wiki>
 <![CDATA[
-if (XsltForms_browser.isIE) {
+if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 	try {
 		var xmlDoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
 		xmlDoc = null;
@@ -288,17 +289,19 @@ if (!XsltForms_browser.isIE) {
 		<cm:wiki>
 * '''transformText''' method : transforms text into text with a text stylesheet</cm:wiki>
 <![CDATA[
-if (XsltForms_browser.isIE) {
+if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 	XsltForms_browser.transformText = function(xml, xslt, inline) {
 		var xmlDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		xmlDoc.setProperty("AllowDocumentFunction", true);
 		xmlDoc.preserveWhiteSpace = true;
 		xmlDoc.validateOnParse = false;
+		xmlDoc.setProperty("ProhibitDTD", false);
 		xmlDoc.loadXML(xml);
 		var xslDoc = new ActiveXObject("MSXML2.FreeThreadedDOMDocument." + XsltForms_browser.MSXMLver);
 		xslDoc.setProperty("AllowDocumentFunction", true);
 		xslDoc.preserveWhiteSpace = true;
 		xslDoc.validateOnParse = false;
+		xslDoc.setProperty("ProhibitDTD", false);
 		if (inline) {
 			xslDoc.loadXML(xslt);
 		} else {
@@ -616,6 +619,7 @@ if (XsltForms_browser.isIE) {
 		var d = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		d.setProperty("SelectionLanguage", "XPath");
 		d.validateOnParse = false;
+		d.setProperty("ProhibitDTD", false);
 		//d.setProperty("SelectionNamespaces", "xmlns:xml='http://www.w3.org/XML/1998/namespace'");
 		d.loadXML(xml);
 		return d;
@@ -672,6 +676,7 @@ if (XsltForms_browser.isIE) {
 	XsltForms_browser.loadXML = function(dest, xml) {
 		var result = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		result.setProperty("SelectionLanguage", "XPath");
+		result.setProperty("ProhibitDTD", false);
 		result.validateOnParse = false;
 		if (result.loadXML(xml)) {
 			var r = result.documentElement.cloneNode(true);

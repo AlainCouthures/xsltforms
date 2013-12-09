@@ -84,12 +84,12 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) 
 		if (event.target && event.target.nodeType === 3) {
 			event.target = event.target.parentNode;
 		}
-		if (event.currentTarget && event.type === "DOMActivate" && event.target.nodeName === "BUTTON" && !XsltForms_browser.isFF2) {
+		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && event.target.parentNode.nodeName === "BUTTON"))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
-		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
-			effectiveTarget = false;
-		}
+//		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
+//			effectiveTarget = false;
+//		}
 		if (event.eventPhase === 3 && event.target.xfElement && event.target === event.currentTarget && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}

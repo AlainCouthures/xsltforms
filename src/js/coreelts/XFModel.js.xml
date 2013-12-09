@@ -162,6 +162,12 @@ XsltForms_model.prototype.dispose = function(subform) {
 	this.binds = null;
 	this.itext = null;
 	this.defaultInstance = null;
+	for (var i = 0, l = XsltForms_globals.models.length; i < l; i++) {
+		if (XsltForms_globals.models[i] === this) {
+			XsltForms_globals.models.splice(i, 1);
+			break;
+		}
+	}
 	XsltForms_coreElement.prototype.dispose.call(this);
 };
 ]]>

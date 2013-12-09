@@ -1,4 +1,4 @@
-/* Rev. 581
+/* Rev. 582
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "581",
-	fileVersionNumber: 581,
+	fileVersion: "582",
+	fileVersionNumber: 582,
 
 	language: "navigator",
 	debugMode: false,
@@ -825,6 +825,7 @@ var XsltForms_browser = {
 	isIE : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/),
 	isIE9 : navigator.userAgent.match(/\bMSIE\b/) && !navigator.userAgent.match(/\bOpera\b/) && window.addEventListener,
 	isIE6 : navigator.userAgent.match(/\bMSIE 6\.0/),
+	isIE11 : navigator.userAgent.match(/\bTrident\/7\.0/),
 	isMozilla : navigator.userAgent.match(/\bGecko\b/),
 	isSafari : navigator.userAgent.match(/\bAppleWebKit/) && !window.FileReader,
 	isChrome : navigator.userAgent.match(/\bAppleWebKit/),
@@ -1005,7 +1006,7 @@ var XsltForms_browser = {
 
 		
 
-if (XsltForms_browser.isIE) {
+if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 	try {
 		var xmlDoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
 		xmlDoc = null;
@@ -1068,17 +1069,19 @@ if (!XsltForms_browser.isIE) {
 
 		
 
-if (XsltForms_browser.isIE) {
+if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 	XsltForms_browser.transformText = function(xml, xslt, inline) {
 		var xmlDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		xmlDoc.setProperty("AllowDocumentFunction", true);
 		xmlDoc.preserveWhiteSpace = true;
 		xmlDoc.validateOnParse = false;
+		xmlDoc.setProperty("ProhibitDTD", false);
 		xmlDoc.loadXML(xml);
 		var xslDoc = new ActiveXObject("MSXML2.FreeThreadedDOMDocument." + XsltForms_browser.MSXMLver);
 		xslDoc.setProperty("AllowDocumentFunction", true);
 		xslDoc.preserveWhiteSpace = true;
 		xslDoc.validateOnParse = false;
+		xslDoc.setProperty("ProhibitDTD", false);
 		if (inline) {
 			xslDoc.loadXML(xslt);
 		} else {
@@ -1390,6 +1393,7 @@ if (XsltForms_browser.isIE) {
 		var d = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		d.setProperty("SelectionLanguage", "XPath");
 		d.validateOnParse = false;
+		d.setProperty("ProhibitDTD", false);
 		//d.setProperty("SelectionNamespaces", "xmlns:xml='http://www.w3.org/XML/1998/namespace'");
 		d.loadXML(xml);
 		return d;
@@ -1446,6 +1450,7 @@ if (XsltForms_browser.isIE) {
 	XsltForms_browser.loadXML = function(dest, xml) {
 		var result = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		result.setProperty("SelectionLanguage", "XPath");
+		result.setProperty("ProhibitDTD", false);
 		result.validateOnParse = false;
 		if (result.loadXML(xml)) {
 			var r = result.documentElement.cloneNode(true);
@@ -3249,6 +3254,12 @@ XsltForms_model.prototype.dispose = function(subform) {
 	this.binds = null;
 	this.itext = null;
 	this.defaultInstance = null;
+	for (var i = 0, l = XsltForms_globals.models.length; i < l; i++) {
+		if (XsltForms_globals.models[i] === this) {
+			XsltForms_globals.models.splice(i, 1);
+			break;
+		}
+	}
 	XsltForms_coreElement.prototype.dispose.call(this);
 };
 
@@ -4381,7 +4392,7 @@ XsltForms_bind.prototype.propagate = function() {
 		
 		
 		
-function XsltForms_submission(subform, id, model, ref, bind, action, method, version, indent,
+function XsltForms_submission(subform, id, model, ref, value, bind, action, method, version, indent,
 			mediatype, encoding, omitXmlDeclaration, cdataSectionElements,
 			replace, targetref, instance, separator, includenamespaceprefixes, validate, relevant,
 			synchr, show, serialization) {
@@ -4432,10 +4443,11 @@ function XsltForms_submission(subform, id, model, ref, bind, action, method, ver
 	this.separator = separator === "&amp;"? "&" : separator;
 	this.includenamespaceprefixes = includenamespaceprefixes;
 	this.headers = [];
-	if (ref || bind) {
-		this.binding = new XsltForms_binding(null, ref, model.element, bind);
+	if (ref || bind || value) {
+		this.binding = new XsltForms_binding(value ? "xsd:string" : null, value ? value : ref, model.element, bind);
 		this.eval_ = function() {
-			return this.binding.bind_evaluate()[0];
+			var res = this.binding.bind_evaluate();
+			return typeof res === "string" ? res : res[0];
 		};
 	} else {
 		this.eval_ = function() {
@@ -4466,8 +4478,8 @@ XsltForms_submission.prototype.xml2data = function(node, method) {
 		}
 		return XsltForms_browser.xml2zip(instance.archive, this.mediatype);
 	}
-	var ser = node ? XsltForms_browser.saveXML(node, this.relevant, false, method === "multipart-post") : "";
-	if (this.mediatype === "text/csv") { 
+	var ser = node ? typeof node === "string" ? node : XsltForms_browser.saveXML(node, this.relevant, false, method === "multipart-post") : "";
+	if (this.mediatype === "text/csv" && typeof node !== "string") { 
 		return XsltForms_browser.xml2csv(ser, this.separator);
 	}
 	return ser;
@@ -6636,8 +6648,8 @@ XsltForms_input.prototype.clone = function(id) {
 XsltForms_input.prototype.dispose = function() {
 	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
 		try {
-			tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
-			tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+			tinymce.execCommand("mceFocus", false, this.cell.children[0].id);
+			tinymce.execCommand("mceRemoveControl", false, this.cell.children[0].id);
 		} catch(e) {
 			alert(e);
 		}
@@ -6668,21 +6680,21 @@ XsltForms_input.prototype.initInput = function(type) {
 				eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
 				initinfo.mode = "none";
 				initinfo.setup = function(ed) {
-					ed.onKeyUp.add(function(ed) {
+					ed.on("KeyUp", function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.onChange.add(function(ed) {
+					ed.on("Change", function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.onUndo.add(function(ed) {
+					ed.on("Undo", function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.onRedo.add(function(ed) {
+					ed.on("Redo", function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
 				};
 				XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
-				tinyMCE.init(initinfo);
+				tinymce.init(initinfo);
 				XsltForms_globals.tinyMCEinit = true;
 			}
 			tinyMCE.execCommand("mceAddControl", true, input.id);
@@ -10034,12 +10046,12 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) 
 		if (event.target && event.target.nodeType === 3) {
 			event.target = event.target.parentNode;
 		}
-		if (event.currentTarget && event.type === "DOMActivate" && event.target.nodeName === "BUTTON" && !XsltForms_browser.isFF2) {
+		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && event.target.parentNode.nodeName === "BUTTON"))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
-		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
-			effectiveTarget = false;
-		}
+//		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
+//			effectiveTarget = false;
+//		}
 		if (event.eventPhase === 3 && event.target.xfElement && event.target === event.currentTarget && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}

@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Submission Class
 * constructor function : store the properties of this submission and attaches it to a model</cm:wiki>
 		<![CDATA[
-function XsltForms_submission(subform, id, model, ref, bind, action, method, version, indent,
+function XsltForms_submission(subform, id, model, ref, value, bind, action, method, version, indent,
 			mediatype, encoding, omitXmlDeclaration, cdataSectionElements,
 			replace, targetref, instance, separator, includenamespaceprefixes, validate, relevant,
 			synchr, show, serialization) {
@@ -80,10 +80,11 @@ function XsltForms_submission(subform, id, model, ref, bind, action, method, ver
 	this.separator = separator === "&amp;"? "&" : separator;
 	this.includenamespaceprefixes = includenamespaceprefixes;
 	this.headers = [];
-	if (ref || bind) {
-		this.binding = new XsltForms_binding(null, ref, model.element, bind);
+	if (ref || bind || value) {
+		this.binding = new XsltForms_binding(value ? "xsd:string" : null, value ? value : ref, model.element, bind);
 		this.eval_ = function() {
-			return this.binding.bind_evaluate()[0];
+			var res = this.binding.bind_evaluate();
+			return typeof res === "string" ? res : res[0];
 		};
 	} else {
 		this.eval_ = function() {
@@ -116,8 +117,8 @@ XsltForms_submission.prototype.xml2data = function(node, method) {
 		}
 		return XsltForms_browser.xml2zip(instance.archive, this.mediatype);
 	}
-	var ser = node ? XsltForms_browser.saveXML(node, this.relevant, false, method === "multipart-post") : "";
-	if (this.mediatype === "text/csv") { 
+	var ser = node ? typeof node === "string" ? node : XsltForms_browser.saveXML(node, this.relevant, false, method === "multipart-post") : "";
+	if (this.mediatype === "text/csv" && typeof node !== "string") { 
 		return XsltForms_browser.xml2csv(ser, this.separator);
 	}
 	return ser;
