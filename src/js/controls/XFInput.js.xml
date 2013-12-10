@@ -69,8 +69,8 @@ XsltForms_input.prototype.clone = function(id) {
 XsltForms_input.prototype.dispose = function() {
 	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
 		try {
-			tinymce.execCommand("mceFocus", false, this.cell.children[0].id);
-			tinymce.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
 		} catch(e) {
 			alert(e);
 		}
@@ -102,21 +102,21 @@ XsltForms_input.prototype.initInput = function(type) {
 				eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
 				initinfo.mode = "none";
 				initinfo.setup = function(ed) {
-					ed.on("KeyUp", function(ed) {
+					ed.onKeyUp.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.on("Change", function(ed) {
+					ed.onChange.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.on("Undo", function(ed) {
+					ed.onUndo.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.on("Redo", function(ed) {
+					ed.onRedo.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
 				};
 				XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
-				tinymce.init(initinfo);
+				tinyMCE.init(initinfo);
 				XsltForms_globals.tinyMCEinit = true;
 			}
 			tinyMCE.execCommand("mceAddControl", true, input.id);

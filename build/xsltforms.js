@@ -1,4 +1,4 @@
-/* Rev. 582
+/* Rev. 583
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "582",
-	fileVersionNumber: 582,
+	fileVersion: "583",
+	fileVersionNumber: 583,
 
 	language: "navigator",
 	debugMode: false,
@@ -6648,8 +6648,8 @@ XsltForms_input.prototype.clone = function(id) {
 XsltForms_input.prototype.dispose = function() {
 	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
 		try {
-			tinymce.execCommand("mceFocus", false, this.cell.children[0].id);
-			tinymce.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
+			tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
 		} catch(e) {
 			alert(e);
 		}
@@ -6680,21 +6680,21 @@ XsltForms_input.prototype.initInput = function(type) {
 				eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
 				initinfo.mode = "none";
 				initinfo.setup = function(ed) {
-					ed.on("KeyUp", function(ed) {
+					ed.onKeyUp.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.on("Change", function(ed) {
+					ed.onChange.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.on("Undo", function(ed) {
+					ed.onUndo.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
-					ed.on("Redo", function(ed) {
+					ed.onRedo.add(function(ed) {
 						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 					});
 				};
 				XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
-				tinymce.init(initinfo);
+				tinyMCE.init(initinfo);
 				XsltForms_globals.tinyMCEinit = true;
 			}
 			tinyMCE.execCommand("mceAddControl", true, input.id);
