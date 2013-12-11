@@ -1,4 +1,4 @@
-/* Rev. 583
+/* Rev. 584
 
 Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "583",
-	fileVersionNumber: 583,
+	fileVersion: "584",
+	fileVersionNumber: 584,
 
 	language: "navigator",
 	debugMode: false,
@@ -10046,7 +10046,7 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) 
 		if (event.target && event.target.nodeType === 3) {
 			event.target = event.target.parentNode;
 		}
-		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && event.target.parentNode.nodeName === "BUTTON"))  && !XsltForms_browser.isFF2) {
+		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && (event.target.parentNode.nodeName === "BUTTON" || event.target.parentNode.nodeName === "A")))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
 //		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
