@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" xmlns:dcterms="http://purl.org/dc/terms/" name="xsltforms.xsl">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-08</cm:creationdate>
-	<cm:lastupdate>2013-09-07</cm:lastupdate>
+	<cm:lastupdate>2014-01-02</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<dcterms:hasVersion>584</dcterms:hasVersion>
 			<dcterms:creator>Alain Couthures - agenceXML</dcterms:creator>
 			<dcterms:conformsTo>XForms 1.1</dcterms:conformsTo>
-			<dcterms:created>2013-12-09</dcterms:created>
-			<dcterms:description>Events bubbling for Chrome</dcterms:description>
+			<dcterms:created>2014-01-02</dcterms:created>
+			<dcterms:description>Events bubbling with triggers for Chrome</dcterms:description>
 			<dcterms:format>text/xsl</dcterms:format>
 		</rdf:Description>
 	</rdf:RDF>

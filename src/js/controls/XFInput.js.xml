@@ -32,6 +32,7 @@ Input Control  Class
 function XsltForms_input(subform, id, valoff, itype, binding, inputmode, incremental, delay, mediatype, aidButton, clone) {
 	XsltForms_globals.counters.input++;
 	this.init(subform, id);
+	this.controlName = "input";
 	this.binding = binding;
 	this.inputmode = typeof inputmode === "string"? XsltForms_input.InputMode[inputmode] : inputmode;
 	this.incremental = incremental;

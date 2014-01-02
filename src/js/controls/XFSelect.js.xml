@@ -32,6 +32,7 @@ Select/Select1 Control  Class
 function XsltForms_select(subform, id, multiple, full, binding, incremental, clone) {
 	XsltForms_globals.counters.select++;
 	this.init(subform, id);
+	this.controlName = multiple? "select": "select1";
 	this.binding = binding;
 	this.multiple = multiple;
 	this.full = full;

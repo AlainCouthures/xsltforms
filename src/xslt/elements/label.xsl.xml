@@ -230,6 +230,49 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						</label>
 					</a>
 				</xsl:when>
+				<xsl:when test="../xforms:help[@appearance='minimal' and not(@href)]">
+					<span class="xforms-help">
+						<xsl:variable name="hid">
+							<xsl:choose>
+								<xsl:when test="../xforms:help/@id"><xsl:value-of select="../xforms:help/@id"/></xsl:when>
+								<xsl:otherwise>
+									<xsl:for-each select="node()">
+										<xsl:if test="self::xforms:help and not(preceding-sibling::xforms:help)">
+											<xsl:value-of select="concat($id_pf,'help-',position(),'_',$workid)"/>
+										</xsl:if>
+									</xsl:for-each>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<xsl:variable name="helpworkid">
+							<xsl:for-each select="../xforms:help/node()">
+								<xsl:if test="self::xforms:help and not(preceding-sibling::xforms:help)">
+									<xsl:value-of select="concat(position(),'_',$workid)"/>
+								</xsl:if>
+							</xsl:for-each>
+						</xsl:variable>
+						<span onmouseover="XsltForms_browser.show(this, 'help', true)" onmouseout="XsltForms_browser.show(this, 'help', false)">
+							<label>
+								<xsl:call-template name="comunLabel">
+									<xsl:with-param name="workid" select="$workid"/>
+								</xsl:call-template>
+								<xsl:choose>
+									<xsl:when test="count(./node()) &gt; 0">
+										<xsl:apply-templates select="node()">
+											<xsl:with-param name="parentworkid" select="$workid"/>
+										</xsl:apply-templates>
+									</xsl:when>
+									<xsl:otherwise>&#xA0;<xsl:text/></xsl:otherwise>
+								</xsl:choose>
+							</label>
+						</span>
+						<span class="xforms-help-value" id="{$hid}">
+							<xsl:apply-templates select="../xforms:help/node()">
+								<xsl:with-param name="parentworkid" select="$helpworkid"/>
+							</xsl:apply-templates>
+						</span>
+					</span>
+				</xsl:when>
 				<xsl:otherwise>
 					<label>
 						<xsl:call-template name="comunLabel">

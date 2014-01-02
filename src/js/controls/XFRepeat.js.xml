@@ -32,6 +32,7 @@ Repeat Element Class
 function XsltForms_repeat(subform, id, nbsiblings, binding, clone) {
 	XsltForms_globals.counters.repeat++;
 	this.init(subform, id);
+	this.controlName = "repeat";
 	this.nbsiblings = nbsiblings;
 	this.binding = binding;
 	this.index = 1;

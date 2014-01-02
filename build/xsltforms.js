@@ -1,6 +1,6 @@
-/* Rev. 584
+/* Rev. 585
 
-Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -41,8 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "584",
-	fileVersionNumber: 584,
+	fileVersion: "585",
+	fileVersionNumber: 585,
 
 	language: "navigator",
 	debugMode: false,
@@ -6545,6 +6545,7 @@ XsltForms_component.prototype.setValue = function(value) {
 function XsltForms_group(subform, id, binding, casebinding) {
 	XsltForms_globals.counters.group++;
 	this.init(subform, id);
+	this.controlName = "group";
 	if (binding) {
 		this.hasBinding = true;
 		this.binding = binding;
@@ -6613,6 +6614,7 @@ XsltForms_group.prototype.refresh = function() {
 function XsltForms_input(subform, id, valoff, itype, binding, inputmode, incremental, delay, mediatype, aidButton, clone) {
 	XsltForms_globals.counters.input++;
 	this.init(subform, id);
+	this.controlName = "input";
 	this.binding = binding;
 	this.inputmode = typeof inputmode === "string"? XsltForms_input.InputMode[inputmode] : inputmode;
 	this.incremental = incremental;
@@ -6975,6 +6977,7 @@ XsltForms_input.InputMode = {
 function XsltForms_item(subform, id, bindingL, bindingV) {
 	XsltForms_globals.counters.item++;
 	this.init(subform, id);
+	this.controlName = "item";
 	if (bindingL || bindingV) {
 		this.hasBinding = true;
 		this.bindingL = bindingL;
@@ -7080,6 +7083,7 @@ XsltForms_item.prototype.click = function (target) {
 function XsltForms_itemset(subform, id, nodesetBinding, labelBinding, valueBinding) {
 	XsltForms_globals.counters.itemset++;
 	this.init(subform, id);
+	this.controlName = "itemset";
 	this.nodesetBinding = nodesetBinding;
 	this.labelBinding = labelBinding;
 	this.valueBinding = valueBinding;
@@ -7206,6 +7210,7 @@ XsltForms_itemset.prototype.refresh_ = function(element, cont) {
 function XsltForms_label(subform, id, binding) {
 	XsltForms_globals.counters.label++;
 	this.init(subform, id);
+	this.controlName = "label";
 	if (binding) {
 		this.hasBinding = true;
 		this.binding = binding;
@@ -7254,6 +7259,7 @@ XsltForms_label.prototype.refresh = function() {
 function XsltForms_output(subform, id, valoff, binding, mediatype) {
 	XsltForms_globals.counters.output++;
 	this.init(subform, id);
+	this.controlName = "output";
 	this.valoff = valoff;
 	var children = this.element.children || this.element.childNodes;
 	if (children.length !== 0) {
@@ -7383,6 +7389,7 @@ XsltForms_output.prototype.getValue = function(format) {
 function XsltForms_range(subform, id, valoff, binding, incremental, start, end, step, aidButton, clone) {
 	XsltForms_globals.counters.upload++;
 	this.init(subform, id);
+	this.controlName = "range";
 	this.binding = binding;
 	this.incremental = incremental;
 	var cells = this.element.children;
@@ -7568,6 +7575,7 @@ XsltForms_range.prototype.blur = function(target) {
 function XsltForms_repeat(subform, id, nbsiblings, binding, clone) {
 	XsltForms_globals.counters.repeat++;
 	this.init(subform, id);
+	this.controlName = "repeat";
 	this.nbsiblings = nbsiblings;
 	this.binding = binding;
 	this.index = 1;
@@ -7875,6 +7883,7 @@ XsltForms_repeat.selectItem = function(element) {
 function XsltForms_select(subform, id, multiple, full, binding, incremental, clone) {
 	XsltForms_globals.counters.select++;
 	this.init(subform, id);
+	this.controlName = multiple? "select": "select1";
 	this.binding = binding;
 	this.multiple = multiple;
 	this.full = full;
@@ -8135,6 +8144,7 @@ XsltForms_select.prototype.getSelected = function() {
 function XsltForms_trigger(subform, id, binding, clone) {
 	XsltForms_globals.counters.trigger++;
 	this.init(subform, id);
+	this.controlName = "trigger";
 	this.binding = binding;
 	this.hasBinding = !!binding;
 	if(!this.hasBinding) {
@@ -8196,6 +8206,7 @@ XsltForms_trigger.prototype.blur = function () { };
 function XsltForms_upload(subform, id, valoff, binding, incremental, filename, mediatype, aidButton, clone) {
 	XsltForms_globals.counters.upload++;
 	this.init(subform, id);
+	this.controlName = "upload";
 	this.binding = binding;
 	this.incremental = incremental;
 	this.filename = filename;
@@ -10046,7 +10057,7 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) 
 		if (event.target && event.target.nodeType === 3) {
 			event.target = event.target.parentNode;
 		}
-		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && (event.target.parentNode.nodeName === "BUTTON" || event.target.parentNode.nodeName === "A")))  && !XsltForms_browser.isFF2) {
+		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
 //		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {

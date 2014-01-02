@@ -32,6 +32,7 @@ Output Control  Class
 function XsltForms_output(subform, id, valoff, binding, mediatype) {
 	XsltForms_globals.counters.output++;
 	this.init(subform, id);
+	this.controlName = "output";
 	this.valoff = valoff;
 	var children = this.element.children || this.element.childNodes;
 	if (children.length !== 0) {

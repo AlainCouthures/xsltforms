@@ -32,6 +32,7 @@ Label Element  Class
 function XsltForms_label(subform, id, binding) {
 	XsltForms_globals.counters.label++;
 	this.init(subform, id);
+	this.controlName = "label";
 	if (binding) {
 		this.hasBinding = true;
 		this.binding = binding;

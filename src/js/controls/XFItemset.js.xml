@@ -32,6 +32,7 @@ ItemSet Element  Class
 function XsltForms_itemset(subform, id, nodesetBinding, labelBinding, valueBinding) {
 	XsltForms_globals.counters.itemset++;
 	this.init(subform, id);
+	this.controlName = "itemset";
 	this.nodesetBinding = nodesetBinding;
 	this.labelBinding = labelBinding;
 	this.valueBinding = valueBinding;

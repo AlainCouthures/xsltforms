@@ -32,6 +32,7 @@ Upload Control  Class
 function XsltForms_range(subform, id, valoff, binding, incremental, start, end, step, aidButton, clone) {
 	XsltForms_globals.counters.upload++;
 	this.init(subform, id);
+	this.controlName = "range";
 	this.binding = binding;
 	this.incremental = incremental;
 	var cells = this.element.children;

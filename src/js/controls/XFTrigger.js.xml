@@ -32,6 +32,7 @@ Trigger Control  Class
 function XsltForms_trigger(subform, id, binding, clone) {
 	XsltForms_globals.counters.trigger++;
 	this.init(subform, id);
+	this.controlName = "trigger";
 	this.binding = binding;
 	this.hasBinding = !!binding;
 	if(!this.hasBinding) {

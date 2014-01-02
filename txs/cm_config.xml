@@ -1,6 +1,6 @@
 <cm:config xmlns:cm="http://www.agencexml.com/cm">
 	<cm:licence>
-Copyright (C) 2008-2013 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -20,7 +20,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
-	<cm:version>584</cm:version>
-	<cm:versionNumber>584</cm:versionNumber>
-	<cm:year>2013</cm:year>
+	<cm:version>585</cm:version>
+	<cm:versionNumber>585</cm:versionNumber>
+	<cm:year>2014</cm:year>
 </cm:config>
