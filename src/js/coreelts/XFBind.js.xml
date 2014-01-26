@@ -91,7 +91,7 @@ XsltForms_bind.prototype.refresh = function(ctx, index) {
 			XsltForms_browser.setMeta(node, "bind", this.element.id);
 		} else {
 			var bindids2 = " "+bindids+" ";
-			if (bindids.indexOf(" "+this.element.id+" ") === -1) {
+			if (bindids2.indexOf(" "+this.element.id+" ") === -1) {
 				XsltForms_browser.setMeta(node, "bind", bindids+" "+this.element.id);
 			}
 		}

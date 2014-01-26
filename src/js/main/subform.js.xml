@@ -76,7 +76,7 @@ XsltForms_subform.prototype.dispose = function() {
 	var scriptelt = document.getElementById(this.id + "-script");
 	scriptelt.parentNode.removeChild(scriptelt);
 	for (var h = 0, len0 = this.subforms.length; h < len0; h++) {
-		this.subforms[h].dispose();
+		this.subforms[0].dispose();
 	}
 	this.subforms = null;
 	XsltForms_globals.dispose(document.getElementById(this.eltid));

@@ -421,7 +421,7 @@ var XsltForms_globals = {
 				}
 				return false;
 			}
-		});
+		}, false);
 		XsltForms_browser.events.attach(b, "click", function(evt) {
 			var target = XsltForms_browser.events.getTarget(evt);
 			var parent = target;
@@ -446,7 +446,7 @@ var XsltForms_globals = {
 				}
 				parent = parent.parentNode;
 			}
-		} );
+		}, false);
 		XsltForms_browser.events.onunload = function() {
 			XsltForms_globals.close();
 		};

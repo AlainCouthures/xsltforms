@@ -579,7 +579,7 @@ XsltForms_submission.requesteventlog = function(evcontext, req) {
 			}
 		}
 		if (req.responseXML) {
-			evcontext["response-body"] = [XsltForms_browser.createXMLDocument(req.responseText)];
+			evcontext["response-body"] = [XsltForms_browser.createXMLDocument(req.responseText).documentElement];
 		} else {
 			evcontext["response-body"] = req.responseText || "";
 		}

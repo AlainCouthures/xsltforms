@@ -44,10 +44,12 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) 
 	this.phase = phase;
 	this.handler = handler;
 	XsltForms_browser.assert(observer);
-	if (observer.listeners && name === "xforms-subform-ready") {
-		for (var i = 0, l = observer.listeners.length; i < l; i++) {
-			if (observer.listeners[i].name === name) {
-				return;
+	if (observer.listeners) {
+		if (name === "xforms-subform-ready") {
+			for (var i = 0, l = observer.listeners.length; i < l; i++) {
+				if (observer.listeners[i].name === name) {
+					return;
+				}
 			}
 		}
 	} else {
