@@ -89,7 +89,6 @@ XsltForms_tree.prototype.click = function(target) {
 XsltForms_tree.prototype.buildTree = function(parent, index, node, nodes) {
 	var li = null;
 	var ul = null;
-	var label = null;
 	var childs = node.childNodes;
 	var nochild = childs.length === 0;
 	nodes.push(node);

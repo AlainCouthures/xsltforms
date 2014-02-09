@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Listener  Class
 * constructor function : creates a Listener object to an observer element and attaches a standard callback function</cm:wiki>
 		<![CDATA[
-function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) {
+function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, defaultaction) {
 	phase = phase || "default";
 	if (phase !== "default" && phase !== "capture") {
 		XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-compute-exception", 
@@ -43,6 +43,7 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) 
 	this.evtName = document.addEventListener? name : "errorupdate";
 	this.phase = phase;
 	this.handler = handler;
+	this.defaultaction = defaultaction;
 	XsltForms_browser.assert(observer);
 	if (observer.listeners) {
 		if (name === "xforms-subform-ready") {
@@ -95,11 +96,14 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler) 
 		if (event.eventPhase === 3 && event.target.xfElement && event.target === event.currentTarget && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
-		if (evtTarget && event.target != evtTarget) {
+		if (evtTarget && event.target !== evtTarget) {
 			effectiveTarget = false;
 		}
 		if (effectiveTarget) {
 			handler.call(event.target, event);
+		}
+		if (!defaultaction) {
+			event.preventDefault();
 		}
 		if (!document.addEventListener) {
 			try {
@@ -146,7 +150,7 @@ XsltForms_listener.prototype.detach = function() {
 * '''clone''' method : creates a new listener for the given element</cm:wiki>
 <![CDATA[
 XsltForms_listener.prototype.clone = function(element) {
-	var unused = new XsltForms_listener(this.subform, element, this.evtTarget, this.name, this.phase, this.handler);
+	return new XsltForms_listener(this.subform, element, this.evtTarget, this.name, this.phase, this.handler);
 };
 ]]>
 	</cm:source>

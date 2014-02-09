@@ -271,7 +271,7 @@ if (!XsltForms_browser.isIE) {
 	XsltForms_browser.StringToBinary = function(s) {
 		var b = function(v) {
 			return String.fromCharCode(v > 9 ? v + 55 : v + 48); 
-		}
+		};
 		var s2 = "";
 		for (var i = 0, l = s.length; i < l; i++) {
 			s2 += b((s.charCodeAt(i) & 0xF0) >> 4) + b(s.charCodeAt(i) & 0xF);
@@ -281,7 +281,7 @@ if (!XsltForms_browser.isIE) {
 		elt.dataType = "bin.hex";
 		elt.text = s2;
 		return elt.nodeTypedValue;
-	}
+	};
 } else {
 	throw new Error("This browser does not support XHRs(Ajax)! \n Enable Javascript or ActiveX controls (on IE) or lower security restrictions.");
 }
@@ -941,9 +941,9 @@ if (XsltForms_browser.isIE) {
 									}
 								}
 							} else {
-								var zc0 = new Uint8Array(XsltForms_upload.contents[cids[icid]]);
-								for (var zci = 0, zcl = zc0.length; zci < zcl; zci++) {
-									zc += String.fromCharCode(zc0[zci]);
+								var zc0b = new Uint8Array(XsltForms_upload.contents[cids[icid]]);
+								for (var zcib = 0, zclb = zc0b.length; zcib < zclb; zcib++) {
+									zc += String.fromCharCode(zc0b[zcib]);
 								}
 							}
 							z += "Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: binary\r\nContent-ID: <" + cids[icid] + ">\r\n\r\n" + zc + "\r\n--" + boundary +  (icid === lcid-1 ? "--\r\n" : "\r\n");
@@ -1141,7 +1141,7 @@ XsltForms_browser.clearMeta = function(node) {
 			}
 		}
 	}
-}
+};
 
 XsltForms_browser.setBoolMeta = function(node, meta, value) {
 	if (node) {
@@ -1253,6 +1253,7 @@ if (!XsltForms_browser.isIE) {
 		var XMLDocument = Document;
 	}
 	XMLDocument.prototype.selectNodes = function(xpath, single, node) {
+		var n;
 		try {
 			var r = this.evaluate(xpath, (node ? node : this), this.createNSResolver(this.documentElement), (single ? XPathResult.FIRST_ORDERED_NODE_TYPE : XPathResult.ORDERED_NODE_SNAPSHOT_TYPE), null);
 			if (single) {
@@ -1282,7 +1283,7 @@ if (!XsltForms_browser.isIE) {
 					}
 					break;
 				case "descendant::*[@xsltforms_notrelevant = 'true']":
-					var n = node.firstChild;
+					n = node.firstChild;
 					if (n) {
 						while (n !== node) {
 							if (n.nodeType === XsltForms_nodeType.ELEMENT && n.getAttribute("xsltforms_notrelevant") === "true") {
@@ -1303,7 +1304,7 @@ if (!XsltForms_browser.isIE) {
 					break;
 				case "descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]":
 					node = node.parentNode;
-					var n = node.firstChild;
+					n = node.firstChild;
 					if (n) {
 						while (n !== node) {
 							if (n.nodeType === XsltForms_nodeType.ELEMENT) {

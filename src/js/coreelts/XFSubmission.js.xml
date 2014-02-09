@@ -122,12 +122,13 @@ XsltForms_submission.prototype.xml2data = function(node, method) {
 		return XsltForms_browser.xml2csv(ser, this.separator);
 	}
 	return ser;
-}
+};
 ]]>
 		<cm:wiki>
 * '''submit''' method : submits serialized data according to choosen method</cm:wiki>
 <![CDATA[
 XsltForms_submission.prototype.submit = function() {
+	var ctxnode, targetnode, inst, body, scriptelt;
 	XsltForms_globals.openAction("XsltForms_submission.prototype.submit");
 	var node = this.eval_();
 	var action = "error";
@@ -180,7 +181,7 @@ XsltForms_submission.prototype.submit = function() {
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
 		} else if (window.location.href.substr(0, 7) === "file://" && method === "get") {
-			var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+			scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
 			scriptelt.setAttribute("src", action);
 			scriptelt.setAttribute("id", "xsltforms-filereader");
 			scriptelt.setAttribute("type", "application/xml");
@@ -188,12 +189,12 @@ XsltForms_submission.prototype.submit = function() {
 				alert(document.getElementById("xsltforms-filereader").textContent);
 			};
 			scriptelt.onreadystatechange = function () {
-				if (this.readyState == 'complete' || this.readyState == 'loaded') {
+				if (this.readyState === 'complete' || this.readyState === 'loaded') {
 					scriptLoaded();
 				}
-			}
+			};
 			scriptelt.onload = scriptLoaded;
-			var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+			body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
 			body.insertBefore(scriptelt, body.firstChild);
 		} else if (action.substr(0, 9) === "opener://" && method === "put") {
 			try {
@@ -245,9 +246,9 @@ XsltForms_submission.prototype.submit = function() {
 				eval("ser = (" + action.substr(11) + ");");
 			}
 			if (ser !== "" && (subm.replace === "instance" || (subm.targetref && subm.replace === "text"))) {
-				var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
+				ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
 				if (subm.targetref) {
-					var targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
+					targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
 					if (targetnode && targetnode[0]) {
 						if (subm.replace === "instance") {
 							XsltForms_browser.loadXML(targetnode[0], ser);
@@ -256,7 +257,7 @@ XsltForms_submission.prototype.submit = function() {
 						}
 					}
 				} else {
-					var inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
+					inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
 					inst.setDoc(ser, false, true);
 				}
 				XsltForms_globals.addChange(subm.model);
@@ -274,9 +275,9 @@ XsltForms_submission.prototype.submit = function() {
 		if (method === "get") {
 			eval("ser = (" + action.substr(11) + ");");
 			if (ser !== "" && (subm.replace === "instance" || (subm.targetref && subm.replace === "text"))) {
-				var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
+				ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
 				if (subm.targetref) {
-					var targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
+					targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
 					if (targetnode && targetnode[0]) {
 						if (subm.replace === "instance") {
 							XsltForms_browser.loadXML(targetnode[0], ser);
@@ -285,7 +286,7 @@ XsltForms_submission.prototype.submit = function() {
 						}
 					}
 				} else {
-					var inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
+					inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
 					inst.setDoc(ser, false, true);
 				}
 				XsltForms_globals.addChange(subm.model);
@@ -303,7 +304,6 @@ XsltForms_submission.prototype.submit = function() {
 	if (synchr) {
 		XsltForms_browser.dialog.show("statusPanel", null, false);
 	}
-	var body;
 	if(method === "xml-urlencoded-post") {
 		var outForm = document.getElementById("xsltforms_form");
 		if(outForm) {
@@ -335,7 +335,7 @@ XsltForms_submission.prototype.submit = function() {
 		*/
 		if (this.mediatype === "text/jsonp") {
 			XsltForms_browser.jsoninstobj = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : this.model.getInstance()) : document.getElementById(instance).xfElement;
-			var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
+			scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
 			scriptelt.setAttribute("src", action.replace(/&amp;/g, "&")+((action.indexOf("?") === -1) ? "?" : "&")+"callback=jsoninst");
 			scriptelt.setAttribute("id", "jsoninst");
 			scriptelt.setAttribute("type", "text/javascript");
@@ -371,8 +371,8 @@ XsltForms_submission.prototype.submit = function() {
 						}
 						if (subm.replace === "instance" || (subm.targetref && subm.replace === "text")) {
 							if (subm.targetref) {
-								var ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
-								var targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
+								ctxnode = !instance ? (node ? (node.documentElement ? node.documentElement : node.ownerDocument.documentElement) : subm.model.getInstance().documentElement) : document.getElementById(instance).xfElement.doc.documentElement;
+								targetnode = subm.targetref.bind_evaluate(subm.subform, ctxnode);
 								if (targetnode && targetnode[0]) {
 									if (subm.replace === "instance") {
 										XsltForms_browser.loadXML(targetnode[0], req.responseText);
@@ -381,7 +381,7 @@ XsltForms_submission.prototype.submit = function() {
 									}
 								}
 							} else {
-								var inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
+								inst = !instance ? (node ? document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "instance")).xfElement : subm.model.getInstance()) : document.getElementById(instance).xfElement;
 								inst.setDocFromReq(req, false, true);
 							}
 							XsltForms_globals.addChange(subm.model);

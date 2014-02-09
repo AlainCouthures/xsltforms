@@ -86,7 +86,7 @@ XsltForms_unload.subform = function(targetid, ref) {
 	}
 	var a = new XsltForms_unload(subform, targetid);
 	a.run();
-}
+};
 ]]>
 	</cm:source>
 </cm:component>

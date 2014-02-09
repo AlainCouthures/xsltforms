@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			</script>
 		</xsl:template>
 		<xsl:template match="ajx:start|ajx:stop" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ajx="http://www.ajaxforms.net/2006/ajx"/>
-		<xsl:template match="xhtml:br | br" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml"><xsl:element name="br"/></xsl:template>
+		<xsl:template match="xhtml:br | br" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml"><br xmlns=""/></xsl:template>
 		<xsl:template match="xhtml:script[@type='text/javascript' and @src] | script[@type='text/javascript' and @src]" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 			<script type="text/javascript" src="{@src}">/* */</script>
 		</xsl:template>

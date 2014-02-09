@@ -46,12 +46,33 @@ XsltForms_atomicType.prototype.setBase = function(base) {
 			var value = baseType[id];
 			if (id === "patterns") {
 				XsltForms_browser.copyArray(value, this.patterns);
-			} else if (id !== "name" && id !== "nsuri") {
+			} else if (id !== "name" && id !== "nsuri" && id !== "base") {
 				this[id] = value;
 			}
 		}
 	}
+	this.basensuri = baseType.nsuri;
+	this.basename = baseType.name;
 	return this;
+};
+
+]]>
+		<cm:wiki>
+* '''hasBase''' method : checks base hierarchy for this AtomicType object</cm:wiki>
+<![CDATA[
+XsltForms_atomicType.prototype.hasBase = function(base) {
+	var baseType = XsltForms_schema.getType(base);
+	var curType = this;
+	while( curType !== baseType ){
+		if (!curType.basename) {
+			return false;
+		}
+		curType = XsltForms_schema.getTypeNS(curType.basensuri, curType.basename);
+		if (!curType) {
+			return false;
+		}
+	}
+	return true;
 };
 
 ]]>

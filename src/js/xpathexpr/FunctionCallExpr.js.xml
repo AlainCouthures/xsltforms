@@ -42,7 +42,7 @@ function XsltForms_functionCallExpr(name) {
 		}
 	}
 	if (!this.func) {
-		XsltForms_globals.error(this, "xforms-compute-exception", "Function " + fs[j] + "() not found");
+		XsltForms_globals.error(this, "xforms-compute-exception", "Function " + this.name + "() not found");
 	}
 	for (var i = 1, len = arguments.length; i < len; i++) {
 		this.args.push(arguments[i]);

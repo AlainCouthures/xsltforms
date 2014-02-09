@@ -51,8 +51,8 @@ XsltForms_load.prototype.run = function(element, ctx) {
 	if (this.binding) {
 		node = this.binding.bind_evaluate(this.subform, ctx)[0];
 		if (node) {
-			var t = XsltForms_browser.getType(node);
-			if (t === "xsd:anyURI") {
+			var t = XsltForms_schema.getType(XsltForms_browser.getType(node));
+			if (!t.hasBase("xf:HTMLFragment")) {
 				href = XsltForms_browser.getValue(node);
 			}
 		}
@@ -72,9 +72,9 @@ XsltForms_load.prototype.run = function(element, ctx) {
 			} catch (e) {
 				alert("XSLTForms Exception\n--------------------------\n\nError evaluating the following Javascript expression :\n\n"+href.substr(11)+"\n\n"+e);
 			}
-		} else if (this.show === "new") {
+		} else if (this.show === "new" || this.targetid === "_blank") {
 			window.open(href);
-		} else if (this.show === "embed") {
+		} else if (this.show === "embed" || (this.targetid !== "" && this.targetid !== "_blank" && this.targetid !== "_self")) {
 			XsltForms_globals.openAction("XsltForms_load.prototype.run");
 			var req = null;
 			var method = "get";
@@ -112,7 +112,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 						targetsubform.dispose();
 					}
 					subjs = '(function(){var xsltforms_subform_eltid = "' + targetelt.id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '"' + subjs.substring(imain + 20) + "})();";
-					subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->"
+					subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->";
 					imain = subbody.indexOf(' id="xsltforms-mainform');
 					while (imain !== -1) {
 						subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
@@ -163,16 +163,14 @@ XsltForms_load.prototype.run = function(element, ctx) {
 		if (node) {
 			var v = XsltForms_browser.getValue(node).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 			var lw;
-			if (this.show === "new") {
+			if (this.show === "new" || this.targetid === "_blank") {
 				lw = window.open("about:blank","_blank");
 				lw.document.write(v);
 				lw.document.close();
 			} else {
-				if (this.show === "replace") {
-					lw = window.open("about:blank", "_self");
-					lw.document.write(v);
-					lw.document.close();
-				}
+				lw = window.open("about:blank", "_self");
+				lw.document.write(v);
+				lw.document.close();
 			}
 		}
 	}
@@ -217,7 +215,7 @@ XsltForms_load.subform = function(resource, targetid, ref) {
 	}
 	var a = new XsltForms_load(subform, null, resource, "embed", targetid);
 	a.run();
-}
+};
 ]]>
 	</cm:source>
 </cm:component>

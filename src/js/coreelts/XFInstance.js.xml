@@ -41,7 +41,7 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML
 				this.header = vals[1].replace(/^\s+/g,'').replace(/\s+$/g,'') === "present";
 				break;
 			case "separator":
-				this.separator = unescape(vals[1].replace(/^\s+/g,'').replace(/\s+$/g,''));
+				this.separator = (decodeURI ? decodeURI : unescape)(vals[1].replace(/^\s+/g,'').replace(/\s+$/g,''));
 				break;
 			case "charset":
 				this.charset = vals[1].replace(/^\s+/g,'').replace(/\s+$/g,'');
@@ -120,6 +120,7 @@ XsltForms_instance.prototype.dispose = function(subform) {
 * '''construct''' method : loads the source of this instance locally or remotely</cm:wiki>
 <![CDATA[
 XsltForms_instance.prototype.construct = function(subform) {
+	var ser;
 	if (!XsltForms_globals.ready || (subform && !subform.ready && this.nbsubforms === 1)) {
 		if (this.src) {
 			if (this.src.substring(0, 8) === "local://") {
@@ -133,7 +134,7 @@ XsltForms_instance.prototype.construct = function(subform) {
 				}
 			} else if (this.src.substr(0, 9) === "opener://") {
 				try {
-					var ser = window.opener.XsltForms_globals.xmlrequest('get', this.src.substr(9));
+					ser = window.opener.XsltForms_globals.xmlrequest('get', this.src.substr(9));
 					this.setDoc(ser);
 				} catch (e) {
 					XsltForms_globals.error(this.element, "xforms-link-exception", "Fatal error loading " + this.src, e.toString());
@@ -141,7 +142,6 @@ XsltForms_instance.prototype.construct = function(subform) {
 			} else {
 				if (this.src.substr(0, 11) === "javascript:") {
 					try {
-						var ser;
 						eval("ser = (" + this.src.substr(11) + ");");
 						this.setDoc(ser);
 					} catch (e) {
@@ -241,7 +241,7 @@ XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld)
 				this.header = vals[1].replace(/^\s+/g,'').replace(/\s+$/g,'') === "present";
 				break;
 			case "separator":
-				this.separator = unescape(vals[1].replace(/^\s+/g,'').replace(/\s+$/g,''));
+				this.separator = (decodeURI ? decodeURI : unescape)(vals[1].replace(/^\s+/g,'').replace(/\s+$/g,''));
 				break;
 			case "charset":
 				this.charset = vals[1].replace(/^\s+/g,'').replace(/\s+$/g,'');
@@ -298,7 +298,7 @@ XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld)
 		case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
 			var arch;
 			if (XsltForms_browser.isIE) {
-				var convertResponseBodyToText = function (binary) {
+				var convertResponseBodyToTextb = function (binary) {
 					if (!XsltForms_browser.byteMapping) {
 						var byteMapping = {};
 						for (var i = 0; i < 256; i++) {
@@ -312,7 +312,7 @@ XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld)
 					var lastChr = XsltForms_browser_BinaryToArray_ByteStr_Last(binary);
 					return rawBytes.replace(/[\s\S]/g, function (match) { return XsltForms_browser.byteMapping[match]; }) + lastChr;
 				};
-				arch = XsltForms_browser.zip2xml(convertResponseBodyToText(req.responseBody), this.mediatype, this.element.id, this.model.element.id);
+				arch = XsltForms_browser.zip2xml(convertResponseBodyToTextb(req.responseBody), this.mediatype, this.element.id, this.model.element.id);
 			} else {
 				arch = XsltForms_browser.zip2xml(srcXML, this.mediatype, this.element.id, this.model.element.id);
 			}
@@ -566,7 +566,6 @@ XsltForms_browser.vcard2xcard_prop = {
 XsltForms_browser.vcard2xcard = function(v) {
 	var s = '<vcards xmlns="urn:ietf:params:xml:ns:vcard-4.0">';
 	var vcards = v.replace(/(\r\n|\n|\r) /gm,"").replace(/^\s+/,"").replace(/\s+$/,"").split("\n");
-	var state = 0;
 	for (var i = 0, len = vcards.length; i < len; i++) {
 		var sep = vcards[i].indexOf(":");
 		var before = vcards[i].substring(0, sep);
@@ -629,7 +628,6 @@ XsltForms_browser.xml2csv = function(s, sep) {
 	while (n) {
 		if (n.nodeType === XsltForms_nodeType.ELEMENT) {
 			var m = n.firstChild;
-			var m0 = m;
 			var l = "";
 			while (m) {
 				if (m.nodeType === XsltForms_nodeType.ELEMENT) {
@@ -740,10 +738,10 @@ XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 	var offset = z.lastIndexOf("PK\x05\x06")+16;
 	var r2 = function(z, offset) {
 		return ((z.charCodeAt(offset+1) & 0xFF)<< 8) | z.charCodeAt(offset) & 0xFF;
-	}
+	};
 	var r4 = function(z, offset) {
 		return ((((((z.charCodeAt(offset+3) & 0xFF)<< 8) | z.charCodeAt(offset+2) & 0xFF)<< 8) | z.charCodeAt(offset+1) & 0xFF)<< 8) | z.charCodeAt(offset) & 0xFF;
-	}
+	};
 	offset = r4(z, offset);
 	while (z.charCodeAt(offset) === 80 && z.charCodeAt(offset+1) === 75 && z.charCodeAt(offset+2) === 1 && z.charCodeAt(offset+3) === 2) {
 		f = {};
@@ -817,7 +815,7 @@ XsltForms_browser.zip2xml = function(z, mediatype, instid, modid) {
 	}
 	arch.srcXML = r;
 	return arch;
-}
+};
 
 XsltForms_browser.xml2zip = function(arch, mediatype) {
 	var z = "";
@@ -825,10 +823,10 @@ XsltForms_browser.xml2zip = function(arch, mediatype) {
 	var fcount = 0;
 	var w2 = function(v) {
 		return String.fromCharCode(v & 0xFF) + String.fromCharCode((v >>> 8) & 0xFF);
-	}
+	};
 	var w4 = function(v) {
 		return String.fromCharCode(v & 0xFF) + String.fromCharCode((v >>> 8) & 0xFF) + String.fromCharCode((v >>> 16) & 0xFF) + String.fromCharCode((v >>> 24) & 0xFF);
-	}
+	};
 	for (fn in arch) {
 		if (arch.hasOwnProperty(fn)) {
 			f = arch[fn];
@@ -915,7 +913,7 @@ XsltForms_browser.xml2zip = function(arch, mediatype) {
 	} catch (e) {
 		return XsltForms_browser.StringToBinary(z);
 	}
-}
+};
 ]]>
 	</cm:source>
 </cm:component>

@@ -30,7 +30,6 @@ Calendar Class for Date/DateTime Control
 * constructor function : dynamically creates a table element</cm:wiki>
 		<![CDATA[
 function XsltForms_calendar() {
-	var calendar = this;
 	var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
 	this.element = XsltForms_browser.createElement("table", body, null, "calendar");
 	var tHead = XsltForms_browser.createElement("thead", this.element);

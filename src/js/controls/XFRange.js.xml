@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="text/javascript">
 		<cm:wiki>
-=== "XsltForms_upload" class ===
+=== "XsltForms_range" class ===
 Upload Control  Class
 * constructor function : initializes specific properties including aid button management</cm:wiki>
 		<![CDATA[
@@ -149,10 +149,10 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 			}
 			parent = parent.parentNode;
 		}
-		if (typeof evt.stopPropagation == "function") {
+		if (typeof evt.stopPropagation === "function") {
 			evt.stopPropagation();
 		}
-		else if (typeof evt.cancelBubble != "undefined") {
+		else if (typeof evt.cancelBubble !== "undefined") {
 			evt.cancelBubble = true;	
 		}
 		if (evt.preventDefault) {

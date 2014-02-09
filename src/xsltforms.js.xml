@@ -28,12 +28,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 The "init()" function is created by the XSLT transformation according to the XForms document, with "xforms.init()" as the last function call, and called by the "onload" event associated with the "body" element.
 Many Javascript objects and functions can be called directly by developers for specific purposes considering that misuse can '''compromise''' the XSLTForms global behavior.</cm:wiki>
 		<cm:import-components path="js/main/main.js.xml"/>
+		<cm:import-components path="js/xmlevtmngt/xmlevtmngt.js.xml"/>
+		<cm:import-components path="js/xpathexpr/xpathexpr.js.xml"/>
 		<cm:import-components path="js/coreelts/coreelts.js.xml"/>
 		<cm:import-components path="js/actions/actions.js.xml"/>
 		<cm:import-components path="js/controls/controls.js.xml"/>
 		<cm:import-components path="js/types/types.js.xml"/>
-		<cm:import-components path="js/xmlevtmngt/xmlevtmngt.js.xml"/>
-		<cm:import-components path="js/xpathexpr/xpathexpr.js.xml"/>
 		<cm:import-components path="js/main/in_script.js.xml"/>
 	</cm:source>
 </cm:component>

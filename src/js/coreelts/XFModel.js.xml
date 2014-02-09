@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 * constructor function : specifically gets the associated schemas</cm:wiki>
 		<![CDATA[
 function XsltForms_model(subform, id, schemas, functions, version) {
+	var found;
 	if (subform.id !== "xsltforms-mainform") {
 		XsltForms_globals.addChange(this);
 	}
@@ -67,7 +68,7 @@ function XsltForms_model(subform, id, schemas, functions, version) {
 	if (schemas) {
 		schemas = schemas.split(" ");
 		for (var i = 0, len = schemas.length; i < len; i++) {
-			var found = false;
+			found = false;
 			for (var sid in XsltForms_schema.all) {
 				if (XsltForms_schema.all.hasOwnProperty(sid)) {
 					var schema = XsltForms_schema.all[sid];
@@ -85,7 +86,6 @@ function XsltForms_model(subform, id, schemas, functions, version) {
 	}
 	if (functions) {
 		var fs = functions.split(" ");
-		var found;
 		for (var j = 0, len2 = fs.length; j < len2; j++) {
 			found = false;
 			for (var k = 0, len3 = XsltForms_xpathCoreFunctions.length; k < len3; k++) {

@@ -87,6 +87,7 @@ XsltForms_schema.prototype.getType = function(name) {
 * '''getType''' function : gets a type according to a given prefix:name</cm:wiki>
 <![CDATA[
 XsltForms_schema.getType = function(name) {
+	name = name || "xsd:string";
 	var res = name.split(":");
 	if (typeof(res[1]) === "undefined") {
 		return XsltForms_schema.getTypeNS(XsltForms_schema.prefixes.xforms, res[0]);

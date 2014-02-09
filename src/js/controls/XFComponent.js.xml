@@ -50,7 +50,7 @@ function XsltForms_component(subform, id, valoff, binding, href) {
 	//this.subformid = "xsltforms-subform-" + XsltForms_globals.nbsubforms;
 	var req = null;
 	var method = "get";
-	var evcontext = {"method": method, "resource-uri": href};
+	// var evcontext = {"method": method, "resource-uri": href};
 	try {
 		req = XsltForms_browser.openRequest(method, href, false);
 		XsltForms_browser.debugConsole.write("Load Component " + href);
@@ -83,7 +83,7 @@ function XsltForms_component(subform, id, valoff, binding, href) {
 				subjs = subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '-instance-default"' + subjs.substring(imain + 37);
 				imain = subjs.indexOf('"xsltforms-mainform-instance-default"');
 			}
-			subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->"
+			subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->";
 			imain = subbody.indexOf(' id="xsltforms-mainform');
 			while (imain !== -1) {
 				subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);

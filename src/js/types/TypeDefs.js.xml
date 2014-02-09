@@ -916,6 +916,14 @@ XsltForms_typeDefs.XForms = {
 		"format" : function(value) {
 			return XsltForms_browser.i18n.formatNumber(value, 2);
 		}
+	},
+]]>
+		<cm:wiki>
+** '''xforms:HTMLFragment'''</cm:wiki>
+<![CDATA[
+	"HTMLFragment" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xsd_:string"
 	}
 };
 ]]>

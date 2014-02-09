@@ -33,7 +33,6 @@ The XFCoreElement is the parent class for all other classes.</cm:wiki>
 		<cm:import-components path="XFInstance.js.xml"/>
 		<cm:import-components path="XFBind.js.xml"/>
 		<cm:import-components path="XFSubmission.js.xml"/>
-		<cm:import-components path="XFProcessor.js.xml"/>
 		<cm:import-components path="AJXTimer.js.xml"/>
 	</cm:source>
 </cm:component>

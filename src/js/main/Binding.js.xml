@@ -47,7 +47,7 @@ function XsltForms_binding(type, xpath, model, bind) {
 <![CDATA[
 XsltForms_binding.prototype.evaluate = function() {
 	alert("Error");
-}
+};
 XsltForms_binding.prototype.bind_evaluate = function(subform, ctx, depsNodes, depsId, depsElements) {
 	var result = null;
 	if( typeof this.model === "string" ) {

@@ -38,6 +38,345 @@ var XsltForms_mathConstants = {
 	"LOG2E":   "1.44269504088896340735992468100189213742664595415298594",
 	"SQRT1_2": "0.707106781186547524400844362104849039284835937688474038"
 };
+
+var XsltForms_xpathFunctionExceptions = {
+	lastInvalidArgumentsNumber : {
+		name : "last() : Invalid number of arguments",
+		message : "last() function has no argument"
+	},
+	positionInvalidArgumentsNumber : {
+		name : "position() : Invalid number of arguments",
+		message : "position() function has no argument"
+	},
+	countInvalidArgumentsNumber : {
+		name : "count() : Invalid number of arguments",
+		message : "count() function must have one argument exactly"
+	},
+	countInvalidArgumentType : {
+		name : "count() : Invalid type of argument",
+		message : "count() function must have a nodeset argument"
+	},
+	idInvalidArgumentsNumber : {
+		name : "id() : Invalid number of arguments",
+		message : "id() function must have one argument exactly"
+	},
+	idInvalidArgumentType : {
+		name : "id() : Invalid type of argument",
+		message : "id() function must have a nodeset or string argument"
+	},
+	localNameInvalidArgumentsNumber : {
+		name : "local-name() : Invalid number of arguments",
+		message : "local-name() function must have one argument at most"
+	},
+	localNameInvalidArgumentType : {
+		name : "local-name() : Invalid type of argument",
+		message : "local-name() function must have a nodeset argument"
+	},
+	localNameNoContext : {
+		name : "local-name() : no context node",
+		message : "local-name() function must have a nodeset argument"
+	},
+	namespaceUriInvalidArgumentsNumber : {
+		name : "namespace-uri() : Invalid number of arguments",
+		message : "namespace-uri() function must have one argument at most"
+	},
+	namespaceUriInvalidArgumentType : {
+		name : "namespace-uri() : Invalid type of argument",
+		message : "namespace-uri() function must have a nodeset argument"
+	},
+	nameInvalidArgumentsNumber : {
+		name : "name() : Invalid number of arguments",
+		message : "name() function must have one argument at most"
+	},
+	nameInvalidArgumentType : {
+		name : "name() : Invalid type of argument",
+		message : "name() function must have a nodeset argument"
+	},
+	stringInvalidArgumentsNumber : {
+		name : "string() : Invalid number of arguments",
+		message : "string() function must have one argument at most"
+	},
+	concatInvalidArgumentsNumber : {
+		name : "concat() : Invalid number of arguments",
+		message : "concat() function must have at least two arguments"
+	},
+	startsWithInvalidArgumentsNumber : {
+		name : "starts-with() : Invalid number of arguments",
+		message : "starts-with() function must have two arguments exactly"
+	},
+	endsWithInvalidArgumentsNumber : {
+		name : "ends-with() : Invalid number of arguments",
+		message : "ends-with() function must have two arguments exactly"
+	},
+	containsInvalidArgumentsNumber : {
+		name : "contains() : Invalid number of arguments",
+		message : "contains() function must have two arguments exactly"
+	},
+	substringBeforeInvalidArgumentsNumber : {
+		name : "substring-before() : Invalid number of arguments",
+		message : "substring-before() function must have two arguments exactly"
+	},
+	replaceInvalidArgumentsNumber : {
+		name : "replace() : Invalid number of arguments",
+		message : "replace() function must have three arguments exactly"
+	},
+	substringAfterInvalidArgumentsNumber : {
+		name : "substring-after() : Invalid number of arguments",
+		message : "substring-after() function must have two arguments exactly"
+	},
+	substringInvalidArgumentsNumber : {
+		name : "substring() : Invalid number of arguments",
+		message : "substring() function must have two or three arguments"
+	},
+	compareInvalidArgumentsNumber : {
+		name : "compare() : Invalid number of arguments",
+		message : "compare() function must have two arguments exactly"
+	},
+	stringLengthInvalidArgumentsNumber : {
+		name : "string-length() : Invalid number of arguments",
+		message : "string-length() function must have one argument at most"
+	},
+	normalizeSpaceInvalidArgumentsNumber : {
+		name : "normalize-space() : Invalid number of arguments",
+		message : "normalize-space() function must have one argument at most"
+	},
+	translateInvalidArgumentsNumber : {
+		name : "translate() : Invalid number of arguments",
+		message : "translate() function must have three argument exactly"
+	},
+	booleanInvalidArgumentsNumber : {
+		name : "boolean() : Invalid number of arguments",
+		message : "boolean() function must have one argument exactly"
+	},
+	notInvalidArgumentsNumber : {
+		name : "not() : Invalid number of arguments",
+		message : "not() function must have one argument exactly"
+	},
+	trueInvalidArgumentsNumber : {
+		name : "true() : Invalid number of arguments",
+		message : "true() function must have no argument"
+	},
+	falseInvalidArgumentsNumber : {
+		name : "false() : Invalid number of arguments",
+		message : "false() function must have no argument"
+	},
+	langInvalidArgumentsNumber : {
+		name : "lang() : Invalid number of arguments",
+		message : "lang() function must have one argument exactly"
+	},
+	numberInvalidArgumentsNumber : {
+		name : "number() : Invalid number of arguments",
+		message : "number() function must have one argument exactly"
+	},
+	sumInvalidArgumentsNumber : {
+		name : "sum() : Invalid number of arguments",
+		message : "sum() function must have one argument exactly"
+	},
+	sumInvalidArgumentType : {
+		name : "sum() : Invalid type of argument",
+		message : "sum() function must have a nodeset argument"
+	},
+	floorInvalidArgumentsNumber : {
+		name : "floor() : Invalid number of arguments",
+		message : "floor() function must have one argument exactly"
+	},
+	ceilingInvalidArgumentsNumber : {
+		name : "ceiling() : Invalid number of arguments",
+		message : "ceiling() function must have one argument exactly"
+	},
+	roundInvalidArgumentsNumber : {
+		name : "round() : Invalid number of arguments",
+		message : "round() function must have one argument exactly"
+	},
+	powerInvalidArgumentsNumber : {
+		name : "power() : Invalid number of arguments",
+		message : "power() function must have one argument exactly"
+	},
+	randomInvalidArgumentsNumber : {
+		name : "random() : Invalid number of arguments",
+		message : "random() function must have no argument"
+	},
+	booleanFromStringInvalidArgumentsNumber : {
+		name : "boolean-from-string() : Invalid number of arguments",
+		message : "boolean-from-string() function must have one argument exactly"
+	},
+	ifInvalidArgumentsNumber : {
+		name : "if() : Invalid number of arguments",
+		message : "if() function must have three argument exactly"
+	},
+	chooseInvalidArgumentsNumber : {
+		name : "choose() : Invalid number of arguments",
+		message : "choose() function must have three argument exactly"
+	},
+	avgInvalidArgumentsNumber : {
+		name : "avg() : Invalid number of arguments",
+		message : "avg() function must have one argument exactly"
+	},
+	avgInvalidArgumentType : {
+		name : "avg() : Invalid type of argument",
+		message : "avg() function must have a nodeset argument"
+	},
+	minInvalidArgumentsNumber : {
+		name : "min() : Invalid number of arguments",
+		message : "min() function must have one argument exactly"
+	},
+	minInvalidArgumentType : {
+		name : "min() : Invalid type of argument",
+		message : "min() function must have a nodeset argument"
+	},
+	maxInvalidArgumentsNumber : {
+		name : "max() : Invalid number of arguments",
+		message : "max() function must have one argument exactly"
+	},
+	maxInvalidArgumentType : {
+		name : "max() : Invalid type of argument",
+		message : "max() function must have a nodeset argument"
+	},
+	serializeInvalidArgumentType : {
+		name : "serialize() : Invalid type of argument",
+		message : "serialize() function must have a nodeset argument"
+	},
+	countNonEmptyInvalidArgumentsNumber : {
+		name : "count-non-empty() : Invalid number of arguments",
+		message : "count-non-empty() function must have one argument exactly"
+	},
+	countNonEmptyInvalidArgumentType : {
+		name : "count-non-empty() : Invalid type of argument",
+		message : "count-non-empty() function must have a nodeset argument"
+	},
+	indexInvalidArgumentsNumber : {
+		name : "index() : Invalid number of arguments",
+		message : "index() function must have one argument exactly"
+	},
+	nodeIndexInvalidArgumentsNumber : {
+		name : "nodeIndex() : Invalid number of arguments",
+		message : "nodeIndex() function must have one argument exactly"
+	},
+	propertyInvalidArgumentsNumber : {
+		name : "property() : Invalid number of arguments",
+		message : "property() function must have one argument exactly"
+	},
+	propertyInvalidArgument : {
+		name : "property() : Invalid argument",
+		message : "Invalid property name"
+	},
+	instanceInvalidArgumentsNumber : {
+		name : "instance() : Invalid number of arguments",
+		message : "instance() function must have zero or one argument"
+	},
+	subformInstanceInvalidArgumentsNumber : {
+		name : "subform-instance() : Invalid number of arguments",
+		message : "subform-instance() function must have no argument"
+	},
+	subformContextInvalidArgumentsNumber : {
+		name : "subform-context() : Invalid number of arguments",
+		message : "subform-context() function must have no argument"
+	},
+	nowInvalidArgumentsNumber : {
+		name : "now() : Invalid number of arguments",
+		message : "now() function must have no argument"
+	},
+	localDateInvalidArgumentsNumber : {
+		name : "local-date() : Invalid number of arguments",
+		message : "local-date() function must have no argument"
+	},
+	localDateTimeInvalidArgumentsNumber : {
+		name : "local-dateTime() : Invalid number of arguments",
+		message : "local-dateTime() function must have no argument"
+	},
+	adjustDateTimeToTimezoneInvalidArgumentsNumber: {
+		name : "adjust-dateTime-to-timezone() : Invalid number of arguments",
+		message : "adjust-dateTime-to-timezone() function must have one argument exactly"
+	},
+	daysFromDateInvalidArgumentsNumber : {
+		name : "days-from-date() : Invalid number of arguments",
+		message : "days-from-date() function must have one argument exactly"
+	},
+	daysToDateInvalidArgumentsNumber : {
+		name : "days-to-date() : Invalid number of arguments",
+		message : "days-to-date() function must have one argument exactly"
+	},
+	secondsToDateTimeInvalidArgumentsNumber : {
+		name : "seconds-to-dateTime() : Invalid number of arguments",
+		message : "seconds-to-dateTime() function must have one argument exactly"
+	},
+	secondsFromDateTimeInvalidArgumentsNumber : {
+		name : "seconds-from-dateTime() : Invalid number of arguments",
+		message : "seconds-from-dateTime() function must have one argument exactly"
+	},
+	currentInvalidArgumentsNumber : {
+		name : "current() : Invalid number of arguments",
+		message : "current() function must have no argument"
+	},
+	isValidInvalidArgumentsNumber : {
+		name : "is-valid() : Invalid number of arguments",
+		message : "is-valid() function must have one argument exactly"
+	},
+	isValidInvalidArgumentType : {
+		name : "is-valid() : Invalid type of argument",
+		message : "is-valid() function must have a nodeset argument"
+	},
+	isNonEmptyArrayArgumentsNumber : {
+		name : "is-non-empty-array() : Invalid number of arguments",
+		message : "is-non-empty-array() function must have zero or one argument"
+	},
+	isNonEmptyArrayInvalidArgumentType : {
+		name : "is-non-empty-array() : Invalid type of argument",
+		message : "is-non-empty-array() function must have a node argument"
+	},
+	isCardNumberInvalidArgumentsNumber : {
+		name : "is-card-number() : Invalid number of arguments",
+		message : "is-card-number() function must have one argument exactly"
+	},
+	upperCaseInvalidArgumentsNumber : {
+		name : "upper-case() : Invalid number of arguments",
+		message : "upper-case() function must have one argument exactly"
+	},
+	lowerCaseInvalidArgumentsNumber : {
+		name : "lower-case() : Invalid number of arguments",
+		message : "lower-case() function must have one argument exactly"
+	},
+	distinctValuesInvalidArgumentsNumber : {
+		name : "distinct-values() : Invalid number of arguments",
+		message : "distinct-values() function must have one argument exactly"
+	},
+	transformInvalidArgumentsNumber : {
+		name : "transform() : Invalid number of arguments",
+		message : "transform() function must have two arguments exactly"
+	},
+	serializeNoContext : {
+		name : "serialize() : no context node",
+		message : "serialize() function must have a node argument"
+	},
+	serializeInvalidArgumentsNumber : {
+		name : "serialize() : Invalid number of arguments",
+		message : "serialize() function must have one argument exactly"
+	},
+	eventInvalidArgumentsNumber : {
+		name : "event() : Invalid number of arguments",
+		message : "event() function must have one argument exactly"
+	},
+	alertInvalidArgumentsNumber : {
+		name : "alert() : Invalid number of arguments",
+		message : "alert() function must have one argument exactly"
+	},
+	jsevalInvalidArgumentsNumber : {
+		name : "js-eval() : Invalid number of arguments",
+		message : "js-eval() function must have one argument exactly"
+	},
+	stringJoinInvalidArgumentsNumber : {
+		name : "string-join() : Invalid number of arguments",
+		message : "string-join() function must have one or two arguments"
+	},
+	stringJoinInvalidArgumentType : {
+		name : "string-join() : Invalid type of argument",
+		message : "string-join() function must have a nodeset argument"
+	},
+	itextInvalidArgumentsNumber : {
+		name : "itext() : Invalid number of arguments",
+		message : "itext() function must have one argument"
+	}
+};
 		
 var XsltForms_xpathCoreFunctions = {
 ]]>
@@ -1013,6 +1352,7 @@ var XsltForms_xpathCoreFunctions = {
 			enco = enco ? XsltForms_globals.stringValue(enco) : "base64";
 			var i;
 			var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+			var add32, hex32, t, str2;
 			switch (algo) {
 				case "SHA-1":
 					var l = str.length;
@@ -1034,7 +1374,7 @@ var XsltForms_xpathCoreFunctions = {
 					var rotl = function(x,n) {
 						return(x <<  n)|(x >>>(32-n));
 					};
-					var add32 = function(x,y) {
+					add32 = function(x,y) {
 						var lsw = (x & 0xFFFF)+(y & 0xFFFF);
 						return ((((x >>> 16)+(y >>> 16)+(lsw >>> 16)) & 0xFFFF)<< 16)|(lsw & 0xFFFF);
 					};
@@ -1044,7 +1384,6 @@ var XsltForms_xpathCoreFunctions = {
 						c = H2;
 						d = H3;
 						e = H4;
-						var t;
 						for(t = 0; t<20; t++){
 							T = add32(add32(add32(add32(rotl(a,5),(b & c)^(~b & d)),e),0x5a827999),W[t] = t<16 ? msg[t+i] : rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
 							e = d;
@@ -1085,7 +1424,7 @@ var XsltForms_xpathCoreFunctions = {
 					}
 					switch (enco) {
 						case "hex" :
-							var hex32 = function(v) {
+							hex32 = function(v) {
 								var h = v >>> 16;
 								var l = v & 0xFFFF;
 								return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000")+h.toString(16)+(l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000")+l.toString(16);
@@ -1103,7 +1442,7 @@ var XsltForms_xpathCoreFunctions = {
 					break;
 				case "MD5":
 					var n = str.length;
-					var add32 = function (a, b) {
+					add32 = function (a, b) {
 						return (a + b) & 0xFFFFFFFF;
 					};
 					var cmn = function(q, a, b, x, s, t) {
@@ -1194,14 +1533,13 @@ var XsltForms_xpathCoreFunctions = {
 						w[3] = add32(d, w[3]);
 					};
 					var w = [1732584193, -271733879, -1732584194, 271733878];
-					var t;
 					i = 0;
 					while (i <= n-64) {
 						t = [];
 						do {
 							t.push(str.charCodeAt(i) + (str.charCodeAt(i+1) << 8) + (str.charCodeAt(i+2) << 16) + (str.charCodeAt(i+3) << 24));
 							i += 4;
-						} while ( i%64 != 0 );
+						} while ( i%64 !== 0 );
 						cycle(w, t);
 					}
 					t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -1224,19 +1562,19 @@ var XsltForms_xpathCoreFunctions = {
 					}
 					switch (enco) {
 						case "hex" :
-							var hex32 = function(v) {
+							hex32 = function(v) {
 								var h = v >>> 16;
 								var l = v & 0xFFFF;
 								return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000")+h.toString(16)+(l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000")+l.toString(16);
 							};
-							var str2 = "";
+							str2 = "";
 							for (k = 0, l = w.length; k < l; k++) {
 								str2 += hex32(w[k]);
 							}
 							return str2;
 						case "base64" :
 							var l2 = w.length*4;
-							var str2 = "";
+							str2 = "";
 							for (i = 0; i < l2; i += 3) {
 								var c1 = (w[i >> 2] >> (24 - (i%4)*8))& 0xFF;
 								var c2 = i + 1 < l2 ? (w[(i + 1) >> 2] >> (24 - ((i+1)%4)*8))& 0xFF : 0;
@@ -1248,19 +1586,19 @@ var XsltForms_xpathCoreFunctions = {
 					break;
 				case "BASE64":
 					str = str.replace(/\r\n/g,"\n");
-					var l2 = str.length;
-					var str2 = "";
-					for (i = 0; i < l2; i++) {
+					var l2b = str.length;
+					str2 = "";
+					for (i = 0; i < l2b; i++) {
 						var c0 = str.charCodeAt(i);
 						str2 += c0 < 128 ? str.charAt(i) : c0 > 127 && c0 < 2048 ? String.fromCharCode(c0 >> 6 | 192, c0 & 63 | 128) : String.fromCharCode(c0 >> 12 | 224, c0 >> 6 & 63 | 128, c0 & 63 | 128);
 					}
-					l2 = str2.length;
+					l2b = str2.length;
 					var res = "";
-					for (i = 0; i < l2; i += 3) {
-						var c1 = str2.charCodeAt(i);
-						var c2 = i + 1 < l2 ? str2.charCodeAt(i + 1) : 0;
-						var c3 = i + 2 < l2 ? str2.charCodeAt(i + 2) : 0;
-						res += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l2 ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l2 ? b64.charAt(c3 & 63) : "=");
+					for (i = 0; i < l2b; i += 3) {
+						var c1b = str2.charCodeAt(i);
+						var c2b = i + 1 < l2 ? str2.charCodeAt(i + 1) : 0;
+						var c3b = i + 2 < l2 ? str2.charCodeAt(i + 2) : 0;
+						res += b64.charAt(c1b >> 2) + b64.charAt((c1b & 3) << 4 | c2b >> 4) + (i + 1 < l2b ? b64.charAt((c2b & 15) << 2 | c3b >> 6) : "=") + (i + 2 < l2b ? b64.charAt(c3b & 63) : "=");
 					}
 					return res;
 			}
@@ -1588,345 +1926,6 @@ var XsltForms_xpathCoreFunctions = {
 			}
 			return res;
 		} )
-};
-
-var XsltForms_xpathFunctionExceptions = {
-	lastInvalidArgumentsNumber : {
-		name : "last() : Invalid number of arguments",
-		message : "last() function has no argument"
-	},
-	positionInvalidArgumentsNumber : {
-		name : "position() : Invalid number of arguments",
-		message : "position() function has no argument"
-	},
-	countInvalidArgumentsNumber : {
-		name : "count() : Invalid number of arguments",
-		message : "count() function must have one argument exactly"
-	},
-	countInvalidArgumentType : {
-		name : "count() : Invalid type of argument",
-		message : "count() function must have a nodeset argument"
-	},
-	idInvalidArgumentsNumber : {
-		name : "id() : Invalid number of arguments",
-		message : "id() function must have one argument exactly"
-	},
-	idInvalidArgumentType : {
-		name : "id() : Invalid type of argument",
-		message : "id() function must have a nodeset or string argument"
-	},
-	localNameInvalidArgumentsNumber : {
-		name : "local-name() : Invalid number of arguments",
-		message : "local-name() function must have one argument at most"
-	},
-	localNameInvalidArgumentType : {
-		name : "local-name() : Invalid type of argument",
-		message : "local-name() function must have a nodeset argument"
-	},
-	localNameNoContext : {
-		name : "local-name() : no context node",
-		message : "local-name() function must have a nodeset argument"
-	},
-	namespaceUriInvalidArgumentsNumber : {
-		name : "namespace-uri() : Invalid number of arguments",
-		message : "namespace-uri() function must have one argument at most"
-	},
-	namespaceUriInvalidArgumentType : {
-		name : "namespace-uri() : Invalid type of argument",
-		message : "namespace-uri() function must have a nodeset argument"
-	},
-	nameInvalidArgumentsNumber : {
-		name : "name() : Invalid number of arguments",
-		message : "name() function must have one argument at most"
-	},
-	nameInvalidArgumentType : {
-		name : "name() : Invalid type of argument",
-		message : "name() function must have a nodeset argument"
-	},
-	stringInvalidArgumentsNumber : {
-		name : "string() : Invalid number of arguments",
-		message : "string() function must have one argument at most"
-	},
-	concatInvalidArgumentsNumber : {
-		name : "concat() : Invalid number of arguments",
-		message : "concat() function must have at least two arguments"
-	},
-	startsWithInvalidArgumentsNumber : {
-		name : "starts-with() : Invalid number of arguments",
-		message : "starts-with() function must have two arguments exactly"
-	},
-	endsWithInvalidArgumentsNumber : {
-		name : "ends-with() : Invalid number of arguments",
-		message : "ends-with() function must have two arguments exactly"
-	},
-	containsInvalidArgumentsNumber : {
-		name : "contains() : Invalid number of arguments",
-		message : "contains() function must have two arguments exactly"
-	},
-	substringBeforeInvalidArgumentsNumber : {
-		name : "substring-before() : Invalid number of arguments",
-		message : "substring-before() function must have two arguments exactly"
-	},
-	replaceInvalidArgumentsNumber : {
-		name : "replace() : Invalid number of arguments",
-		message : "replace() function must have three arguments exactly"
-	},
-	substringAfterInvalidArgumentsNumber : {
-		name : "substring-after() : Invalid number of arguments",
-		message : "substring-after() function must have two arguments exactly"
-	},
-	substringInvalidArgumentsNumber : {
-		name : "substring() : Invalid number of arguments",
-		message : "substring() function must have two or three arguments"
-	},
-	compareInvalidArgumentsNumber : {
-		name : "compare() : Invalid number of arguments",
-		message : "compare() function must have two arguments exactly"
-	},
-	stringLengthInvalidArgumentsNumber : {
-		name : "string-length() : Invalid number of arguments",
-		message : "string-length() function must have one argument at most"
-	},
-	normalizeSpaceInvalidArgumentsNumber : {
-		name : "normalize-space() : Invalid number of arguments",
-		message : "normalize-space() function must have one argument at most"
-	},
-	translateInvalidArgumentsNumber : {
-		name : "translate() : Invalid number of arguments",
-		message : "translate() function must have three argument exactly"
-	},
-	booleanInvalidArgumentsNumber : {
-		name : "boolean() : Invalid number of arguments",
-		message : "boolean() function must have one argument exactly"
-	},
-	notInvalidArgumentsNumber : {
-		name : "not() : Invalid number of arguments",
-		message : "not() function must have one argument exactly"
-	},
-	trueInvalidArgumentsNumber : {
-		name : "true() : Invalid number of arguments",
-		message : "true() function must have no argument"
-	},
-	falseInvalidArgumentsNumber : {
-		name : "false() : Invalid number of arguments",
-		message : "false() function must have no argument"
-	},
-	langInvalidArgumentsNumber : {
-		name : "lang() : Invalid number of arguments",
-		message : "lang() function must have one argument exactly"
-	},
-	numberInvalidArgumentsNumber : {
-		name : "number() : Invalid number of arguments",
-		message : "number() function must have one argument exactly"
-	},
-	sumInvalidArgumentsNumber : {
-		name : "sum() : Invalid number of arguments",
-		message : "sum() function must have one argument exactly"
-	},
-	sumInvalidArgumentType : {
-		name : "sum() : Invalid type of argument",
-		message : "sum() function must have a nodeset argument"
-	},
-	floorInvalidArgumentsNumber : {
-		name : "floor() : Invalid number of arguments",
-		message : "floor() function must have one argument exactly"
-	},
-	ceilingInvalidArgumentsNumber : {
-		name : "ceiling() : Invalid number of arguments",
-		message : "ceiling() function must have one argument exactly"
-	},
-	roundInvalidArgumentsNumber : {
-		name : "round() : Invalid number of arguments",
-		message : "round() function must have one argument exactly"
-	},
-	powerInvalidArgumentsNumber : {
-		name : "power() : Invalid number of arguments",
-		message : "power() function must have one argument exactly"
-	},
-	randomInvalidArgumentsNumber : {
-		name : "random() : Invalid number of arguments",
-		message : "random() function must have no argument"
-	},
-	booleanFromStringInvalidArgumentsNumber : {
-		name : "boolean-from-string() : Invalid number of arguments",
-		message : "boolean-from-string() function must have one argument exactly"
-	},
-	ifInvalidArgumentsNumber : {
-		name : "if() : Invalid number of arguments",
-		message : "if() function must have three argument exactly"
-	},
-	chooseInvalidArgumentsNumber : {
-		name : "choose() : Invalid number of arguments",
-		message : "choose() function must have three argument exactly"
-	},
-	avgInvalidArgumentsNumber : {
-		name : "avg() : Invalid number of arguments",
-		message : "avg() function must have one argument exactly"
-	},
-	avgInvalidArgumentType : {
-		name : "avg() : Invalid type of argument",
-		message : "avg() function must have a nodeset argument"
-	},
-	minInvalidArgumentsNumber : {
-		name : "min() : Invalid number of arguments",
-		message : "min() function must have one argument exactly"
-	},
-	minInvalidArgumentType : {
-		name : "min() : Invalid type of argument",
-		message : "min() function must have a nodeset argument"
-	},
-	maxInvalidArgumentsNumber : {
-		name : "max() : Invalid number of arguments",
-		message : "max() function must have one argument exactly"
-	},
-	maxInvalidArgumentType : {
-		name : "max() : Invalid type of argument",
-		message : "max() function must have a nodeset argument"
-	},
-	serializeInvalidArgumentType : {
-		name : "serialize() : Invalid type of argument",
-		message : "serialize() function must have a nodeset argument"
-	},
-	countNonEmptyInvalidArgumentsNumber : {
-		name : "count-non-empty() : Invalid number of arguments",
-		message : "count-non-empty() function must have one argument exactly"
-	},
-	countNonEmptyInvalidArgumentType : {
-		name : "count-non-empty() : Invalid type of argument",
-		message : "count-non-empty() function must have a nodeset argument"
-	},
-	indexInvalidArgumentsNumber : {
-		name : "index() : Invalid number of arguments",
-		message : "index() function must have one argument exactly"
-	},
-	nodeIndexInvalidArgumentsNumber : {
-		name : "nodeIndex() : Invalid number of arguments",
-		message : "nodeIndex() function must have one argument exactly"
-	},
-	propertyInvalidArgumentsNumber : {
-		name : "property() : Invalid number of arguments",
-		message : "property() function must have one argument exactly"
-	},
-	propertyInvalidArgument : {
-		name : "property() : Invalid argument",
-		message : "Invalid property name"
-	},
-	instanceInvalidArgumentsNumber : {
-		name : "instance() : Invalid number of arguments",
-		message : "instance() function must have zero or one argument"
-	},
-	subformInstanceInvalidArgumentsNumber : {
-		name : "subform-instance() : Invalid number of arguments",
-		message : "subform-instance() function must have no argument"
-	},
-	subformContextInvalidArgumentsNumber : {
-		name : "subform-context() : Invalid number of arguments",
-		message : "subform-context() function must have no argument"
-	},
-	nowInvalidArgumentsNumber : {
-		name : "now() : Invalid number of arguments",
-		message : "now() function must have no argument"
-	},
-	localDateInvalidArgumentsNumber : {
-		name : "local-date() : Invalid number of arguments",
-		message : "local-date() function must have no argument"
-	},
-	localDateTimeInvalidArgumentsNumber : {
-		name : "local-dateTime() : Invalid number of arguments",
-		message : "local-dateTime() function must have no argument"
-	},
-	adjustDateTimeToTimezoneInvalidArgumentsNumber: {
-		name : "adjust-dateTime-to-timezone() : Invalid number of arguments",
-		message : "adjust-dateTime-to-timezone() function must have one argument exactly"
-	},
-	daysFromDateInvalidArgumentsNumber : {
-		name : "days-from-date() : Invalid number of arguments",
-		message : "days-from-date() function must have one argument exactly"
-	},
-	daysToDateInvalidArgumentsNumber : {
-		name : "days-to-date() : Invalid number of arguments",
-		message : "days-to-date() function must have one argument exactly"
-	},
-	secondsToDateTimeInvalidArgumentsNumber : {
-		name : "seconds-to-dateTime() : Invalid number of arguments",
-		message : "seconds-to-dateTime() function must have one argument exactly"
-	},
-	secondsFromDateTimeInvalidArgumentsNumber : {
-		name : "seconds-from-dateTime() : Invalid number of arguments",
-		message : "seconds-from-dateTime() function must have one argument exactly"
-	},
-	currentInvalidArgumentsNumber : {
-		name : "current() : Invalid number of arguments",
-		message : "current() function must have no argument"
-	},
-	isValidInvalidArgumentsNumber : {
-		name : "is-valid() : Invalid number of arguments",
-		message : "is-valid() function must have one argument exactly"
-	},
-	isValidInvalidArgumentType : {
-		name : "is-valid() : Invalid type of argument",
-		message : "is-valid() function must have a nodeset argument"
-	},
-	isNonEmptyArrayArgumentsNumber : {
-		name : "is-non-empty-array() : Invalid number of arguments",
-		message : "is-non-empty-array() function must have zero or one argument"
-	},
-	isNonEmptyArrayInvalidArgumentType : {
-		name : "is-non-empty-array() : Invalid type of argument",
-		message : "is-non-empty-array() function must have a node argument"
-	},
-	isCardNumberInvalidArgumentsNumber : {
-		name : "is-card-number() : Invalid number of arguments",
-		message : "is-card-number() function must have one argument exactly"
-	},
-	upperCaseInvalidArgumentsNumber : {
-		name : "upper-case() : Invalid number of arguments",
-		message : "upper-case() function must have one argument exactly"
-	},
-	lowerCaseInvalidArgumentsNumber : {
-		name : "lower-case() : Invalid number of arguments",
-		message : "lower-case() function must have one argument exactly"
-	},
-	distinctValuesInvalidArgumentsNumber : {
-		name : "distinct-values() : Invalid number of arguments",
-		message : "distinct-values() function must have one argument exactly"
-	},
-	transformInvalidArgumentsNumber : {
-		name : "transform() : Invalid number of arguments",
-		message : "transform() function must have two arguments exactly"
-	},
-	serializeNoContext : {
-		name : "serialize() : no context node",
-		message : "serialize() function must have a node argument"
-	},
-	serializeInvalidArgumentsNumber : {
-		name : "serialize() : Invalid number of arguments",
-		message : "serialize() function must have one argument exactly"
-	},
-	eventInvalidArgumentsNumber : {
-		name : "event() : Invalid number of arguments",
-		message : "event() function must have one argument exactly"
-	},
-	alertInvalidArgumentsNumber : {
-		name : "alert() : Invalid number of arguments",
-		message : "alert() function must have one argument exactly"
-	},
-	jsevalInvalidArgumentsNumber : {
-		name : "js-eval() : Invalid number of arguments",
-		message : "js-eval() function must have one argument exactly"
-	},
-	stringJoinInvalidArgumentsNumber : {
-		name : "string-join() : Invalid number of arguments",
-		message : "string-join() function must have one or two arguments"
-	},
-	stringJoinInvalidArgumentType : {
-		name : "string-join() : Invalid type of argument",
-		message : "string-join() function must have a nodeset argument"
-	},
-	itextInvalidArgumentsNumber : {
-		name : "itext() : Invalid number of arguments",
-		message : "itext() function must have one argument"
-	}
 };
 
 XsltForms_globals.validate_ = function (node) {

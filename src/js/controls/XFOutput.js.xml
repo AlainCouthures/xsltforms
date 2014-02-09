@@ -80,7 +80,6 @@ XsltForms_output.prototype.dispose = function() {
 * '''setValue''' method : sets the value of this output control</cm:wiki>
 <![CDATA[
 XsltForms_output.prototype.setValue = function(value) {
-	var node = this.element.node;
 	var element = this.valueElement;
 	if (element.nodeName.toLowerCase() === "span" || element.nodeName.toLowerCase() === "tspan" || element.nodeName.toLowerCase() === "label") {
 		if (this.mediatype === "application/xhtml+xml") {
@@ -143,7 +142,6 @@ XsltForms_output.prototype.setValue = function(value) {
 * '''getValue''' method : gets the value of this output control</cm:wiki>
 <![CDATA[
 XsltForms_output.prototype.getValue = function(format) {
-	var node = this.element.node;
 	var element = this.valueElement;
 	if (element.nodeName.toLowerCase() === "span") {
 		return XsltForms_browser.getValue(element, format);

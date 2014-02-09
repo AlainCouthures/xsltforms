@@ -127,7 +127,6 @@ XsltForms_select.prototype.setValue = function(value) {
 			XsltForms_xmlevents.dispatch(this, "xforms-out-of-range");
 		}
 		vals = this.multiple? vals : [vals[0]];
-		var readonly = this.element.node.readonly;
 		var item;
 		if (this.full) {
 			for (var n = 0, len2 = list.length; n < len2; n++) {

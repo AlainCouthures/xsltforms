@@ -27,13 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:wiki>
 == XPath Expressions Management ==
 XPath expressions are "compiled" (converted to Javascript objects creation instructions) by the XSLT transformation. There is an "XPath" object for each distinct (according to its text source) expression. An implicit cast is usually performed for each parameter.</cm:wiki>
-		<cm:import-components path="constants.js.xml"/>
 		<cm:import-components path="ArrayExpr.js.xml"/>
 		<cm:import-components path="BinaryExpr.js.xml"/>
 		<cm:import-components path="ExprContext.js.xml"/>
 		<cm:import-components path="Exprs.js.xml"/>
 		<cm:import-components path="FilterExpr.js.xml"/>
-		<cm:import-components path="FunctionCallExpr.js.xml"/>
 		<cm:import-components path="LocationExpr.js.xml"/>
 		<cm:import-components path="NodeTestAny.js.xml"/>
 		<cm:import-components path="NodeTestName.js.xml"/>
@@ -48,6 +46,7 @@ XPath expressions are "compiled" (converted to Javascript objects creation instr
 		<cm:import-components path="XPath.js.xml"/>
 		<cm:import-components path="XPathFunction.js.xml"/>
 		<cm:import-components path="XPathCoreFunctions.js.xml"/>
+		<cm:import-components path="FunctionCallExpr.js.xml"/>
 	</cm:source>
 	<cm:unit-test-group>
 		<cm:import-components path="../main/jsCore.js.xml"/>

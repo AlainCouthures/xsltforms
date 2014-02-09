@@ -113,7 +113,6 @@ XsltForms_xmlevents.dispatch = function(target, name, type, bubbles, cancelable,
 				defaultAction.call(target.xfElement, event);
 			}
 		} else {
-			var fauxName = "errorupdate";
 			var canceler = null;
 			// Capture phase.
 			var ancestors = [];

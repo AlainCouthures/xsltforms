@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:otherwise>
 						<xsl:variable name="parentid">
 							<xsl:choose>
-								<xsl:when test="@id">"<xsl:value-of select="@id"/></xsl:when>
+								<xsl:when test="../@id">"<xsl:value-of select="../@id"/></xsl:when>
 								<xsl:otherwise>
 									<xsl:variable name="lname" select="local-name(parent::*)"/>
 									<xsl:value-of select="$jsid_pf"/>
@@ -88,7 +88,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@iterate"/></xsl:call-template>
 						<xsl:text>),</xsl:text>
 						<xsl:value-of select="$parentid"/>
-						<xsl:text>",evt,false,true)});</xsl:text>
+						<xsl:text>",evt,false,true)}, true);</xsl:text>
 					</xsl:otherwise>
 				</xsl:choose>
 			</js>

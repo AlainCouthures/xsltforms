@@ -54,7 +54,7 @@ if (typeof xsltforms_d0 === "undefined") {
 				document.addEventListener("load", func, false);
 			} else if (window.attachEvent) {
 				window.attachEvent("onload", func);
-			} else if (typeof window.onload != "function") {
+			} else if (typeof window.onload !== "function") {
 				window.onload = func;
 			} else {
 				var oldonload = window.onload;
@@ -107,15 +107,15 @@ if (typeof xsltforms_d0 === "undefined") {
 					elts[i].outerHTML = subbody;
 				}
 			}
-		}
+		};
 		var xsltforms_init = function () {
 			try {
 				xftrans();
 				xsltforms_initImpl();
 			} catch(e) {
-				alert("XSLTForms Exception\n--------------------------\n\nIncorrect Javascript code generation:\n\n"+(typeof(e.stack)=="undefined"?"":e.stack)+"\n\n"+(e.name?e.name+(e.message?"\n\n"+e.message:""):e));
+				alert("XSLTForms Exception\n--------------------------\n\nIncorrect Javascript code generation:\n\n"+(typeof(e.stack)==="undefined"?"":e.stack)+"\n\n"+(e.name?e.name+(e.message?"\n\n"+e.message:""):e));
 			}
-		}
+		};
 		if (document.readyState === "complete") {
 			xsltforms_init();
 		} else {

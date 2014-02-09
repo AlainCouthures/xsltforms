@@ -44,7 +44,7 @@ function XsltForms_locationExpr(absolute) {
 XsltForms_locationExpr.prototype.evaluate = function(ctx) {
 	var start = (this.absolute && ctx.root )|| !ctx.node ? ctx.root : ctx.node;
 	var m = XsltForms_browser.getMeta((start.documentElement ? start.documentElement : start.ownerDocument.documentElement), "model");
-	if (m && m != "dummy") {
+	if (m) {
 		ctx.addDepElement(document.getElementById(m).xfElement);
 	}
 	var nodes = [];
