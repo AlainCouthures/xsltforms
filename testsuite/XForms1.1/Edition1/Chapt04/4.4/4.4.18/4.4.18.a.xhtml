@@ -47,17 +47,13 @@
     <xforms:repeat id="repeat_001" nodeset="/carColors/color" startindex="1">
     	<xforms:group>
     		<xforms:label></xforms:label>
-	    	<xforms:action ev:event="xforms-scroll-first" ev:observer="repeat_001">
-	    		<xforms:message level="modal">xforms-scroll-first</xforms:message>
-	    	</xforms:action>
-	    </xforms:group>
-	    <xforms:group>
-	    	<xforms:label></xforms:label>
-	    	<xforms:action ev:event="xforms-scroll-last" ev:observer="repeat_001">
-	    		<xforms:message level="modal">xforms-scroll-last</xforms:message>
-	    	</xforms:action>
 	    </xforms:group>
     </xforms:repeat>
-	
+	<xforms:action ev:event="xforms-scroll-first" ev:observer="repeat_001">
+		<xforms:message level="modal">xforms-scroll-first</xforms:message>
+	</xforms:action>    
+	<xforms:action ev:event="xforms-scroll-last" ev:observer="repeat_001">
+		<xforms:message level="modal">xforms-scroll-last</xforms:message>
+	</xforms:action>	
   </xhtml:body>
 </xhtml:html>

@@ -265,7 +265,7 @@ XsltForms_xmlevents.define("xforms-refresh", true, true, function(event) { this.
 *** cancelable : yes
 *** default handler : focus() method</cm:wiki>
 <![CDATA[
-XsltForms_xmlevents.define("xforms-focus", true, true, function(event) { this.focus(); } );
+XsltForms_xmlevents.define("xforms-focus", true, true, function(event) { this.focus ? this.focus() : this.element.focus(); } );
 
 ]]>
 		<cm:wiki>

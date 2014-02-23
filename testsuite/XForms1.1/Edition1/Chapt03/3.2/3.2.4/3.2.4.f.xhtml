@@ -36,13 +36,13 @@
 
     <xforms:select bind="bind_carOrder">
       	<xforms:label>Cars</xforms:label>
+      	<xforms:action ev:event="xforms-binding-exception">
+      		<xforms:message level="modal">xforms-binding-exception</xforms:message>
+      	</xforms:action>
 	    <!-- itemset has invalid bind -->
         <xforms:itemset bind="invalidBind">
         	<xforms:label ref="."></xforms:label>
           	<xforms:value ref="."></xforms:value>
-          	<xforms:action ev:event="xforms-binding-exception">
-      			<xforms:message level="modal">xforms-binding-exception</xforms:message>
-      	  	</xforms:action>
         </xforms:itemset>
     </xforms:select>
 

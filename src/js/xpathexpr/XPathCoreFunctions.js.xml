@@ -260,6 +260,14 @@ var XsltForms_xpathFunctionExceptions = {
 		name : "property() : Invalid argument",
 		message : "Invalid property name"
 	},
+	secondsInvalidArgumentsNumber : {
+		name : "seconds() : Invalid number of arguments",
+		message : "seconds() function must have one argument exactly"
+	},
+	monthsInvalidArgumentsNumber : {
+		name : "months() : Invalid number of arguments",
+		message : "months() function must have one argument exactly"
+	},
 	instanceInvalidArgumentsNumber : {
 		name : "instance() : Invalid number of arguments",
 		message : "instance() function must have zero or one argument"
@@ -286,7 +294,7 @@ var XsltForms_xpathFunctionExceptions = {
 	},
 	adjustDateTimeToTimezoneInvalidArgumentsNumber: {
 		name : "adjust-dateTime-to-timezone() : Invalid number of arguments",
-		message : "adjust-dateTime-to-timezone() function must have one argument exactly"
+		message : "adjust-dateTime-to-timezone() function must have zero or one argument"
 	},
 	daysFromDateInvalidArgumentsNumber : {
 		name : "days-from-date() : Invalid number of arguments",
@@ -503,6 +511,10 @@ var XsltForms_xpathCoreFunctions = {
 				var idattr = XsltForms_globals.IDstr ? XsltForms_globals.IDstr : "@xml:id";
 				for (var k = 0, len2 = ids.length; k < len2; k++) {
 					var n = XsltForms_browser.selectSingleNode("descendant-or-self::*[" + idattr + "='" + ids[k] + "']", ref[0]);
+					if (n) {
+						result.push(n);
+					}
+					n = XsltForms_browser.selectSingleNode("descendant-or-self::*[@*[local-name() = 'type'] = 'xsd:ID' and . = '" + ids[k] + "']", ref[0]);
 					if (n) {
 						result.push(n);
 					}
@@ -1020,7 +1032,11 @@ var XsltForms_xpathCoreFunctions = {
 			if (arguments.length !== 2) {
 				throw XsltForms_xpathFunctionExceptions.indexInvalidArgumentsNumber;
 			}
-			var xf = XsltForms_idManager.find(XsltForms_globals.stringValue(id)).xfElement;
+			var elt = XsltForms_idManager.find(XsltForms_globals.stringValue(id));
+			if (!elt) {
+				return NaN;
+			}
+			var xf = elt.xfElement;
 			ctx.addDepElement(xf);
 			return xf.index;
 		} ),
@@ -1081,8 +1097,43 @@ var XsltForms_xpathCoreFunctions = {
 							}
 						}
 					}
+					if (name.match("^[" + XsltForms_typeDefs.ctes.i + "][" + XsltForms_typeDefs.ctes.c + "]*$")) {
+						XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-binding-exception", "Invalid NCNAME");
+					}
 			}
 			return "";
+		} ),
+]]>
+		<cm:wiki>
+* '''seconds(string)'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2002/xforms seconds" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(duration) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.secondsInvalidArgumentsNumber;
+			}
+			duration = XsltForms_globals.stringValue(duration);
+			var durarr = duration.match("^-?P(?!$)([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T(?!$)([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?$");
+			if (durarr) {
+				return (duration.charAt(0) === '-'? -1: 1)*(((parseFloat(durarr[3] || 0)*24 + parseFloat(durarr[5] || 0))*60 + parseFloat(durarr[6] || 0))*60 + parseFloat(durarr[7] || 0));
+			}
+			return NaN;
+		} ),
+]]>
+		<cm:wiki>
+* '''months(string)'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2002/xforms months" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(duration) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.monthsInvalidArgumentsNumber;
+			}
+			duration = XsltForms_globals.stringValue(duration);
+			var durarr = duration.match("^-?P(?!$)([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T(?!$)([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?$");
+			if (durarr) {
+				return (duration.charAt(0) === '-'? -1: 1)*(parseFloat(durarr[1] || 0)*12 + parseFloat(durarr[2] || 0));
+			}
+			return NaN;
 		} ),
 ]]>
 		<cm:wiki>
@@ -1184,6 +1235,9 @@ var XsltForms_xpathCoreFunctions = {
 <![CDATA[
 	"http://www.w3.org/2002/xforms adjust-dateTime-to-timezone" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(string) {
+			if (arguments.length === 0) {
+				return "";
+			}
 			if (arguments.length !== 1) {
 				throw XsltForms_xpathFunctionExceptions.adjustDateTimeToTimezoneInvalidArgumentsNumber;
 			}
@@ -1602,6 +1656,7 @@ var XsltForms_xpathCoreFunctions = {
 					}
 					return res;
 			}
+			XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-binding-exception", "Invalid encoding method");
 			return "unsupported";
 		} ),
 /*jshint bitwise:true */

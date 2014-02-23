@@ -73,6 +73,20 @@
             <testCaseRequired>true</testCaseRequired>
             <testCaseNote />
         </testCase>
+         <testCase>
+            <testCaseSection>5.1</testCaseSection>
+            <testCaseName>5.1.e</testCaseName>
+            <testCaseLink>../../Chapt05/5.1/5.1.e.xhtml</testCaseLink>
+            <testCaseDescription>built-in primitive type via xsi:type</testCaseDescription>
+            <testCaseSpecLinkName>5.1</testCaseSpecLinkName>
+            <testCaseSpecLink>http://www.w3.org/TR/xforms11/#datatypes-schema</testCaseSpecLink>
+            <testCaseBasic>true</testCaseBasic>
+            <testCaseNormative>true</testCaseNormative>
+            <testCaseStatus>Unknown</testCaseStatus>
+            <testCaseDate>2005-09-10</testCaseDate>
+            <testCaseRequired>true</testCaseRequired>
+            <testCaseNote />
+        </testCase>
         <testCase>
             <testCaseSection>5.2.1</testCaseSection>
             <testCaseName>5.2.1.a</testCaseName>

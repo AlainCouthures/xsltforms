@@ -455,7 +455,7 @@ XsltForms_submission.prototype.submit = function() {
 						var hname;
 						for (var n = 0, lenn = nodes.length; n < lenn; n++) {
 							if (this.headers[i].name.evaluate) {
-								hname = XsltForms_globals.stringValue(this.headers[i].name.evaluate(nodes[n]));
+								hname = XsltForms_globals.stringValue(this.headers[i].name.bind_evaluate(nodes[n]));
 							} else {
 								hname = this.headers[i].name;
 							}
@@ -467,7 +467,7 @@ XsltForms_submission.prototype.submit = function() {
 									var hv = this.headers[i].values[j];
 									var hv2;
 									if (hv.evaluate) {
-										hv2 = XsltForms_globals.stringValue(hv.evaluate(nodes[n]));
+										hv2 = XsltForms_globals.stringValue(hv.bind_evaluate(nodes[n]));
 									} else {
 										hv2 = hv;
 									}

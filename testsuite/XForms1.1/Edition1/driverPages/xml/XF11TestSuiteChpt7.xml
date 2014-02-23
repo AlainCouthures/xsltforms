@@ -480,6 +480,20 @@
             <testCaseNote />
         </testCase>
         <testCase>
+            <testCaseSection>7.8.3</testCaseSection>
+            <testCaseName>7.8.3.f</testCaseName>
+            <testCaseLink>../../Chapt07/7.8/7.8.3/7.8.3.f.xhtml</testCaseLink>
+            <testCaseDescription>digest() function default encoding base64</testCaseDescription>
+            <testCaseSpecLinkName>7.8.3</testCaseSpecLinkName>
+            <testCaseSpecLink>http://www.w3.org/TR/xforms11/#fn-digest</testCaseSpecLink>
+            <testCaseBasic>true</testCaseBasic>
+            <testCaseNormative>true</testCaseNormative>
+            <testCaseStatus>Unknown</testCaseStatus>
+            <testCaseDate>2005-09-10</testCaseDate>
+            <testCaseRequired>true</testCaseRequired>
+            <testCaseNote />
+        </testCase>        
+        <testCase>
             <testCaseSection>7.8.4</testCaseSection>
             <testCaseName>7.8.4.a</testCaseName>
             <testCaseLink>../../Chapt07/7.8/7.8.4/7.8.4.a.xhtml</testCaseLink>
@@ -549,6 +563,20 @@
             <testCaseRequired>true</testCaseRequired>
             <testCaseNote />
         </testCase>
+        <testCase>
+            <testCaseSection>7.8.4</testCaseSection>
+            <testCaseName>7.8.4.f</testCaseName>
+            <testCaseLink>../../Chapt07/7.8/7.8.4/7.8.4.f.xhtml</testCaseLink>
+            <testCaseDescription>hmac() function using default encoding base64</testCaseDescription>
+            <testCaseSpecLinkName>7.8.4</testCaseSpecLinkName>
+            <testCaseSpecLink>http://www.w3.org/TR/xforms11/#fn-hmac</testCaseSpecLink>
+            <testCaseBasic>true</testCaseBasic>
+            <testCaseNormative>true</testCaseNormative>
+            <testCaseStatus>Unknown</testCaseStatus>
+            <testCaseDate>2005-09-10</testCaseDate>
+            <testCaseRequired>true</testCaseRequired>
+            <testCaseNote />
+        </testCase>        
         <testCase>
             <testCaseSection>7.9.1</testCaseSection>
             <testCaseName>7.9.1.a</testCaseName>
@@ -833,21 +861,7 @@
             <testCaseSection>7.11.2</testCaseSection>
             <testCaseName>7.11.2.a</testCaseName>
             <testCaseLink>../../Chapt07/7.11/7.11.2/7.11.2.a.xhtml</testCaseLink>
-            <testCaseDescription>event() function with binding property</testCaseDescription>
-            <testCaseSpecLinkName>7.11.2</testCaseSpecLinkName>
-            <testCaseSpecLink>http://www.w3.org/TR/xforms11/#fn-event</testCaseSpecLink>
-            <testCaseBasic>true</testCaseBasic>
-            <testCaseNormative>true</testCaseNormative>
-            <testCaseStatus>Unknown</testCaseStatus>
-            <testCaseDate>2005-09-10</testCaseDate>
-            <testCaseRequired>true</testCaseRequired>
-            <testCaseNote />
-        </testCase>
-        <testCase>
-            <testCaseSection>7.11.2</testCaseSection>
-            <testCaseName>7.11.2.b</testCaseName>
-            <testCaseLink>../../Chapt07/7.11/7.11.2/7.11.2.b.xhtml</testCaseLink>
-            <testCaseDescription>event() function with resource-uri property</testCaseDescription>
+            <testCaseDescription>event() function with inserted-nodes property</testCaseDescription>
             <testCaseSpecLinkName>7.11.2</testCaseSpecLinkName>
             <testCaseSpecLink>http://www.w3.org/TR/xforms11/#fn-event</testCaseSpecLink>
             <testCaseBasic>true</testCaseBasic>

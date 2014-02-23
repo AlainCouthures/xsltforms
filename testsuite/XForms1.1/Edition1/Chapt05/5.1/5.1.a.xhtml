@@ -3,12 +3,13 @@
 	    xmlns:ev="http://www.w3.org/2001/xml-events"
 	    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	    xmlns:xforms="http://www.w3.org/2002/xforms">
+	    xmlns:xforms="http://www.w3.org/2002/xforms"
+		xmlns:my="http://namespace.org/my">
   <xhtml:head>
     <xhtml:title>5.1.a built-in primitive types</xhtml:title>
     <xhtml:link rel="stylesheet" href="../../driverPages/forms/TestSuite11.css" type="text/css"/>
     <xforms:model>
-      <xforms:instance xmlns="">
+      <xforms:instance xmlns="" xmlns:my="http://namespace.org/my">
 	<types>
 	  <my_dateTime />
 	  <my_time />
@@ -249,26 +250,26 @@
       </xforms:input>
     </xforms:group>
     <xforms:group>
-      <xforms:upload ref="my_base64Binary">
-	<xforms:label>base64Binary </xforms:label>
-	<xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[11]">
-	  XFORMS-INVALID (base64Binary)
-	</xforms:setvalue>
-	<xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[11]">
-	  xforms-valid (base64Binary)
-	</xforms:setvalue>
-      </xforms:upload>
+			<xforms:output ref="my_base64Binary">
+				<xforms:label>base64Binary </xforms:label>
+				<xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[11]">
+					XFORMS-INVALID (base64Binary)
+				</xforms:setvalue>
+				<xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[11]">
+					xforms-valid (base64Binary)
+				</xforms:setvalue>
+			</xforms:output>
     </xforms:group>
     <xforms:group>
-      <xforms:upload ref="my_hexBinary">
-	<xforms:label>hexBinary </xforms:label>
-	<xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[12]">
-	  XFORMS-INVALID (hexBinary)
-	</xforms:setvalue>
-	<xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[12]">
-	  xforms-valid (hexBinary)
-	</xforms:setvalue>
-      </xforms:upload>
+			<xforms:output ref="my_hexBinary">
+				<xforms:label>hexBinary </xforms:label>
+				<xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[12]">
+					XFORMS-INVALID (hexBinary)
+				</xforms:setvalue>
+				<xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[12]">
+					xforms-valid (hexBinary)
+				</xforms:setvalue>
+			</xforms:output>
     </xforms:group>
     <xforms:group>
       <xforms:input ref="my_float">

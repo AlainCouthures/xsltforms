@@ -819,7 +819,7 @@
             <testCaseSection>11.9</testCaseSection>
             <testCaseName>11.9.p</testCaseName>
             <testCaseLink>../../Chapt11/11.9/11.9.p.xhtml</testCaseLink>
-            <testCaseDescription>mailto multipart-post as a submission option</testCaseDescription>
+            <testCaseDescription>mailto urlencoded-posts as a submission option</testCaseDescription>
             <testCaseSpecLinkName>11.9</testCaseSpecLinkName>
             <testCaseSpecLink>http://www.w3.org/TR/xforms11/#submit-options</testCaseSpecLink>
             <testCaseBasic>false</testCaseBasic>
@@ -834,20 +834,6 @@
             <testCaseName>11.9.q</testCaseName>
             <testCaseLink>../../Chapt11/11.9/11.9.q.xhtml</testCaseLink>
             <testCaseDescription>mailto form-data-post as a submission option</testCaseDescription>
-            <testCaseSpecLinkName>11.9</testCaseSpecLinkName>
-            <testCaseSpecLink>http://www.w3.org/TR/xforms11/#submit-options</testCaseSpecLink>
-            <testCaseBasic>false</testCaseBasic>
-            <testCaseNormative>false</testCaseNormative>
-            <testCaseStatus>Unknown</testCaseStatus>
-            <testCaseDate>2005-09-10</testCaseDate>
-            <testCaseRequired>false</testCaseRequired>
-            <testCaseNote />
-        </testCase>
-        <testCase>
-            <testCaseSection>11.9</testCaseSection>
-            <testCaseName>11.9.r</testCaseName>
-            <testCaseLink>../../Chapt11/11.9/11.9.r.xhtml</testCaseLink>
-            <testCaseDescription>mailto urlencoded-posts as a submission option</testCaseDescription>
             <testCaseSpecLinkName>11.9</testCaseSpecLinkName>
             <testCaseSpecLink>http://www.w3.org/TR/xforms11/#submit-options</testCaseSpecLink>
             <testCaseBasic>false</testCaseBasic>

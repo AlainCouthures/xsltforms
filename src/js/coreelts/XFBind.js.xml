@@ -36,7 +36,6 @@ function XsltForms_bind(subform, id, parent, nodeset, type, readonly, required, 
 	var model = parent.model || parent;
 	if (type === "xsd:ID") {
 		XsltForms_globals.IDstr = nodeset.split('/').pop();
-		return;
 	}
 	this.init(subform, id, parent, "xforms-bind");
 	this.model = model;

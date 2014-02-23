@@ -6,35 +6,35 @@
   <xhtml:head>
     <xhtml:title>5.2.1.c built-in data types which allow empty content for basic processors</xhtml:title>
     <xforms:model id="emptyData_model">
-      <xforms:instance>
-	<types>
-	  <my_dateTime />
-	  <my_date />
-	  <my_time />
-	  <my_gYearMonth />
-	  <my_gYear />
-	  <my_gMonthDay />
-	  <my_gDay />
-	  <my_gMonth />
-	  <my_string />
-	  <my_boolean />
-	  <my_base64Binary />
-	  <my_decimal />
-	  <my_anyURI />
-	  <my_integer />
-	  <my_nonPositiveInteger />
-	  <my_negativeInteger />
-	  <my_long />
-	  <my_int />
-	  <my_short />
-	  <my_byte />
-	  <my_nonNegativeInteger />
-	  <my_unsignedLong />
-	  <my_unsignedInt />
-	  <my_unsignedShort />
-	  <my_unsignedByte />
-	  <my_positiveInteger />
-	</types>
+      <xforms:instance xmlns="">
+		  <types>
+				  <my_dateTime>non-empty-content</my_dateTime>
+	              <my_date>non-empty-content</my_date>
+	              <my_time>non-empty-content</my_time>
+	              <my_gYearMonth>non-empty-content</my_gYearMonth>
+	              <my_gYear>non-empty-content</my_gYear>
+	              <my_gMonthDay>non-empty-content</my_gMonthDay>
+	              <my_gDay>non-empty-content</my_gDay>
+	              <my_gMonth>non-empty-content</my_gMonth>
+	              <my_string>non-empty-content</my_string>
+	              <my_boolean>non-empty-content</my_boolean>
+	              <my_base64Binary>non-empty-content</my_base64Binary>
+	              <my_decimal>non-empty-content</my_decimal>
+	              <my_anyURI>non empty content</my_anyURI>
+	              <my_integer>non empty content</my_integer>
+	              <my_nonPositiveInteger>non empty content</my_nonPositiveInteger>
+	              <my_negativeInteger>non empty content</my_negativeInteger>
+	              <my_long>non empty content</my_long>
+	              <my_int>non empty content</my_int>
+	              <my_short>non empty content</my_short>
+	              <my_byte>non empty content</my_byte>
+	              <my_nonNegativeInteger>non empty content</my_nonNegativeInteger>
+	              <my_unsignedLong>non empty content</my_unsignedLong>
+	              <my_unsignedInt>non empty content</my_unsignedInt>
+	              <my_unsignedShort>non empty content</my_unsignedShort>
+	              <my_unsignedByte>non empty content</my_unsignedByte>
+	              <my_positiveInteger>non empty content</my_positiveInteger>
+		  </types>
       </xforms:instance>
 
 	  <xforms:bind nodeset="my_dateTime" type="xforms:dateTime" />
@@ -64,7 +64,6 @@
 	  <xforms:bind nodeset="my_unsignedByte" type="xforms:unsignedByte" />
 	  <xforms:bind nodeset="my_positiveInteger" type="xforms:positiveInteger" />
 
-      <xforms:bind nodeset="/types" relevant="false()"/>
     </xforms:model>
     <xforms:model id="event_model">
       <xforms:instance>
@@ -106,6 +105,10 @@
     </xforms:group>
     <xforms:group>
       <xforms:label>
+    When the form first displays you should not see any valid or invalid messages.  If an implementation fires validity events on 
+    form initialization (incorrectly) then you may see XFORMS-INVALID output for all types (except string) below.  This is not
+    being tested but is an error.
+
 	When you activate the Run Test trigger below you must see an 'xforms-valid' output for all the 
 	data types. If the data type does not accept empty content you will see an 'XFORMS-INVALID' output. 
 	An 'XFORMS-INVALID' output is a failure for this test case. 
@@ -113,7 +116,34 @@
     </xforms:group>
     <xforms:trigger>
       <xforms:label>Run Test</xforms:label>
-      <xforms:reset model="emptyData_model" ev:event="DOMActivate" />
+      <xforms:action ev:event="DOMActivate">
+			 <xforms:setvalue model="emptyData_model" ref="my_dateTime"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_date"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_time"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_gYearMonth"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_gYear"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_gMonthDay"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_gDay"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_gMonth"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_string"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_boolean"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_base64Binary"/>		
+			 <xforms:setvalue model="emptyData_model" ref="my_decimal"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_anyURI"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_integer"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_nonPositiveInteger"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_negativeInteger"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_long"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_int"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_short"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_byte"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_nonNegativeInteger"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedLong"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedInt"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedShort"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedByte"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_positiveInteger"/>
+	  </xforms:action>
     </xforms:trigger>
     <xforms:repeat model="event_model" nodeset="/events/event" >
       <xforms:output ref=".">
@@ -231,15 +261,15 @@
       </xforms:input>
     </xforms:group>
     <xforms:group>
-      <xforms:upload ref="my_base64Binary">
-	<xforms:label>base64Binary</xforms:label>
-	<xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[11]">
-	  XFORMS-INVALID (base64Binary)
-	</xforms:setvalue>
-	<xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[11]">
-	  xforms-valid (base64Binary)
-	</xforms:setvalue>
-      </xforms:upload>
+            <xforms:output ref="my_base64Binary">
+                <xforms:label>base64Binary</xforms:label>
+                <xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[11]">
+                    XFORMS-INVALID (base64Binary)
+                </xforms:setvalue>
+                <xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[11]">
+                    xforms-valid (base64Binary)
+                </xforms:setvalue>
+            </xforms:output>
     </xforms:group>
     <xforms:group>
       <xforms:input ref="my_decimal">

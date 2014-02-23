@@ -70,7 +70,7 @@ var XsltForms_globals = {
 	inittime: 0,
 	refreshtime: 0,
 	refreshcount: 0,
-	validationError: false,
+	validationError: true,
 	counters: {
 		component: 0,
 		group: 0,

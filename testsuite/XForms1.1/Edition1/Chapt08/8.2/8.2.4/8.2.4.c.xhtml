@@ -9,9 +9,13 @@
     <xhtml:title>8.2.4.c bind precedence for alert element</xhtml:title>
     <xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
     <xforms:model>
-       <xforms:instance xmlns="">
-			<msg>Instance Alert Message</msg>
+       <xforms:instance xmlns=""> 
+          <data>   
+       	     <numeric_field>0</numeric_field>   
+             <msg>Instance Alert Message</msg>
+          </data>
        </xforms:instance>
+       <xforms:bind nodeset="numeric_field" type="xsd:integer"/>
     </xforms:model>
   </xhtml:head>
   <xhtml:body>
@@ -20,15 +24,15 @@
   	</xforms:group>
 	<xforms:group>
 		<xforms:label>
-		  When you activate the Dispacth Alert Message trigger you must see the message 
+		  When you enter an alphanumeric value in the input field you must see the message 
 		  &quot;Instance Alert Message&quot;. 
 		</xforms:label>	
 	</xforms:group>
 	
-	<xforms:trigger>
-		<xforms:label>Dispatch Alert Message</xforms:label>
-		<xforms:alert ev:event="DOMActivate" ref="/msg">Inline Alert Message (WRONG)</xforms:alert>
-	</xforms:trigger>
+  	<xforms:input ref="numeric_field">
+  		<xforms:label>Enter 'abc', tab out, and see the alert message</xforms:label>
+  		<xforms:alert ref="/data/msg">Inline Alert Message (WRONG)</xforms:alert>
+  	</xforms:input>
 	
   </xhtml:body>
 </xhtml:html>

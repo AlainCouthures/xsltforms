@@ -11,7 +11,7 @@
     <xforms:model>
        <xforms:instance xmlns="">       
           <pic>
-          	<image filename="../calendar-picker-open.png"/>
+          	<image filename="../calendar-picker-open.png" mediatype="image/*"/>
           </pic>
        </xforms:instance>
        <xforms:bind id="image" nodeset="/pic/image/@filename" type="xsd:anyURI"/>
@@ -28,9 +28,9 @@
 	</xforms:group>
 
    	<xforms:group>
-		<xforms:output bind="image" mediatype="image/*">
+		<xforms:output bind="image" mediatype="text/plain">
 			<xforms:label>Image : </xforms:label>
-			<xforms:mediatype ref="@filename"/>
+			<xforms:mediatype ref="../@mediatype"/>
 		</xforms:output>
 	</xforms:group>
 	

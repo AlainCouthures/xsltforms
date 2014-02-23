@@ -25,12 +25,11 @@
 
     <xforms:group>
       <xforms:label>Test 1</xforms:label>
-      <xforms:group ref="self::node()[translate(digest('abc', 'SHA-1', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')= 'a9993e364706816aba3e25717850c26c9cd0d89d']">
+      <xforms:group ref="self::node()[digest('abc', 'SHA-1', 'hex') = 'a9993e364706816aba3e25717850c26c9cd0d89d']">
 	<xforms:label>Test 1 : PASS</xforms:label>
       </xforms:group>
 
-      <xforms:group ref="self::node()[translate(digest('abc', 'SHA-1', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 
-'abcdefghijklmnopqrstuvwxyz') != 'a9993e364706816aba3e25717850c26c9cd0d89d']">
+      <xforms:group ref="self::node()[digest('abc', 'SHA-1', 'hex') != 'a9993e364706816aba3e25717850c26c9cd0d89d']">
 	<xforms:label>Test 1 : FAIL</xforms:label>
 	<xforms:output value="digest('abc', 'SHA-1', 'hex')">
 	  <xforms:label>Bad Value=</xforms:label>
@@ -40,10 +39,10 @@
 
     <xforms:group>
       <xforms:label>Test 2</xforms:label>
-      <xforms:group ref="self::node()[translate(digest('abc', 'MD5', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '900150983cd24fb0d6963f7d28e17f72']">
+      <xforms:group ref="self::node()[digest('abc', 'MD5', 'hex') = '900150983cd24fb0d6963f7d28e17f72']">
 	<xforms:label>Test 2 : PASS </xforms:label>
       </xforms:group>
-      <xforms:group ref="self::node()[translate(digest('abc', 'MD5', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') != '900150983cd24fb0d6963f7d28e17f72']">
+      <xforms:group ref="self::node()[digest('abc', 'MD5', 'hex') != '900150983cd24fb0d6963f7d28e17f72']">
 	<xforms:label>Test 2 : FAIL </xforms:label>
 	<xforms:output value="digest('abc', 'MD5', 'hex')">
 	  <xforms:label>Bad Value=</xforms:label>
@@ -54,10 +53,10 @@
 
     <xforms:group>
       <xforms:label>Test 3</xforms:label>
-      <xforms:group ref="self::node()[translate(digest('abc', 'SHA-256', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad']">
+      <xforms:group ref="self::node()[digest('abc', 'SHA-256', 'hex') = 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad']">
 	<xforms:label>Test 3 : PASS </xforms:label>
       </xforms:group>
-      <xforms:group ref="self::node()[translate(digest('abc', 'SHA-256', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') != 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad']">
+      <xforms:group ref="self::node()[digest('abc', 'SHA-256', 'hex') != 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad']">
 	<xforms:label>Test 3 : FAIL </xforms:label>
 	<xforms:output value="digest('abc', 'SHA-256', 'hex')">
 	  <xforms:label>Bad Value=</xforms:label>

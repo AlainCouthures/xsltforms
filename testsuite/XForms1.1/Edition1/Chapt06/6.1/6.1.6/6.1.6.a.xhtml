@@ -14,7 +14,7 @@
 					<to/>
 				</range>
 			</xforms:instance>
-			<xforms:bind nodeset="/range/to" constraint=". &gt; /range/from"/>
+			<xforms:bind nodeset="/range/to" constraint="number(.) &gt; number(/range/from)"/>
 		</xforms:model>
 	</xhtml:head>
 	<xhtml:body>

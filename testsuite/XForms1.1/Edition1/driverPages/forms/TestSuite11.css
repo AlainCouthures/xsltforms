@@ -21,26 +21,26 @@ body {
   background: white;
 }
 
-xf\:label.title, xforms|label.title 
+xf\:label.title, xforms|label.title, p.title 
 {
-    font-size: 15pt !important; 
-    font-weight: bold !important;
-    color: #000099 !important;
-    margin-bottom: 0em !important;
+    font-size: 15pt; 
+    font-weight: bold;
+    color: #000099;
+    margin-bottom: 2em;
 }
 
 xf\:label.subtitle, xforms|label.subtitle
 {
-	font-size: 12pt !important;
-	font-weight: bold !important;
-	margin-bottom: 0em !important;
+	font-size: 12pt;
+	font-weight: bold;
+	margin-bottom: 2em;
 }
 
 xf\:label, xforms|label
 {
 	font-size: 9pt;
 	color: black;
-	margin-bottom: 0em;
+	margin-bottom: 1em;
 }
 
 xf\:group, xforms|group
@@ -65,8 +65,8 @@ h2 {color: black;}
 .testCaseBasicTitle {color:white; background-color:#4169E1; width: 50px; font-weight: bold; text-align:center;}
 .testCaseStatusTitle {color:white; background-color:#4169E1; width: 108px; font-weight: bold; text-align:center;}
 .testCaseNormativeTitle {color:white; background-color:#4169E1; width: 64px; font-weight: bold; text-align:center;}
-.testCaseDateTitle {color:white; background-color:#4169E1; width: 108px; font-weight: bold; text-align:center;}
-.testCaseNoteTitle {color:white; background-color:#4169E1; width: 143px; font-weight: bold; text-align:center;}
+.testCaseDateTitle {color:white; background-color:#4169E1; width: 128px; font-weight: bold; text-align:center;}
+.testCaseNoteTitle {color:white; background-color:#4169E1; width: 150px; font-weight: bold; text-align:center;}
 
 .testCaseName {color: blue; text-decoration: underline; width: 100px;}
 .testCaseNameGray {color: gray; width: 150px;}
@@ -75,8 +75,8 @@ h2 {color: black;}
 .testCaseBasic {width: 60px;}
 .testCaseNormative {width: 67px;}
 .testCaseStatus {width: 100px;}
-.testCaseDate {width: 170px;}
-.testCaseNote {width: 150px;}
+.testCaseDate {width: 190px;}
+.testCaseNote {width: 225px;}
 
 /*in used in test case 5.5*/
 .hlist {display:inline;}
@@ -97,7 +97,10 @@ xforms|output.testCaseDescription span.xf-value{ display: table-cell; width: 410
 xforms|trigger[appearance="minimal"].testCaseSpecLink span {display: table-cell; width: 105px; color: blue;}
 xforms|output.testCaseBasic span.xf-value {display: table-cell; width: 55px;}
 xforms|output.testCaseNormative span.xf-value {display: table-cell; width: 80px;}
-xforms|input.testCaseNote {width:150px;}
+xforms|input.testCaseNote {width:225px;}
 /*xforms|select1.testCaseStatus span.-moz-select1-container {display: table-cell; width: 100px;} Firefox only. */
 /*xforms|input.testCaseDate {display: table-cell; width: 100px;}*/
 
+.Passed {background-color: #50FF50; vertical-align: middle;}
+.Failed {background-color: #FF2020; vertical-align: middle;}
+.Unknown {background-color: white; vertical-align: middle;}

@@ -6,7 +6,11 @@
     <xhtml:head>
         <xhtml:title>4.5.1.a4 xforms-binding-exception, invalid instance attribute of submission attribute</xhtml:title>
         <xforms:model id="form1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <xforms:submission action="response.xml" id="submit" method="get" replace="instance" instance="INVALID"/>
+            <xforms:submission action="response.xml" id="submit" method="get" replace="instance" instance="INVALID">
+		        <xforms:action ev:event="xforms-binding-exception">
+		          <xforms:message level="modal">xforms-binding-exception</xforms:message>
+		        </xforms:action>
+            </xforms:submission>
             <xforms:instance id="instance1" xmlns="">
                 <car>
                     <carOwner>Henry</carOwner>
@@ -16,9 +20,6 @@
             </xforms:instance>
         </xforms:model>
         <xhtml:link href="../../../driverPages/forms/TestSuite11.css" rel="stylesheet"/>
-        <xforms:action ev:event="xforms-binding-exception">
-          <xforms:message level="modal">xforms-binding-exception</xforms:message>
-        </xforms:action>
     </xhtml:head>
     <xhtml:body>
         <xforms:group xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

@@ -19,7 +19,7 @@
                 required="/my:payment/@method='cc'" type="my:ccnumber" />
             <xforms:bind nodeset="/my:payment/my:expiry" relevant="/my:payment/@method = 'cc'"
                 required="/my:payment/@method='cc'" type="xsd:gYearMonth" />
-            <xsd:schema targetNamespace="http://commerce.example.com/payment" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:schema targetNamespace="http://commerce.example.com/payment" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
                 <xsd:simpleType name="ccnumber">
                     <xsd:restriction base="xsd:string">
                         <xsd:pattern value="\d{14,18}" />

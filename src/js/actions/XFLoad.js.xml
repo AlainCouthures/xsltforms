@@ -34,7 +34,7 @@ function XsltForms_load(subform, binding, resource, show, targetid, instance, if
 	this.binding = binding;
 	this.resource = resource;
 	this.show = show;
-	this.targetid = targetid;
+	this.targetid = targetid || "_self";
 	this.instance = instance;
 	this.init(ifexpr, whileexpr, iterateexpr);
 }

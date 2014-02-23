@@ -5,11 +5,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xforms="http://www.w3.org/2002/xforms">
 	<xhtml:head>
-		<xhtml:title>11.10.c submission response with target receiving instance</xhtml:title>
+		<xhtml:title>11.10.c submission response with the target data node receiving instance</xhtml:title>
 		<xhtml:link rel="stylesheet" href="../../driverPages/html/TestSuite11.css" type="text/css"/>
 		<xforms:model id="form1" >
 			<xforms:submission id="submit01" method="get" replace="instance" 
-				instance="instance2" action="11.10.data.xml" target="/car"/>
+				instance="instance2" action="11.10.data.xml" targetref="/car"/>
 			<xforms:instance id="instance1">
 				<car>
 					<carOwner>Henry</carOwner>
@@ -29,7 +29,7 @@
 	</xhtml:head>
 	<xhtml:body>
 	    <xforms:group>
-		    <xforms:label class="title">11.10.c submission response with target receiving instance</xforms:label>
+		    <xforms:label class="title">11.10.c submission response with the target data node receiving instance</xforms:label>
 		</xforms:group>
 		<xforms:group>
 		    <xforms:label>

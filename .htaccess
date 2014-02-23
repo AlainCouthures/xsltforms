@@ -1,4 +1,10 @@
 RewriteEngine on
+RewriteCond %{REQUEST_METHOD} ^PUT$
+RewriteRule ^trunk/(build|src|test|short)/testsuite/(.*\.xml)$									testsuite/$2
+RewriteCond %{REQUEST_METHOD} ^PUT$
+RewriteRule ^((.*)/)*(.*)\.xml$																	trunk/src/put.php?name=%{REQUEST_FILENAME} [L,QSA]
+RewriteCond %{REQUEST_METHOD} ^POST$
+RewriteRule ^((.*)/)*(.*)/$																		trunk/src/post.php?name=%{REQUEST_FILENAME} [L,QSA]
 RewriteRule ^(.*)-engine/testsuite/(.*\.xhtml)$													txs/xforms.txs?engine=$1&file=testsuite/$2
 RewriteRule ^(.*)-engine/testsuite/(.*)$														testsuite/$2 [L]
 RewriteRule ^releases/(.*)/(.*)-transform/testsuite/(.*\.xhtml)$								txs/xforms.txs?transform=$2&file=testsuite/$3

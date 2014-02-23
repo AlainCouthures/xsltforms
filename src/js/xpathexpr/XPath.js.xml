@@ -90,7 +90,7 @@ XsltForms_xpath.prototype.xpath_evaluate = function(ctx, current, subform) {
 		this.evaltime += d2 - d1;
 		return res;
 	} catch(e) {
-		alert("XSLTForms Exception\n--------------------------\n\nError evaluating the following XPath expression :\n\n"+this.expression+"\n\n"+e.name+"\n\n"+e.message);
+		alert("XSLTForms Exception\n--------------------------\n\nError evaluating the following XPath expression :\n\n"+this.expression+"\n\n"+(e.name?e.name+"\n\n"+e.message:e));
 		return null;
 	}
 };

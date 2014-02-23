@@ -12,11 +12,9 @@
        <xforms:instance xmlns="">       
           <mail>
           	<picture>
-          		<attachment1 xsi:type="xsd:base64Binary"/>
-          		<attachment2 xsi:type="xsd:anyURI"/>
-          		<attachment3 xsi:type="xsd:string"/> <!-- binding to type string is invalid for an upload control -->
-          		<name/>
-          		<type/>
+          		<attachment xsi:type="xsd:string"></attachment> <!-- binding to type string is invalid for an upload control -->
+          		<name></name>
+          		<type></type>
           	</picture>
           </mail>
        </xforms:instance>
@@ -28,32 +26,13 @@
   	</xforms:group>
   	<xforms:group>
   		<xforms:label>
-  		  There are three upload controls on this page. However, you must only be able to use Upload 1 and Upload 2. 
-  		  Upload 3 must not work correctly, generate an error, not appear on this page or otherwise make the 
-  		  problem known. 
-  		  For Upload 1 and Upload 2, after activating the control and selecting a file you must see the Filename and 
-  		  Media Type output controls display the name and type of the file you selected. 
+    	  You must have seen an xforms-binding-exception message or a fatal error due to an 
+		  xforms-binding-exception. The upload must not work correctly.
   		</xforms:label>
   	</xforms:group>
-  	<xforms:group>
-  		<xforms:upload ref="/mail/picture/attachment1">
-  			<xforms:label>Upload 1</xforms:label>
-       		<xforms:filename ref="/mail/picture/name"/>
-       		<xforms:mediatype ref="/mail/picture/type"/>
-			<xforms:hint>Valid</xforms:hint>
-  		</xforms:upload>
-	</xforms:group>
-	<xforms:group>
-		<xforms:upload ref="/mail/picture/attachment2">
-			<xforms:label>Upload 2</xforms:label>
-       		<xforms:filename ref="/mail/picture/name"/>
-       		<xforms:mediatype ref="/mail/picture/type"/>
-			<xforms:hint>Valid</xforms:hint>
-		</xforms:upload>
-    </xforms:group>
     <xforms:group>
-       	<xforms:upload ref="/mail/picture/attachment3">
-       		<xforms:label>Upload 3</xforms:label>
+       	<xforms:upload ref="/mail/picture/attachment">
+       		<xforms:label>Upload that binds to node with invalid datatype</xforms:label>
        		<xforms:filename ref="/mail/picture/name"/>
        		<xforms:mediatype ref="/mail/picture/type"/>
        		<xforms:hint>Invalid</xforms:hint>
@@ -70,6 +49,5 @@
 			<xforms:label>Media type : </xforms:label>
 		</xforms:output>
   	</xforms:group>
-  	
   </xhtml:body>
 </xhtml:html>

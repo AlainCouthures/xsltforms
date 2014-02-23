@@ -28,13 +28,13 @@
   		<xforms:trigger>
 	        <xforms:label>Rebuild Without Delay</xforms:label>
 	        <xforms:action ev:event="DOMActivate">
-				<xforms:dispatch name="xforms-rebuild" target="mymodel"/>
+				<xforms:dispatch name="xforms-rebuild" targetid="mymodel"/>
 			</xforms:action>
 		</xforms:trigger>
 		<xforms:trigger>
 	        <xforms:label>Rebuild With Delay</xforms:label>
 	        <xforms:action ev:event="DOMActivate">
-				<xforms:dispatch name="xforms-rebuild" target="mymodel">
+				<xforms:dispatch name="xforms-rebuild" targetid="mymodel">
 					<xforms:delay value="5000">0</xforms:delay>
 				</xforms:dispatch>
 			</xforms:action>

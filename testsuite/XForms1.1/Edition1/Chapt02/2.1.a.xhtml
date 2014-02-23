@@ -1,53 +1,53 @@
 <?xml version="1.0"  encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:xf="http://www.w3.org/2002/xforms">
-    <head>
-        <title>2.1.a Introductory Example No. 1</title>
-        <link rel="stylesheet" href="../driverPages/forms/TestSuite11.css" type="text/css" />
-        <xf:model>
-            <xf:instance>
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml"
+      xmlns:xforms="http://www.w3.org/2002/xforms">
+    <xhtml:head>
+        <xhtml:title>2.1.a Introductory Example No. 1</xhtml:title>
+        <xhtml:link rel="stylesheet" href="../driverPages/forms/TestSuite11.css" type="text/css" />
+        <xforms:model>
+            <xforms:instance>
                 <ecommerce xmlns="">
                     <method>cc</method>
                     <number />
                     <expiry />
                 </ecommerce>
-            </xf:instance>
-            <xf:submission id="submit" method="post" action="http://xformstest.org/cgi-bin/echo.sh" />
-        </xf:model>
-    </head>
-    <body>
-        <xf:group>
-            <xf:label class="title">2.1.a Introductory Example No. 1</xf:label>
-        </xf:group>
-        <xf:group>
-            <xf:label>
+            </xforms:instance>
+            <xforms:submission id="submit" method="post" action="http://xformstest.org/cgi-bin/echo.sh" />
+        </xforms:model>
+    </xhtml:head>
+    <xhtml:body>
+        <xforms:group>
+            <xforms:label class="title">2.1.a Introductory Example No. 1</xforms:label>
+        </xforms:group>
+        <xforms:group>
+            <xforms:label>
                 You must see a select1 control with the values &quot;Cash&quot; and &quot;Credit&quot; as well as two 
                 input controls on the page. When you activate the Submit Now submit control this page must be 
                 replaced by the form data. You must see the value &quot;cc&quot; if you had selected Credit or the 
                 value &quot;cash&quot; if you had selected Cash. You must also see the values, if any, you entered 
                 in the Credit Card Number and Expiration Date input controls. 
-            </xf:label>
-        </xf:group>
-        <xf:select1 ref="method" xmlns="">
-            <xf:label>Select Payment Method:</xf:label>
-            <xf:item>
-                <xf:label>Cash</xf:label>
-                <xf:value>cash</xf:value>
-            </xf:item>
-            <xf:item>
-                <xf:label>Credit</xf:label>
-                <xf:value>cc</xf:value>
-            </xf:item>
-            <xf:hint>Please select method of payment: cash or credit</xf:hint>
-        </xf:select1>
-        <xf:input ref="number" xmlns="">
-            <xf:label>Credit Card Number:</xf:label>
-        </xf:input>
-        <xf:input ref="expiry" xmlns="">
-            <xf:label>Expiration Date:</xf:label>
-        </xf:input>
-        <xf:submit submission="submit">
-            <xf:label>Submit Now</xf:label>
-        </xf:submit>
-    </body>
-</html>
+            </xforms:label>
+        </xforms:group>
+        <xforms:select1 ref="method">
+            <xforms:label>Select Payment Method:</xforms:label>
+            <xforms:item>
+                <xforms:label>Cash</xforms:label>
+                <xforms:value>cash</xforms:value>
+            </xforms:item>
+            <xforms:item>
+                <xforms:label>Credit</xforms:label>
+                <xforms:value>cc</xforms:value>
+            </xforms:item>
+            <xforms:hint>Please select method of payment: cash or credit</xforms:hint>
+        </xforms:select1>
+        <xforms:input ref="number">
+            <xforms:label>Credit Card Number:</xforms:label>
+        </xforms:input>
+        <xforms:input ref="expiry">
+            <xforms:label>Expiration Date:</xforms:label>
+        </xforms:input>
+        <xforms:submit submission="submit">
+            <xforms:label>Submit Now</xforms:label>
+        </xforms:submit>
+    </xhtml:body>
+</xhtml:html>

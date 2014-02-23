@@ -48,7 +48,7 @@
         <testCase>
             <testCaseSection>H.3</testCaseSection>
             <testCaseName>H.3</testCaseName>
-            <testCaseLink>../../Appendix/H/h.3.xhtml</testCaseLink>
+            <testCaseLink>../../Appendix/H/h.3.svg</testCaseLink>
             <testCaseDescription>Survey Using XForms and SVG</testCaseDescription>
             <testCaseSpecLinkName>H.3</testCaseSpecLinkName>
             <testCaseSpecLink>http://www.w3.org/TR/xforms11/#N93686</testCaseSpecLink>

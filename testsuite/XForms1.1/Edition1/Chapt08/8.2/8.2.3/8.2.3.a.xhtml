@@ -9,8 +9,11 @@
     <xhtml:title>8.2.3.a hint element references instance data</xhtml:title>
     <xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
     <xforms:model>
-       <xforms:instance xmlns="">       
-          <msg>Instance Hint Message</msg>
+       <xforms:instance xmlns="">
+          <data>       
+            <msg>Instance Hint Message</msg>
+            <myinput></myinput>
+          </data>
        </xforms:instance>
     </xforms:model>
   </xhtml:head>
@@ -24,14 +27,14 @@
 		  &quot;Instance Hint Message&quot;. 
 		</xforms:label>	
 	</xforms:group>
-	<xforms:input id="input1">
+	<xforms:input id="input1" ref="myinput">
 		<xforms:label>Input : </xforms:label>
-		<xforms:hint id="hintSrc" ref="/msg"></xforms:hint>
+		<xforms:hint id="hintSrc" ref="../msg"></xforms:hint>
   	</xforms:input>
   	<xforms:trigger id="hint_trigger">
   		<xforms:label>Dispatch Hint Message</xforms:label>
   		<xforms:action ev:event="DOMActivate">
-  			<xforms:dispatch name="xforms-hint" target="input1"/>
+  			<xforms:dispatch name="xforms-hint" targetid="input1"/>
   		</xforms:action>
   	</xforms:trigger>
   	

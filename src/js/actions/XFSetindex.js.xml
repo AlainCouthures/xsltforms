@@ -47,6 +47,13 @@ XsltForms_setindex.prototype.run = function(element, ctx) {
 	var index = XsltForms_globals.numberValue(this.index.xpath_evaluate(ctx));
 	XsltForms_browser.debugConsole.write("setIndex " + index);
 	if (!isNaN(index)) {
+		if (index < 1) {
+			index = 1;
+			XsltForms_xmlevents.dispatch(repeat.xfElement, "xforms-scroll-first");
+		} else if (index > repeat.xfElement.nodes.length) {
+			index = repeat.xfElement.nodes.length;
+			XsltForms_xmlevents.dispatch(repeat.xfElement, "xforms-scroll-last");
+		}
 		repeat.xfElement.setIndex(index);
 	}
 };

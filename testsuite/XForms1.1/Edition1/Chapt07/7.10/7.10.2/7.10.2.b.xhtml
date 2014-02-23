@@ -29,9 +29,7 @@
             <xforms:label>You must see the value &quot;Jan Feb Mar&quot; for the Months output. </xforms:label>
         </xforms:group>
         <xforms:repeat nodeset="mon">
-            <xforms:output value="instance('i2')/month[@code = current()]">
-                <xforms:label>Months : </xforms:label>
-            </xforms:output>
+            <xforms:output value="instance('i2')/month[@code = current()]"/>
         </xforms:repeat>
     </xhtml:body>
 </xhtml:html>

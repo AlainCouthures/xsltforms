@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xforms="http://www.w3.org/2002/xforms"
+    xmlns:ts="http://www.w3c.org/MarkUp/Forms/XForms/Test/11" ts:dummy="dummy">
+  <head>
+    <title>XForms Test Suite</title>
+   
+    <xforms:model id="chapterModel" >
+    	<xforms:instance id="instance_chapterModel">
+			<testSuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3c.org/MarkUp/Forms/XForms/Test/11 XF11TestSuite.xsd" specVersion="1.1" xmlns="http://www.w3c.org/MarkUp/Forms/XForms/Test/11"/>
+		</xforms:instance>
+		<xforms:instance id="instance_selectedChapter">
+			<chapter xmlns="" readonly="true">Chpt1</chapter>
+		</xforms:instance>
+		<!--xforms:bind nodeset="/ts:testSuite" readonly="instance('instance_selectedChapter')/@readonly = 'true'"/-->
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase/ts:testCaseDate" type="xsd:date" />
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly" type="xsd:boolean"/>
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly" type="xsd:boolean"/>
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase/ts:testCaseBasic" type="xsd:boolean" />
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase/ts:testCaseNormative" type="xsd:boolean" />	
+			  
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numNormTotal" calculate="count(/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'])" />
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numNormPass" calculate="count(/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseStatus = 'Passed'])" />
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numNormFail" calculate="count(/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseStatus = 'Failed'])" />
+
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numBasicTotal" calculate="count(/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseBasic = 'true'])" />
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numBasicPass" calculate="count(/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseBasic = 'true'][ts:testCaseStatus = 'Passed'])" />
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numBasicFail" calculate="count(/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseBasic = 'true'][ts:testCaseStatus = 'Failed'])" />
+
+
+<!-- bindings for test execution profile settings -->
+
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+		             relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/>
+		             
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/>
+
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+	                 relevant="/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false' and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/> 
+	                 
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true') and (/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/>
+
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+		             relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/>
+		             
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/>
+
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+	                 relevant="/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false' and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/> 
+	                 
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'false']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true') and (/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.1')"/>
+	              	                 
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+		             relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0')"/>
+		             
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0')"/>
+
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+	                 relevant="/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false' and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0')"/> 
+	                 
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'false'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true') and (/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false') and not(/ts:testSuite/ts:specChapter/ts:profile/ts:specification = 'XForms 1.0')"/>
+
+		<xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+		             relevant="true()"/>
+		             
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'true'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true')"/>
+
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'true'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+	                 relevant="/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false'"/> 
+	                 
+	    <xforms:bind nodeset="/ts:testSuite/ts:specChapter/ts:testCase[ts:testCaseNormative = 'false'][ts:testCaseBasic = 'false'][ts:testCaseApplicability/ts:XForms1.0 = 'true'][ts:testCaseApplicability/ts:XForms1.1 = 'true']" 
+	                 relevant="not(/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly = 'true') and (/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly = 'false')"/>
+
+      	<xforms:submission id="submit_chapterModel" method="put" replace="none">
+			<xforms:resource value="concat('../Results/XF11TestSuite',instance('instance_selectedChapter'),'_Results.xml')"/>
+		</xforms:submission>
+      	<xforms:submission id="load_chapterModel" method="get" replace="instance" serialization="none">  
+			<xforms:resource value="concat('../Results/XF11TestSuite',instance('instance_selectedChapter'),'_Results.xml')"/>
+			<xforms:send submission="clear_chapterModel" ev:event="xforms-submit-error"/>
+		</xforms:submission>
+      	<xforms:submission id="clear_chapterModel" method="get" replace="instance" serialization="none">
+			<xforms:resource value="concat('../xml/XF11TestSuite',instance('instance_selectedChapter'),'.xml')"/>
+		</xforms:submission>
+		<xforms:send submission="load_chapterModel" ev:event="xforms-ready"/>
+    </xforms:model>
+    
+    <link href="TestSuite11.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <h1>XForms Test Suite</h1>
+
+	<xforms:select1 ref="instance('instance_selectedChapter')">
+		<xforms:label>Select a chapter: </xforms:label>
+		<xforms:item>
+			<xforms:label>1. Differences between XForms 1.1 and XForms 1.0</xforms:label>
+			<xforms:value>Chpt1</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>2. Introduction to XForms</xforms:label>
+			<xforms:value>Chpt2</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>3. Document Structure</xforms:label>
+			<xforms:value>Chpt3</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>4. Processing Model</xforms:label>
+			<xforms:value>Chpt4</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>5. Datatypes</xforms:label>
+			<xforms:value>Chpt5</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>6. Model Item Properties</xforms:label>
+			<xforms:value>Chpt6</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>7. XPath Expressions in XForms</xforms:label>
+			<xforms:value>Chpt7</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>8. Core Form Controls</xforms:label>
+			<xforms:value>Chpt8</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>9. Container Form Controls</xforms:label>
+			<xforms:value>Chpt9</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>10. XForms Actions</xforms:label>
+			<xforms:value>Chpt10</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>11. The XForms Submission Module</xforms:label>
+			<xforms:value>Chpt11</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>B. Insert and Delete Action Patterns for Data Mutations</xforms:label>
+			<xforms:value>AppxB</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>G. XForms and Styling</xforms:label>
+			<xforms:value>AppxG</xforms:value>
+		</xforms:item>
+		<xforms:item>
+			<xforms:label>H. Complete XForms Examples </xforms:label>
+			<xforms:value>AppxH</xforms:value>
+		</xforms:item>
+		<xforms:send submission="load_chapterModel" ev:event="xforms-value-changed"/>
+	</xforms:select1>
+	<!--p>
+		<xforms:output ref="ts:specChapter/@chapterName" class="docTitle"><xforms:label/></xforms:output>
+		<xforms:output ref="ts:specChapter/@chapterTitle" class="docTitle"><xforms:label/></xforms:output>
+	</p-->
+    <p>
+	  <xforms:input ref="/ts:testSuite/ts:specChapter/@productId" class="testCaseSummaryTitle">
+	    <xforms:label>Product/Build Note: </xforms:label>
+	  </xforms:input>
+	</p>
+	
+	<!--h3>Targets</h3>
+	
+    <table>
+	  <tr>
+	    <td>
+	       <xforms:input ref="/ts:testSuite/ts:specChapter/ts:profile/ts:basicOnly" appearance="compact">
+	          <xforms:label>Basic Only?</xforms:label>
+	       </xforms:input>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td>
+	       <xforms:input ref="/ts:testSuite/ts:specChapter/ts:profile/ts:normativeOnly" appearance="compact">
+	          <xforms:label>Normative Only?</xforms:label>
+	       </xforms:input>
+	    </td>
+	  </tr>	
+	</table-->
+	
+	<h3>Results</h3>
+	
+	<table>
+	  <tr>
+	    <td class="testCaseSummaryTitle">Normative:</td>
+	    <td>Passed</td><td><xforms:output model="chapterModel" ref="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numNormPass"/></td>
+	    <td>Failed</td><td><xforms:output model="chapterModel" ref="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numNormFail"/></td>
+	    <td>Total</td><td><xforms:output model="chapterModel" ref="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numNormTotal"/></td>
+	  </tr>
+	  <tr>
+	    <td class="testCaseSummaryTitle">Basic:</td>
+	    <td>Passed</td><td><xforms:output model="chapterModel" ref="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numBasicPass"/></td>
+	    <td>Failed</td><td><xforms:output model="chapterModel" ref="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numBasicFail"/></td>
+	    <td>Total</td><td><xforms:output model="chapterModel" ref="/ts:testSuite/ts:specChapter/ts:statusSummary/ts:numBasicTotal"/></td>
+	  </tr>
+	</table>
+	
+    <h3>Test Cases</h3>
+	
+	<table id="testsuiteTable">
+		<thead>
+			<tr>
+				<th class="testCaseNameTitle">Test Case</th>
+				<th class="testCaseDescriptionTitle">Description</th>
+				<th class="testCaseSpecLinkTitle">Spec Link</th>
+				<th class="testCaseBasicTitle">Normative for XForms Basic</th>
+				<th class="testCaseBasicTitle">Normative for XForms Full</th>
+				<th class="testCaseStatusTitle">Status</th>			
+				<th class="testCaseDateTitle">Date</th>
+				<th class="testCaseNoteTitle">Note</th>						
+			</tr>
+		</thead>
+
+		<tbody>
+			<xforms:repeat nodeset="/ts:testSuite/ts:specChapter/ts:testCase">	<!-- testCase -->
+				<tr>
+
+					<td class="{ts:testCaseStatus}">
+						<xforms:trigger appearance="minimal" class="testCaseName" ref=".">  	
+							<xforms:label ref="ts:testCaseName" class="theLink"></xforms:label>
+							<xforms:hint>Click here to execute the test case.</xforms:hint>  
+							<xforms:load ref="ts:testCaseLink" target="_blank" ev:event="DOMActivate" model="chapterModel"/>
+						</xforms:trigger>
+					</td>
+				
+					<td class="{ts:testCaseStatus}">
+						<xforms:output ref="ts:testCaseDescription" model="chapterModel" class="testCaseDescription">     	
+							<xforms:label></xforms:label>
+							<!--  <xforms:hint>Short Description of the test case.</xforms:hint> -->
+						</xforms:output>
+						<xforms:output appearance="minimal" ref="ts:testCaseApplicability/ts:XForms1.0" model="chapterModel" class="testCaseBasic">     	
+							<xforms:label></xforms:label>
+						</xforms:output>
+						<xforms:output appearance="minimal" ref="ts:testCaseApplicability/ts:XForms1.1" model="chapterModel" class="testCaseBasic">     	
+							<xforms:label></xforms:label>
+						</xforms:output>
+					</td>
+				
+					<td class="{ts:testCaseStatus}">
+						<xforms:trigger appearance="minimal" class="testCaseSpecLink" ref=".">    	
+							<xforms:label ref="ts:testCaseSpecLinkName" class="theLink"></xforms:label>
+							<xforms:hint>Click here to see the Recommendation text for the test case.</xforms:hint>  
+							<xforms:load ref="ts:testCaseSpecLink" target="_blank" ev:event="DOMActivate" model="chapterModel"/>
+						</xforms:trigger>
+					</td>
+					
+					<td class="{ts:testCaseStatus}">
+						<xforms:output appearance="minimal" ref="ts:testCaseBasic" model="chapterModel" class="testCaseBasic">     	
+							<xforms:label></xforms:label>
+						</xforms:output>
+					</td>
+
+					<td class="{ts:testCaseStatus}">
+						<xforms:output appearance="minimal" ref="ts:testCaseNormative" model="chapterModel" class="testCaseNormative">
+							<xforms:label></xforms:label>
+						</xforms:output>
+					</td>
+				
+					<td class="{ts:testCaseStatus}">
+						<xforms:select1 ref="ts:testCaseStatus" model="chapterModel" class="testCaseStatus">     	
+							<xforms:label></xforms:label>
+							<xforms:item>
+								<xforms:label>Passed</xforms:label>
+								<xforms:value>Passed</xforms:value>
+							</xforms:item>
+							<xforms:item>
+								<xforms:label>Failed</xforms:label>
+								<xforms:value>Failed</xforms:value>
+							</xforms:item>
+							<xforms:item>
+								<xforms:label>Unknown</xforms:label>
+								<xforms:value>Unknown</xforms:value>
+								</xforms:item>
+							<xforms:hint>Select test case status of Passed, Failed, or Unknown.</xforms:hint> 
+						</xforms:select1>
+					</td>
+				
+					<td class="{ts:testCaseStatus}">
+						<xforms:input ref="ts:testCaseDate" model="chapterModel" class="testCaseDate">     	
+							<xforms:label></xforms:label>
+							<xforms:hint>Date the current status was established.</xforms:hint> 
+						</xforms:input>
+					</td>
+
+					<td class="{ts:testCaseStatus}">
+						<xforms:input ref="ts:testCaseNote" model="chapterModel" class="testCaseNote">
+							<xforms:label></xforms:label>
+						</xforms:input>    	    
+					</td>
+
+				</tr>
+			</xforms:repeat>  <!-- testCase -->
+		</tbody>
+	</table>
+
+  <xforms:group ref=".[instance('instance_selectedChapter')/@readonly = true]">
+    <xforms:label/>
+    <xforms:submit submission="submit_chapterModel">
+    	<xforms:label>Save</xforms:label>
+    </xforms:submit>
+    <xforms:submit submission="load_chapterModel">
+    	<xforms:label>Load</xforms:label>
+    </xforms:submit>
+    <xforms:submit submission="clear_chapterModel">
+  	  <xforms:label>Clear</xforms:label>
+    </xforms:submit>
+  </xforms:group>
+     
+	<hr/>
+	<p>
+		<a href="http://www.w3.org/MarkUp/Forms/Test/XForms1.1/Edition1/driverPages/forms/">Original W3C document</a>
+	</p>
+	<p>
+		Distributed under both the <a href="http://www.w3.org/Consortium/Legal/2008/04-testsuite-license">W3C Test Suite License</a> and the <a href="http://www.w3.org/Consortium/Legal/2008/03-bsd-license">W3C 3-clause BSD License</a>. To contribute to a W3C Test Suite, see the <a href="http://www.w3.org/2004/10/27-testcases">policies and contribution forms</a>.
+	</p>
+  </body>
+</html>

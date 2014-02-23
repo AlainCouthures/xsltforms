@@ -1,10 +1,10 @@
 <?xml version="1.0"  encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml"
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml"
       xmlns:xforms="http://www.w3.org/2002/xforms" 
       xmlns:my="http://commerce.example.com/payment">
-    <head>
-        <title>2.2.a Example: Encapsulation of Instance Data</title>
-        <link rel="stylesheet" href="../driverPages/forms/TestSuite11.css" type="text/css" />
+    <xhtml:head>
+        <xhtml:title>2.2.a Example: Encapsulation of Instance Data</xhtml:title>
+        <xhtml:link rel="stylesheet" href="../driverPages/forms/TestSuite11.css" type="text/css" />
         <xforms:model>
             <xforms:instance>
                 <payment method="cc" xmlns="http://commerce.example.com/payment">
@@ -14,8 +14,8 @@
             </xforms:instance>
             <xforms:submission id="submit" method="post" action="http://xformstest.org/cgi-bin/echo.sh" />
         </xforms:model>
-    </head>
-    <body>
+    </xhtml:head>
+    <xhtml:body>
         <xforms:group>
             <xforms:label class="title">2.2.a Example: Encapsulation of Instance Data</xforms:label>
         </xforms:group>
@@ -48,5 +48,5 @@
         <xforms:submit submission="submit">
             <xforms:label>Submit Now</xforms:label>
         </xforms:submit>
-    </body>
-</html>
+    </xhtml:body>
+</xhtml:html>

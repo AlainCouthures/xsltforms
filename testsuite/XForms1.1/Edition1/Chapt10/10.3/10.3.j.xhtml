@@ -25,9 +25,9 @@
                 </item_lists>
             </xforms:instance>
             <xforms:action ev:event="xforms-ready">
-              <xforms:insert origin="instance('second')/item_list/item[1]/@price" context="instance('first')/item_list/item[1]"/>
-              <xforms:insert origin="instance('second')/item_list/item[2]/@price" context="instance('first')/item_list/item[2]"/>
-              <xforms:insert origin="instance('second')/item_list/item[3]/@price" context="instance('first')/item_list/item[3]"/>
+              <xforms:insert origin="instance('second')/item_list/item[1]/@price" nodeset="instance('first')/item_list/item[1]"/>
+              <xforms:insert origin="instance('second')/item_list/item[2]/@price" nodeset="instance('first')/item_list/item[2]"/>
+              <xforms:insert origin="instance('second')/item_list/item[3]/@price" nodeset="instance('first')/item_list/item[3]"/>
             </xforms:action>
         </xforms:model>
     </xhtml:head>
@@ -36,15 +36,15 @@
             <xforms:label class="title">10.3.j insert action - copying an attribute</xforms:label>
         </xforms:group>
         <xforms:group>
-          <xforms:label>You must see the value &quot;4.00&quot; : </xforms:label>
+          <xforms:label>You must not see the value &quot;4.00&quot; : </xforms:label>
           <xforms:output ref="instance('first')/item_list/item[1]/@price"/>
         </xforms:group>
         <xforms:group>
-          <xforms:label>You must see the value &quot;5.00&quot; : </xforms:label>
+          <xforms:label>You must not see the value &quot;5.00&quot; : </xforms:label>
           <xforms:output ref="instance('first')/item_list/item[2]/@price"/>
         </xforms:group>
         <xforms:group>
-          <xforms:label>You must see the value &quot;6.00&quot; : </xforms:label>
+          <xforms:label>You must not see the value &quot;6.00&quot; : </xforms:label>
           <xforms:output ref="instance('first')/item_list/item[3]/@price"/>
         </xforms:group>
     </xhtml:body>

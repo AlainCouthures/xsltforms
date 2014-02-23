@@ -7,8 +7,8 @@
   	<xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css" />
   	<xforms:model>
 	  	<xforms:action ev:event="xforms-ready">
-	  	   <xforms:insert nodeset="item[2]/@key" origin="item[1]/@key"/>
-		</xforms:action>
+	  	   <xforms:setvalue ref="item[2]/@key" value="../../item[1]/@key"/>
+		  </xforms:action>
   		<xforms:instance>
   			<items xmlns="">
   				<item key="0" />

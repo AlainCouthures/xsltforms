@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xforms="http://www.w3.org/2002/xforms">
 	<xhtml:head>
-		<xhtml:title>11.10.a submission response with invalid target</xhtml:title>
+		<xhtml:title>11.10.a submission response with invalid target data node</xhtml:title>
 		<xhtml:link rel="stylesheet" href="../../driverPages/html/TestSuite11.css" type="text/css"/>
 		<xforms:model id="form1" >
 			<xforms:instance id="instance1">
@@ -23,7 +23,7 @@
 				</car>
 			</xforms:instance>
 			<xforms:submission id="submit01" method="get" replace="instance" 
-				instance="instance2" action="11.10.data.xml" target="invalidNode">
+				instance="instance2" action="11.10.data.xml" targetref="invalidNode">
 			  <xforms:message ev:event="xforms-submit-error" level="modal">xforms-submit-error</xforms:message>
 			  <xforms:action ev:event="xforms-submit-error">
 	            <xforms:setvalue model="catcher" ref="/eventdata" value="event('error-type')"/>
@@ -38,7 +38,7 @@
 	</xhtml:head>
 	<xhtml:body>
 	    <xforms:group>
-		    <xforms:label class="title">11.10.a submission response with invalid target</xforms:label>
+		    <xforms:label class="title">11.10.a submission response with invalid target data node</xforms:label>
 		</xforms:group>
 		<xforms:group>
 		    <xforms:label>

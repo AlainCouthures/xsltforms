@@ -5,32 +5,32 @@
   <xhtml:head>
     <xhtml:title>5.2.1.b built-in derived types which allow empty content</xhtml:title>
     <xforms:model id="emptyData_model">
-      <xforms:instance>
-	<types>
-	  <my_normalizedString />
-	  <my_token />
-	  <my_language />
-	  <my_Name />
-	  <my_NCName />
-	  <my_ID />
-	  <my_IDREF />
-	  <my_IDREFS />
-	  <my_NMTOKEN />
-	  <my_NMTOKENS />
-	  <my_integer />
-	  <my_nonPositiveInteger />
-	  <my_negativeInteger />
-	  <my_long />
-	  <my_int />
-	  <my_short />
-	  <my_byte />
-	  <my_nonNegativeInteger />
-	  <my_unsignedLong />
-	  <my_unsignedInt />
-	  <my_unsignedShort />
-	  <my_unsignedByte />
-	  <my_positiveInteger />
-	</types>
+      <xforms:instance xmlns="">
+		  <types>
+	              <my_normalizedString>non empty content</my_normalizedString>
+	              <my_token>non empty content</my_token>
+	              <my_language>non empty content</my_language>
+	              <my_Name>non empty content</my_Name>
+	              <my_NCName>non empty content</my_NCName>
+	              <my_ID>non empty content</my_ID>
+	              <my_IDREF>non empty content</my_IDREF>
+	              <my_IDREFS>non / empty / content</my_IDREFS>
+	              <my_NMTOKEN>non empty content</my_NMTOKEN>
+	              <my_NMTOKENS>non / empty / content</my_NMTOKENS>
+	              <my_integer>non empty content</my_integer>
+	              <my_nonPositiveInteger>non empty content</my_nonPositiveInteger>
+	              <my_negativeInteger>non empty content</my_negativeInteger>
+	              <my_long>non empty content</my_long>
+	              <my_int>non empty content</my_int>
+	              <my_short>non empty content</my_short>
+	              <my_byte>non empty content</my_byte>
+	              <my_nonNegativeInteger>non empty content</my_nonNegativeInteger>
+	              <my_unsignedLong>non empty content</my_unsignedLong>
+	              <my_unsignedInt>non empty content</my_unsignedInt>
+	              <my_unsignedShort>non empty content</my_unsignedShort>
+	              <my_unsignedByte>non empty content</my_unsignedByte>
+	              <my_positiveInteger>non empty content</my_positiveInteger>
+	       </types>
       </xforms:instance>
       <xforms:bind nodeset="my_normalizedString" type="xforms:normalizedString" />
       <xforms:bind nodeset="my_token" type="xforms:token" />
@@ -55,7 +55,6 @@
       <xforms:bind nodeset="my_unsignedShort" type="xforms:unsignedShort" />
       <xforms:bind nodeset="my_unsignedByte" type="xforms:unsignedByte" />
       <xforms:bind nodeset="my_positiveInteger" type="xforms:positiveInteger" />
-      <xforms:bind nodeset="/types" relevant="false()"/>
     </xforms:model>
     <xforms:model id="event_model">
       <xforms:instance>
@@ -94,6 +93,10 @@
     </xforms:group>
     <xforms:group>
       <xforms:label>
+    When the form first displays you should not see any valid or invalid messages.  If an implementation fires validity events on 
+    form initialization (incorrectly) then you may see XFORMS-INVALID output for all types (except string) below.  This is not
+    being tested but is an error.
+
 	When you activate the Run Test trigger below you must see an 'xforms-valid' output for all the 
 	data types. If the data type does not accept empty content you will see an 'XFORMS-INVALID' output. 
 	An 'XFORMS-INVALID' output is a failure for this test case. 
@@ -101,7 +104,31 @@
     </xforms:group>
     <xforms:trigger>
       <xforms:label>Run Test</xforms:label>
-      <xforms:reset model="emptyData_model" ev:event="DOMActivate" />
+      <xforms:action ev:event="DOMActivate">
+			 <xforms:setvalue model="emptyData_model" ref="my_normalizedString"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_token"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_language"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_Name"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_NCName"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_ID"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_IDREF"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_IDREFS"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_NMTOKEN"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_NMTOKENS"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_integer"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_nonPositiveInteger"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_negativeInteger"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_long"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_int"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_short"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_byte"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_nonNegativeInteger"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedLong"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedInt"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedShort"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_unsignedByte"/>
+			 <xforms:setvalue model="emptyData_model" ref="my_positiveInteger"/>
+	  </xforms:action>
     </xforms:trigger>
     <xforms:repeat model="event_model" nodeset="/events/event" >
       <xforms:output ref=".">

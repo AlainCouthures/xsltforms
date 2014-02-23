@@ -4,8 +4,7 @@
 			xmlns:xhtml="http://www.w3.org/1999/xhtml" 
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xmlns:soap="http://www.w3.org/2001/12/soap-envelope"
-			soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">
+			xmlns:soap="http://www.w3.org/2001/12/soap-envelope">
   <xhtml:head>
     <xhtml:title>11.11.1.a representation of SOAP envelope</xhtml:title>
     <xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
@@ -17,8 +16,8 @@
     		  </soap:Envelope>
     		</root>
     	</xforms:instance>
-    	<xforms:submission id="submitEnvelope" ref="/root" action="http://xformstest.org/cgi-bin/echo.sh"
-          method="post"/>
+    	<xforms:submission id="submitEnvelope" ref="/root/soap:Envelope" action="http://xformstest.org/cgi-bin/echo.sh"
+          method="post" mediatype="application/soap+xml"/>
     </xforms:model>
   </xhtml:head>
   <xhtml:body>

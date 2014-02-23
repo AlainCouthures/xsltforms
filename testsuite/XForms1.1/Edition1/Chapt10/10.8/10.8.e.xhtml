@@ -8,8 +8,8 @@
   	<xhtml:head>
     	<xhtml:title>10.8.e dispatch element dispatches cancelled custom event</xhtml:title>
     	<xhtml:link rel="stylesheet" href="../../driverPages/forms/TestSuite11.css" type="text/css" />
-    	<xforms:model id="model1" ev:event="custom-event" ev:defaultAction="cancel">
-    		<xforms:action>
+    	<xforms:model id="model1" ev:defaultAction="cancel">
+    		<xforms:action ev:event="custom-event">
     			<xforms:message level="modal">custom-event</xforms:message>
     		</xforms:action>
     	</xforms:model>
@@ -21,13 +21,14 @@
 	  	</xforms:group>	
   		<xforms:group>
   			<xforms:label>
-  				When you activate the Fire Custom Event trigger you must not see a custom-event message. 
+  				When you activate the Fire Custom Event trigger you must see a custom-event message. If an implementation has a default action
+  				for the custom event you must not see the effect of the default action. 
 			</xforms:label>
   		</xforms:group>
   		<xforms:trigger>
 	        <xforms:label>Fire Custom Event</xforms:label>
 	        <xforms:action ev:event="DOMActivate">
-				<xforms:dispatch name="custom-event" target="model1" cancelable="true()"/>
+				<xforms:dispatch name="custom-event" targetid="model1" cancelable="true"/>
 			</xforms:action>
 		</xforms:trigger>
 		

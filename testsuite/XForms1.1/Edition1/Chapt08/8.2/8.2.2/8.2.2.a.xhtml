@@ -9,8 +9,11 @@
     <xhtml:title>8.2.2.a help element references instance data</xhtml:title>
     <xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
     <xforms:model>
-       <xforms:instance xmlns="">       
-          <msg>Instance Help Message</msg>
+       <xforms:instance xmlns="">
+          <data>       
+             <msg>Instance Help Message</msg>
+             <myinput></myinput>
+          </data>
        </xforms:instance>
     </xforms:model>
   </xhtml:head>
@@ -24,14 +27,14 @@
 		  &quot;Instance Help Message&quot;. 
 		</xforms:label>	
 	</xforms:group>
-	<xforms:input id="input1">
+	<xforms:input id="input1" ref="myinput">
 		<xforms:label>Input : </xforms:label>
-		<xforms:help id="extHelp" ref="/msg"></xforms:help>
+		<xforms:help id="extHelp" ref="../msg"></xforms:help>
   	</xforms:input>
   	<xforms:trigger id="help_trigger">
 	    <xforms:label>Dispatch Help Message</xforms:label>
 	    <xforms:action ev:event="DOMActivate">
-      		<xforms:dispatch name="xforms-help" target="input1"/> 
+      		<xforms:dispatch name="xforms-help" targetid="input1"/> 
      	</xforms:action>
 	</xforms:trigger>
 	

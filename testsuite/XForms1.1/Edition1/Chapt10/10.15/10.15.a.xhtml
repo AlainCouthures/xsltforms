@@ -16,13 +16,13 @@
 				</car>
        		</xforms:instance>
 			<xforms:submission id="submit_color" action="http://xformstest.org/cgi-bin/echo.sh"
-        		ref="/car/color" method="post">
-        		<xforms:action ev:event="xforms-submit">
+        		ref="/car/color" method="post" replace="none">
+        		<xforms:action ev:event="xforms-submit-done">
         			<xforms:message level="modal">xforms-submit-done</xforms:message>
         		</xforms:action>
         	</xforms:submission>
 			<xforms:submission id="submit_condition" action="http://xformstest.org/cgi-bin/echo.sh"
-        		ref="/car/condition" method="post">
+        		ref="/car/condition" method="post" replace="none">
         		<xforms:action ev:event="xforms-submit-done">
         			<xforms:message level="modal">xforms-submit-done</xforms:message>
         		</xforms:action>
@@ -35,8 +35,7 @@
 	  	</xforms:group>
   		<xforms:group>
   			<xforms:label>
-  			  When you activate either trigger on this page you must see an xforms-submit-done message 
-  			  and the page must be replaced by the form data. 
+  			  When you activate either trigger on this page you must see an xforms-submit-done message. 
   			</xforms:label>
   		</xforms:group>
 

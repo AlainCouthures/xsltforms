@@ -614,7 +614,7 @@ XsltForms_browser.xsltsrcrelevany += '		</xsl:copy>';
 XsltForms_browser.xsltsrcrelevany += '	</xsl:template>';
 XsltForms_browser.xsltsrcrelevany += '</xsl:stylesheet>';
 
-if (XsltForms_browser.isIE) {
+if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 	XsltForms_browser.createXMLDocument = function(xml) {
 		var d = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		d.setProperty("SelectionLanguage", "XPath");
@@ -1057,7 +1057,7 @@ XsltForms_browser.crc32 = function (s) {
 };
 
 XsltForms_browser.getMeta = function(node, meta) {
-	return node.nodeType && (node.nodeType === XsltForms_nodeType.ELEMENT || node.nodeType === XsltForms_nodeType.ATTRIBUTE) ? node.nodeType === XsltForms_nodeType.ELEMENT ? node.getAttribute("xsltforms_"+meta) : node.ownerElement ? node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : null;
+	return node.nodeType && (node.nodeType === XsltForms_nodeType.ELEMENT || node.nodeType === XsltForms_nodeType.ATTRIBUTE) ? node.nodeType === XsltForms_nodeType.ELEMENT ? node.getAttribute("xsltforms_"+meta) : node.ownerElement ? node.ownerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : node.oldOwnerElement ? node.oldOwnerElement.getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : node.selectSingleNode("..").getAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta) : null;
 };
 
 XsltForms_browser.getBoolMeta = function(node, meta) {
@@ -1115,6 +1115,8 @@ XsltForms_browser.setMeta = function(node, meta, value) {
 		} else {
 			if (node.ownerElement) {
 				node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
+			} else if (node.oldOwnerElement) {
+				node.oldOwnerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
 			} else {
 				node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
 			}
@@ -1123,11 +1125,11 @@ XsltForms_browser.setMeta = function(node, meta, value) {
 };
 
 XsltForms_browser.clearMeta = function(node) {
+	var i = 0, n;
 	if (node && node.nodeType && node.nodeType === XsltForms_nodeType.ELEMENT) {
-		var i = 0;
 		if (node.attributes) {
 			while (node.attributes[i]) {
-				var n = node.attributes[i].localName ? node.attributes[i].localName : node.attributes[i].baseName;
+				n = node.attributes[i].localName ? node.attributes[i].localName : node.attributes[i].baseName;
 				if (n.substr(0, 10) === "xsltforms_") {
 					node.removeAttribute(n);
 				} else {
@@ -1140,6 +1142,21 @@ XsltForms_browser.clearMeta = function(node) {
 				XsltForms_browser.clearMeta(node.children[j]);
 			}
 		}
+	/*
+	} else if (node && node.nodeType && node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+		var ownerElement = node.ownerElement? node.ownerElement: node.selectSingleNode("..");
+		if (ownerElement) {
+			var metaprefix = "xsltforms_" + (node.localName ? node.localName : node.baseName) + "_";
+			while (ownerElement.attributes[i]) {
+				n = ownerElement.attributes[i].localName ? ownerElement.attributes[i].localName : ownerElement.attributes[i].baseName;
+				if (n.substr(0, metaprefix.length) === metaprefix) {
+					ownerElement.removeAttribute(n);
+				} else {
+					i++;
+				}
+			}
+		}
+	*/
 	}
 };
 
@@ -1248,7 +1265,7 @@ XsltForms_browser.setType = function(node, value) {
 	}
 };
 
-if (!XsltForms_browser.isIE) {
+if (!XsltForms_browser.isIE && !XsltForms_browser.isIE11) {
 	if (typeof XMLDocument === "undefined") {
 		var XMLDocument = Document;
 	}
@@ -1333,7 +1350,7 @@ if (!XsltForms_browser.isIE) {
 		}
 	};
 	XMLDocument.prototype.selectSingleNode = function(xpath) {
-		return this.selectNodes(xpath, true);
+		return this.selectNodes(xpath, true)[0];
 	};
 	XMLDocument.prototype.createNode = function(t, name, ns) {
 		switch(t) {

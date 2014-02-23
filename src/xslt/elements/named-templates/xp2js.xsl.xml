@@ -74,7 +74,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:when test="contains('_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',$c)">
 						<xsl:variable name="after" select="translate($d,'_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-:','')"/>
 						<xsl:choose>
-							<xsl:when test="substring($after,1,1)='(' and substring(substring-after($d,'('),1,1) = ')'">
+							<xsl:when test="substring($after,1,1)='(' and substring(substring-after($d,'('),1,1) = ')' and not(contains(substring-before($d,'('),'::'))">
 								<xsl:variable name="t"><xsl:call-template name="getName"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>
 								<xsl:value-of select="string-length($t)+2"/>
 								<xsl:text>.new XsltForms_functionCallExpr('</xsl:text>

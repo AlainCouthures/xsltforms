@@ -7,7 +7,7 @@
   	<xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css" />
   	<xforms:model>
 	  	<xforms:action ev:event="xforms-ready">
-	  		<xforms:insert nodeset="item[2]" origin="item[1]/@rating"/>
+	  		<xforms:insert context="item[2]" origin="../item[1]/@rating"/>
 	  		<xforms:delete nodeset="item[1]/@rating"/>
 	  	</xforms:action>
   		<xforms:instance>

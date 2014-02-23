@@ -10,7 +10,10 @@
     <xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
     <xforms:model>
        <xforms:instance xmlns="">       
-          <msg/>
+          <data>
+             <msg>Instance Hint Message (WRONG)</msg>
+             <myinput></myinput>
+          </data>
        </xforms:instance>
     </xforms:model>
   </xhtml:head>
@@ -24,14 +27,14 @@
 		  &quot;Inline Hint Message&quot;. 
 		</xforms:label>	
 	</xforms:group>
-	<xforms:input id="input1">
+	<xforms:input id="input1" ref="myinput">
 		<xforms:label>Input : </xforms:label>
-		<xforms:hint id="hintInv">Inline Help Message</xforms:hint>
+		<xforms:hint id="hintInv">Inline Hint Message</xforms:hint>
   	</xforms:input>
 	<xforms:trigger id="hint_trigger">
   		<xforms:label>Dispatch Hint Message</xforms:label>
   		<xforms:action ev:event="DOMActivate">
-  			<xforms:dispatch name="xforms-hint" target="input1"/>
+  			<xforms:dispatch name="xforms-hint" targetid="input1"/>
   		</xforms:action>
   	</xforms:trigger>
 	

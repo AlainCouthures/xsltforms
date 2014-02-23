@@ -24,10 +24,10 @@
     </xforms:group>
 
     <xforms:group>
-      <xforms:group ref="self::node()[translate(hmac('key', 'abc', 'SHA-1', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '4fd0b215276ef12f2b3e4c8ecac2811498b656fc']">
+      <xforms:group ref="self::node()[hmac('key', 'abc', 'SHA-1', 'hex') = '4fd0b215276ef12f2b3e4c8ecac2811498b656fc']">
 	<xforms:label>Test 1 PASS </xforms:label>
       </xforms:group>
-      <xforms:group ref="self::node()[translate(hmac('key', 'abc', 'SHA-1', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') != '4fd0b215276ef12f2b3e4c8ecac2811498b656fc']">
+      <xforms:group ref="self::node()[hmac('key', 'abc', 'SHA-1', 'hex') != '4fd0b215276ef12f2b3e4c8ecac2811498b656fc']">
 	<xforms:label>Test 1 FAIL: </xforms:label>
 	<xforms:output value="hmac('key', 'abc', 'SHA-1', 'hex')">
 	  <xforms:label>Bad Value =</xforms:label>
@@ -36,10 +36,10 @@
     </xforms:group>
 
     <xforms:group>
-      <xforms:group ref="self::node()[translate(hmac('key', 'abc', 'MD5', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'd2fe98063f876b03193afb49b4979591']">
+      <xforms:group ref="self::node()[hmac('key', 'abc', 'MD5', 'hex') = 'd2fe98063f876b03193afb49b4979591']">
 	<xforms:label>Test 2 PASS </xforms:label>
       </xforms:group>
-      <xforms:group ref="self::node()[translate(hmac('key', 'abc', 'MD5', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') != 'd2fe98063f876b03193afb49b4979591']">
+      <xforms:group ref="self::node()[hmac('key', 'abc', 'MD5', 'hex') != 'd2fe98063f876b03193afb49b4979591']">
 	<xforms:label>Test 2 FAIL: </xforms:label>
 	<xforms:output value="hmac('key', 'abc', 'MD5', 'hex')">
 	  <xforms:label>Bad Value =</xforms:label>
@@ -48,10 +48,10 @@
     </xforms:group>
 
     <xforms:group>
-      <xforms:group ref="self::node()[translate(hmac('key', 'abc', 'SHA-256', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '9c196e32dc0175f86f4b1cb89289d6619de6bee699e4c378e68309ed97a1a6ab']">
+      <xforms:group ref="self::node()[hmac('key', 'abc', 'SHA-256', 'hex') = '9c196e32dc0175f86f4b1cb89289d6619de6bee699e4c378e68309ed97a1a6ab']">
 	<xforms:label>Test 3 PASS </xforms:label>
       </xforms:group>
-      <xforms:group ref="self::node()[translate(hmac('key', 'abc', 'SHA-256', 'hex'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') != '9c196e32dc0175f86f4b1cb89289d6619de6bee699e4c378e68309ed97a1a6ab']">
+      <xforms:group ref="self::node()[hmac('key', 'abc', 'SHA-256', 'hex') != '9c196e32dc0175f86f4b1cb89289d6619de6bee699e4c378e68309ed97a1a6ab']">
 	<xforms:label>Test 3 FAIL: </xforms:label>
 	<xforms:output value="hmac('key', 'abc', 'SHA-256', 'hex')">
 	  <xforms:label>Bad Value =</xforms:label>

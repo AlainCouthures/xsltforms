@@ -71,10 +71,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 								<xsl:apply-templates select="xforms:hint/node()"/>
 							</xsl:attribute>
 						</xsl:if>
-						<xsl:if test="local-name() != 'trigger' and local-name() != 'submit' and local-name() != 'reset' and local-name() != 'output' and xforms:label/node() and string($appearance) != 'none'">
+						<xsl:if test="local-name() != 'trigger' and local-name() != 'submit' and local-name() != 'reset' and local-name() != 'output' and xforms:label and string($appearance) != 'none'">
 							<span class="focus">&#160;<xsl:text/></span>
 						</xsl:if>
-						<xsl:if test="local-name() != 'trigger' and local-name() != 'submit' and local-name() != 'reset' and xforms:label/node() and string($appearance) != 'none'">
+						<xsl:if test="local-name() != 'trigger' and local-name() != 'submit' and local-name() != 'reset' and xforms:label and string($appearance) != 'none'">
 							<xsl:choose>
 								<xsl:when test="$appearance = 'minimal'">
 									<xsl:apply-templates select="node()">

@@ -65,6 +65,7 @@ XsltForms_delete.prototype.run = function(element, ctx) {
 		model = document.getElementById(XsltForms_browser.getMeta(nodes[0].documentElement ? nodes[0].documentElement : nodes[0].ownerDocument.documentElement, "model")).xfElement;
 		instance = model.findInstance(nodes[0]);
 	}
+	var deletedNodes = [];
 	for (var i = 0, len = nodes.length; i < len; i++) {
 		var node = nodes[i];
 		XsltForms_mipbinding.nodedispose(node);
@@ -73,19 +74,26 @@ XsltForms_delete.prototype.run = function(element, ctx) {
 			document.getElementById(repeat).xfElement.deleteNode(node);
 		}
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
-			if (node.ownerElement) {
-				node.ownerElement.removeAttributeNS(node.namespaceURI, node.nodeName);
+			var oldOwnerElement = node.ownerElement? node.ownerElement: node.selectSingleNode("..");
+			//XsltForms_browser.clearMeta(node);
+			if (oldOwnerElement.removeAttributeNS) {
+				oldOwnerElement.removeAttributeNS(node.namespaceURI, node.nodeName);
 			} else {
-				node.selectSingleNode("..").removeAttributeNS(node.namespaceURI, node.nodeName);
+				oldOwnerElement.removeAttributeNode(node);
+			}
+			if (!XsltForms_browser.isIE && !XsltForms_browser.isIE11) {
+				node.oldOwnerElement = oldOwnerElement;
 			}
 		} else {
 			node.parentNode.removeChild(node);
 		}
+		deletedNodes.push(node);
 	}
 	if (nodes.length > 0) {
 		XsltForms_globals.addChange(model);
 		model.setRebuilded(true);
-		XsltForms_xmlevents.dispatch(instance, "xforms-delete");
+		var evcontext = {"deleted-nodes": deletedNodes, "delete-location": index};
+		XsltForms_xmlevents.dispatch(instance, "xforms-delete", null, null, null, null, evcontext);
 	}
 };
     ]]>

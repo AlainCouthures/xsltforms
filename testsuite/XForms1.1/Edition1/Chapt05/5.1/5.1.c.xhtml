@@ -227,15 +227,15 @@
       </xforms:input>
     </xforms:group>
     <xforms:group>
-      <xforms:upload ref="my_base64Binary">
-	<xforms:label>base64Binary </xforms:label>
-	<xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[11]">
-	  XFORMS-INVALID (base64Binary)
-	</xforms:setvalue>
-	<xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[11]">
-	  xforms-valid (base64Binary)
-	</xforms:setvalue>
-      </xforms:upload>
+			<xforms:output ref="my_base64Binary">
+				<xforms:label>base64Binary </xforms:label>
+				<xforms:setvalue ev:event="xforms-invalid" model="event_model" ref="/events/event[11]">
+					XFORMS-INVALID (base64Binary)
+				</xforms:setvalue>
+				<xforms:setvalue ev:event="xforms-valid" model="event_model" ref="/events/event[11]">
+					xforms-valid (base64Binary)
+				</xforms:setvalue>
+			</xforms:output>
     </xforms:group>
     <xforms:group>
       <xforms:input ref="my_decimal">

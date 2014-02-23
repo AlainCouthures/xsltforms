@@ -11,7 +11,10 @@
     	<xforms:instance>
     		<root/>
     	</xforms:instance>
-    	<xforms:submission id="sub1" action="deleteme.txt" method="delete" replace="none">
+    	<xforms:submission id="sub1" action="deleteme.txt" method="delete" replace="none"/>
+    	
+    	<xforms:submission id="sub2" action="deleteme.txt" method="get" replace="none">
+    		<xforms:message level="modal" ev:event="xforms-submit-error" if="event('error-type')='resource-error'">You pass</xforms:message>
     	</xforms:submission>
     </xforms:model>
   </xhtml:head>
@@ -22,21 +25,17 @@
     <xforms:group>
     	<xforms:label>
     	  The local file, deleteme.txt, must be deleted when you activate the Submit control. 
-    	  If you activate the Load File trigger after activating the Submit control you must get an xforms-link-error 
+    	  If you activate the Load submit control after activating the Submit control you must get a You pass 
     	  message. 
     	</xforms:label>
     </xforms:group>
-    <xforms:action ev:event="xforms-link-error" ev:observer="mod1">
-    	<xforms:message level="modal">xforms-link-error</xforms:message>
-    </xforms:action>
     <xforms:group>
       <xforms:submit submission="sub1">
         <xforms:label>Submit</xforms:label>
       </xforms:submit>
-      <xforms:trigger>
-      	<xforms:label>Load</xforms:label>
-      	<xforms:load ev:event="DOMActivate" resource="deleteme.txt"/>
-      </xforms:trigger>
+      <xforms:submit submission="sub2">
+        <xforms:label>Load</xforms:label>
+      </xforms:submit>
     </xforms:group>
     
   </xhtml:body>

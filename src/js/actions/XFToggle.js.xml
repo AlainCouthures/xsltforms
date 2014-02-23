@@ -55,7 +55,7 @@ XsltForms_toggle.toggle = function(caseId, ctx) {
 		if (!ctx) {
 			ctx = XsltForms_globals.defaultModel.getInstanceDocument() ? XsltForms_globals.defaultModel.getInstanceDocument().documentElement : null;
 		}
-		caseId = XsltForms_globals.stringValue(caseId.xpath.evaluate(ctx));
+		caseId = XsltForms_globals.stringValue(caseId.xpath.xpath_evaluate(ctx));
 	}
 	var element = XsltForms_idManager.find(caseId);
 	var childs = element ? element.parentNode.childNodes : [];

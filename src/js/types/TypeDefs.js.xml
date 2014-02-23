@@ -380,7 +380,7 @@ XsltForms_typeDefs.Default = {
 	"anyURI" : {
 		"nsuri" : "http://www.w3.org/2001/XMLSchema",
 		"base" : "xsd_:token",
-		"patterns" : [ "^(([^:\\/?#]+):)?(\\/\\/([^\\/\\?#]*))?([^\\?#]*)(\\?([^#]*))?(#([^\\:#\\[\\]\\@\\!\\$\\&\\\\'\\(\\)\\*\\+\\,\\;\\=]*))?$" ]
+		"patterns" : [ "^(([^ :\\/?#]+):\\/\\/)?[^ \\/\\?#]+([^ \\?#]*)(\\?([^ #]*))?(#([^ \\:#\\[\\]\\@\\!\\$\\&\\\\'\\(\\)\\*\\+\\,\\;\\=]*))?$" ]
 	},
 ]]>
 		<cm:wiki>
@@ -447,7 +447,7 @@ XsltForms_typeDefs.Default = {
 <![CDATA[
 	"NMTOKENS" : {
 		"nsuri" : "http://www.w3.org/2001/XMLSchema",
-		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.c + "]+( +[" + XsltForms_typeDefs.ctes.c + "]+)*$" ]
+		"patterns" : [ "^[" + XsltForms_typeDefs.ctes.c + "]+( [" + XsltForms_typeDefs.ctes.c + "]+)*$" ]
 	},
 ]]>
 		<cm:wiki>
@@ -853,7 +853,7 @@ XsltForms_typeDefs.XForms = {
 <![CDATA[
 	"NMTOKENS" : {
 		"nsuri" : "http://www.w3.org/2002/xforms",
-		"patterns" : [ "^([" + XsltForms_typeDefs.ctes.c + "]+( +[" + XsltForms_typeDefs.ctes.c + "]+)*)?$" ]
+		"patterns" : [ "^([" + XsltForms_typeDefs.ctes.c + "]+( [" + XsltForms_typeDefs.ctes.c + "]+)*)?$" ]
 	},
 ]]>
 		<cm:wiki>

@@ -5,21 +5,24 @@
   	<xhtml:title>4.2.2.c1 form control referenced instance that did not exist yet</xhtml:title>
   	<xhtml:link rel="stylesheet" href="../../../driverPages/forms/TestSuite11.css" type="text/css"/>
   	<xforms:model>
-  		<xforms:instance id="inst1" resource="4.2.2.c.data.xml"/>
   	</xforms:model>
   </xhtml:head>
   <xhtml:body>
+    <xforms:model>
+  	</xforms:model>
   	<xforms:group>
   		<xforms:label class="title">4.2.2.c1 form control referenced instance that did not exist yet</xforms:label>
   	</xforms:group>
   	<xforms:group>
   		<xforms:label>
-	  		You must see the value &quot;Mitsubishi&quot;:
+	  		You must be able to type in the input and see the result in the output as car="your input"
 		</xforms:label>
   	</xforms:group>
-	<xforms:output ref="/car">
-		<xforms:label></xforms:label>
-	</xforms:output>
+	<xforms:input ref="car">
+		<xforms:label>Type a car model:</xforms:label>
+	</xforms:input>
+	<xforms:output value="concat(local-name(*[1]),'=',car)"/>
 		
   </xhtml:body>
+  
 </xhtml:html>

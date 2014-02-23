@@ -74,20 +74,6 @@
             <testCaseNote />
         </testCase>
         <testCase>
-            <testCaseSection>6.1.3</testCaseSection>
-            <testCaseName>6.1.3.b</testCaseName>
-            <testCaseLink>../../Chapt06/6.1/6.1.3/6.1.3.b.xhtml</testCaseLink>
-            <testCaseDescription>required property with xsi:nil</testCaseDescription>
-            <testCaseSpecLinkName>6.1.3</testCaseSpecLinkName>
-            <testCaseSpecLink>http://www.w3.org/TR/xforms11/#model-prop-required</testCaseSpecLink>
-            <testCaseBasic>false</testCaseBasic>
-            <testCaseNormative>true</testCaseNormative>
-            <testCaseStatus>Unknown</testCaseStatus>
-            <testCaseDate>2005-09-10</testCaseDate>
-            <testCaseRequired>true</testCaseRequired>
-            <testCaseNote />
-        </testCase>
-        <testCase>
             <testCaseSection>6.1.4</testCaseSection>
             <testCaseName>6.1.4.a</testCaseName>
             <testCaseLink>../../Chapt06/6.1/6.1.4/6.1.4.a.xhtml</testCaseLink>
