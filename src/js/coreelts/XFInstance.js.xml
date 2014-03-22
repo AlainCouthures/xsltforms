@@ -58,9 +58,13 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML
 			break;
 		case "text/json":
 		case "application/json":
-			var json;
-			eval("json = " + XsltForms_browser.unescape(srcXML));
-			this.srcXML = XsltForms_browser.json2xml("", json, true, false);
+			if (srcXML) {
+				var json;
+				eval("json = " + XsltForms_browser.unescape(srcXML));
+				this.srcXML = XsltForms_browser.json2xml("", json, true, false);
+			} else {
+				this.srcXML = "";
+			}
 			break;
 		case "text/csv":
 			this.srcXML = XsltForms_browser.csv2xml(XsltForms_browser.unescape(srcXML), this.separator, this.header);
@@ -170,6 +174,8 @@ XsltForms_instance.prototype.construct = function(subform) {
 							XsltForms_browser.debugConsole.write("Loading " + this.src);
 							if ((this.mediatype === "application/zip" || this.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )&& req.overrideMimeType) {
 								req.overrideMimeType('text/plain; charset=x-user-defined');
+							} else if (this.mediatype === "text/json" || this.mediatype === "application/json") {
+								req.overrideMimeType('application/json; charset=x-user-defined');
 							}
 							req.send(null);
 							if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
@@ -231,7 +237,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 <![CDATA[
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
-	var mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type') : "application/xml";
+	var mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type') : this.mediatype;
 	var lines = mediatype.split(";");
 	this.mediatype = lines[0];
 	for (var i = 1, len = lines.length; i < len; i++) {

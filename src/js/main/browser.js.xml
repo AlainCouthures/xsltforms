@@ -1362,10 +1362,10 @@ if (!XsltForms_browser.isIE && !XsltForms_browser.isIE11) {
 				return null;
 		}
 	};
-	Element.prototype.selectNodes = function(xpath) {
+	Node.prototype.selectNodes = function(xpath) {
 		return this.ownerDocument.selectNodes(xpath, false, this);
 	};
-	Element.prototype.selectSingleNode = function(xpath) {	
+	Node.prototype.selectSingleNode = function(xpath) {	
 		return this.ownerDocument.selectNodes(xpath, true, this);
 	};
 }

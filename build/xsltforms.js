@@ -1,4 +1,4 @@
-/* 1.0RC2
+/* Rev. 589
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -1385,10 +1385,10 @@ if (!XsltForms_browser.isIE && !XsltForms_browser.isIE11) {
 				return null;
 		}
 	};
-	Element.prototype.selectNodes = function(xpath) {
+	Node.prototype.selectNodes = function(xpath) {
 		return this.ownerDocument.selectNodes(xpath, false, this);
 	};
-	Element.prototype.selectSingleNode = function(xpath) {	
+	Node.prototype.selectSingleNode = function(xpath) {	
 		return this.ownerDocument.selectNodes(xpath, true, this);
 	};
 }
@@ -2153,8 +2153,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "1.0RC2",
-	fileVersionNumber: 588,
+	fileVersion: "589",
+	fileVersionNumber: 589,
 
 	language: "navigator",
 	debugMode: false,
@@ -6806,9 +6806,13 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcXML
 			break;
 		case "text/json":
 		case "application/json":
-			var json;
-			eval("json = " + XsltForms_browser.unescape(srcXML));
-			this.srcXML = XsltForms_browser.json2xml("", json, true, false);
+			if (srcXML) {
+				var json;
+				eval("json = " + XsltForms_browser.unescape(srcXML));
+				this.srcXML = XsltForms_browser.json2xml("", json, true, false);
+			} else {
+				this.srcXML = "";
+			}
 			break;
 		case "text/csv":
 			this.srcXML = XsltForms_browser.csv2xml(XsltForms_browser.unescape(srcXML), this.separator, this.header);
@@ -6915,6 +6919,8 @@ XsltForms_instance.prototype.construct = function(subform) {
 							XsltForms_browser.debugConsole.write("Loading " + this.src);
 							if ((this.mediatype === "application/zip" || this.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )&& req.overrideMimeType) {
 								req.overrideMimeType('text/plain; charset=x-user-defined');
+							} else if (this.mediatype === "text/json" || this.mediatype === "application/json") {
+								req.overrideMimeType('application/json; charset=x-user-defined');
 							}
 							req.send(null);
 							if (req.status !== 0 && (req.status < 200 || req.status >= 300)) {
@@ -6972,7 +6978,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 
 XsltForms_instance.prototype.setDocFromReq = function(req, isReset, preserveOld) {
 	var srcXML = req.responseText;
-	var mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type') : "application/xml";
+	var mediatype = req.getResponseHeader('Content-Type') ? req.getResponseHeader('Content-Type') : this.mediatype;
 	var lines = mediatype.split(";");
 	this.mediatype = lines[0];
 	for (var i = 1, len = lines.length; i < len; i++) {
@@ -9664,7 +9670,10 @@ XsltForms_control.prototype.build_ = function(ctx) {
 XsltForms_control.prototype.refresh = function() {
 	var element = this.element;
 	var node = element.node;
-	if (node) {
+	if (this.outputValue !== undefined) {
+		this.setValue(this.outputValue);
+		this.eventDispatch("xforms-disabled", "xforms-enabled", false);
+	} else if (node) {
 		var value = XsltForms_browser.getValue(node, true, this.complex);
 		XsltForms_globals.openAction("XsltForms_control.prototype.refresh");
 		var changed = value !== this.currentValue || this.nodeChanged;
@@ -9683,9 +9692,6 @@ XsltForms_control.prototype.refresh = function() {
 			}
 		}
 		XsltForms_globals.closeAction("XsltForms_control.prototype.refresh");
-	} else if (this.outputValue !== undefined) {
-		this.setValue(this.outputValue);
-		this.eventDispatch("xforms-disabled", "xforms-enabled", false);
 	} else {
 		this.eventDispatch("xforms-disabled", "xforms-enabled", !this.hasValue);
 	}
