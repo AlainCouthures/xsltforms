@@ -128,7 +128,10 @@ XsltForms_control.prototype.build_ = function(ctx) {
 XsltForms_control.prototype.refresh = function() {
 	var element = this.element;
 	var node = element.node;
-	if (node) {
+	if (this.outputValue !== undefined) {
+		this.setValue(this.outputValue);
+		this.eventDispatch("xforms-disabled", "xforms-enabled", false);
+	} else if (node) {
 		var value = XsltForms_browser.getValue(node, true, this.complex);
 		XsltForms_globals.openAction("XsltForms_control.prototype.refresh");
 		var changed = value !== this.currentValue || this.nodeChanged;
@@ -147,9 +150,6 @@ XsltForms_control.prototype.refresh = function() {
 			}
 		}
 		XsltForms_globals.closeAction("XsltForms_control.prototype.refresh");
-	} else if (this.outputValue !== undefined) {
-		this.setValue(this.outputValue);
-		this.eventDispatch("xforms-disabled", "xforms-enabled", false);
 	} else {
 		this.eventDispatch("xforms-disabled", "xforms-enabled", !this.hasValue);
 	}

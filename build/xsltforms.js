@@ -1,4 +1,4 @@
-/* Rev. 589
+/* Rev. 590
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -225,11 +225,16 @@ var XsltForms_browser = {
 
 		
 
+                                getWindowSize : function() {
+                                var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
+                                if (!(XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
+                                                myWidth = document.body.clientWidth;
+                                                myHeight = document.body.clientHeight;
 	getWindowSize : function() {
 		var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
-		if (!XsltForms_browser.isIE) {
-			myWidth = document.documentElement.clientWidth;
-			myHeight = document.documentElement.clientHeight;
+		if (!(XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
+			myWidth = document.body ? document.body.clientWidth : document.documentElement.clientWidth;
+			myHeight = document.body ? document.body.clientHeight : document.documentElement.clientHeight;
 			myOffsetX = document.body ? Math.max(document.documentElement.clientWidth, document.body.clientWidth) : document.documentElement.clientWidth; // body margins ?
 			myOffsetY = document.body ? Math.max(document.documentElement.clientHeight, document.body.clientHeight) : document.documentElement.clientHeight; // body margins ?
 			myScrollX = window.scrollX;
@@ -2153,8 +2158,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "589",
-	fileVersionNumber: 589,
+	fileVersion: "590",
+	fileVersionNumber: 590,
 
 	language: "navigator",
 	debugMode: false,
@@ -2197,6 +2202,7 @@ var XsltForms_globals = {
 	},
 	nbsubforms: 0,
 	componentLoads: [],
+	jslibraries: {},
 
 		
 
@@ -6919,6 +6925,8 @@ XsltForms_instance.prototype.construct = function(subform) {
 							XsltForms_browser.debugConsole.write("Loading " + this.src);
 							if ((this.mediatype === "application/zip" || this.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )&& req.overrideMimeType) {
 								req.overrideMimeType('text/plain; charset=x-user-defined');
+							} else if (this.mediatype === "text/csv") {
+								req.overrideMimeType('text/csv');
 							} else if (this.mediatype === "text/json" || this.mediatype === "application/json") {
 								req.overrideMimeType('application/json; charset=x-user-defined');
 							}
@@ -10053,8 +10061,12 @@ XsltForms_input.prototype.clone = function(id) {
 XsltForms_input.prototype.dispose = function() {
 	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
 		try {
-			tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
-			tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+			if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
+				tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
+				tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+			} else {
+				tinyMCE.editors[this.cell.children[1].id].remove();
+			}
 		} catch(e) {
 			alert(e);
 		}
@@ -10080,29 +10092,48 @@ XsltForms_input.prototype.initInput = function(type) {
 		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
 			input.id = this.element.id + "_textarea";
 			XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
-			if (!XsltForms_globals.tinyMCEinit) {
+			if (!XsltForms_globals.tinyMCEinit || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) !== "3.") {
 				var initinfo;
-				eval("initinfo = " + (type.appinfo ? type.appinfo : "{}"));
+				eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
 				initinfo.mode = "none";
-				initinfo.setup = function(ed) {
-					ed.onKeyUp.add(function(ed) {
-						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-					});
-					ed.onChange.add(function(ed) {
-						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-					});
-					ed.onUndo.add(function(ed) {
-						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-					});
-					ed.onRedo.add(function(ed) {
-						XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-					});
-				};
+				if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
+					initinfo.setup = function(ed) {
+						ed.onKeyUp.add(function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+						});
+						ed.onChange.add(function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+						});
+						ed.onUndo.add(function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+						});
+						ed.onRedo.add(function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+						});
+					};
+				} else {
+					initinfo.setup = function(ed) {
+						ed.on("KeyUp", function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.innerHTML || "");
+						});
+						ed.on("Change", function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+						});
+						ed.on("Undo", function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+						});
+						ed.on("Redo", function(ed) {
+							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+						});
+					};
+					initinfo.selector = "#" + input.id;
+				}
 				XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
 				tinyMCE.init(initinfo);
 				XsltForms_globals.tinyMCEinit = true;
 			}
 			tinyMCE.execCommand("mceAddControl", true, input.id);
+			//this.editor = new tinymce.Editor(input.id, initinfo, tinymce.EditorManager);
 		}
 		this.initEvents(input, false);
 	} else if (type !== this.type) {

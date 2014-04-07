@@ -86,6 +86,7 @@ var XsltForms_globals = {
 	},
 	nbsubforms: 0,
 	componentLoads: [],
+	jslibraries: {},
 ]]>
 		<cm:wiki>
 * '''debugging''' method : toggles debug mode</cm:wiki>

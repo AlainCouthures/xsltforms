@@ -32,11 +32,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:when test="$type = 'repeat'">
 					<xsl:variable name="mainelt">
 						<xsl:choose>
-							<xsl:when test="parent::*[local-name()='table']">tbody</xsl:when>
-							<xsl:when test="parent::*[local-name()='thead']">thead</xsl:when>
-							<xsl:when test="parent::*[local-name()='tbody']">tbody</xsl:when>
-							<xsl:when test="parent::*[local-name()='tfoot']">tfoot</xsl:when>
-							<xsl:when test="parent::*[local-name()='tr']">tr</xsl:when>
+							<xsl:when test="parent::*[local-name()='table' or @appearance='table']">tbody</xsl:when>
+							<xsl:when test="parent::*[local-name()='thead' or @appearance='table-head']">thead</xsl:when>
+							<xsl:when test="parent::*[local-name()='tbody' or @appearance='table-body']">tbody</xsl:when>
+							<xsl:when test="parent::*[local-name()='tfoot' or @appearance='table-foot']">tfoot</xsl:when>
+							<xsl:when test="parent::*[local-name()='tr' or @appearance='table-row']">tr</xsl:when>
 							<xsl:when test="ancestor::*[namespace-uri() = 'http://www.w3.org/2000/svg']">g</xsl:when>
 							<xsl:otherwise>div</xsl:otherwise>
 						</xsl:choose>
@@ -60,16 +60,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="$mainelt != 'div' and $mainelt != 'g' and parent::*/parent::xforms:repeat">
 							<xsl:attribute name="mixedrepeat">true</xsl:attribute>
 						</xsl:if>
-						<xsl:if test="parent::*[local-name()='table']">
+						<xsl:if test="parent::*[local-name()='table' or @appearance='table']">
 							<xsl:apply-templates select="preceding-sibling::node()">
 								<xsl:with-param name="parentworkid" select="substring-after($workid,'_')"/>
 							</xsl:apply-templates>
 						</xsl:if>
 						<xsl:variable name="itemelt">
 							<xsl:choose>
-								<xsl:when test="parent::*[local-name()='table' or local-name()='thead' or local-name()='tbody' or local-name()='tfoot']">tr</xsl:when>
-								<xsl:when test="parent::*[local-name()='tr'] and ancestor::*[2][local-name()='thead']">th</xsl:when>
-								<xsl:when test="parent::*[local-name()='tr']">td</xsl:when>
+								<xsl:when test="parent::*[local-name()='table' or local-name()='thead' or local-name()='tbody' or local-name()='tfoot' or @appearance='table' or @appearance='table-head' or @appearance='table-body' or @appearance='table-foot']">tr</xsl:when>
+								<xsl:when test="parent::*[local-name()='tr' or @appearance='table-row'] and ancestor::*[2][local-name()='thead' or @appearance='table-head']">th</xsl:when>
+								<xsl:when test="parent::*[local-name()='tr' or @appearance='table-row']">td</xsl:when>
 								<xsl:when test="ancestor::*[namespace-uri() = 'http://www.w3.org/2000/svg']">g</xsl:when>
 								<xsl:otherwise>div</xsl:otherwise>
 							</xsl:choose>
@@ -159,11 +159,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:otherwise>
 					<xsl:variable name="mainelt">
 						<xsl:choose>
-							<xsl:when test="parent::*[local-name()='table']">tbody</xsl:when>
-							<xsl:when test="parent::*[local-name()='thead']">thead</xsl:when>
+							<xsl:when test="$appearance='table'">table</xsl:when>
+							<xsl:when test="$appearance='table-caption'">caption</xsl:when>
+							<xsl:when test="parent::*[local-name()='table'] or $appearance='table-body'">tbody</xsl:when>
+							<xsl:when test="parent::*[local-name()='thead'] or $appearance='table-head'">thead</xsl:when>
 							<xsl:when test="parent::*[local-name()='tbody']">tbody</xsl:when>
-							<xsl:when test="parent::*[local-name()='tfoot']">tfoot</xsl:when>
-							<xsl:when test="parent::*[local-name()='tr']">tr</xsl:when>
+							<xsl:when test="parent::*[local-name()='tfoot'] or $appearance='table-foot'">tfoot</xsl:when>
+							<xsl:when test="parent::*[local-name()='tr'] or $appearance='table-row'">tr</xsl:when>
+							<xsl:when test="$appearance='table-cell'">td</xsl:when>
 							<xsl:when test="ancestor::*[namespace-uri() = 'http://www.w3.org/2000/svg']">g</xsl:when>
 							<xsl:otherwise>div</xsl:otherwise>
 						</xsl:choose>
@@ -189,32 +192,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="$type = 'case' and (not(@selected) or @selected != 'true')">
 							<xsl:attribute name="style">display:none;</xsl:attribute>
 						</xsl:if>
-						<xsl:for-each select="node()">
-							<xsl:if test="self::xforms:label">
-								<xsl:apply-templates select=".">
-									<xsl:with-param name="workid" select="concat(position(),'_',$workid)"/>
-									<xsl:with-param name="appearance" select="'groupTitle'"/>
+						<xsl:choose>
+							<xsl:when test="starts-with($appearance, 'table')">
+								<xsl:apply-templates select="node()">
+									<xsl:with-param name="parentworkid" select="$workid"/>
+									<xsl:with-param name="appearance" select="'groupNone'"/>
 								</xsl:apply-templates>
-							</xsl:if>
-						</xsl:for-each>
-						<xsl:variable name="itemelt">
-							<xsl:choose>
-								<xsl:when test="parent::*[local-name()='table' or local-name()='thead' or local-name()='tbody' or local-name()='tfoot']">tr</xsl:when>
-								<xsl:when test="parent::*[local-name()='tr']">td</xsl:when>
-								<xsl:when test="ancestor::*[namespace-uri() = 'http://www.w3.org/2000/svg']">g</xsl:when>
-								<xsl:otherwise>div</xsl:otherwise>
-							</xsl:choose>
-						</xsl:variable>
-						<xsl:variable name="itemns">
-							<xsl:if test="$mainelt = 'g'">http://www.w3.org/2000/svg</xsl:if>
-						</xsl:variable>
-						<xsl:element name="{$itemelt}" namespace="{$itemns}">
-							<xsl:attribute name="class">xforms-<xsl:value-of select="$type"/>-content</xsl:attribute>
-							<xsl:apply-templates select="node()">
-								<xsl:with-param name="parentworkid" select="$workid"/>
-								<xsl:with-param name="appearance" select="'groupNone'"/>
-							</xsl:apply-templates>
-						</xsl:element>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:for-each select="node()">
+									<xsl:if test="self::xforms:label">
+										<xsl:apply-templates select=".">
+											<xsl:with-param name="workid" select="concat(position(),'_',$workid)"/>
+											<xsl:with-param name="appearance" select="'groupTitle'"/>
+										</xsl:apply-templates>
+									</xsl:if>
+								</xsl:for-each>
+								<xsl:variable name="itemelt">
+									<xsl:choose>
+										<xsl:when test="parent::*[local-name()='table' or local-name()='thead' or local-name()='tbody' or local-name()='tfoot']">tr</xsl:when>
+										<xsl:when test="parent::*[local-name()='tr']">td</xsl:when>
+										<xsl:when test="ancestor::*[namespace-uri() = 'http://www.w3.org/2000/svg']">g</xsl:when>
+										<xsl:otherwise>div</xsl:otherwise>
+									</xsl:choose>
+								</xsl:variable>
+								<xsl:variable name="itemns">
+									<xsl:if test="$mainelt = 'g'">http://www.w3.org/2000/svg</xsl:if>
+								</xsl:variable>
+								<xsl:element name="{$itemelt}" namespace="{$itemns}">
+									<xsl:attribute name="class">xforms-<xsl:value-of select="$type"/>-content</xsl:attribute>
+									<xsl:apply-templates select="node()">
+										<xsl:with-param name="parentworkid" select="$workid"/>
+										<xsl:with-param name="appearance" select="'groupNone'"/>
+									</xsl:apply-templates>
+								</xsl:element>
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:element>
 				</xsl:otherwise>
 			</xsl:choose>

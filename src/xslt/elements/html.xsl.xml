@@ -114,7 +114,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:apply-templates select="xhtml:head/xhtml:style | xhtml:head/xhtml:link | head/style | head/link">
 						<xsl:with-param name="config" select="$script/config"/>
 					</xsl:apply-templates>
-					<script id="xsltforms-src" src="{$resourcesdir}xsltforms.js" type="text/javascript">/* */</script>
+					<script id="xsltforms-src" src="{$resourcesdir}xsltforms.js" type="text/javascript" data-uri="http://www.agencexml.com/xsltforms">
+						<xsl:attribute name="data-version"><cm:value name="versionNumber"/></xsl:attribute>
+						<xsl:text>/* */</xsl:text>
+					</script>
 					<xsl:for-each select="$script/config/jsextensions">
 						<script id="xsltforms-jsextension{position()}" src="{$resourcesdir}{.}" type="text/javascript">/* */</script>
 					</xsl:for-each>

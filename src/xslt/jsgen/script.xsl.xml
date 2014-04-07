@@ -1,7 +1,10 @@
-<cm:config xmlns:cm="http://www.agencexml.com/cm">
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="load.xsl">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2014-04-02</cm:creationdate>
+	<cm:lastupdate>2014-04-02</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
-Contact at : xsltforms@agencexml.com
+Contact at : info@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
 Contact at: info@ajaxforms.com
@@ -20,7 +23,15 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
-	<cm:version>590</cm:version>
-	<cm:versionNumber>590</cm:versionNumber>
-	<cm:year>2014</cm:year>
-</cm:config>
+	<cm:source type="application/xml">
+		<xsl:template match="xhtml:script[@data-uri] | script[@data-uri]" mode="script" priority="1" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms">
+			<js xmlns="">
+				<xsl:text>XsltForms_globals.jslibraries["</xsl:text>
+				<xsl:value-of select="@data-uri"/>
+				<xsl:text>"] = "</xsl:text>
+				<xsl:value-of select="@data-version"/>
+				<xsl:text>";</xsl:text>
+			</js>
+		</xsl:template>
+	</cm:source>
+</cm:component>

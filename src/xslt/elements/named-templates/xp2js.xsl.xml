@@ -44,24 +44,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:value-of select="substring-after($t,'.')"/><xsl:text>)</xsl:text>
 					</xsl:when>
 					<xsl:when test="$c = &quot;'&quot;">
-						<xsl:variable name="t">'<xsl:value-of select="substring-before($d,&quot;'&quot;)"/>'</xsl:variable>
+						<xsl:variable name="t"><xsl:value-of select="substring-before($d,&quot;'&quot;)"/></xsl:variable>
 						<xsl:variable name="t2">
+							<xsl:text>'</xsl:text>
 							<xsl:call-template name="escapeJS">
 								<xsl:with-param name="text" select="$t"/>
 								<xsl:with-param name="trtext" select="translate($t,'&#13;&#9;&quot;','&#10;&#10;&#10;')"/>
 							</xsl:call-template>
+							<xsl:text>'</xsl:text>
 						</xsl:variable>
-						<xsl:value-of select="concat(string-length($t),'.new XsltForms_cteExpr(',$t2,')')"/>
+						<xsl:value-of select="concat(string-length($t)+2,'.new XsltForms_cteExpr(',$t2,')')"/>
 					</xsl:when>
 					<xsl:when test="$c = '&quot;'">
-						<xsl:variable name="t">"<xsl:value-of select="substring-before($d,'&quot;')"/>"</xsl:variable>
+						<xsl:variable name="t"><xsl:value-of select="substring-before($d,'&quot;')"/></xsl:variable>
 						<xsl:variable name="t2">
+							<xsl:text>"</xsl:text>
 							<xsl:call-template name="escapeJS">
 								<xsl:with-param name="text" select="$t"/>
 								<xsl:with-param name="trtext" select="translate($t,'&#13;&#9;&quot;','&#10;&#10;&#10;')"/>
 							</xsl:call-template>
+							<xsl:text>"</xsl:text>
 						</xsl:variable>
-						<xsl:value-of select="concat(string-length($t),'.new XsltForms_cteExpr(',$t2,')')"/>
+						<xsl:value-of select="concat(string-length($t)+2,'.new XsltForms_cteExpr(',$t2,')')"/>
 					</xsl:when>
 					<xsl:when test="$c = '('">
 						<xsl:text>(</xsl:text>

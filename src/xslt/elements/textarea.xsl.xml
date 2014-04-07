@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:with-param name="workid" select="$workid"/>
 				<xsl:with-param name="appearance" select="$appearance"/>
 				<xsl:with-param name="body">
-					<textarea><xsl:copy-of select="@*[local-name() != 'ref']"/><xsl:call-template name="comun"/><xsl:text/>&#160;</textarea>
+					<textarea><xsl:copy-of select="@*[local-name() != 'ref' and local-name() != 'id' and local-name() != 'class']"/><xsl:call-template name="comun"/><xsl:text/>&#160;</textarea>
 				</xsl:with-param>
 			</xsl:call-template>
 		</xsl:template>
