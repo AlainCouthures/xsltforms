@@ -1,4 +1,4 @@
-/* Rev. 590
+/* Rev. 592
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -225,11 +225,6 @@ var XsltForms_browser = {
 
 		
 
-                                getWindowSize : function() {
-                                var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
-                                if (!(XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
-                                                myWidth = document.body.clientWidth;
-                                                myHeight = document.body.clientHeight;
 	getWindowSize : function() {
 		var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
 		if (!(XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
@@ -2158,8 +2153,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "590",
-	fileVersionNumber: 590,
+	fileVersion: "592",
+	fileVersionNumber: 592,
 
 	language: "navigator",
 	debugMode: false,

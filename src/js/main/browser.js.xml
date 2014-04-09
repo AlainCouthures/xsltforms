@@ -194,11 +194,6 @@ var XsltForms_browser = {
 		<cm:wiki>
 * '''getWindowSize''' method : obtains window size for various browsers</cm:wiki>
 <![CDATA[
-                                getWindowSize : function() {
-                                var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
-                                if (!(XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
-                                                myWidth = document.body.clientWidth;
-                                                myHeight = document.body.clientHeight;
 	getWindowSize : function() {
 		var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
 		if (!(XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
