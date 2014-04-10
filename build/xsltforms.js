@@ -1,4 +1,4 @@
-/* Rev. 592
+/* Rev. 593
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2153,8 +2153,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "592",
-	fileVersionNumber: 592,
+	fileVersion: "593",
+	fileVersionNumber: 593,
 
 	language: "navigator",
 	debugMode: false,
