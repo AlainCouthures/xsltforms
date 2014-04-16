@@ -362,7 +362,7 @@ XsltForms_instance.prototype.validation_ = function(node, readonly, notrelevant)
 	if (atts) {
 		var atts2 = [];
 		for (var i = 0, len = atts.length; i < len; i++) {
-			if (atts[i].nodeName.substr(0,10) !== "xsltforms_") {
+			if (atts[i].nodeName.substr(0,10) !== "xsltforms_" && atts[i].nodeName.substr(0,5) !== "xmlns") {
 				atts2[atts2.length] = atts[i];
 			}
 		}
