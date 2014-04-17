@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:variable name="text2" select="substring-before($text,$entity)"/>
 					<xsl:variable name="last" select="substring($text2, string-length($text2), 1)"/>
 					<xsl:variable name="lastn" select="substring(normalize-space($text2), string-length(normalize-space($text2)), 1)"/>
-					<xsl:variable name="text3"><xsl:choose><xsl:when test="$entity = '&#xA;' and $last != $lastn and $last != ' ' and $last != '&#x9;'"><xsl:value-of select="substring($text2,1,string-length($text2)-1)"/></xsl:when><xsl:otherwise><xsl:value-of select="$text2"/></xsl:otherwise></xsl:choose></xsl:variable>
+					<xsl:variable name="text3"><xsl:choose><xsl:when test="$entity = $newline and $last != $lastn and $last != ' ' and $last != $tab"><xsl:value-of select="substring($text2,1,string-length($text2)-1)"/></xsl:when><xsl:otherwise><xsl:value-of select="$text2"/></xsl:otherwise></xsl:choose></xsl:variable>
 					<xsl:call-template name="escapeEntities">
 						<xsl:with-param name="text" select="$text3"/>
 						<xsl:with-param name="entities" select="substring-after(substring-after($entities,'.'),'.')"/>
