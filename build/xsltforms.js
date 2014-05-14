@@ -1,4 +1,4 @@
-/* Rev. 595
+/* Rev. 596
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2153,8 +2153,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "595",
-	fileVersionNumber: 595,
+	fileVersion: "596",
+	fileVersionNumber: 596,
 
 	language: "navigator",
 	debugMode: false,
@@ -2822,7 +2822,6 @@ var XsltForms_globals = {
 				try {
 					this.focus.blur();
 				} catch (e){
-					alert("Blur?");
 				}
 				this.closeAction("XsltForms_globals.blur");
 			}
@@ -3207,7 +3206,7 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, 
 		if (event.target && event.target.nodeType === 3) {
 			event.target = event.target.parentNode;
 		}
-		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
+		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName.toUpperCase() === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
 //		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
@@ -6086,8 +6085,8 @@ var XsltForms_xpathCoreFunctions = {
 					var res = "";
 					for (i = 0; i < l2b; i += 3) {
 						var c1b = str2.charCodeAt(i);
-						var c2b = i + 1 < l2 ? str2.charCodeAt(i + 1) : 0;
-						var c3b = i + 2 < l2 ? str2.charCodeAt(i + 2) : 0;
+						var c2b = i + 1 < l2b ? str2.charCodeAt(i + 1) : 0;
+						var c3b = i + 2 < l2b ? str2.charCodeAt(i + 2) : 0;
 						res += b64.charAt(c1b >> 2) + b64.charAt((c1b & 3) << 4 | c2b >> 4) + (i + 1 < l2b ? b64.charAt((c2b & 15) << 2 | c3b >> 6) : "=") + (i + 2 < l2b ? b64.charAt(c3b & 63) : "=");
 					}
 					return res;
@@ -6400,7 +6399,7 @@ XsltForms_globals.validate_ = function (node) {
 	}
 	var atts = node.attributes || [];
 	for (var i = 0, len = atts.length; i < len; i++) {
-		if (atts[i].nodeName.substr(0,10) !== "xsltforms_" && !XsltForms_globals.validate_(atts[i])) {
+		if (atts[i].nodeName.substr(0,10) !== "xsltforms_" && atts[i].nodeName.substr(0,5) !== "xmlns" && !XsltForms_globals.validate_(atts[i])) {
 			return false;
 		}
 	}
@@ -10054,16 +10053,25 @@ XsltForms_input.prototype.clone = function(id) {
 		
 
 XsltForms_input.prototype.dispose = function() {
-	if (this.mediatype === "application/xhtml+xml" && this.type.rte && this.type.rte.toLowerCase() === "tinymce") {
-		try {
-			if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
-				tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
-				tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
-			} else {
-				tinyMCE.editors[this.cell.children[1].id].remove();
-			}
-		} catch(e) {
-			alert(e);
+	if (this.mediatype === "application/xhtml+xml" && this.type.rte) {
+		switch(this.type.rte.toLowerCase()) {
+			case "tinymce":
+				try {
+					if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
+						tinyMCE.execCommand("mceFocus", false, this.cell.children[0].id);
+						tinyMCE.execCommand("mceRemoveControl", false, this.cell.children[0].id);
+					} else {
+						tinyMCE.editors[this.cell.children[1].id].remove();
+					}
+				} catch(e) {
+					alert(e);
+				}
+				break;
+			case "ckeditor":
+				if (this.rte) {
+					this.rte.destroy();
+					this.rte = null;
+				}
 		}
 	}
 	this.cell = null;
@@ -10084,51 +10092,70 @@ XsltForms_input.prototype.initInput = function(type) {
 		this.initEvents(input, true);
 	} else if (input.nodeName.toLowerCase() === "textarea") {
 		this.type = type;
-		if (this.mediatype === "application/xhtml+xml" && type.rte && type.rte.toLowerCase() === "tinymce") {
-			input.id = this.element.id + "_textarea";
-			XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
-			if (!XsltForms_globals.tinyMCEinit || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) !== "3.") {
-				var initinfo;
-				eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
-				initinfo.mode = "none";
-				if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
-					initinfo.setup = function(ed) {
-						ed.onKeyUp.add(function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-						});
-						ed.onChange.add(function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-						});
-						ed.onUndo.add(function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-						});
-						ed.onRedo.add(function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
-						});
-					};
-				} else {
-					initinfo.setup = function(ed) {
-						ed.on("KeyUp", function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.innerHTML || "");
-						});
-						ed.on("Change", function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
-						});
-						ed.on("Undo", function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
-						});
-						ed.on("Redo", function(ed) {
-							XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
-						});
-					};
-					initinfo.selector = "#" + input.id;
-				}
-				XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
-				tinyMCE.init(initinfo);
-				XsltForms_globals.tinyMCEinit = true;
+		if (this.mediatype === "application/xhtml+xml" && type.rte) {
+			switch(type.rte.toLowerCase()) {
+				case "tinymce":
+					input.id = this.element.id + "_textarea";
+					XsltForms_browser.debugConsole.write(input.id+": init="+XsltForms_globals.tinyMCEinit);
+					if (!XsltForms_globals.tinyMCEinit || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) !== "3.") {
+						var initinfo;
+						eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
+						initinfo.mode = "none";
+						if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
+							initinfo.setup = function(ed) {
+								ed.onKeyUp.add(function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+								});
+								ed.onChange.add(function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+								});
+								ed.onUndo.add(function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+								});
+								ed.onRedo.add(function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
+								});
+							};
+						} else {
+							initinfo.setup = function(ed) {
+								ed.on("KeyUp", function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.innerHTML || "");
+								});
+								ed.on("Change", function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+								});
+								ed.on("Undo", function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+								});
+								ed.on("Redo", function(ed) {
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+								});
+							};
+							initinfo.selector = "#" + input.id;
+						}
+						XsltForms_browser.debugConsole.write(input.id+": initinfo="+initinfo);
+						tinyMCE.init(initinfo);
+						XsltForms_globals.tinyMCEinit = true;
+					}
+					tinyMCE.execCommand("mceAddControl", true, input.id);
+					//this.editor = new tinymce.Editor(input.id, initinfo, tinymce.EditorManager);
+					break;
+				case "ckeditor":
+					input.id = this.element.id + "_textarea";
+					if (!CKEDITOR.replace) {
+						alert("CKEditor is not compatible with XHTML mode.");
+					}
+					var initinfo;
+					eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
+					this.rte = CKEDITOR.replace(input.id, initinfo);
+					this.rte.on("change", function(ev) {
+						var data = this.getData();
+						if (data.substr(data.length - 1) === "\n") {
+							data = data.substr(0, data.length - 1);
+						}
+						XsltForms_control.getXFElement(document.getElementById(this.name)).valueChanged(data || "");
+					});
 			}
-			tinyMCE.execCommand("mceAddControl", true, input.id);
-			//this.editor = new tinymce.Editor(input.id, initinfo, tinymce.EditorManager);
 		}
 		this.initEvents(input, false);
 	} else if (type !== this.type) {
@@ -10203,6 +10230,19 @@ XsltForms_input.prototype.setValue = function(value) {
 			XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
 		}
 		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "ckeditor") {
+		var data = this.rte.getData();
+		if (data.substr(data.length - 1) === "\n") {
+			data = data.substr(0, data.length - 1);
+		}
+		if (data !== value) {
+			XsltForms_browser.debugConsole.write("value = '"+value+"'");
+			XsltForms_browser.debugConsole.write(this.input.id+": getData() = '"+this.rte.getData()+"'");
+			XsltForms_browser.debugConsole.write(this.input.id+".value = '"+this.input.value+"'");
+			this.input.value = value || "";
+			this.rte.setData(value);
+			//this.input.value = this.rte.getData() || "";
+		}
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";
 	}

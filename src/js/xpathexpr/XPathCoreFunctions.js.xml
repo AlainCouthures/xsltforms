@@ -1650,8 +1650,8 @@ var XsltForms_xpathCoreFunctions = {
 					var res = "";
 					for (i = 0; i < l2b; i += 3) {
 						var c1b = str2.charCodeAt(i);
-						var c2b = i + 1 < l2 ? str2.charCodeAt(i + 1) : 0;
-						var c3b = i + 2 < l2 ? str2.charCodeAt(i + 2) : 0;
+						var c2b = i + 1 < l2b ? str2.charCodeAt(i + 1) : 0;
+						var c3b = i + 2 < l2b ? str2.charCodeAt(i + 2) : 0;
 						res += b64.charAt(c1b >> 2) + b64.charAt((c1b & 3) << 4 | c2b >> 4) + (i + 1 < l2b ? b64.charAt((c2b & 15) << 2 | c3b >> 6) : "=") + (i + 2 < l2b ? b64.charAt(c3b & 63) : "=");
 					}
 					return res;
@@ -1989,7 +1989,7 @@ XsltForms_globals.validate_ = function (node) {
 	}
 	var atts = node.attributes || [];
 	for (var i = 0, len = atts.length; i < len; i++) {
-		if (atts[i].nodeName.substr(0,10) !== "xsltforms_" && !XsltForms_globals.validate_(atts[i])) {
+		if (atts[i].nodeName.substr(0,10) !== "xsltforms_" && atts[i].nodeName.substr(0,5) !== "xmlns" && !XsltForms_globals.validate_(atts[i])) {
 			return false;
 		}
 	}

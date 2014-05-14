@@ -36,7 +36,7 @@
 									<txs:include xmlns:xsl="http://www.w3.org/1999/XSL/Transform" href="/sourceforge/trunk/src/config.xsl"/>
 								-->
 									<xsl:copy-of select="/cm:component/rdf:RDF"/>
-									<txs:output method="html" encoding="utf-8" omit-xml-declaration="no" indent="no" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
+									<txs:output method="html" encoding="utf-8" omit-xml-declaration="yes" indent="no" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN" doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
 									<xsl:apply-templates select="/cm:component/cm:source/node()">
 										<xsl:with-param name="loc">
 											<xsl:call-template name="locationextract">

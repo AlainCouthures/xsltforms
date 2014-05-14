@@ -726,7 +726,6 @@ var XsltForms_globals = {
 				try {
 					this.focus.blur();
 				} catch (e){
-					alert("Blur?");
 				}
 				this.closeAction("XsltForms_globals.blur");
 			}

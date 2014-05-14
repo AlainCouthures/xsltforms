@@ -60,7 +60,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:with-param name="parentworkid" select="$workid"/>
 			</xsl:apply-templates>
 			<message xmlns="">
-				<span xmlns="http://www.w3.org/1999/xhtml" class="xforms-message">
+				<span class="xforms-message">
 					<xsl:call-template name="genid">
 						<xsl:with-param name="workid" select="$workid"/>
 					</xsl:call-template>
