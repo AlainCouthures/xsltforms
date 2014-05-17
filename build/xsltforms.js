@@ -1,4 +1,4 @@
-/* Rev. 596
+/* Rev. 597
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2153,8 +2153,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "596",
-	fileVersionNumber: 596,
+	fileVersion: "597",
+	fileVersionNumber: 597,
 
 	language: "navigator",
 	debugMode: false,
@@ -10230,7 +10230,7 @@ XsltForms_input.prototype.setValue = function(value) {
 			XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
 		}
 		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "ckeditor") {
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "ckeditor" && this.rte) {
 		var data = this.rte.getData();
 		if (data.substr(data.length - 1) === "\n") {
 			data = data.substr(0, data.length - 1);

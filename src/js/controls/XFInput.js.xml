@@ -247,7 +247,7 @@ XsltForms_input.prototype.setValue = function(value) {
 			XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
 		}
 		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "ckeditor") {
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "ckeditor" && this.rte) {
 		var data = this.rte.getData();
 		if (data.substr(data.length - 1) === "\n") {
 			data = data.substr(0, data.length - 1);

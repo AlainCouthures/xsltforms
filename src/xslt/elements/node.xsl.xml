@@ -37,22 +37,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			</xsl:element>
 		</xsl:template>
 		<xsl:template match="@*" priority="-2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-			<xsl:param name="appearance" select="@appearance"/>
-			<xsl:param name="parentworkid"/>
-			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
-			<xsl:attribute name="{local-name()}">
-				<xsl:apply-templates select="node()">
-					<xsl:with-param name="parentworkid" select="$workid"/>
-					<xsl:with-param name="appearance" select="$appearance"/>
-				</xsl:apply-templates>
-			</xsl:attribute>
+			<xsl:attribute name="{local-name()}"><xsl:value-of select="."/></xsl:attribute>
 		</xsl:template>
 		<xsl:template match="node()" priority="-3" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:param name="appearance" select="@appearance"/>
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
 			<xsl:copy>
-				<xsl:apply-templates select="@*"/>
 				<xsl:apply-templates select="node()">
 					<xsl:with-param name="parentworkid" select="$workid"/>
 					<xsl:with-param name="appearance" select="$appearance"/>
