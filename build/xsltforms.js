@@ -1,4 +1,4 @@
-/* Rev. 597
+/* Rev. 598
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2153,8 +2153,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "597",
-	fileVersionNumber: 597,
+	fileVersion: "598",
+	fileVersionNumber: 598,
 
 	language: "navigator",
 	debugMode: false,
@@ -3562,6 +3562,14 @@ XsltForms_xmlevents.define("xforms-load-error", true, false);
 		
 
 XsltForms_xmlevents.define("xforms-unload-done", true, false);
+
+		
+
+XsltForms_xmlevents.define("xforms-upload-done", true, false);
+
+		
+
+XsltForms_xmlevents.define("xforms-upload-error", true, false);
 
 	
 	
@@ -8218,7 +8226,7 @@ XsltForms_submission.prototype.submit = function() {
 						}
 						var hname;
 						for (var n = 0, lenn = nodes.length; n < lenn; n++) {
-							if (this.headers[i].name.evaluate) {
+							if (this.headers[i].name.bind_evaluate) {
 								hname = XsltForms_globals.stringValue(this.headers[i].name.bind_evaluate(nodes[n]));
 							} else {
 								hname = this.headers[i].name;
@@ -8230,7 +8238,7 @@ XsltForms_submission.prototype.submit = function() {
 								for (j = 0, len2 = this.headers[i].values.length; j < len2; j++) {
 									var hv = this.headers[i].values[j];
 									var hv2;
-									if (hv.evaluate) {
+									if (hv.bind_evaluate) {
 										hv2 = XsltForms_globals.stringValue(hv.bind_evaluate(nodes[n]));
 									} else {
 										hv2 = hv;
@@ -11686,6 +11694,7 @@ function XsltForms_upload(subform, id, valoff, binding, incremental, filename, m
 	this.bolAidButton = aidButton;
 	this.mediatype = mediatype;
 	this.value = "";
+	this.headers = [];
 	this.initFocus(this.cell.children[0], true);
 	if (!window.FileReader && !(document.applets.xsltforms || document.getElementById("xsltforms_applet"))) {
 		XsltForms_browser.loadapplet();
@@ -11700,6 +11709,20 @@ XsltForms_upload.prototype = new XsltForms_control();
 
 XsltForms_upload.contents = {};
 
+
+		
+
+XsltForms_upload.prototype.resource = function(resource) {
+	this.resource = resource;
+	return this;
+};
+
+		
+
+XsltForms_upload.prototype.header = function(nodeset, combine, name, values) {
+	this.headers.push({nodeset: nodeset, combine: combine, name: name, values: values});
+	return this;
+};
 
 		
 
@@ -11724,6 +11747,123 @@ XsltForms_upload.prototype.setValue = function(value) {
 	this.type = node ? XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string") : XsltForms_schema.getType("xsd_:string");
 	if (this.value !== value) {
 		this.value = value || "";
+	}
+	if (this.resource) {
+		if (!this.uploader) {
+			var upsettings = {};
+			eval("upsettings = " + (this.type.appinfo ? this.type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
+			upsettings.url = "dummy";
+			upsettings.init = {
+				PostInit: function() {
+					var uploadctl = XsltForms_control.getXFElement(this.getOption("browse_button")[0]);
+					if (uploadctl.uploadbtn) {
+						uploadctl.uploadbtn.disabled = true;
+						uploadctl.uploadbtn.onclick = function() {
+							var uploadctl = XsltForms_control.getXFElement(this);
+							uploadctl.uploader.start();
+							return false;
+						};
+					}
+				},
+				FileFiltered: function(up, file) {
+					var uploadctl = XsltForms_control.getXFElement(up.getOption("browse_button")[0]);
+					if ((" " + uploadctl.value + " ").indexOf(" " + file.name + " ") === -1) {
+						if (uploadctl.value !== "") {
+							uploadctl.value = uploadctl.value + " " + file.name;
+						} else {
+							uploadctl.value = file.name;
+						}
+						if (uploadctl.incremental) {
+							uploadctl.valueChanged(uploadctl.value);
+						}
+					}
+					if (uploadctl.uploadbtn) {
+						uploadctl.uploadbtn.disabled = false;
+					}
+				},
+				BeforeUpload: function(up, file) {
+					var uploadctl = XsltForms_control.getXFElement(up.getOption("browse_button")[0]);
+					var resource;
+					if (uploadctl.resource.bind_evaluate) {
+						resource = XsltForms_globals.stringValue(uploadctl.resource.bind_evaluate(uploadctl.subform, uploadctl.boundnodes[0]));
+					} else {
+						resource = uploadctl.resource;
+					}
+					up.setOption("url", resource);
+					var len = uploadctl.headers.length;
+					if (len !== 0) {
+						var upheaders = {};
+						for (var i = 0, len0 = uploadctl.headers.length; i < len0; i++) {
+							var nodes = [];
+							if (uploadctl.headers[i].nodeset) {
+								nodes = uploadctl.headers[i].nodeset.bind_evaluate(uploadctl.subform, uploadctl.boundnodes[0]);
+							} else {
+								nodes = uploadctl.boundnodes;
+							}
+							var hname;
+							for (var n = 0, lenn = nodes.length; n < lenn; n++) {
+								if (uploadctl.headers[i].name.bind_evaluate) {
+									hname = XsltForms_globals.stringValue(uploadctl.headers[i].name.bind_evaluate(uploadctl.subform, nodes[n]));
+								} else {
+									hname = uploadctl.headers[i].name;
+								}
+								if (hname !== "") {
+									var hvalue = "";
+									var j;
+									var len2;
+									for (j = 0, len2 = uploadctl.headers[i].values.length; j < len2; j++) {
+										var hv = uploadctl.headers[i].values[j];
+										var hv2;
+										if (hv.bind_evaluate) {
+											hv2 = XsltForms_globals.stringValue(hv.bind_evaluate(uploadctl.subform, nodes[n]));
+										} else {
+											hv2 = hv;
+										}
+										hvalue += hv2;
+										if (j < len2 - 1) {
+											hvalue += ",";
+										}
+									}
+									upheaders[hname] = hvalue;
+								}
+							}
+						}
+						up.setOption("headers", upheaders);
+					}
+				},
+				UploadComplete: function(up, files) {
+					var uploadctl = XsltForms_control.getXFElement(up.getOption("browse_button")[0]);
+					if (uploadctl.uploadbtn) {
+						uploadctl.uploadbtn.disabled = true;
+					}
+					if (uploadctl.error) {
+						uploadctl.error = null;
+					} else {
+						XsltForms_xmlevents.dispatch(uploadctl, "xforms-upload-done");
+					}
+				},
+				Error: function(up, err) {
+					var evcontext = {
+						"method": "POST",
+						"resource-uri": up.getOption("url"),
+						"error-type": "resource-error",
+						"response-status-code": err.code,
+						"response-reason-phrase": err.message
+					};
+					var uploadctl = XsltForms_control.getXFElement(up.getOption("browse_button")[0]);
+					uploadctl.error = true;
+					XsltForms_xmlevents.dispatch(uploadctl, "xforms-upload-error", null, null, null, null, evcontext);
+				}
+			};
+			if (XsltForms_globals.jslibraries["http://www.plupload.com/jquery.ui.plupload"]) {
+				$(this.element.children[this.valoff].firstChild).plupload(upsettings);
+			} else {
+				this.uploadbtn = this.element.children[this.valoff].firstChild.children[1];
+				upsettings.browse_button = this.element.children[this.valoff].firstChild.firstChild;
+				this.uploader = new plupload.Uploader(upsettings);
+				this.uploader.init();
+			}
+		}
 	}
 };
 

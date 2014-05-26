@@ -62,7 +62,63 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@mediatype"/></xsl:call-template>
 				<xsl:text>,</xsl:text>
 				<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@ajx:aid-button"/></xsl:call-template>
-				<xsl:text>);</xsl:text>
+				<xsl:text>)</xsl:text>
+				<xsl:if test="xforms:resource | @resource | @action">
+					<xsl:text>.resource(</xsl:text>
+					<xsl:choose>
+						<xsl:when test="xforms:resource/@value">
+							<xsl:for-each select="xforms:resource[1]">
+								<xsl:call-template name="toScriptBinding"/>
+							</xsl:for-each>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:variable name="resource">
+								<xsl:choose>
+									<xsl:when test="xforms:resource"><xsl:value-of select="xforms:resource"/></xsl:when>
+									<xsl:when test="@resource"><xsl:value-of select="@resource"/></xsl:when>
+									<xsl:otherwise><xsl:value-of select="@action"/></xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+							<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="$resource"/></xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:text>)</xsl:text>
+				</xsl:if>
+				<xsl:for-each select="xforms:header">
+					<xsl:text>.header(</xsl:text>
+					<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@nodeset | @ref"/></xsl:call-template>
+					<xsl:text>,</xsl:text>
+					<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="@combine"/><xsl:with-param name="default">"append"</xsl:with-param></xsl:call-template>
+					<xsl:text>,</xsl:text>
+					<xsl:choose>
+						<xsl:when test="xforms:name/@value">
+							<xsl:text>new XsltForms_binding("xsd:string", "</xsl:text>
+							<xsl:call-template name="toXPathExpr"><xsl:with-param name="p" select="xforms:name/@value"/></xsl:call-template>
+							<xsl:text>")</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="xforms:name"/></xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:text>,[</xsl:text>
+					<xsl:for-each select="xforms:value">
+						<xsl:choose>
+							<xsl:when test="@value">
+								<xsl:text>new XsltForms_binding("xsd:string", "</xsl:text>
+								<xsl:call-template name="toXPathExpr"><xsl:with-param name="p" select="@value"/></xsl:call-template>
+								<xsl:text>")</xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:call-template name="toScriptParam"><xsl:with-param name="p" select="."/></xsl:call-template>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="position() != last()">
+							<xsl:text>,</xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+					<xsl:text>])</xsl:text>
+				</xsl:for-each>
+				<xsl:text>;</xsl:text>
 			</js>
 			<xsl:apply-templates select="node()" mode="script">
 				<xsl:with-param name="parentworkid" select="$workid"/>

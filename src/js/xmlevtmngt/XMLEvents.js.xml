@@ -489,5 +489,21 @@ XsltForms_xmlevents.define("xforms-load-error", true, false);
 <![CDATA[
 XsltForms_xmlevents.define("xforms-unload-done", true, false);
 ]]>
+		<cm:wiki>
+** '''xforms-upload-done''' : fired by the Upload control
+*** bubbles : yes
+*** cancelable : yes
+*** default handler : empty</cm:wiki>
+<![CDATA[
+XsltForms_xmlevents.define("xforms-upload-done", true, false);
+]]>
+		<cm:wiki>
+** '''xforms-upload-error''' : fired by the Upload control
+*** bubbles : yes
+*** cancelable : yes
+*** default handler : empty</cm:wiki>
+<![CDATA[
+XsltForms_xmlevents.define("xforms-upload-error", true, false);
+]]>
 	</cm:source>
 </cm:component>

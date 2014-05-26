@@ -32,12 +32,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<xsl:with-param name="workid" select="$workid"/>
 				<xsl:with-param name="appearance" select="$appearance"/>
 				<xsl:with-param name="body">
-				<!--
-					<input type="text" readonly="readonly">
-					-->
-					<input type="file" onclick="return this.parentElement.parentElement.xfElement.directclick();" onchange="this.parentElement.parentElement.xfElement.change()">
-						<xsl:call-template name="comun"/>
-					</input>
+					<xsl:choose>
+						<xsl:when test="xforms:resource">
+							<span>
+								<button type="button">Select&#160;files</button>
+								<button type="button">Upload</button>
+							</span>
+						</xsl:when>
+						<xsl:otherwise>
+							<input type="file" onclick="return this.parentElement.parentElement.xfElement.directclick();" onchange="this.parentElement.parentElement.xfElement.change()">
+								<xsl:call-template name="comun"/>
+							</input>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:with-param>
 			</xsl:call-template>
 		</xsl:template>
