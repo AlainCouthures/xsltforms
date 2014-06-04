@@ -104,7 +104,7 @@ XsltForms_upload.prototype.setValue = function(value) {
 	if (this.value !== value) {
 		this.value = value || "";
 	}
-	if (this.resource) {
+	if (this.resource && typeof plupload !== "undefined") {
 		if (!this.uploader) {
 			var upsettings = {};
 			eval("upsettings = " + (this.type.appinfo ? this.type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
@@ -212,7 +212,8 @@ XsltForms_upload.prototype.setValue = function(value) {
 				}
 			};
 			if (XsltForms_globals.jslibraries["http://www.plupload.com/jquery.ui.plupload"]) {
-				$(this.element.children[this.valoff].firstChild).plupload(upsettings);
+				var $jQuery = jQuery.noConflict();
+				$jQuery(this.element.children[this.valoff].firstChild).plupload(upsettings);
 			} else {
 				this.uploadbtn = this.element.children[this.valoff].firstChild.children[1];
 				upsettings.browse_button = this.element.children[this.valoff].firstChild.firstChild;

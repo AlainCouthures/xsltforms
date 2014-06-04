@@ -383,6 +383,10 @@ var XsltForms_xpathFunctionExceptions = {
 	itextInvalidArgumentsNumber : {
 		name : "itext() : Invalid number of arguments",
 		message : "itext() function must have one argument"
+	},
+	encodeForUriInvalidArgumentsNumber : {
+		name : "encode-for-uri() : Invalid number of arguments",
+		message : "encode-for-uri() function must have one argument exactly"
 	}
 };
 		
@@ -1968,6 +1972,17 @@ var XsltForms_xpathCoreFunctions = {
 				strings.push(XsltForms_globals.xmlValue(nodeSet[i]));
 			}
 			return strings.join(joinString);
+		} ),
+]]>
+		<cm:wiki>
+* '''encode-for-uri(string?)'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions encode-for-uri" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(rawString) { 
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.encodeForUriInvalidArgumentsNumber;
+			}
+			return encodeURIComponent(XsltForms_globals.stringValue(rawString));
 		} ),
 ]]>
 		<cm:wiki>

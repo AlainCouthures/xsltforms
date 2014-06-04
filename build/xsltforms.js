@@ -1,4 +1,4 @@
-/* Rev. 598
+/* Rev. 599
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2153,8 +2153,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "598",
-	fileVersionNumber: 598,
+	fileVersion: "599",
+	fileVersionNumber: 599,
 
 	language: "navigator",
 	debugMode: false,
@@ -4889,6 +4889,10 @@ var XsltForms_xpathFunctionExceptions = {
 	itextInvalidArgumentsNumber : {
 		name : "itext() : Invalid number of arguments",
 		message : "itext() function must have one argument"
+	},
+	encodeForUriInvalidArgumentsNumber : {
+		name : "encode-for-uri() : Invalid number of arguments",
+		message : "encode-for-uri() function must have one argument exactly"
 	}
 };
 		
@@ -6387,6 +6391,16 @@ var XsltForms_xpathCoreFunctions = {
 				strings.push(XsltForms_globals.xmlValue(nodeSet[i]));
 			}
 			return strings.join(joinString);
+		} ),
+
+		
+
+	"http://www.w3.org/2005/xpath-functions encode-for-uri" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(rawString) { 
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.encodeForUriInvalidArgumentsNumber;
+			}
+			return encodeURIComponent(XsltForms_globals.stringValue(rawString));
 		} ),
 
 		
@@ -11748,7 +11762,7 @@ XsltForms_upload.prototype.setValue = function(value) {
 	if (this.value !== value) {
 		this.value = value || "";
 	}
-	if (this.resource) {
+	if (this.resource && typeof plupload !== "undefined") {
 		if (!this.uploader) {
 			var upsettings = {};
 			eval("upsettings = " + (this.type.appinfo ? this.type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
@@ -11856,7 +11870,8 @@ XsltForms_upload.prototype.setValue = function(value) {
 				}
 			};
 			if (XsltForms_globals.jslibraries["http://www.plupload.com/jquery.ui.plupload"]) {
-				$(this.element.children[this.valoff].firstChild).plupload(upsettings);
+				var $jQuery = jQuery.noConflict();
+				$jQuery(this.element.children[this.valoff].firstChild).plupload(upsettings);
 			} else {
 				this.uploadbtn = this.element.children[this.valoff].firstChild.children[1];
 				upsettings.browse_button = this.element.children[this.valoff].firstChild.firstChild;
