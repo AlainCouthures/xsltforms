@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</xsl:choose>
 				<xsl:text>",</xsl:text>
 				<xsl:choose>
-					<xsl:when test="xforms:label/node()">1</xsl:when>
+					<xsl:when test="string(xforms:label) != '' or xforms:label/@*">1</xsl:when>
 					<xsl:otherwise>0</xsl:otherwise>
 				</xsl:choose>
 				<xsl:text>,</xsl:text>

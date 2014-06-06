@@ -1,4 +1,4 @@
-/* Rev. 599
+/* Rev. 600
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -229,7 +229,8 @@ var XsltForms_browser = {
 		var myWidth = 0, myHeight = 0, myOffsetX = 0, myOffsetY = 0, myScrollX = 0, myScrollY = 0;
 		if (!(XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
 			myWidth = document.body ? document.body.clientWidth : document.documentElement.clientWidth;
-			myHeight = document.body ? document.body.clientHeight : document.documentElement.clientHeight;
+			//myHeight = document.body ? document.body.clientHeight : document.documentElement.clientHeight;
+			myHeight = document.documentElement.clientHeight;
 			myOffsetX = document.body ? Math.max(document.documentElement.clientWidth, document.body.clientWidth) : document.documentElement.clientWidth; // body margins ?
 			myOffsetY = document.body ? Math.max(document.documentElement.clientHeight, document.body.clientHeight) : document.documentElement.clientHeight; // body margins ?
 			myScrollX = window.scrollX;
@@ -2153,8 +2154,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "599",
-	fileVersionNumber: 599,
+	fileVersion: "600",
+	fileVersionNumber: 600,
 
 	language: "navigator",
 	debugMode: false,
