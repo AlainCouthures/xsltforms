@@ -67,7 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:text>model_</xsl:text>
 					<xsl:value-of select="$workid"/>
 					<xsl:text>,false,"application/xml",null,'&lt;data xmlns=""&gt;</xsl:text>
-					<xsl:for-each select="//@ref[namespace-uri(parent::*) = 'http://www.w3.org/2002/xforms']">
+					<xsl:for-each select="//@ref[namespace-uri(parent::*) = 'http://www.w3.org/2002/xforms' and translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.','') = '' and contains('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_', substring(.,1,1))]">
 						<xsl:text>&lt;</xsl:text>
 						<xsl:value-of select="."/>
 						<xsl:text>/&gt;</xsl:text>

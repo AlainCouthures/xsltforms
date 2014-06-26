@@ -1,4 +1,4 @@
-/* Rev. 601
+/* Rev. 602
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2154,8 +2154,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "601",
-	fileVersionNumber: 601,
+	fileVersion: "602",
+	fileVersionNumber: 602,
 
 	language: "navigator",
 	debugMode: false,
@@ -11445,11 +11445,16 @@ XsltForms_select.prototype.setValue = function(value) {
 		var vals = value? (this.multiple? value.split(XsltForms_globals.valuesSeparator) : [value]) : [""];
 		var list = this.full? (XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input")) : this.select.options;
 		var well = true;
+		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(this.element.node) || "xsd_:string");
 		for (var i = 0, len = vals.length; well && i < len; i++) {
 			var val = vals[i];
 			var found = false;
 			for (var j = 0, len1 = list.length; !found && j < len1; j++) {
-				if (list[j].value === val) {
+				var optvalue = list[j].value;
+				if (schtyp.format) {
+					try { optvalue = schtyp.format(optvalue); } catch(e) { }
+				}
+				if (optvalue === val) {
 					found = true;
 				}
 			}
@@ -11475,7 +11480,11 @@ XsltForms_select.prototype.setValue = function(value) {
 			this.selectedOptions = [];
 			for (var k = 0, len3 = list.length; k < len3; k++) {
 				item = list[k];
-				var b = XsltForms_browser.inArray(item.value, vals);
+				var optvalue = item.value;
+				if (schtyp.format) {
+					try { optvalue = schtyp.format(optvalue); } catch(e) { }
+				}
+				var b = XsltForms_browser.inArray(optvalue, vals);
 				if (b) {
 					this.selectedOptions.push(item);
 				}
@@ -11524,7 +11533,14 @@ XsltForms_select.prototype.itemClick = function(value) {
 		}
 		value = newValue;
 	} else {
-		var old = this.value || XsltForms_browser.getValue(this.element.node);
+		var old = this.value;
+		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(this.element.node) || "xsd_:string");
+		if (!old) {
+			old = XsltForms_browser.getValue(this.element.node);
+			if (schtyp.format) {
+				try { old = schtyp.format(old); } catch(e) { }
+			}
+		}
 		var inputSelected = null;
 		if (old === value) {
 			XsltForms_globals.closeAction("XsltForms_select.prototype.itemClick");
@@ -11532,10 +11548,14 @@ XsltForms_select.prototype.itemClick = function(value) {
 		}
 		for (var j = 0, len1 = inputs.length; j < len1; j++) {
 			input = inputs[j];
-			input.checked = input.value === value;
-			if (input.value === old) {
+			var input_controlvalue = input.value;
+			if (schtyp.format) {
+				try { input_controlvalue = schtyp.format(input_controlvalue); } catch(e) { }
+			}
+			input.checked = input_controlvalue === value;
+			if (input_controlvalue === old) {
 				XsltForms_xmlevents.dispatch(input.parentNode, "xforms-deselect");
-			} else if (input.value === value) {
+			} else if (input_controlvalue === value) {
 				inputSelected = input;
 			}
 		}
@@ -11595,6 +11615,10 @@ XsltForms_select.normalChange = function(evt) {
 		}
 	}
 	xf.value = value;
+	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(xf.element.node) || "xsd_:string");
+	if (schtyp.format) {
+		try { xf.value = schtyp.format(value); } catch(e) { }
+	}
 	xf.selectedOptions = news;
 	XsltForms_globals.closeAction("XsltForms_select.normalChange");
 };
