@@ -111,6 +111,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="main" select="/"/>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="amp"><xsl:text>&amp;</xsl:text></xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="apos"><xsl:text>&apos;</xsl:text></xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="lt"><xsl:text>&lt;</xsl:text></xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="gt"><xsl:text>&gt;</xsl:text></xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="quot"><xsl:text>&quot;</xsl:text></xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="backslash"><xsl:text>\</xsl:text></xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="lineseparator"><xsl:text>&#8232;</xsl:text></xsl:variable>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="newline"><xsl:text>&#10;</xsl:text></xsl:variable>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="carriagereturn"><xsl:text>&#13;</xsl:text></xsl:variable>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="tab"><xsl:text>&#9;</xsl:text></xsl:variable>
