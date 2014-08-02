@@ -79,6 +79,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 			var req = null;
 			var method = "get";
 			var evcontext = {"method": method, "resource-uri": href};
+			var subformidx = XsltForms_globals.nbsubforms++;
 			try {
 				req = XsltForms_browser.openRequest(method, href, false);
 				XsltForms_browser.debugConsole.write("Load " + href);
@@ -105,17 +106,17 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				if (sp.length === 1) {
 					subbody = resp;
 				} else {
-					subjs = "/* xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[2] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " */";
+					subjs = "/* xsltforms-subform-" + subformidx + " " + sp[2] + " xsltforms-subform-" + subformidx + " */";
 					var imain = subjs.indexOf('"xsltforms-mainform"');
 					var targetsubform = targetelt.xfSubform;
 					if (targetsubform) {
 						targetsubform.dispose();
 					}
-					subjs = '(function(){var xsltforms_subform_eltid = "' + targetelt.id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + XsltForms_globals.nbsubforms + '"' + subjs.substring(imain + 20) + "})();";
-					subbody = "<!-- xsltforms-subform-" + XsltForms_globals.nbsubforms + " " + sp[4] + " xsltforms-subform-" + XsltForms_globals.nbsubforms + " -->";
+					subjs = '(function(){var xsltforms_subform_eltid = "' + targetelt.id + '";var xsltforms_parentform = XsltForms_subform.subforms["' + this.subform.id + '"];' + subjs.substring(0, imain) + '"xsltforms-subform-' + subformidx + '"' + subjs.substring(imain + 20) + "})();";
+					subbody = "<!-- xsltforms-subform-" + subformidx + " " + sp[4] + " xsltforms-subform-" + subformidx + " -->";
 					imain = subbody.indexOf(' id="xsltforms-mainform');
 					while (imain !== -1) {
-						subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + XsltForms_globals.nbsubforms + subbody.substring(imain + 23);
+						subbody = subbody.substring(0, imain) + ' id="xsltforms-subform-' + subformidx + subbody.substring(imain + 23);
 						imain = subbody.indexOf(' id="xsltforms-mainform');
 					}
 				}
@@ -135,7 +136,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				}
 				if (sp.length !== 1) {
 					var scriptelt = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "script") : document.createElement("script");
-					scriptelt.setAttribute("id", "xsltforms-subform-" + XsltForms_globals.nbsubforms + "-script");
+					scriptelt.setAttribute("id", "xsltforms-subform-" + subformidx + "-script");
 					scriptelt.setAttribute("type", "text/javascript");
 					if (XsltForms_browser.isIE) {
 						scriptelt.text = subjs;
@@ -149,7 +150,6 @@ XsltForms_load.prototype.run = function(element, ctx) {
 				if (targetxf) {
 					XsltForms_xmlevents.dispatch(targetxf, "xforms-load-done", null, null, null, null, evcontext);
 				}
-				XsltForms_globals.nbsubforms++;
 			} catch(e2) {
 				XsltForms_browser.debugConsole.write(e2.message || e2);
 				evcontext["error-type"] = "resource-error";
