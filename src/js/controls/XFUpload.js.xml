@@ -244,7 +244,7 @@ XsltForms_upload.prototype.directclick = function() {
 	if (window.FileReader) {
 		return true;
 	}
-	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
+	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "string" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
 		alert("Unexpected type for upload control: " + this.type.nsuri + " " + this.type.name);
 		throw "Error";
 	} else {
@@ -289,7 +289,7 @@ XsltForms_upload.prototype.directclick = function() {
 * '''change'' method : manages the change event</cm:wiki>
 <![CDATA[
 XsltForms_upload.prototype.change = function() {
-	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
+	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "string" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
 		alert("Unexpected type for upload control: " + this.type.nsuri + " " + this.type.name);
 		throw "Error";
 	} else {
@@ -304,7 +304,18 @@ XsltForms_upload.prototype.change = function() {
 				return;
 			}
 			filename = file.name;
-			if (xf.type.name === "hexBinary") {
+			if (xf.type.name === "string") {
+				fr.onload = function(e) {
+					var bytes = new Uint8Array(e.target.result);
+					for( var i = 0, len = bytes.length; i < len; i++) {
+						content += String.fromCharCode(bytes[i]);
+					}
+					xf.value = content;
+					if (xf.incremental) {
+						xf.valueChanged(content);
+					}
+				};
+			} else if (xf.type.name === "hexBinary") {
 				fr.onload = function(e) {
 					var bytes = new Uint8Array(e.target.result);
 					for( var i = 0, len = bytes.length; i < len; i++) {

@@ -37,12 +37,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:call-template name="style">
 							<xsl:with-param name="class">xforms-choices</xsl:with-param>
 						</xsl:call-template>
-						<xsl:value-of select="xforms:label/text()"/>
+						<xsl:if test="normalize-space(xforms:label) != ''">
+							<div class="xforms-label">
+								<xsl:value-of select="xforms:label/text()"/>
+							</div>
+						</xsl:if>
+						<div class="xforms-choices-items">
+							<xsl:apply-templates select="node()" mode="item">
+								<xsl:with-param name="parentworkid" select="$workid"/>
+								<xsl:with-param name="type" select="$type" />
+							</xsl:apply-templates>
+						</div>
 					</div>
-					<xsl:apply-templates select="node()" mode="item">
-						<xsl:with-param name="parentworkid" select="$workid"/>
-						<xsl:with-param name="type" select="$type" />
-					</xsl:apply-templates>
 				</xsl:when>
 				<xsl:otherwise>
 					<optgroup label="{xforms:label/text()}">

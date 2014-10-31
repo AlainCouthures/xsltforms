@@ -66,6 +66,9 @@ if (typeof xsltforms_d0 === "undefined") {
 		};
 		var xftrans = function () {
 			var conselt = document.createElement("div");
+			conselt.setAttribute("id", "xsltforms_console");
+			document.getElementsByTagName("body")[0].appendChild(conselt);
+			conselt = document.createElement("div");
 			conselt.setAttribute("id", "statusPanel");
 			conselt.setAttribute("style", "display: none; z-index: 99; top: 294.5px; left: 490px;");
 			conselt.innerHTML = "... Loading ...";
@@ -100,8 +103,8 @@ if (typeof xsltforms_d0 === "undefined") {
 						var scripttxt = document.createTextNode(mainjs);
 						newelt.appendChild(scripttxt);
 					}
-					var panel = document.getElementById("statusPanel");
-					panel.parentNode.removeChild(panel);
+					//var panel = document.getElementById("statusPanel");
+					//panel.parentNode.removeChild(panel);
 					document.getElementsByTagName("body")[0].appendChild(newelt);
 					var subbody = "<!-- xsltforms-mainform " + sp[4] + " xsltforms-mainform -->";
 					elts[i].outerHTML = subbody;

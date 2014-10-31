@@ -1,4 +1,4 @@
-/* Rev. 604
+/* Rev. 605
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -1824,14 +1824,14 @@ XsltForms_browser.i18n = {
 			format = format.replace(new RegExp("\\.", "g"), "\\.");
 			format = format.replace(new RegExp("\\(", "g"), "\\(");
 			format = format.replace(new RegExp("\\)", "g"), "\\)");
-			format = format.replace(new RegExp(el), "(" + el + ")");
+			format = format.replace(new RegExp(el), "(" + el + ")!!!");
 			format = format.replace(new RegExp("yyyy"), "[12][0-9]{3}");
-			format = format.replace(new RegExp("MM"), "[0-1][0-9]");
-			format = format.replace(new RegExp("dd"), "[0-3][0-9]");
+			format = format.replace(new RegExp("MM"), "(?:0?[1-9](?![0-9])|1[0-2])");
+			format = format.replace(new RegExp("dd"), "(?:0?[1-9](?![0-9])|[1-2][0-9]|30|31)");
 			format = format.replace(new RegExp("hh"), "[0-2][0-9]");
 			format = format.replace(new RegExp("mm"), "[0-5][0-9]");
 			format = format.replace(new RegExp("ss"), "[0-5][0-9]");
-			format = "^" + format.substring(0, format.indexOf(")") + 1) + "[^0-9]*.*";
+			format = "^" + format.substring(0, format.indexOf(")!!!") + 1) + "[^0-9]*.*";
 			var r = new RegExp(format);
 			var val = '00';
 			if (r.test(str)) {
@@ -2159,8 +2159,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "604",
-	fileVersionNumber: 604,
+	fileVersion: "605",
+	fileVersionNumber: 605,
 
 	language: "navigator",
 	debugMode: false,
@@ -11930,7 +11930,7 @@ XsltForms_upload.prototype.directclick = function() {
 	if (window.FileReader) {
 		return true;
 	}
-	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
+	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "string" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
 		alert("Unexpected type for upload control: " + this.type.nsuri + " " + this.type.name);
 		throw "Error";
 	} else {
@@ -11974,7 +11974,7 @@ XsltForms_upload.prototype.directclick = function() {
 		
 
 XsltForms_upload.prototype.change = function() {
-	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
+	if (this.type.nsuri !== "http://www.w3.org/2001/XMLSchema" || (this.type.name !== "anyURI" && this.type.name !== "string" && this.type.name !== "base64Binary" && this.type.name !== "hexBinary")) {
 		alert("Unexpected type for upload control: " + this.type.nsuri + " " + this.type.name);
 		throw "Error";
 	} else {
@@ -11989,7 +11989,18 @@ XsltForms_upload.prototype.change = function() {
 				return;
 			}
 			filename = file.name;
-			if (xf.type.name === "hexBinary") {
+			if (xf.type.name === "string") {
+				fr.onload = function(e) {
+					var bytes = new Uint8Array(e.target.result);
+					for( var i = 0, len = bytes.length; i < len; i++) {
+						content += String.fromCharCode(bytes[i]);
+					}
+					xf.value = content;
+					if (xf.incremental) {
+						xf.valueChanged(content);
+					}
+				};
+			} else if (xf.type.name === "hexBinary") {
 				fr.onload = function(e) {
 					var bytes = new Uint8Array(e.target.result);
 					for( var i = 0, len = bytes.length; i < len; i++) {
@@ -13722,6 +13733,9 @@ if (typeof xsltforms_d0 === "undefined") {
 		};
 		var xftrans = function () {
 			var conselt = document.createElement("div");
+			conselt.setAttribute("id", "xsltforms_console");
+			document.getElementsByTagName("body")[0].appendChild(conselt);
+			conselt = document.createElement("div");
 			conselt.setAttribute("id", "statusPanel");
 			conselt.setAttribute("style", "display: none; z-index: 99; top: 294.5px; left: 490px;");
 			conselt.innerHTML = "... Loading ...";
@@ -13756,8 +13770,8 @@ if (typeof xsltforms_d0 === "undefined") {
 						var scripttxt = document.createTextNode(mainjs);
 						newelt.appendChild(scripttxt);
 					}
-					var panel = document.getElementById("statusPanel");
-					panel.parentNode.removeChild(panel);
+					//var panel = document.getElementById("statusPanel");
+					//panel.parentNode.removeChild(panel);
 					document.getElementsByTagName("body")[0].appendChild(newelt);
 					var subbody = "<!-- xsltforms-mainform " + sp[4] + " xsltforms-mainform -->";
 					elts[i].outerHTML = subbody;
