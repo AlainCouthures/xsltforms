@@ -203,6 +203,7 @@ XsltForms_upload.prototype.setValue = function(value) {
 						"method": "POST",
 						"resource-uri": up.getOption("url"),
 						"error-type": "resource-error",
+						"response-body": err.response,
 						"response-status-code": err.code,
 						"response-reason-phrase": err.message
 					};
