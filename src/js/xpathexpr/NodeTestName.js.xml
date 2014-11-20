@@ -45,6 +45,7 @@ function XsltForms_nodeTestName(prefix, name) {
 <![CDATA[
 XsltForms_nodeTestName.prototype.evaluate = function(node, nsresolver, csensitive) {
 	var nodename = node.localName || node.baseName;
+	//console.log("nodeTestName: " + node.nodeType + " " + nodename + " =? " + this.name);
 	if (this.notwildcard && (nodename !== this.name || (csensitive && nodename.toUpperCase() !== this.uppercase))) {
 		return false;
 	}

@@ -143,7 +143,7 @@ XsltForms_stepExpr.prototype.evaluate = function(ctx) {
 
 XsltForms_stepExpr.push = function(ctx, list, node, test, csensitive) {
 	if (test.evaluate(node, ctx.nsresolver, csensitive) && !XsltForms_browser.inArray(node, list)) {
-		list.push(node);
+		list[list.length] = node;
 	}
 };
 

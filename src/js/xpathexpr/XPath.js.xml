@@ -66,6 +66,7 @@ XsltForms_xpath.prototype.evaluate = function() {
 	alert("XPath error");
 };
 XsltForms_xpath.prototype.xpath_evaluate = function(ctx, current, subform) {
+	//console.log(this.expression);
 	var d1 = new Date();
 	XsltForms_browser.assert(ctx);
 //	alert("XPath evaluate \""+this.expression+"\"");

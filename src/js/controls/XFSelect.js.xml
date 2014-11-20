@@ -136,7 +136,7 @@ XsltForms_select.prototype.setValue = function(value) {
 		if (this.full) {
 			for (var n = 0, len2 = list.length; n < len2; n++) {
 				item = list[n];
-				item.checked = XsltForms_browser.inArray(item.value, vals);
+				item.checked = item.value !== "" ? XsltForms_browser.inArray(item.value, vals) : false;
 			}
 		} else {
 			this.selectedOptions = [];

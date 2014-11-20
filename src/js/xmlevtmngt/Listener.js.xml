@@ -100,6 +100,9 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, 
 			effectiveTarget = false;
 		}
 		if (effectiveTarget) {
+			XsltForms_browser.debugConsole.write("Captured event " + name + " on <" + event.target.nodeName +
+				(event.target.className? " class=\"" + (typeof event.target.className === "string" ? event.target.className : event.target.className.baseVal) + "\"" : "") +
+				(event.target.id? " id=\"" + event.target.id + "\"" : "") + "/>");
 			handler.call(event.target, event);
 		}
 		if (!defaultaction) {

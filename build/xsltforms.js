@@ -1,4 +1,4 @@
-/* Rev. 606
+/* Rev. 607
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2159,8 +2159,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "606",
-	fileVersionNumber: 606,
+	fileVersion: "607",
+	fileVersionNumber: 607,
 
 	language: "navigator",
 	debugMode: false,
@@ -3225,6 +3225,9 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, 
 			effectiveTarget = false;
 		}
 		if (effectiveTarget) {
+			XsltForms_browser.debugConsole.write("Captured event " + name + " on <" + event.target.nodeName +
+				(event.target.className? " class=\"" + (typeof event.target.className === "string" ? event.target.className : event.target.className.baseVal) + "\"" : "") +
+				(event.target.id? " id=\"" + event.target.id + "\"" : "") + "/>");
 			handler.call(event.target, event);
 		}
 		if (!defaultaction) {
@@ -3928,6 +3931,7 @@ function XsltForms_nodeTestName(prefix, name) {
 
 XsltForms_nodeTestName.prototype.evaluate = function(node, nsresolver, csensitive) {
 	var nodename = node.localName || node.baseName;
+	//console.log("nodeTestName: " + node.nodeType + " " + nodename + " =? " + this.name);
 	if (this.notwildcard && (nodename !== this.name || (csensitive && nodename.toUpperCase() !== this.uppercase))) {
 		return false;
 	}
@@ -4181,7 +4185,7 @@ XsltForms_stepExpr.prototype.evaluate = function(ctx) {
 
 XsltForms_stepExpr.push = function(ctx, list, node, test, csensitive) {
 	if (test.evaluate(node, ctx.nsresolver, csensitive) && !XsltForms_browser.inArray(node, list)) {
-		list.push(node);
+		list[list.length] = node;
 	}
 };
 
@@ -4402,6 +4406,7 @@ XsltForms_xpath.prototype.evaluate = function() {
 	alert("XPath error");
 };
 XsltForms_xpath.prototype.xpath_evaluate = function(ctx, current, subform) {
+	//console.log(this.expression);
 	var d1 = new Date();
 	XsltForms_browser.assert(ctx);
 //	alert("XPath evaluate \""+this.expression+"\"");
@@ -10215,6 +10220,8 @@ XsltForms_input.prototype.initInput = function(type) {
 				this.initFocus(this.calendarButton);
 			} else if (tclass === "number") {
 				input.style.textAlign = "right";
+			} else {
+				input.style.textAlign = "left";
 			}
 			var max = type.getMaxLength();
 			if (max) {
@@ -11479,7 +11486,7 @@ XsltForms_select.prototype.setValue = function(value) {
 		if (this.full) {
 			for (var n = 0, len2 = list.length; n < len2; n++) {
 				item = list[n];
-				item.checked = XsltForms_browser.inArray(item.value, vals);
+				item.checked = item.value !== "" ? XsltForms_browser.inArray(item.value, vals) : false;
 			}
 		} else {
 			this.selectedOptions = [];

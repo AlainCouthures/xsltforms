@@ -203,6 +203,8 @@ XsltForms_input.prototype.initInput = function(type) {
 				this.initFocus(this.calendarButton);
 			} else if (tclass === "number") {
 				input.style.textAlign = "right";
+			} else {
+				input.style.textAlign = "left";
 			}
 			var max = type.getMaxLength();
 			if (max) {
