@@ -41,6 +41,10 @@ function XsltForms_input(subform, id, valoff, itype, binding, inputmode, increme
 	var cells = this.element.children;
 	this.valoff = valoff;
 	this.cell = cells[valoff];
+	if (!this.cell) {
+		XsltForms_browser.debugConsole.write("ERROR: Could not create input id " + id + ", with binding " + binding + " on subform " + subform);
+		return;
+	}
 	this.isClone = clone;
 	this.hasBinding = true;
 	this.itype = itype;
@@ -79,7 +83,7 @@ XsltForms_input.prototype.dispose = function() {
 						tinyMCE.editors[this.cell.children[1].id].remove();
 					}
 				} catch(e) {
-					alert(e);
+					//alert(e);
 				}
 				break;
 			case "ckeditor":
@@ -102,7 +106,7 @@ XsltForms_input.prototype.dispose = function() {
 XsltForms_input.prototype.initInput = function(type) {
 	var cell = this.cell;
 	var input = cell.children[0];
-	var tclass = type["class"];
+	var tclass = type.class;
 	if (input.type === "password") {
 		this.type = XsltForms_schema.getType("xsd_:string");
 		this.initEvents(input, true);
@@ -198,10 +202,27 @@ XsltForms_input.prototype.initInput = function(type) {
 			}
 			this.initEvents(input, (this.itype === "text"));
 			if (tclass === "date" || tclass === "datetime") {
-				this.calendarButton = XsltForms_browser.createElement("button", cell, "...", "aid-button");
-				this.calendarButton.setAttribute("type", "button");
-				this.initFocus(this.calendarButton);
-			} else if (tclass === "number") {
+				if (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari)) {
+					if (tclass === "date") {
+						input.type = "date";
+					}
+					if (tclass === "datetime"){
+						input.type = "datetime-local";
+					}
+			    } else {
+					this.calendarButton = XsltForms_browser.createElement("button", cell, XsltForms_browser.selectSingleNode("calendar.label", XsltForms_browser.config) ? XsltForms_browser.i18n.get("calendar.label") : "...", "aid-button");
+					this.calendarButton.setAttribute("type", "button");
+					this.initFocus(this.calendarButton);
+				}
+			} else if (tclass === "number"){
+				if (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari)) {
+					input.type = "number";
+					if (typeof type.fractionDigits === "number") {
+						input.step = "" + Math.pow(1, -parseInt(type.fractionDigits, 10));
+					} else {
+						input.step = "any";
+					}
+				}
 				input.style.textAlign = "right";
 			} else {
 				input.style.textAlign = "left";
@@ -294,6 +315,7 @@ XsltForms_input.prototype.initEvents = function(input, canActivate) {
 		XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpInputMode);
 	}
 	if (canActivate) {
+		//XsltForms_browser.events.attach(input, "input", XsltForms_input.inputActivate);
 		XsltForms_browser.events.attach(input, "keydown", XsltForms_input.keyDownActivate);
 		XsltForms_browser.events.attach(input, "keypress", XsltForms_input.keyPressActivate);
 		if (this.incremental) {
@@ -424,6 +446,17 @@ XsltForms_input.keyUpIncrementalActivate = function(a) {
 		}
 	}
 	this.keyDownCode = this.keyPressCode = null;
+};
+
+]]>
+		<cm:wiki>
+* '''inputActivate''' function : treats spinner input value changes</cm:wiki>
+<![CDATA[
+XsltForms_input.inputActivate = function(a) {
+	var xf = XsltForms_control.getXFElement(this);
+	XsltForms_globals.openAction("XsltForms_input.inputActivate#1");
+	xf.valueChanged(this.value || "");
+	XsltForms_globals.closeAction("XsltForms_input.inputActivate#1");
 };
 
 ]]>

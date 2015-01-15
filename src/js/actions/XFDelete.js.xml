@@ -51,9 +51,10 @@ XsltForms_delete.prototype.run = function(element, ctx) {
 	if (!ctx) {
 		return;
 	}
-	var nodes = this.binding.bind_evaluate(this.subform, ctx);
+	var varresolver = this.parentAction ? this.parentAction.varResolver : element.xfElement.varResolver;
+	var nodes = this.binding.bind_evaluate(this.subform, ctx, varresolver);
 	if(this.at) {
-		var index = XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes)));
+		var index = XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes, null, null, null, varresolver)));
 		if(!nodes[index - 1]) {
 			return;
 		}

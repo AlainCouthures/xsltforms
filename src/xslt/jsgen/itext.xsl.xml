@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:text>": "</xsl:text>
 			<xsl:call-template name="escapeJS">
 				<xsl:with-param name="text" select="xforms:value"/>
-				<xsl:with-param name="trtext" select="translate(xforms:value,concat($newline,$newline,$newline,'&quot;'),concat($newline,$newline,$newline,$newline))"/>
+				<xsl:with-param name="trtext" select="translate(xforms:value,concat($newline,'&quot;'),concat($tab,$tab))"/>
 			</xsl:call-template>
 			<xsl:text>"</xsl:text>
 			<xsl:if test="following-sibling::*">

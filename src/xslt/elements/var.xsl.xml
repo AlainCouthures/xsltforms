@@ -1,9 +1,9 @@
-<cm:component xmlns:cm="http://www.agencexml.com/cm" name="toXPathExpr.xsl">
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="var.xsl">
 	<cm:author>Alain Couthures</cm:author>
-	<cm:creationdate>2009-04-08</cm:creationdate>
-	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:creationdate>2014-12-04</cm:creationdate>
+	<cm:lastupdate>2014-12-04</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -24,11 +24,13 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
-		<xsl:template name="toXPathExpr" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-			<xsl:param name="p"/>
-			<xsl:call-template name="escapeJS">
-				<xsl:with-param name="text" select="$p"/>
-				<xsl:with-param name="trtext" select="translate($p,concat($newline,$carriagereturn,'&quot;'),concat($tab,$tab,$tab))"/>
+		<xsl:template match="xforms:var" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" priority="2">
+			<xsl:param name="parentworkid"/>
+			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
+			<xsl:call-template name="field">
+				<xsl:with-param name="workid" select="$workid"/>
+				<xsl:with-param name="appearance" select="false()"/>
+				<xsl:with-param name="body"><span>&#160;<xsl:text/></span></xsl:with-param>
 			</xsl:call-template>
 		</xsl:template>
 	</cm:source>

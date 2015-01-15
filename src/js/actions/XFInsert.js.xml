@@ -46,6 +46,7 @@ XsltForms_insert.prototype = new XsltForms_abstractAction();
 * '''run''' method : clones then inserts a new element and dispatches the "xforms-insert"</cm:wiki>
 <![CDATA[
 XsltForms_insert.prototype.run = function(element, ctx) {
+	var varresolver = this.parentAction ? this.parentAction.varResolver : element.xfElement.varResolver;
 	if (this.context) {
 		ctx = this.context.xpath_evaluate(ctx)[0];
 	}
@@ -54,7 +55,7 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 	}
 	var nodes = [];
 	if( this.binding.bind || this.binding.xpath ) {
-		nodes = this.binding.bind_evaluate(this.subform, ctx);
+		nodes = this.binding.bind_evaluate(this.subform, ctx, varresolver);
 	}
 	var index = 0;
 	var node = null;
@@ -78,7 +79,7 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 		} else {
 			parent = nodes[0].nodeType === XsltForms_nodeType.DOCUMENT? nodes[0] : nodes[0].nodeType === XsltForms_nodeType.ATTRIBUTE? nodes[0].ownerDocument ? nodes[0].ownerDocument : nodes[0].selectSingleNode("..") : nodes[0].parentNode;
 			if (parent.nodeType !== XsltForms_nodeType.DOCUMENT && node.nodeType !== XsltForms_nodeType.ATTRIBUTE) {
-				res = this.at ? Math.round(XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes)))) + i - 1: nodes.length - 1;
+				res = this.at ? Math.round(XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes, null, null, null, varresolver)))) + i - 1: nodes.length - 1;
 				index = isNaN(res)? nodes.length : res + pos;
 			}
 		}

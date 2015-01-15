@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="globals.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2011-10-30</cm:lastupdate>
+	<cm:lastupdate>2014-12-15</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2011 &lt;agenceXML&gt; - Alain COUTHURES
+Copyright (C) 2008-2014 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -82,11 +82,13 @@ var XsltForms_globals = {
 		repeat: 0,
 		select: 0,
 		trigger: 0,
-		upload: 0
+		upload: 0,
+		var: 0
 	},
 	nbsubforms: 0,
 	componentLoads: [],
 	jslibraries: {},
+	htmlversion: "4",
 ]]>
 		<cm:wiki>
 * '''debugging''' method : toggles debug mode</cm:wiki>
@@ -221,7 +223,12 @@ var XsltForms_globals = {
 					case "xsltforms-profiler":
 						return XsltForms_globals.profiling_data();
 					case "xsltforms-tracelog":
-						return XsltForms_browser.saveXML(XsltForms_browser.debugConsole.doc_.documentElement, true);
+						try  {
+							return XsltForms_browser.saveXML(XsltForms_browser.debugConsole.doc_.documentElement, true);
+						} catch (e) {
+							XsltForms_browser.debugConsole.write("ERROR: Could not open xsltforms-tracelog " + e.message);
+							return '<error xmlns="">Could not open xsltforms-tracelog "'+e.message+'"</error>';
+						}
 					default:
 						var slash = resource.indexOf("/");
 						if (slash === -1 ) {
@@ -388,7 +395,12 @@ var XsltForms_globals = {
 			alert("File not found: " + XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml");
 		}
 		if (req.status === 200 || req.status === 0) {
-			var s = XsltForms_browser.transformText(req.responseText, XsltForms_browser.ROOT + "xsltforms.xsl", false, "xsltforms_debug", "false", "baseuri", XsltForms_browser.ROOT);
+			var s = "";
+			try {
+				s = XsltForms_browser.transformText(req.responseText, XsltForms_browser.ROOT + "xsltforms.xsl", false, "xsltforms_debug", "false", "baseuri", XsltForms_browser.ROOT);
+			} catch (e) {
+				XsltForms_browser.debugConsole.write("ERROR: Could not get contents of xsltforms_debug - " + e.message);
+			}			
 			if (s.substring(0, 21) === '<?xml version="1.0"?>') {
 				s = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + s.substring(21);
 			}
@@ -396,15 +408,16 @@ var XsltForms_globals = {
 			prow.document.write(s);
 			prow.document.close();
 		} else {
-			alert("File not found (" + req.status + "): " + XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml");
+			XsltForms_browser.debugConsole.write("File not found (" + req.status + "): " + XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml");
 		}
 	},
 ]]>
 		<cm:wiki>
 * '''init''' method : called from the generated '''init()''' function called at onload event</cm:wiki>
 <![CDATA[
-	init : function() {
+	init: function() {
 		XsltForms_browser.setValue(document.getElementById("statusPanel"), XsltForms_browser.i18n.get("status"));
+		this.htmlversion = XsltForms_browser.i18n.get("html");
 		var b = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
 		this.body = b;
 		document.onhelp = function(){return false;};
@@ -604,7 +617,7 @@ var XsltForms_globals = {
 		<cm:wiki>
 * '''build''' method : XForms build management</cm:wiki>
 <![CDATA[
-	build : function(element, ctx, selected) {
+	build : function(element, ctx, selected, varresolver) {
 		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
 			return {ctx: ctx, hasXFElement: false};
 		}
@@ -617,10 +630,10 @@ var XsltForms_globals = {
 		if (xf) {
 			if (xf instanceof Array) {
 				for (var ixf = 0, lenxf = xf.length; ixf < lenxf; ixf++) {
-					xf[ixf].build(ctx);
+					xf[ixf].build(ctx, varresolver);
 				}
 			} else {
-				xf.build(ctx);
+				xf.build(ctx, varresolver);
 				if (xf.isRepeat) {
 					xf.refresh(selected);
 				}
@@ -650,7 +663,7 @@ var XsltForms_globals = {
 						curctx = newctx;
 					}
 					if (!childs[i].getAttribute("cloned")) {
-						var br = this.build(childs[i], curctx, selected);
+						var br = this.build(childs[i], curctx, selected, varresolver);
 						if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
 							nbsiblings = childs[i].xfElement.nbsiblings;
 							nodes = childs[i].xfElement.nodes;
@@ -662,6 +675,7 @@ var XsltForms_globals = {
 					}
 				}
 			}
+			element.varScope = null;
 		}
 		if(this.building) {
 			if (xf instanceof Array) {

@@ -116,7 +116,9 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, 
 		}
 	};
 	this.attach();
-	subform.listeners.push(this);
+	if (subform) {
+		subform.listeners.push(this);
+	}
 }
 
 ]]>

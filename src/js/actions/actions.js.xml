@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="actions.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:lastupdate>2014-12-19</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Copyright (C) 2008-2014 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -41,6 +41,7 @@ The XFAbstractAction is the parent class for all action classes.</cm:wiki>
 		<cm:import-components path="XFSetindex.js.xml"/>
 		<cm:import-components path="XFSetnode.js.xml"/>
 		<cm:import-components path="XFSetvalue.js.xml"/>
+		<cm:import-components path="XFSetvar.js.xml"/>
 		<cm:import-components path="XFToggle.js.xml"/>
 		<cm:import-components path="XFUnload.js.xml"/>
 	</cm:source>

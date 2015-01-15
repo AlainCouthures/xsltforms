@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="xsltforms.xsl">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-08</cm:creationdate>
-	<cm:lastupdate>2012-07-25</cm:lastupdate>
+	<cm:lastupdate>2014-12-19</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:import-components path="setindex.xsl.xml"/>
 		<cm:import-components path="setnode.xsl.xml"/>
 		<cm:import-components path="setvalue.xsl.xml"/>
+		<cm:import-components path="setvar.xsl.xml"/>
 		<cm:import-components path="show-hide.xsl.xml"/>
 		<cm:import-components path="simpleType.xsl.xml"/>
 		<cm:import-components path="submission.xsl.xml"/>
@@ -66,6 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:import-components path="trigger.xsl.xml"/>
 		<cm:import-components path="unload.xsl.xml"/>
 		<cm:import-components path="upload.xsl.xml"/>
+		<cm:import-components path="var.xsl.xml"/>
 		<cm:import-components path="xscript.xsl.xml"/>
 		<cm:import-components path="named-templates/named-templates.xsl.xml"/>
 	</cm:source>

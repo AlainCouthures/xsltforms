@@ -626,8 +626,12 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 		return d;
 	};
 	XsltForms_browser.setAttributeNS = function(node, ns, name, value) {
-		node.setAttributeNode(node.ownerDocument.createNode(XsltForms_nodeType.ATTRIBUTE, name, ns));
-		node.setAttribute(name, value);
+		try {
+			node.setAttributeNode(node.ownerDocument.createNode(XsltForms_nodeType.ATTRIBUTE, name, ns));
+			node.setAttribute(name, value);
+		} catch (e) {
+			XsltForms_browser.debugConsole.write("ERROR: Could not set @" + (ns !== "" ? "Q{" + ns + "}" : "") + name + " with value " + value + " on " + XsltForms_browser.name2string(node));
+		}
 	};
 	XsltForms_browser.selectSingleNode = function(xpath, node) {
 		try {
@@ -753,7 +757,11 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 		return XsltForms_browser.parser.parseFromString(xml, "text/xml");
 	};
 	XsltForms_browser.setAttributeNS = function(node, ns, name, value) {
-		node.setAttributeNS(ns, name, value);
+		try {
+			node.setAttributeNS(ns, name, value);
+		} catch (e) {
+			XsltForms_browser.debugConsole.write("ERROR: Could not set " + (ns !== "" ? "Q{" + ns + "}" : "") + name + " with value " + value + " on " + XsltForms_browser.name2string(node));
+		}
 	};
 	XsltForms_browser.selectSingleNode = function(xpath, node) {
 		try {
@@ -1165,12 +1173,12 @@ XsltForms_browser.setBoolMeta = function(node, meta, value) {
 	if (node) {
 		if (value) {
 			if (node.nodeType === XsltForms_nodeType.ELEMENT) {
-				node.setAttribute("xsltforms_"+meta, value);
+				node.setAttribute("xsltforms_"+meta, "true");
 			} else {
 				if (node.ownerElement) {
-					node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
+					node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, "true");
 				} else {
-					node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, value);
+					node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, "true");
 				}
 			}
 		} else {
@@ -1190,12 +1198,12 @@ XsltForms_browser.setBoolMeta = function(node, meta, value) {
 XsltForms_browser.setTrueBoolMeta = function(node, meta) {
 	if (node) {
 		if (node.nodeType === XsltForms_nodeType.ELEMENT) {
-			node.setAttribute("xsltforms_"+meta, true);
+			node.setAttribute("xsltforms_"+meta, "true");
 		} else {
 			if (node.ownerElement) {
-				node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, true);
+				node.ownerElement.setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, "true");
 			} else {
-				node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, true);
+				node.selectSingleNode("..").setAttribute("xsltforms_"+(node.localName ? node.localName : node.baseName)+"_"+meta, "true");
 			}
 		}
 	}
@@ -1251,6 +1259,32 @@ XsltForms_browser.inValueMeta = function(node, meta, value) {
 		return pos !== -1;
 	}
 };
+
+XsltForms_browser.name2string = function(node) {
+	var s = "";
+	if (!node.nodeType) {
+		return "#notanode (" + node + ")";
+	}
+	switch (node.nodeType) {
+		case XsltForms_nodeType.ATTRIBUTE:
+			s = "@";
+		case XsltForms_nodeType.ELEMENT:
+			if (node.namespaceURI && node.namespaceURI !== "") {
+				s += "Q{" + node.namespaceURI + "}";
+			}
+			return s + (node.baseName || node.localName);
+		case XsltForms_nodeType.TEXT:
+			return "#text";
+		case XsltForms_nodeType.CDATA_SECTION:
+			return "#cdata";
+		case XsltForms_nodeType.PROCESSING_INSTRUCTION:
+			return "#processing-instruction";
+		case XsltForms_nodeType.COMMENT:
+			return "#comment";
+		case XsltForms_nodeType.DOCUMENT:
+			return "#document";
+	}
+}
 
 XsltForms_browser.setType = function(node, value) {
 	if (node) {
@@ -1701,7 +1735,7 @@ Internationalization Management</cm:wiki>
 XsltForms_browser.i18n = {
 	messages : null,
 	lang : null,
-	langs : ["cz", "de", "el", "en", "en_us", "es", "fr" , "gl", "ko", "it", "ja", "nb_no", "nl", "nn_no", "pt", "ro", "ru", "si", "sk", "zh", "zh_cn", "zh_tw"],
+	langs : ["cz", "de", "el", "en", "en_us", "es", "fr" , "gl", "ko", "it", "ja", "nb_no", "nl", "nn_no", "pl", "pt", "ro", "ru", "si", "sk", "zh", "zh_cn", "zh_tw"],
 ]]>
 		<cm:wiki>
 * '''get''' method : get a property value for the current language</cm:wiki>
@@ -1711,7 +1745,7 @@ XsltForms_browser.i18n = {
 			return "Initializing";
 		}
 		if (XsltForms_globals.language === "navigator" || XsltForms_globals.language !== XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config)) {
-			var lan = XsltForms_globals.language === "navigator" ? (navigator.language || navigator.userLanguage) : XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
+			var lan = XsltForms_globals.language === "navigator" ? (navigator.language || navigator.userLanguage || "undefined") : XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
 			lan = lan.replace("-", "_").toLowerCase();
 			var found = XsltForms_browser.inArray(lan, XsltForms_browser.i18n.langs);
 			if (!found) {
@@ -1734,37 +1768,54 @@ XsltForms_browser.i18n = {
 		<cm:wiki>
 * '''parse''' method : data parsing according to a pattern and the current language</cm:wiki>
 <![CDATA[
-	parse : function(str, pattern) {
+	parse : function(str, pattern, timeonly) {
+		var ret = true;
 		if (!str || str.match("^\\s*$")) {
 			return null;
 		}
 		if (!pattern) {
-			pattern = XsltForms_browser.i18n.get("format.datetime");
+			if (!timeonly) {
+				pattern = XsltForms_browser.i18n.get("format.datetime");
+			} else {
+				pattern = "hh:mm:ss";
+			}
 		}
 		var d = new Date(2000, 0, 1);
-		XsltForms_browser.i18n._parse(d, "Year", str, pattern, "yyyy");
-		XsltForms_browser.i18n._parse(d, "Month", str, pattern, "MM");
-		XsltForms_browser.i18n._parse(d, "Date", str, pattern, "dd");
+		if (!timeonly) {
+			ret &= XsltForms_browser.i18n._parse(d, "Year", str, pattern, "yyyy");
+			ret &= XsltForms_browser.i18n._parse(d, "Month", str, pattern, "MM");
+			ret &= XsltForms_browser.i18n._parse(d, "Date", str, pattern, "dd");
+		}
 		XsltForms_browser.i18n._parse(d, "Hours", str, pattern, "hh");
 		XsltForms_browser.i18n._parse(d, "Minutes", str, pattern, "mm");
 		XsltForms_browser.i18n._parse(d, "Seconds", str, pattern, "ss");
-		return d;
+		return ret ? d : str;
 	},
 ]]>
 		<cm:wiki>
 * '''format''' method : data formatting according to a pattern and the current language</cm:wiki>
 <![CDATA[
-	format : function(date, pattern, loc) {
+	format : function(date, pattern, loc, timeonly) {
 		if (!date) {
 			return "";
 		}
-		if (!pattern) {
-			pattern = XsltForms_browser.i18n.get("format.datetime");
+		if (typeof date === "string") {
+			return date;
 		}
-		var str = XsltForms_browser.i18n._format(pattern, (loc ? date.getDate() : date.getUTCDate()), "dd");
-		str = XsltForms_browser.i18n._format(str, (loc ? date.getMonth() : date.getUTCMonth()) + 1, "MM");
-		var y = (loc ? date.getFullYear() : date.getUTCFullYear());
-		str = XsltForms_browser.i18n._format(str, y < 1000? 1900 + y : y, "yyyy");
+		if (!pattern) {
+			if (!timeonly) {
+				pattern = XsltForms_browser.i18n.get("format.datetime");
+			} else {
+				pattern = "hh:mm:ss";
+			}
+		}
+		var str = pattern;
+		if (!timeonly) {
+			str = XsltForms_browser.i18n._format(str, (loc ? date.getDate() : date.getUTCDate()), "dd");
+			str = XsltForms_browser.i18n._format(str, (loc ? date.getMonth() : date.getUTCMonth()) + 1, "MM");
+			var y = (loc ? date.getFullYear() : date.getUTCFullYear());
+			str = XsltForms_browser.i18n._format(str, y < 1000? 1900 + y : y, "yyyy");
+		}
 		str = XsltForms_browser.i18n._format(str, (loc ? date.getSeconds() : date.getUTCSeconds()), "ss");
 		str = XsltForms_browser.i18n._format(str, (loc ? date.getMinutes() : date.getUTCMinutes()), "mm");
 		str = XsltForms_browser.i18n._format(str, (loc ? date.getHours() : date.getUTCHours()), "hh");
@@ -1819,6 +1870,7 @@ XsltForms_browser.i18n = {
 		return returnValue.replace(el, XsltForms_browser.zeros(value, el.length));
 	},
 	_parse : function(date, prop, str, format, el) {
+		var ret = false;
 		var index = format.indexOf(el);
 		if (index !== -1) {
 			format = format.replace(new RegExp("\\.", "g"), "\\.");
@@ -1828,7 +1880,7 @@ XsltForms_browser.i18n = {
 			format = format.replace(new RegExp("yyyy"), "[12][0-9]{3}");
 			format = format.replace(new RegExp("MM"), "(?:0?[1-9](?![0-9])|1[0-2])");
 			format = format.replace(new RegExp("dd"), "(?:0?[1-9](?![0-9])|[1-2][0-9]|30|31)");
-			format = format.replace(new RegExp("hh"), "[0-2][0-9]");
+			format = format.replace(new RegExp("hh"), "(?:0?[1-9](?![0-9])|1[0-9]|20|21|22|23)");
 			format = format.replace(new RegExp("mm"), "[0-5][0-9]");
 			format = format.replace(new RegExp("ss"), "[0-5][0-9]");
 			format = "^" + format.substring(0, format.indexOf(")!!!") + 1) + "[^0-9]*.*";
@@ -1836,17 +1888,19 @@ XsltForms_browser.i18n = {
 			var val = '00';
 			if (r.test(str)) {
 				val = str.replace(r, "$1");
+				ret = true;
 			}
 			if (val.charAt(0) === '0') {
 				val = val.substring(1);
 			}
 			val = parseInt(val, 10);
 			if (isNaN(val)) {
-				throw "Error parsing date " + str + " with pattern " + format;
+				return false;
 			}
 			var n = new Date();
 			n = n.getFullYear() - 2000;
 			date["set" + prop](prop === "Month"? val - 1 : (prop === "Year" && val <= n+10 ? val+2000 : val));
+			return ret;
 		}
 	}
 };
@@ -2059,7 +2113,11 @@ XsltForms_browser.setValue = function(node, value) {
 		}
 		if (value) {
 			for (var i = 0, l = value.length; i < l; i += 4096) {
-				node.appendChild(node.ownerDocument.createTextNode(value.substr(i, 4096)));
+				try {
+					node.appendChild(node.ownerDocument.createTextNode(value.substr(i, 4096)));
+				} catch (e) {
+					XsltForms_browser.debugConsole.write("ERROR: Cannot set value " + value + " on " + XsltForms_browser.name2string(node) + "; " + e.message);
+				}
 			}
 		}
 	}

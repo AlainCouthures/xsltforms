@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:text>'</xsl:text>
 							<xsl:call-template name="escapeJS">
 								<xsl:with-param name="text" select="$t"/>
-								<xsl:with-param name="trtext" select="translate($t,concat($carriagereturn,$tab,'&quot;'),concat($newline,$newline,$newline))"/>
+								<xsl:with-param name="trtext" select="translate($t,concat($newline,$carriagereturn,'&quot;'),concat($tab,$tab,$tab))"/>
 							</xsl:call-template>
 							<xsl:text>'</xsl:text>
 						</xsl:variable>
@@ -61,7 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:text>"</xsl:text>
 							<xsl:call-template name="escapeJS">
 								<xsl:with-param name="text" select="$t"/>
-								<xsl:with-param name="trtext" select="translate($t,concat($carriagereturn,$tab,'&quot;'),concat($newline,$newline,$newline))"/>
+								<xsl:with-param name="trtext" select="translate($t,concat($newline,$carriagereturn,'&quot;'),concat($tab,$tab,$tab))"/>
 							</xsl:call-template>
 							<xsl:text>"</xsl:text>
 						</xsl:variable>
@@ -82,6 +82,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 								<xsl:value-of select="concat(string-length($t),'.new XsltForms_cteExpr(',$t,')')"/>
 							</xsl:when>
 						</xsl:choose>
+					</xsl:when>
+					<xsl:when test="$c = '$'">		
+						<xsl:variable name="t"><xsl:call-template name="getName"><xsl:with-param name="s" select="$d"/></xsl:call-template></xsl:variable>
+						<xsl:value-of select="concat(string-length($t)+1,'.new XsltForms_varRef(&quot;',$t,'&quot;)')"/>
 					</xsl:when>
 					<xsl:when test="contains('0123456789',$c)">
 						<xsl:variable name="t"><xsl:call-template name="getNumber"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>

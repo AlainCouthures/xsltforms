@@ -52,9 +52,13 @@ XsltForms_setvalue.prototype.run = function(element, ctx) {
 		}
 		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform)) : this.literal;
 		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
-		XsltForms_browser.setValue(node, value || "");
-		document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement.addChange(node);
-		XsltForms_browser.debugConsole.write("Setvalue " + node.nodeName + " = " + value); 
+		try {
+			XsltForms_browser.setValue(node, value || "");
+			document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement.addChange(node);
+			XsltForms_browser.debugConsole.write("Setvalue " + XsltForms_browser.name2string(node) + " = " + value);
+		} catch (e) {
+			XsltForms_browser.debugConsole.write("ERROR: cannot setvalue on " + XsltForms_browser.name2string(node) + " = " + value + "(context " + XsltForms_browser.name2string(ctx) + ")");
+		}
 		XsltForms_globals.closeAction("XsltForms_setvalue.prototype.run");
 	}
 };

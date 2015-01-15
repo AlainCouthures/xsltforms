@@ -3,7 +3,9 @@
 		<options>
 		</options>
 		<properties> <!--  accessible at run time -->
+			<html>4</html>
 			<language>zh</language>
+			<calendar.label>...</calendar.label>
 			<calendar.day0>一</calendar.day0>
 			<calendar.day1>二</calendar.day1>
 			<calendar.day2>三</calendar.day2>

@@ -3,7 +3,9 @@
 		<options>
 		</options>
 		<properties> <!--  accessible at run time -->
+			<html>4</html>
 			<language>ko</language>
+			<calendar.label>...</calendar.label>
 			<calendar.day0>월</calendar.day0>
 			<calendar.day1>화</calendar.day1>
 			<calendar.day2>수</calendar.day2>

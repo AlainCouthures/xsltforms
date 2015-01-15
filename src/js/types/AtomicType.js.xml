@@ -124,16 +124,16 @@ XsltForms_atomicType.prototype.validate = function (value) {
 	}
 	var l = value.length;
 	var value_i = parseInt(value, 10);
-	if ( (this.length && this.length !== l) ||
-		(this.minLength && l < this.minLength) ||
-		(this.maxLength && l > this.maxLength) ||
-		(this.maxInclusive && value_i > this.maxInclusive) ||
-		(this.maxExclusive && value_i >= this.maxExclusive) ||
-		(this.minInclusive && value_i < this.minInclusive) ||
-		(this.minExclusive && value_i <= this.minExclusive) ) {
+	if ( (typeof this.length === "number" && this.length !== l) ||
+		(typeof this.minLength === "number" && l < this.minLength) ||
+		(typeof this.maxLength === "number" && l > this.maxLength) ||
+		(typeof this.maxInclusive === "number" && value_i > this.maxInclusive) ||
+		(typeof this.maxExclusive === "number" && value_i >= this.maxExclusive) ||
+		(typeof this.minInclusive === "number" && value_i < this.minInclusive) ||
+		(typeof this.minExclusive === "number" && value_i <= this.minExclusive) ) {
 		return false;
 	}
-	if (this.totalDigits || this.fractionDigits) {
+	if (typeof this.totalDigits === "number" || typeof this.fractionDigits === "number") {
 		var index = value.indexOf(".");
 		var integer = "" + Math.abs(parseInt(index !== -1? value.substring(0, index) : value, 10));
 		var decimal = index !== -1? value.substring(index + 1) : "";
@@ -147,8 +147,8 @@ XsltForms_atomicType.prototype.validate = function (value) {
 			}
 			decimal = decimal.substring(0, dl + 1);
 		}
-		if ( (this.totalDigits && integer.length + decimal.length > this.totalDigits) ||
-			(this.fractionDigits && decimal.length > this.fractionDigits)) {
+		if ( (typeof this.totalDigits === "number" && integer.length + decimal.length > this.totalDigits) ||
+			(typeof this.fractionDigits === "number" && decimal.length > this.fractionDigits)) {
 			return false;
 		}
 	}
@@ -160,7 +160,7 @@ XsltForms_atomicType.prototype.validate = function (value) {
 * '''normalize''' method : normalizes a value for fraction digits according to this AtomicType object</cm:wiki>
 <![CDATA[
 XsltForms_atomicType.prototype.normalize = function (value) {
-	if (this.fractionDigits) {
+	if (typeof this.fractionDigits === "number") {
 		var number = parseFloat(value);
 		var num;
 		if (isNaN(number)) {

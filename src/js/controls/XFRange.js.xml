@@ -67,7 +67,7 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
 			var xf = parent.xfElement;
 			if (xf) {
-				var newPos = evt.clientX + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
+				var newPos = XsltForms_browser.getEventPos(evt).x + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
 				parent = xf.rail;
 				while (parent) {
 					newPos -= parent.offsetLeft;
@@ -99,7 +99,7 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
 			var xf = parent.xfElement;
 			if (xf) {
-				xf.offset = evt.clientX + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
+				xf.offset = XsltForms_browser.getEventPos(evt).x + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
 				parent = xf.cursor;
 				while (parent) {
 					xf.offset -= parent.offsetLeft;
@@ -111,7 +111,7 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 					while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
 						var xf = parent.xfElement;
 						if (xf) {
-							var newPos = evt.clientX - xf.offset + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
+							var newPos = XsltForms_browser.getEventPos(evt).x - xf.offset + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
 							parent = xf.rail;
 							while (parent) {
 								newPos -= parent.offsetLeft;

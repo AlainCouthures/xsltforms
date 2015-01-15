@@ -87,6 +87,10 @@ XsltForms_xmlevents.dispatchList = function(list, name) {
 * '''dispatch''' function : dispatches the given event at a given target with possibly different properties</cm:wiki>
 <![CDATA[
 XsltForms_xmlevents.dispatch = function(target, name, type, bubbles, cancelable, defaultAction, evcontext) {
+	if (!target) {
+		XsltForms_browser.debugConsole.write("ERROR: Cannot dispatch event " + name + " as the target is null");
+		return;
+	}
 	target = target.element || target;
 	XsltForms_browser.assert(target && typeof(target.nodeName) !== "undefined");
 	XsltForms_browser.debugConsole.write("Dispatching event " + name + " on <" + target.nodeName +

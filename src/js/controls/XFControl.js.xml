@@ -88,8 +88,12 @@ XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 	if (fcontrol && !focusEvent) {
 		var control = this.focusControl;
 		var name = control.nodeName.toLowerCase();
-		control.focus();
-		control.focus();
+		try {
+			control.focus();
+			control.focus();
+		} catch (e) {
+			XsltForms_browser.debugConsole.write("ERROR: Could not focus on element " + control);
+		}
 		if (name === "input" || name === "textarea") {
 			try {
 				control.select();
@@ -103,8 +107,8 @@ XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 		<cm:wiki>
 * '''build_''' method : specific build method updating dependencies</cm:wiki>
 <![CDATA[
-XsltForms_control.prototype.build_ = function(ctx) {
-	var result = this.evaluateBinding(this.binding, ctx);
+XsltForms_control.prototype.build_ = function(ctx, varresolver) {
+	var result = this.evaluateBinding(this.binding, ctx, varresolver);
 	if (typeof result === "object") {
 		var node = result[0];
 		var element = this.element;
@@ -126,11 +130,16 @@ XsltForms_control.prototype.build_ = function(ctx) {
 * '''refresh''' method : refreshes this control according to the value of the corresponding node and dispatches according events</cm:wiki>
 <![CDATA[
 XsltForms_control.prototype.refresh = function() {
+	if (this.controlName === "var") {
+		return;
+	}
 	var element = this.element;
 	var node = element.node;
 	if (this.outputValue !== undefined) {
 		this.setValue(this.outputValue);
-		this.eventDispatch("xforms-disabled", "xforms-enabled", false);
+		if (this.controlName !== "var") {
+			this.eventDispatch("xforms-disabled", "xforms-enabled", false);
+		}
 	} else if (node) {
 		var value = XsltForms_browser.getValue(node, true, this.complex);
 		XsltForms_globals.openAction("XsltForms_control.prototype.refresh");

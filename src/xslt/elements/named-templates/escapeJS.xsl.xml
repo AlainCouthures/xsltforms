@@ -28,11 +28,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="text"/>
 			<xsl:param name="trtext"/>
 			<xsl:choose>
-				<xsl:when test="contains($trtext, $newline)">
-					<xsl:value-of select="substring-before($trtext, $newline)"/>
-					<xsl:variable name="c" select="substring($text, string-length(substring-before($trtext, $newline))+1, 1)"/>
+				<xsl:when test="function-available('msxsl:node-set') and contains($trtext, '&#9;')">
+					<xsl:value-of select="substring-before($trtext, '&#9;')"/>
+					<xsl:variable name="c" select="substring($text, string-length(substring-before($trtext, '&#9;'))+1, 1)"/>
 					<xsl:choose>
-						<!--xsl:when test="$c = ' '"><xsl:text> </xsl:text></xsl:when-->
+						<xsl:when test="$c = $newline">\n</xsl:when>
+						<xsl:when test="$c = $carriagereturn">\r</xsl:when>
+						<xsl:when test="$c = '&#9;'">\t</xsl:when>
+						<xsl:when test="$c = '&quot;'">\"</xsl:when>
+						<xsl:when test="$c = '\'">\\</xsl:when>
+					</xsl:choose>
+					<xsl:call-template name="escapeJS">
+						<xsl:with-param name="text" select="substring-after($text, $c)"/>
+						<xsl:with-param name="trtext" select="substring-after($trtext, '&#9;')"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:when test="not(function-available('msxsl:node-set')) and contains($trtext, $tab)">
+					<xsl:value-of select="substring-before($trtext, $tab)"/>
+					<xsl:variable name="c" select="substring($text, string-length(substring-before($trtext, $tab))+1, 1)"/>
+					<xsl:choose>
 						<xsl:when test="$c = $newline">\n</xsl:when>
 						<xsl:when test="$c = $carriagereturn">\r</xsl:when>
 						<xsl:when test="$c = $tab">\t</xsl:when>
@@ -41,7 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</xsl:choose>
 					<xsl:call-template name="escapeJS">
 						<xsl:with-param name="text" select="substring-after($text, $c)"/>
-						<xsl:with-param name="trtext" select="substring-after($trtext, $newline)"/>
+						<xsl:with-param name="trtext" select="substring-after($trtext, $tab)"/>
 					</xsl:call-template>
 				</xsl:when>
 				<xsl:otherwise>

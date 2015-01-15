@@ -49,7 +49,8 @@ XsltForms_load.prototype.run = function(element, ctx) {
 	var href = this.resource;
 	var node;
 	if (this.binding) {
-		node = this.binding.bind_evaluate(this.subform, ctx)[0];
+		var varresolver = this.parentAction ? this.parentAction.varResolver : element.xfElement.varResolver;
+		node = this.binding.bind_evaluate(this.subform, ctx, varresolver)[0];
 		if (node) {
 			var t = XsltForms_schema.getType(XsltForms_browser.getType(node));
 			if (!t.hasBase("xf:HTMLFragment")) {
@@ -161,16 +162,20 @@ XsltForms_load.prototype.run = function(element, ctx) {
 		}
 	} else {
 		if (node) {
-			var v = XsltForms_browser.getValue(node).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-			var lw;
-			if (this.show === "new" || this.targetid === "_blank") {
-				lw = window.open("about:blank","_blank");
-				lw.document.write(v);
-				lw.document.close();
-			} else {
-				lw = window.open("about:blank", "_self");
-				lw.document.write(v);
-				lw.document.close();
+			try {
+				var v = XsltForms_browser.getValue(node).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+				var lw;
+				if (this.show === "new" || this.targetid === "_blank") {
+					lw = window.open("about:blank","_blank");
+					lw.document.write(v);
+					lw.document.close();
+				} else {
+					lw = window.open("about:blank", "_self");
+					lw.document.write(v);
+					lw.document.close();
+				}
+			} catch (e) {
+				XsltForms_browser.debugConsole.write("ERROR: Load:" + e.message);
 			}
 		}
 	}

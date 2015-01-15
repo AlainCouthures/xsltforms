@@ -3,7 +3,9 @@
 		<options>
 		</options>
 		<properties> <!--  accessible at run time -->
+			<html>4</html>
 			<language>ru</language>
+			<calendar.label>...</calendar.label>
 			<calendar.day0>Пон</calendar.day0>
 			<calendar.day1>Вто</calendar.day1>
 			<calendar.day2>Сре</calendar.day2>

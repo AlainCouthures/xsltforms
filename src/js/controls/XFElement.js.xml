@@ -54,6 +54,18 @@ XsltForms_element.prototype.init = function(subform, id) {
 	this.depsNodesRefresh = [];
 	this.depsIdB = XsltForms_element.depsId++;
 	this.depsIdR = XsltForms_element.depsId++;
+	var p = this.element.parentNode;
+	while (p) {
+		if (p.varScope) {
+			for (var v in p.varScope) {
+				if (!this.varResolver) {
+					this.varResolver = {};
+				}
+				this.varResolver[v] = p.varScope[v];
+			}
+		}
+		p = p.parentNode;
+	}
 };
 
 ]]>
@@ -85,7 +97,7 @@ XsltForms_element.prototype.dispose = function() {
 		<cm:wiki>
 * '''build''' method : abstractly builds this element from dependencies</cm:wiki>
 <![CDATA[
-XsltForms_element.prototype.build = function(ctx) {
+XsltForms_element.prototype.build = function(ctx, varresolver) {
 	if (this.hasBinding) {
 		var deps = this.depsElements;
 		var depsN = this.depsNodesBuild;
@@ -131,7 +143,7 @@ XsltForms_element.prototype.build = function(ctx) {
 			depsR.length = 0;
 			deps.length = 0;
 			this.ctx = ctx;
-			this.build_(ctx);
+			this.build_(ctx, varresolver);
 		}
 	} else {
 		this.element.node = ctx;
@@ -141,11 +153,19 @@ XsltForms_element.prototype.build = function(ctx) {
 		<cm:wiki>
 * '''evaluateBinding''' method : evaluates the spec'ed binding and gathers any errors</cm:wiki>
 <![CDATA[
-XsltForms_element.prototype.evaluateBinding = function(binding, ctx) {
+XsltForms_element.prototype.evaluateBinding = function(binding, ctx, varresolver) {
 	this.boundnodes = null;
 	var errmsg = null;
 	if (binding) {
-		this.boundnodes = binding.bind_evaluate(this.subform, ctx, this.depsNodesBuild, this.depsIdB, this.depsElements);
+		if (this.varResolver) {
+			for (var v in this.varResolver) {
+				if (!varresolver) {
+					varresolver = {};
+				}
+				varresolver[v] = this.varResolver[v];
+			}
+		}
+		this.boundnodes = binding.bind_evaluate(this.subform, ctx, varresolver, this.depsNodesBuild, this.depsIdB, this.depsElements);
 		if (this.boundnodes || this.boundnodes === "") {
 			return this.boundnodes;
 		}

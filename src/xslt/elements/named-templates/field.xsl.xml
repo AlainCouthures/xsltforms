@@ -98,10 +98,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:if test="@ajx:aid-button = 'true'">
 							<button type="button" class="aid-button">...</button>
 						</xsl:if>
-						<xsl:if test="local-name() != 'output' and local-name() != 'component' and not($required-position = 'left' and (string(xforms:label) != '' or xforms:label/@* or xforms:label/*))">
+						<xsl:if test="local-name() != 'output' and local-name() != 'component' and local-name() != 'var' and not($required-position = 'left' and (string(xforms:label) != '' or xforms:label/@* or xforms:label/*))">
 							<span class="xforms-required-icon">*</span>
 						</xsl:if>
-						<xsl:if test="local-name() != 'output' and local-name() != 'component'">
+						<xsl:if test="local-name() != 'output' and local-name() != 'component' and local-name() != 'var'">
 							<span class="xforms-alert">
 								<span class="xforms-alert-icon">
 									<xsl:if test="xforms:alert">

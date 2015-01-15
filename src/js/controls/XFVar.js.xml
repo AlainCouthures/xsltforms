@@ -1,0 +1,64 @@
+<cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFOutput.js">
+	<cm:author>Alain Couthures</cm:author>
+	<cm:creationdate>2014-12-15</cm:creationdate>
+	<cm:lastupdate>2014-12-15</cm:lastupdate>
+	<cm:licence>
+Copyright (C) 2008-2014 &lt;agenceXML&gt; - Alain COUTHURES
+Contact at : &lt;info@agencexml.com&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	</cm:licence>
+	<cm:source type="text/javascript">
+		<cm:wiki>
+=== "XsltForms_var" class ===
+Var Control  Class
+* constructor function : initializes specific properties and initializes scope</cm:wiki>
+		<![CDATA[
+function XsltForms_var(subform, id, name, binding) {
+	XsltForms_globals.counters.var++;
+	this.init(subform, id);
+	if (!this.element.parentNode.varScope) {
+		this.element.parentNode.varScope = {};
+	}
+	this.element.parentNode.varScope[name] = id;
+	this.controlName = "var";
+	this.name = name;
+	this.hasBinding = true;
+	this.binding = binding;
+	this.isOutput = true;
+}
+
+XsltForms_var.prototype = new XsltForms_control();
+
+]]>
+		<cm:wiki>
+* '''clone''' method : creates a new var control with the given id</cm:wiki>
+<![CDATA[
+XsltForms_var.prototype.clone = function(id) { 
+	return new XsltForms_var(this.subform, id, this.name, this.binding);
+};
+
+]]>
+		<cm:wiki>
+* '''dispose''' method : clears properties of this control and calls the parent dispose() method</cm:wiki>
+<![CDATA[
+XsltForms_var.prototype.dispose = function() {
+	XsltForms_globals.counters.var--;
+	XsltForms_control.prototype.dispose.call(this);
+};
+
+]]>
+	</cm:source>
+</cm:component>

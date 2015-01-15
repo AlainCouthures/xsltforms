@@ -4,7 +4,9 @@
 			<debug/>
 		</options>
 		<properties> <!--  accessible at run time -->
+			<html>4</html>
 			<language>es</language>
+			<calendar.label>...</calendar.label>
 			<calendar.day0>Lun</calendar.day0>
 			<calendar.day1>Mar</calendar.day1>
 			<calendar.day2>Mie</calendar.day2>

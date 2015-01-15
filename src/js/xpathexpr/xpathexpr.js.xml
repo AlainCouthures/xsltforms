@@ -42,6 +42,7 @@ XPath expressions are "compiled" (converted to Javascript objects creation instr
 		<cm:import-components path="PredicateExpr.js.xml"/>
 		<cm:import-components path="StepExpr.js.xml"/>
 		<cm:import-components path="UnionExpr.js.xml"/>
+		<cm:import-components path="VarRef.js.xml"/>
 		<cm:import-components path="utils.js.xml"/>
 		<cm:import-components path="XPath.js.xml"/>
 		<cm:import-components path="XPathFunction.js.xml"/>

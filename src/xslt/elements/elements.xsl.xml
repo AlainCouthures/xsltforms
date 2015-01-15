@@ -54,6 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:import-components path="tree.xsl.xml"/>
 		<cm:import-components path="trigger-submit.xsl.xml"/>
 		<cm:import-components path="upload.xsl.xml"/>
+		<cm:import-components path="var.xsl.xml"/>
 		<cm:import-components path="named-templates/named-templates.xsl.xml"/>
 	</cm:source>
 	<cm:unit-test-group>

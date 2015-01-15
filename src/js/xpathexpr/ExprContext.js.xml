@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Context for XPath Expression evaluation Class
 * constructor function : initializes specific properties</cm:wiki>
 		<![CDATA[
-function XsltForms_exprContext(subform, node, position, nodelist, parent, nsresolver, current, depsNodes, depsId, depsElements) {
+function XsltForms_exprContext(subform, node, position, nodelist, parent, nsresolver, current, varresolver, depsNodes, depsId, depsElements) {
 	this.subform = subform;
 	this.node = node;
 	this.current = current || node;
@@ -53,6 +53,7 @@ function XsltForms_exprContext(subform, node, position, nodelist, parent, nsreso
 	this.parent = parent;
 	this.root = parent ? parent.root : node ? node.ownerDocument : null;
 	this.nsresolver = nsresolver;
+	this.varresolver = varresolver;
 	this.depsId = depsId;
 	this.initDeps(depsNodes, depsElements);
 }
@@ -64,7 +65,7 @@ function XsltForms_exprContext(subform, node, position, nodelist, parent, nsreso
 XsltForms_exprContext.prototype.clone = function(node, position, nodelist) {
 	return new XsltForms_exprContext(this.subform, node || this.node, 
 		typeof position === "undefined" ? this.position : position,
-		nodelist || this.nodelist, this, this.nsresolver, this.current,
+		nodelist || this.nodelist, this, this.nsresolver, this.current, this.varresolver,
 		this.depsNodes, this.depsId, this.depsElements);
 };
 

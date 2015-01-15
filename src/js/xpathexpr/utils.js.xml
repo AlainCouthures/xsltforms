@@ -59,9 +59,9 @@ XsltForms_globals.numberValue = function(value) {
 * '''booleanValue''' function : number cast</cm:wiki>
 <![CDATA[
 XsltForms_globals.nodeSetValue = function(value) {
-	if (typeof value !== "object") {
-		throw {name: this, message: Error().stack};
-	}
+//	if (typeof value !== "object") {
+//		throw {name: this, message: Error().stack};
+//	}
 	return value;
 };
 

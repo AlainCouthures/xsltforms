@@ -39,6 +39,12 @@ function XsltForms_trigger(subform, id, binding, clone) {
 		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
 	}
 	this.isTrigger = true;
+	var anchor = XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "a")[0] : this.element.getElementsByTagName("a")[0];
+	if (anchor !== null && typeof anchor !== "undefined") {
+		if (!anchor.hasAttribute("href")) {
+			anchor.setAttribute("href", "#");
+		}
+	}
 	var button = XsltForms_browser.isXhtml ? (this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "a")[0] || this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "button")[0]) : (this.element.getElementsByTagName("a")[0] || this.element.getElementsByTagName("button")[0]);
 	this.input = button;
 	this.initFocus(button);

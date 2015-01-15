@@ -43,6 +43,7 @@ XsltForms_action.prototype = new XsltForms_abstractAction();
 <![CDATA[
 XsltForms_action.prototype.add = function(action) {
 	this.childs.push(action);
+	action.parentAction = this;
 	return this;
 };
 
@@ -51,6 +52,12 @@ XsltForms_action.prototype.add = function(action) {
 * '''run''' method : executes each child action of this action</cm:wiki>
 <![CDATA[
 XsltForms_action.prototype.run = function(element, ctx, evt) {
+	if (element.xfElement.varResolver) {
+		this.varResolver = {};
+		for (var v in element.xfElement.varResolver) {
+			this.varResolver[v] = element.xfElement.varResolver[v];
+		}
+	}
 	XsltForms_browser.forEach(this.childs, "execute", element, ctx, evt);
 };
     ]]>
