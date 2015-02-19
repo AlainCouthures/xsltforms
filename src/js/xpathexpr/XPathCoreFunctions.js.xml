@@ -1999,7 +1999,7 @@ var XsltForms_xpathCoreFunctions = {
 };
 
 XsltForms_globals.validate_ = function (node) {
-	if (XsltForms_browser.getBoolMeta(node, "notvalid")) {
+	if (XsltForms_browser.getBoolMeta(node, "notvalid") || XsltForms_browser.getBoolMeta(node, "unsafe")) {
 		return false;
 	}
 	var atts = node.attributes || [];

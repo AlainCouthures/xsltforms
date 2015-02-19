@@ -46,7 +46,7 @@ function XsltForms_item(subform, id, bindingL, bindingV) {
 		this.input.name = XsltForms_control.getXFElement(this.element).element.id;
 		XsltForms_browser.events.attach(this.input, "focus", XsltForms_control.focusHandler);
 		XsltForms_browser.events.attach(this.input, "blur", XsltForms_control.blurHandler);
-		this.label = XsltForms_browser.isXhtml ? element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "span")[0] : element.getElementsByTagName("span")[0];
+		this.label = XsltForms_browser.isXhtml ? element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "label")[0] : element.getElementsByTagName("label")[0];
 	}
 }
 

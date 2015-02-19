@@ -314,6 +314,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						</xsl:for-each>
 						<xsl:text>} catch (e) {
 </xsl:text>
+						<xsl:text>try {console.log(e);} catch(e2) {}
+</xsl:text>
 						<xsl:text>XsltForms_browser.dialog.hide('statusPanel');
 </xsl:text>
 						<xsl:text>if (!XsltForms_globals.debugMode) {
@@ -324,7 +326,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 </xsl:text>
 						<xsl:text>}
 </xsl:text>
-						<xsl:text>alert("XSLTForms Exception\n--------------------------\n\nError initializing :\n\n"+(typeof(e.stack)=="undefined"?"":e.stack)+"\n\n"+(e.name?e.name+(e.message?"\n\n"+e.message:""):e));
+						<xsl:text>alert("XSLTForms Exception\n--------------------------\n\nError initializing :\n\n"+(!e || typeof(e.stack)=="undefined"?"":e.stack)+"\n\n"+(!e || !e.name?e:e.name+(e.message?"\n\n"+e.message:"")));
 </xsl:text>
 						<xsl:text>} /* XsltForms_MagicSeparator */ };
 </xsl:text>
@@ -355,6 +357,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:text>;
 </xsl:text>
 						<xsl:text>} catch(e) {
+</xsl:text>
+						<xsl:text>try {console.log(e);} catch(e2) {}
 </xsl:text>
 						<xsl:text>alert("XSLTForms Exception\n--------------------------\n\nIncorrect Javascript code generation:\n\n"+(typeof(e.stack)=="undefined"?"":e.stack)+"\n\n"+(e.name?e.name+(e.message?"\n\n"+e.message:""):e));
 </xsl:text>

@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFSelect.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2010-06-12</cm:lastupdate>
+	<cm:lastupdate>2015-01-25</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -43,7 +43,12 @@ function XsltForms_select(subform, id, multiple, full, binding, incremental, clo
 	if (!this.full) {
 		this.select = XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "select")[0] : this.element.getElementsByTagName("select")[0];
 		this.initFocus(this.select);
-		XsltForms_browser.events.attach(this.select, "change", incremental? XsltForms_select.incrementalChange : XsltForms_select.normalChange);
+		if (incremental) {
+			XsltForms_browser.events.attach(this.select, "change", XsltForms_select.incrementalChange);
+			XsltForms_browser.events.attach(this.select, "keyup", XsltForms_select.incrementalChangeKeyup);
+		} else {
+			XsltForms_browser.events.attach(this.select, "change", XsltForms_select.normalChange);
+		}
 	}
 }
 
@@ -104,7 +109,7 @@ XsltForms_select.prototype.setValue = function(value) {
 			//this.select.removeChild(this.select.firstChild);
 			this.select.remove(0);
 		}
-		var vals = value? (this.multiple? value.split(XsltForms_globals.valuesSeparator) : [value]) : [""];
+		var vals = value? value instanceof Array ? value : (this.multiple? value.split(XsltForms_globals.valuesSeparator) : [value]) : [""];
 		var list = this.full? (XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input")) : this.select.options;
 		var well = true;
 		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(this.element.node) || "xsd_:string");
@@ -254,6 +259,7 @@ XsltForms_select.normalChange = function(evt) {
 	var xf = XsltForms_control.getXFElement(this);
 	var news = [];
 	var value = "";
+	var copy = [];
 	var old = xf.getSelected();
 	var opts = this.options;
 	XsltForms_globals.openAction("XsltForms_select.normalChange");
@@ -268,7 +274,11 @@ XsltForms_select.normalChange = function(evt) {
 	for (var j = 0, len1 = opts.length; j < len1; j++) {
 		opt = opts[j];
 		if (opt.selected) {
-			value = value? value + XsltForms_globals.valuesSeparator + opt.value : opt.value;
+			if (opt.copy) {
+				copy.push(opt.copy);
+			} else {
+				value = value? value + XsltForms_globals.valuesSeparator + opt.value : opt.value;
+			}
 		}
 	}
 	for (var k = 0, len2 = opts.length; k < len2; k++) {
@@ -280,10 +290,14 @@ XsltForms_select.normalChange = function(evt) {
 			}
 		}
 	}
-	xf.value = value;
-	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(xf.element.node) || "xsd_:string");
-	if (schtyp.format) {
-		try { xf.value = schtyp.format(value); } catch(e) { }
+	if (copy.length === 0) {
+		xf.value = value;
+		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(xf.element.node) || "xsd_:string");
+		if (schtyp.format) {
+			try { xf.value = schtyp.format(value); } catch(e) { }
+		}
+	} else {
+		xf.value = copy;
 	}
 	xf.selectedOptions = news;
 	XsltForms_globals.closeAction("XsltForms_select.normalChange");
@@ -299,6 +313,20 @@ XsltForms_select.incrementalChange = function(evt) {
 	XsltForms_select.normalChange.call(this, evt);
 	xf.valueChanged(xf.value);
 	XsltForms_globals.closeAction("XsltForms_select.incrementalChange");
+};
+
+]]>
+		<cm:wiki>
+* '''incrementalChangeKeyup''' function : handler for incremental mode from keyboard on change calling normal mode handler</cm:wiki>
+<![CDATA[
+XsltForms_select.incrementalChangeKeyup = function(evt) {
+	if (evt.keyCode !== 9 && evt.keyCode !== 17) {
+		var xf = XsltForms_control.getXFElement(this);
+		XsltForms_globals.openAction("XsltForms_select.incrementalChangeKeyup");
+		XsltForms_select.normalChange.call(this, evt);
+		xf.valueChanged(xf.value);
+		XsltForms_globals.closeAction("XsltForms_select.incrementalChangeKeyup");
+	}
 };
 
 ]]>

@@ -37,12 +37,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:call-template name="style">
 							<xsl:with-param name="class">xforms-item</xsl:with-param>
 						</xsl:call-template>
-						<input type="{$type}" value="{xforms:value}">
+						<xsl:variable name="inputid" select="concat($id_pf, 'input-', local-name(), '-', $workid)"/>
+						<input type="{$type}" value="{xforms:value}" id="{$inputid}">
 							<xsl:call-template name="comun"/>
 						</input>
 						<xsl:apply-templates select="node()">
 							<xsl:with-param name="parentworkid" select="$workid"/>
 							<xsl:with-param name="appearance">item</xsl:with-param>
+							<xsl:with-param name="inputid" select="$inputid"/>
 						</xsl:apply-templates>
 					</div>
 				</xsl:when>

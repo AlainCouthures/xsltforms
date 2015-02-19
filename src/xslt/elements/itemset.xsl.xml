@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="itemset.xsl">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-08</cm:creationdate>
-	<cm:lastupdate>2009-04-08</cm:lastupdate>
+	<cm:lastupdate>2015-02-17</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -38,12 +38,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:with-param name="class">xforms-itemset</xsl:with-param>
 						</xsl:call-template>
 						<div class="xforms-item">
-							<xsl:attribute name="id"><xsl:choose><xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when><xsl:otherwise><xsl:value-of select="$id_pf"/>itemset-item-<xsl:value-of select="$workid"/></xsl:otherwise></xsl:choose>
-							</xsl:attribute>
-							<input type="{$type}" value="{xforms:value}"/>
+							<xsl:attribute name="id"><xsl:choose><xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when><xsl:otherwise><xsl:value-of select="$id_pf"/>itemset-item-<xsl:value-of select="$workid"/></xsl:otherwise></xsl:choose></xsl:attribute>
+							<xsl:variable name="inputid" select="concat($id_pf, 'input-', local-name(), '-', $workid)"/>
+							<input type="{$type}" value="{xforms:value}" id="{$inputid}"/>
 							<xsl:apply-templates select="node()">
 								<xsl:with-param name="parentworkid" select="$workid"/>
 								<xsl:with-param name="appearance">item</xsl:with-param>
+								<xsl:with-param name="inputid" select="$inputid"/>
 							</xsl:apply-templates>
 						</div>
 					</div>

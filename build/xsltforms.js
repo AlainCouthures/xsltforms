@@ -1,4 +1,4 @@
-/* Rev. 608
+/* Rev. 609
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2093,6 +2093,18 @@ XsltForms_browser.getValue = function(node, format, serialize) {
 
 
 		
+		
+XsltForms_browser.getValueItemsetCopy = function(node) {
+	XsltForms_browser.assert(node);
+	var value = [];
+	for (var i = 0, l = node.children.length; i < l ; i++) {
+		value.push(XsltForms_browser.saveXML(node.children[i]));
+	}
+	return value;
+};
+
+
+		
 
 XsltForms_browser.setValue = function(node, value) {
 	XsltForms_browser.assert(node);
@@ -2105,11 +2117,19 @@ XsltForms_browser.setValue = function(node, value) {
 			node.removeChild(node.firstChild);
 		}
 		if (value) {
-			for (var i = 0, l = value.length; i < l; i += 4096) {
-				try {
-					node.appendChild(node.ownerDocument.createTextNode(value.substr(i, 4096)));
-				} catch (e) {
-					XsltForms_browser.debugConsole.write("ERROR: Cannot set value " + value + " on " + XsltForms_browser.name2string(node) + "; " + e.message);
+			if (value instanceof Array) {
+				for (var i = 0, l = value.length; i < l; i++) {
+					var dummy = node.ownerDocument.createElement("dummy");
+					node.appendChild(dummy);
+					XsltForms_browser.loadXML(dummy, value[i]);
+				}
+			} else {
+				for (var j = 0, l2 = value.length; j < l2; j += 4096) {
+					try {
+						node.appendChild(node.ownerDocument.createTextNode(value.substr(j, 4096)));
+					} catch (e) {
+						XsltForms_browser.debugConsole.write("ERROR: Cannot set value " + value + " on " + XsltForms_browser.name2string(node) + "; " + e.message);
+					}
 				}
 			}
 		}
@@ -2217,8 +2237,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "608",
-	fileVersionNumber: 608,
+	fileVersion: "609",
+	fileVersionNumber: 609,
 
 	language: "navigator",
 	debugMode: false,
@@ -2258,7 +2278,7 @@ var XsltForms_globals = {
 		select: 0,
 		trigger: 0,
 		upload: 0,
-		var: 0
+		xvar: 0
 	},
 	nbsubforms: 0,
 	componentLoads: [],
@@ -2826,15 +2846,20 @@ var XsltForms_globals = {
 						curctx = newctx;
 					}
 					if (!childs[i].getAttribute("cloned")) {
+						var samechild = childs[i];
 						var br = this.build(childs[i], curctx, selected, varresolver);
-						if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
-							nbsiblings = childs[i].xfElement.nbsiblings;
-							nodes = childs[i].xfElement.nodes;
-							nbnodes = nodes.length;
-							inodes = 0;
-							isiblings = nbsiblings;
+						if (childs[i] !== samechild) {
+							i--;
+						} else {
+							if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
+								nbsiblings = childs[i].xfElement.nbsiblings;
+								nodes = childs[i].xfElement.nodes;
+								nbnodes = nodes.length;
+								inodes = 0;
+								isiblings = nbsiblings;
+							}
+							hasXFElement = br.hasXFElement || hasXFElement;
 						}
-						hasXFElement = br.hasXFElement || hasXFElement;
 					}
 				}
 			}
@@ -4509,13 +4534,13 @@ function XsltForms_xpath(subform, expression, unordered, compiled, ns) {
 XsltForms_xpath.prototype.evaluate = function() {
 	alert("XPath error");
 };
-XsltForms_xpath.prototype.xpath_evaluate = function(ctx, current, subform) {
+XsltForms_xpath.prototype.xpath_evaluate = function(ctx, current, subform, varresolver) {
 	//console.log(this.expression);
 	var d1 = new Date();
 	XsltForms_browser.assert(ctx);
 //	alert("XPath evaluate \""+this.expression+"\"");
 	if (!ctx.node) {
-		ctx = new XsltForms_exprContext(subform, ctx, null, null, null, this.nsresolver, current);
+		ctx = new XsltForms_exprContext(subform, ctx, null, null, null, this.nsresolver, current, varresolver);
 	} else if (!ctx.nsresolver) {
 		ctx.nsresolver = this.nsresolver;
 	}
@@ -6531,7 +6556,7 @@ var XsltForms_xpathCoreFunctions = {
 };
 
 XsltForms_globals.validate_ = function (node) {
-	if (XsltForms_browser.getBoolMeta(node, "notvalid")) {
+	if (XsltForms_browser.getBoolMeta(node, "notvalid") || XsltForms_browser.getBoolMeta(node, "unsafe")) {
 		return false;
 	}
 	var atts = node.attributes || [];
@@ -7290,14 +7315,14 @@ XsltForms_instance.prototype.validate_ = function(node, readonly, notrelevant) {
 			}
 			this.setProperty_(node, "notvalid",
 				!XsltForms_browser.getBoolMeta(node, "notrelevant") && !(!(XsltForms_browser.getBoolMeta(node, "required") && (!value || value === "")) &&
-				(XsltForms_browser.getNil(node) ? value === "" : !schtyp || schtyp.validate(value)) &&
+				(XsltForms_browser.getNil(node) ? value === "" : !schtyp || schtyp.validate(value) && !XsltForms_browser.getBoolMeta(node, "unsafe")) &&
 				(!bind.constraint || bind.constraint.evaluate(ctx, node))));
 			XsltForms_browser.copyArray(ctx.depsNodes, bind.depsNodes);
 		}
 	} else {
 		this.setProperty_(node, "notrelevant", notrelevant);
 		this.setProperty_(node, "readonly", readonly);
-		this.setProperty_(node, "notvalid", schtyp && !schtyp.validate(value));
+		this.setProperty_(node, "notvalid", schtyp && (!schtyp.validate(value) || XsltForms_browser.getBoolMeta(node, "unsafe")));
 	}
 };
 
@@ -9338,12 +9363,13 @@ XsltForms_setvalue.prototype = new XsltForms_abstractAction();
 		
 
 XsltForms_setvalue.prototype.run = function(element, ctx) {
-	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx)[0];
+	var varresolver = this.parentAction ? this.parentAction.varResolver : element.xfElement.varResolver;
+	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx, varresolver)[0];
 	if (node) {
 		if (this.context) {
-			ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx)[0];
+			ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx, null, varresolver)[0];
 		}
-		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform)) : this.literal;
+		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform, varresolver) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform, varresolver)) : this.literal;
 		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
 		try {
 			XsltForms_browser.setValue(node, value || "");
@@ -9786,7 +9812,9 @@ XsltForms_control.prototype.initFocus = function(element, principal) {
 		this.focusControl = element;
 	}
 	XsltForms_browser.events.attach(element, "focus", XsltForms_control.focusHandler);
+	//XsltForms_browser.events.attach(element, "mousein", XsltForms_control.focusHandler);
 	XsltForms_browser.events.attach(element, "blur", XsltForms_control.blurHandler);
+	//XsltForms_browser.events.attach(element, "mouseout", XsltForms_control.blurHandler);
 };
 
 
@@ -9879,9 +9907,25 @@ XsltForms_control.prototype.refresh = function() {
 			this.eventDispatch("xforms-disabled", "xforms-enabled", false);
 		}
 	} else if (node) {
-		var value = XsltForms_browser.getValue(node, true, this.complex);
+		var value = this.value instanceof Array ? XsltForms_browser.getValueItemsetCopy(node) : XsltForms_browser.getValue(node, true, this.complex);
 		XsltForms_globals.openAction("XsltForms_control.prototype.refresh");
-		var changed = value !== this.currentValue || this.nodeChanged;
+		var changed;
+		if (this.currentValue instanceof Array) {
+			changed = false;
+			if (this.currentValue.length !== value.length) {
+				changed = true;
+			} else {
+				for (var i = 0, l = this.currentValue.length; i < l; i++) {
+					if (this.currentValue[i] !== value[i]) {
+						changed = true;
+						break;
+					}
+				}
+			}
+			changed = changed || this.nodeChanged;
+		} else {
+			changed = value !== this.currentValue || this.nodeChanged;
+		}
 		if (this.relevant) {
 			XsltForms_browser.setClass(element, "xforms-disabled", false);
 		}
@@ -9889,7 +9933,7 @@ XsltForms_control.prototype.refresh = function() {
 		this.changeProp(node, "notrelevant", "xforms-disabled", "xforms-enabled", changed, value);
 		this.changeProp(node, "readonly", "xforms-readonly", "xforms-readwrite", changed, value);
 		this.changeProp(node, "notvalid", "xforms-invalid", "xforms-valid", changed, value);
-		this.currentValue = value;
+		this.currentValue = value instanceof Array ? value.slice(0) : value;
 		if (changed) {
 			this.setValue(value);
 			if (!this.nodeChanged && !this.isTrigger) {
@@ -9931,20 +9975,44 @@ XsltForms_control.prototype.changeProp = function(node, prop, onTrue, onFalse, c
 
 		
 
-XsltForms_control.prototype.valueChanged = function(value) {
+XsltForms_control.prototype.valueChanged = function(value, force) {
 	var node = this.element.node;
 	var model = document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement;
 	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
-	if (value && value.length > 0 && schtyp.parse) {
+	if (value && !(value instanceof Array) && value.length > 0 && schtyp.parse) {
 		try { value = schtyp.parse(value); } catch(e) { }
 	}
-	if (value !== XsltForms_browser.getValue(node)) {
-		XsltForms_globals.openAction("XsltForms_control.prototype.valueChanged");
-		XsltForms_browser.setValue(node, value);
-		model.addChange(node);
-		XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
-		XsltForms_globals.refresh();
-		XsltForms_globals.closeAction("XsltForms_control.prototype.valueChanged");
+	var changed;
+	if (value instanceof Array) {
+		var prevvalue = XsltForms_browser.getValueItemsetCopy(node);
+		changed = true;
+		var i = 0, l = value.length;
+		if (prevvalue.length === l) {
+			changed = false;
+			for (; i < l; i++) {
+				if (prevvalue[i] !== value[i]) {
+					changed = true;
+					break;
+				}
+			}
+		}
+	} else {
+		changed = value !== XsltForms_browser.getValue(node);
+	}
+	if (changed || force) {
+		if (value instanceof Array || this.currentValue instanceof Array) {
+			XsltForms_browser.setValue(node, value);
+			model.addChange(node);
+			XsltForms_globals.addChange(model);
+			model.setRebuilded(true);
+		} else {
+			XsltForms_globals.openAction("XsltForms_control.prototype.valueChanged");
+			XsltForms_browser.setValue(node, value);
+			model.addChange(node);
+			XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
+			XsltForms_globals.refresh();
+			XsltForms_globals.closeAction("XsltForms_control.prototype.valueChanged");
+		}
 	}
 };
 
@@ -9981,7 +10049,8 @@ XsltForms_control.focusHandler = function() {
 XsltForms_control.blurHandler = function() {
 	if (XsltForms_control.getXFElement(this) === XsltForms_globals.focus) {
 		XsltForms_globals.posibleBlur = true;
-		setTimeout(function(){XsltForms_globals.blur();}, 200);
+		//setTimeout(function(){XsltForms_globals.blur();}, 200);
+		XsltForms_globals.blur();
 	}
 };
     
@@ -10293,7 +10362,7 @@ XsltForms_input.prototype.dispose = function() {
 XsltForms_input.prototype.initInput = function(type) {
 	var cell = this.cell;
 	var input = cell.children[0];
-	var tclass = type.class;
+	var tclass = type["class"];
 	if (input.type === "password") {
 		this.type = XsltForms_schema.getType("xsd_:string");
 		this.initEvents(input, true);
@@ -10308,7 +10377,7 @@ XsltForms_input.prototype.initInput = function(type) {
 						var initinfo;
 						eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
 						initinfo.mode = "none";
-						if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
+						if (!XsltForms_globals.jslibraries["http://www.tinymce.com"] || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
 							initinfo.setup = function(ed) {
 								ed.onKeyUp.add(function(ed) {
 									XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
@@ -10355,17 +10424,26 @@ XsltForms_input.prototype.initInput = function(type) {
 					var initinfo;
 					eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
 					this.rte = CKEDITOR.replace(input.id, initinfo);
-					this.rte.on("change", function(ev) {
-						var data = this.getData();
+					var eltRefresh = function(evt) {
+						var data = evt.editor.getData();
 						if (data.substr(data.length - 1) === "\n") {
 							data = data.substr(0, data.length - 1);
 						}
-						XsltForms_control.getXFElement(document.getElementById(this.name)).valueChanged(data || "");
+						var ctl = XsltForms_control.getXFElement(document.getElementById(evt.editor.name));
+						XsltForms_browser.setBoolMeta(ctl.element.node, "unsafe", evt.editor.mode === "source");
+						ctl.valueChanged(data || "", true);
+					};
+					this.rte.on("change", eltRefresh);
+					this.rte.on("blur", eltRefresh);
+					this.rte.on("mode", function(evt) {
+						var ctl = XsltForms_control.getXFElement(document.getElementById(evt.editor.name));
+						XsltForms_browser.setBoolMeta(ctl.element.node, "unsafe", evt.editor.mode === "source");
 					});
 			}
 		}
 		this.initEvents(input, false);
 	} else if (type !== this.type) {
+		var inputid = input.id;
 		this.type = type;
 		if (tclass === "boolean" || this.itype !== input.type) {
 			while (cell.firstChild) {
@@ -10382,11 +10460,13 @@ XsltForms_input.prototype.initInput = function(type) {
 		if (tclass === "boolean") {
 			input = XsltForms_browser.createElement("input");
 			input.type = "checkbox";
+			input.id = inputid;
 			cell.appendChild(input);
 		} else {
 			if(this.itype !== input.type) {
 				input = XsltForms_browser.createElement("input", cell, null, "xforms-value");
 			}
+			input.id = inputid;
 			this.initEvents(input, (this.itype === "text"));
 			if (tclass === "date" || tclass === "datetime") {
 				if (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari)) {
@@ -10534,6 +10614,7 @@ XsltForms_input.prototype.blur = function(target) {
 		if (this.timer) {
 			window.clearTimeout(this.timer);
 			this.timer = null;
+			this.valueChanged(value);
 		}
 	}
 };
@@ -10615,7 +10696,13 @@ XsltForms_input.keyUpIncrementalActivate = function(a) {
 			if (xf.timer) {
 				window.clearTimeout(xf.timer);
 			}
-			xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncrementalActivate#2');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncrementalActivate#2');", xf.delay);
+			var _self = this;
+			xf.timer = window.setTimeout(
+				function () {
+					XsltForms_globals.openAction('XsltForms_input.keyUpIncrementalActivate#2');
+					xf.valueChanged(_self.value || "");
+					XsltForms_globals.closeAction('XsltForms_input.keyUpIncrementalActivate#2');
+				}, xf.delay);
 		} else {
 			XsltForms_globals.openAction("XsltForms_input.keyUpIncrementalActivate#3");
 			xf.valueChanged(this.value || "");
@@ -10644,7 +10731,13 @@ XsltForms_input.keyUpIncremental = function() {
 		if (xf.timer) {
 			window.clearTimeout(xf.timer);
 		}
-		xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncremental#1');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncremental#1');", xf.delay);
+		var _self = this;
+		xf.timer = window.setTimeout(
+			function () {
+				XsltForms_globals.openAction('XsltForms_input.keyUpIncremental#1');
+				xf.valueChanged(_self.value || "");
+				XsltForms_globals.closeAction('XsltForms_input.keyUpIncremental#1');
+			}, xf.delay);
 	} else {
 		XsltForms_globals.openAction("XsltForms_input.keyUpIncremental#2");
 		xf.valueChanged(this.value || "");
@@ -10697,7 +10790,7 @@ function XsltForms_item(subform, id, bindingL, bindingV) {
 		this.input.name = XsltForms_control.getXFElement(this.element).element.id;
 		XsltForms_browser.events.attach(this.input, "focus", XsltForms_control.focusHandler);
 		XsltForms_browser.events.attach(this.input, "blur", XsltForms_control.blurHandler);
-		this.label = XsltForms_browser.isXhtml ? element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "span")[0] : element.getElementsByTagName("span")[0];
+		this.label = XsltForms_browser.isXhtml ? element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "label")[0] : element.getElementsByTagName("label")[0];
 	}
 }
 
@@ -10786,13 +10879,14 @@ XsltForms_item.prototype.click = function (target) {
 		
 		
 		
-function XsltForms_itemset(subform, id, nodesetBinding, labelBinding, valueBinding) {
+function XsltForms_itemset(subform, id, nodesetBinding, labelBinding, valueBinding, copyBinding) {
 	XsltForms_globals.counters.itemset++;
 	this.init(subform, id);
 	this.controlName = "itemset";
 	this.nodesetBinding = nodesetBinding;
 	this.labelBinding = labelBinding;
 	this.valueBinding = valueBinding;
+	this.copyBinding = copyBinding;
 	this.hasBinding = true;
 }
 
@@ -10875,7 +10969,7 @@ XsltForms_itemset.prototype.refresh = function() {
 		
 
 XsltForms_itemset.prototype.clone = function(id) {
-	return new XsltForms_itemset(this.subform, id, this.nodesetBinding, this.labelBinding, this.valueBinding);
+	return new XsltForms_itemset(this.subform, id, this.nodesetBinding, this.labelBinding, this.valueBinding, this.copyBinding);
 };
 
 
@@ -10892,7 +10986,8 @@ XsltForms_itemset.prototype.dispose = function() {
 XsltForms_itemset.prototype.refresh_ = function(element, cont) {
 	var ctx = this.nodes[cont];
 	var nodeLabel = this.evaluateBinding(this.labelBinding, ctx)[0];
-	var nodeValue = this.evaluateBinding(this.valueBinding, ctx)[0];
+	var nodeValue = this.valueBinding ? this.evaluateBinding(this.valueBinding, ctx)[0] : null;
+	var nodeCopy = this.copyBinding ? this.evaluateBinding(this.copyBinding, ctx)[0] : null;
 	if (nodeLabel) {
 		this.depsNodesRefresh.push(nodeLabel);
 		try {
@@ -10900,11 +10995,18 @@ XsltForms_itemset.prototype.refresh_ = function(element, cont) {
 		} catch(e) {
 		}
 	}
-	if (nodeValue) {
+	if (this.valueBinding && nodeValue) {
 		this.depsNodesRefresh.push(nodeValue);
 		try {
 			element.value = XsltForms_browser.getValue(nodeValue);
 		} catch(e2) {
+		}
+	}
+	if (this.copyBinding && nodeCopy) {
+		this.depsNodesRefresh.push(nodeCopy);
+		try {
+			element.value = element.copy = XsltForms_browser.saveXML(nodeCopy);
+		} catch(e3) {
 		}
 	}
 };
@@ -11368,6 +11470,7 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 			nodes.push(nodes0[n]);
 		}
 	}
+	var inputids = {ids: {}, fors: {}};
 	this.nodes = nodes;
 	n = nodes.length;
 	if (this.nbsiblings === 0) {
@@ -11381,7 +11484,7 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 		for (var i = l; i < n; i++) {
 			child = r0.cloneNode(true);
 			r.appendChild(child);
-			XsltForms_repeat.initClone(child);
+			XsltForms_repeat.initClone(child, inputids);
 		}
 		for (var j = n; j < l && r.childNodes.length > 1; j++) {
 			XsltForms_globals.dispose(r.lastChild);
@@ -11417,13 +11520,13 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 		for (var ib = l; ib < n; ib++) {
 			child = r0.cloneNode(true);
 			r.insertBefore(child, rl);
-			XsltForms_repeat.initClone(child);
+			XsltForms_repeat.initClone(child, inputids);
 			delete child.xfElement;
 			var r0s = r0.nextSibling;
 			for (var isb = 1; isb < this.nbsiblings; isb++, r0s = r0s.nextSibling) {
 				child = r0s.cloneNode(true);
 				r.insertBefore(child, rl);
-				XsltForms_repeat.initClone(child);
+				XsltForms_repeat.initClone(child, inputids);
 			}
 		}
 		for (var jb = n; jb < l; jb++) {
@@ -11488,10 +11591,25 @@ XsltForms_repeat.prototype.clone = function(id) {
 
 		
 
-XsltForms_repeat.initClone = function(element) {
+XsltForms_repeat.initClone = function(element, inputids) {
+	if ("LABEL" === element.nodeName.toUpperCase() && element.getAttribute("for") !== "") {
+		if (inputids.ids[element.getAttribute("for")]) {
+			element.setAttribute("for", inputids.ids[element.getAttribute("for")]);
+		} else {
+			inputids.fors[element.getAttribute("for")] = element;
+		}
+	}
 	var id = element.id;
 	if (id) {
 		XsltForms_idManager.cloneId(element);
+		if ("INPUT" === element.nodeName.toUpperCase()) {
+			if (inputids.fors[id]) {
+				inputids.fors[id].setAttribute("for", element.id);
+				delete inputids.ids[id];
+			} else {
+				inputids.ids[id] = element.id;
+			}
+		}
 		element.xfElement = null;
 		var oldid = element.getAttribute("oldid");
 		var original = document.getElementById(oldid);
@@ -11520,6 +11638,7 @@ XsltForms_repeat.initClone = function(element) {
 		}
 		return;
 	}
+	//var oldinputids = {ids: inputids.ids.slice(0), fors: inputids.fors.slice(0)};
 	var next = element.firstChild;
 	while (next) {
 		var child = next;
@@ -11527,7 +11646,7 @@ XsltForms_repeat.initClone = function(element) {
 		if (child.id && child.getAttribute("cloned")) {
 			element.removeChild(child);
 		} else {
-			XsltForms_repeat.initClone(child);
+			XsltForms_repeat.initClone(child, inputids);
 		}
 	}
 };
@@ -11599,7 +11718,12 @@ function XsltForms_select(subform, id, multiple, full, binding, incremental, clo
 	if (!this.full) {
 		this.select = XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "select")[0] : this.element.getElementsByTagName("select")[0];
 		this.initFocus(this.select);
-		XsltForms_browser.events.attach(this.select, "change", incremental? XsltForms_select.incrementalChange : XsltForms_select.normalChange);
+		if (incremental) {
+			XsltForms_browser.events.attach(this.select, "change", XsltForms_select.incrementalChange);
+			XsltForms_browser.events.attach(this.select, "keyup", XsltForms_select.incrementalChangeKeyup);
+		} else {
+			XsltForms_browser.events.attach(this.select, "change", XsltForms_select.normalChange);
+		}
 	}
 }
 
@@ -11656,7 +11780,7 @@ XsltForms_select.prototype.setValue = function(value) {
 			//this.select.removeChild(this.select.firstChild);
 			this.select.remove(0);
 		}
-		var vals = value? (this.multiple? value.split(XsltForms_globals.valuesSeparator) : [value]) : [""];
+		var vals = value? value instanceof Array ? value : (this.multiple? value.split(XsltForms_globals.valuesSeparator) : [value]) : [""];
 		var list = this.full? (XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input")) : this.select.options;
 		var well = true;
 		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(this.element.node) || "xsd_:string");
@@ -11802,6 +11926,7 @@ XsltForms_select.normalChange = function(evt) {
 	var xf = XsltForms_control.getXFElement(this);
 	var news = [];
 	var value = "";
+	var copy = [];
 	var old = xf.getSelected();
 	var opts = this.options;
 	XsltForms_globals.openAction("XsltForms_select.normalChange");
@@ -11816,7 +11941,11 @@ XsltForms_select.normalChange = function(evt) {
 	for (var j = 0, len1 = opts.length; j < len1; j++) {
 		opt = opts[j];
 		if (opt.selected) {
-			value = value? value + XsltForms_globals.valuesSeparator + opt.value : opt.value;
+			if (opt.copy) {
+				copy.push(opt.copy);
+			} else {
+				value = value? value + XsltForms_globals.valuesSeparator + opt.value : opt.value;
+			}
 		}
 	}
 	for (var k = 0, len2 = opts.length; k < len2; k++) {
@@ -11828,10 +11957,14 @@ XsltForms_select.normalChange = function(evt) {
 			}
 		}
 	}
-	xf.value = value;
-	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(xf.element.node) || "xsd_:string");
-	if (schtyp.format) {
-		try { xf.value = schtyp.format(value); } catch(e) { }
+	if (copy.length === 0) {
+		xf.value = value;
+		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(xf.element.node) || "xsd_:string");
+		if (schtyp.format) {
+			try { xf.value = schtyp.format(value); } catch(e) { }
+		}
+	} else {
+		xf.value = copy;
 	}
 	xf.selectedOptions = news;
 	XsltForms_globals.closeAction("XsltForms_select.normalChange");
@@ -11846,6 +11979,19 @@ XsltForms_select.incrementalChange = function(evt) {
 	XsltForms_select.normalChange.call(this, evt);
 	xf.valueChanged(xf.value);
 	XsltForms_globals.closeAction("XsltForms_select.incrementalChange");
+};
+
+
+		
+
+XsltForms_select.incrementalChangeKeyup = function(evt) {
+	if (evt.keyCode !== 9 && evt.keyCode !== 17) {
+		var xf = XsltForms_control.getXFElement(this);
+		XsltForms_globals.openAction("XsltForms_select.incrementalChangeKeyup");
+		XsltForms_select.normalChange.call(this, evt);
+		xf.valueChanged(xf.value);
+		XsltForms_globals.closeAction("XsltForms_select.incrementalChangeKeyup");
+	}
 };
 
 
@@ -12201,67 +12347,70 @@ XsltForms_upload.prototype.change = function() {
 			var fr = new FileReader();
 			var file = xf.input.files[0];
 			if (!file) {
-				alert("No file!?!");
-				return;
-			}
-			filename = file.name;
-			if (xf.type.name === "string") {
-				fr.onload = function(e) {
-					var bytes = new Uint8Array(e.target.result);
-					for( var i = 0, len = bytes.length; i < len; i++) {
-						content += String.fromCharCode(bytes[i]);
-					}
-					xf.value = content;
-					if (xf.incremental) {
-						xf.valueChanged(content);
-					}
-				};
-			} else if (xf.type.name === "hexBinary") {
-				fr.onload = function(e) {
-					var bytes = new Uint8Array(e.target.result);
-					for( var i = 0, len = bytes.length; i < len; i++) {
-						var c = bytes[i] >> 4;
-						var d = bytes[i] & 0xF;
-						content += String.fromCharCode(c > 9 ? c + 55 : c + 48, d > 9 ? d + 55 : d + 48);
-					}
-					xf.value = content;
-					if (xf.incremental) {
-						xf.valueChanged(content);
-					}
-				};
-			} else if (xf.type.name === "base64Binary") {
-				fr.onload = function(e) {
-					var bytes = new Uint8Array(e.target.result);
-					var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-					var len = bytes.length;
-					bytes[len] = bytes[len+1] = 0;
-					for( var i = 0; i < len; i += 3) {
-						var c1 = bytes[i] >> 2;
-						var c2 = ((bytes[i] & 3) << 4) | (bytes[i+1] >> 4);
-						var c3 = ((bytes[i+1] & 15) << 2) | (bytes[i+2] >> 6);
-						var c4 = bytes[i+2] & 63;
-						if( i === len - 1) {
-							c3 = c4 = 64;
-						} else if( i === len -2) {
-							c4 = 64;
-						}
-						content += b64.charAt(c1) + b64.charAt(c2) + b64.charAt(c3) + b64.charAt(c4);
-					}
-					xf.value = content;
-					if (xf.incremental) {
-						xf.valueChanged(content);
-					}
-				};
+				xf.value = "";
+				if (xf.incremental) {
+					xf.valueChanged("");
+				}
 			} else {
-				fr.onload = function(e) {
-					XsltForms_upload.contents[xf.element.id] = e.target.result;
-					xf.value = "file://" + filename + "?id=" + xf.element.id;
-					if (xf.incremental) {
-						xf.valueChanged(xf.value);
-					}
-				};
+				filename = file.name;
+				if (xf.type.name === "string") {
+					fr.onload = function(e) {
+						var bytes = new Uint8Array(e.target.result);
+						for( var i = 0, len = bytes.length; i < len; i++) {
+							content += String.fromCharCode(bytes[i]);
+						}
+						xf.value = content;
+						if (xf.incremental) {
+							xf.valueChanged(content);
+						}
+					};
+				} else if (xf.type.name === "hexBinary") {
+					fr.onload = function(e) {
+						var bytes = new Uint8Array(e.target.result);
+						for( var i = 0, len = bytes.length; i < len; i++) {
+							var c = bytes[i] >> 4;
+							var d = bytes[i] & 0xF;
+							content += String.fromCharCode(c > 9 ? c + 55 : c + 48, d > 9 ? d + 55 : d + 48);
+						}
+						xf.value = content;
+						if (xf.incremental) {
+							xf.valueChanged(content);
+						}
+					};
+				} else if (xf.type.name === "base64Binary") {
+					fr.onload = function(e) {
+						var bytes = new Uint8Array(e.target.result);
+						var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+						var len = bytes.length;
+						bytes[len] = bytes[len+1] = 0;
+						for( var i = 0; i < len; i += 3) {
+							var c1 = bytes[i] >> 2;
+							var c2 = ((bytes[i] & 3) << 4) | (bytes[i+1] >> 4);
+							var c3 = ((bytes[i+1] & 15) << 2) | (bytes[i+2] >> 6);
+							var c4 = bytes[i+2] & 63;
+							if( i === len - 1) {
+								c3 = c4 = 64;
+							} else if( i === len -2) {
+								c4 = 64;
+							}
+							content += b64.charAt(c1) + b64.charAt(c2) + b64.charAt(c3) + b64.charAt(c4);
+						}
+						xf.value = content;
+						if (xf.incremental) {
+							xf.valueChanged(content);
+						}
+					};
+				} else {
+					fr.onload = function(e) {
+						XsltForms_upload.contents[xf.element.id] = e.target.result;
+						xf.value = "file://" + filename + "?id=" + xf.element.id;
+						if (xf.incremental) {
+							xf.valueChanged(xf.value);
+						}
+					};
+				}
+				fr.readAsArrayBuffer(file);
 			}
-			fr.readAsArrayBuffer(file);
 		} catch (e) {
 			content = XsltForms_browser.readFile(xf.input.value, "ISO-8859-1", xf.type.name, "");
 			if (xf.type.name === "anyURI") {
@@ -12295,7 +12444,7 @@ XsltForms_upload.prototype.change = function() {
 		
 		
 function XsltForms_var(subform, id, name, binding) {
-	XsltForms_globals.counters.var++;
+	XsltForms_globals.counters.xvar++;
 	this.init(subform, id);
 	if (!this.element.parentNode.varScope) {
 		this.element.parentNode.varScope = {};
@@ -12321,7 +12470,7 @@ XsltForms_var.prototype.clone = function(id) {
 		
 
 XsltForms_var.prototype.dispose = function() {
-	XsltForms_globals.counters.var--;
+	XsltForms_globals.counters.xvar--;
 	XsltForms_control.prototype.dispose.call(this);
 };
 

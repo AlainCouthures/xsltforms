@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<xsl:template name="genid" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:param name="workid"/>
 			<xsl:variable name="lname" select="local-name()"/>
-			<xsl:variable name="nsuri" select="namespace-uri()"/>
 			<xsl:attribute name="id"><xsl:choose><xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when><xsl:otherwise><xsl:value-of select="$id_pf"/><xsl:value-of select="$lname"/>-<xsl:value-of select="$workid"/></xsl:otherwise></xsl:choose>
 			</xsl:attribute>
 		</xsl:template>

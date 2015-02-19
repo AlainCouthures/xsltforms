@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFInput.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:lastupdate>2015-02-05</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -106,7 +106,7 @@ XsltForms_input.prototype.dispose = function() {
 XsltForms_input.prototype.initInput = function(type) {
 	var cell = this.cell;
 	var input = cell.children[0];
-	var tclass = type.class;
+	var tclass = type["class"];
 	if (input.type === "password") {
 		this.type = XsltForms_schema.getType("xsd_:string");
 		this.initEvents(input, true);
@@ -121,7 +121,7 @@ XsltForms_input.prototype.initInput = function(type) {
 						var initinfo;
 						eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
 						initinfo.mode = "none";
-						if (XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
+						if (!XsltForms_globals.jslibraries["http://www.tinymce.com"] || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
 							initinfo.setup = function(ed) {
 								ed.onKeyUp.add(function(ed) {
 									XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
@@ -168,17 +168,26 @@ XsltForms_input.prototype.initInput = function(type) {
 					var initinfo;
 					eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
 					this.rte = CKEDITOR.replace(input.id, initinfo);
-					this.rte.on("change", function(ev) {
-						var data = this.getData();
+					var eltRefresh = function(evt) {
+						var data = evt.editor.getData();
 						if (data.substr(data.length - 1) === "\n") {
 							data = data.substr(0, data.length - 1);
 						}
-						XsltForms_control.getXFElement(document.getElementById(this.name)).valueChanged(data || "");
+						var ctl = XsltForms_control.getXFElement(document.getElementById(evt.editor.name));
+						XsltForms_browser.setBoolMeta(ctl.element.node, "unsafe", evt.editor.mode === "source");
+						ctl.valueChanged(data || "", true);
+					};
+					this.rte.on("change", eltRefresh);
+					this.rte.on("blur", eltRefresh);
+					this.rte.on("mode", function(evt) {
+						var ctl = XsltForms_control.getXFElement(document.getElementById(evt.editor.name));
+						XsltForms_browser.setBoolMeta(ctl.element.node, "unsafe", evt.editor.mode === "source");
 					});
 			}
 		}
 		this.initEvents(input, false);
 	} else if (type !== this.type) {
+		var inputid = input.id;
 		this.type = type;
 		if (tclass === "boolean" || this.itype !== input.type) {
 			while (cell.firstChild) {
@@ -195,11 +204,13 @@ XsltForms_input.prototype.initInput = function(type) {
 		if (tclass === "boolean") {
 			input = XsltForms_browser.createElement("input");
 			input.type = "checkbox";
+			input.id = inputid;
 			cell.appendChild(input);
 		} else {
 			if(this.itype !== input.type) {
 				input = XsltForms_browser.createElement("input", cell, null, "xforms-value");
 			}
+			input.id = inputid;
 			this.initEvents(input, (this.itype === "text"));
 			if (tclass === "date" || tclass === "datetime") {
 				if (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari)) {
@@ -351,6 +362,7 @@ XsltForms_input.prototype.blur = function(target) {
 		if (this.timer) {
 			window.clearTimeout(this.timer);
 			this.timer = null;
+			this.valueChanged(value);
 		}
 	}
 };
@@ -438,7 +450,13 @@ XsltForms_input.keyUpIncrementalActivate = function(a) {
 			if (xf.timer) {
 				window.clearTimeout(xf.timer);
 			}
-			xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncrementalActivate#2');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncrementalActivate#2');", xf.delay);
+			var _self = this;
+			xf.timer = window.setTimeout(
+				function () {
+					XsltForms_globals.openAction('XsltForms_input.keyUpIncrementalActivate#2');
+					xf.valueChanged(_self.value || "");
+					XsltForms_globals.closeAction('XsltForms_input.keyUpIncrementalActivate#2');
+				}, xf.delay);
 		} else {
 			XsltForms_globals.openAction("XsltForms_input.keyUpIncrementalActivate#3");
 			xf.valueChanged(this.value || "");
@@ -469,7 +487,13 @@ XsltForms_input.keyUpIncremental = function() {
 		if (xf.timer) {
 			window.clearTimeout(xf.timer);
 		}
-		xf.timer = window.setTimeout("XsltForms_globals.openAction('XsltForms_input.keyUpIncremental#1');document.getElementById('" + xf.element.id + "').xfElement.valueChanged('" + (this.value.addslashes() || "") + "');XsltForms_globals.closeAction('XsltForms_input.keyUpIncremental#1');", xf.delay);
+		var _self = this;
+		xf.timer = window.setTimeout(
+			function () {
+				XsltForms_globals.openAction('XsltForms_input.keyUpIncremental#1');
+				xf.valueChanged(_self.value || "");
+				XsltForms_globals.closeAction('XsltForms_input.keyUpIncremental#1');
+			}, xf.delay);
 	} else {
 		XsltForms_globals.openAction("XsltForms_input.keyUpIncremental#2");
 		xf.valueChanged(this.value || "");

@@ -413,14 +413,14 @@ XsltForms_instance.prototype.validate_ = function(node, readonly, notrelevant) {
 			}
 			this.setProperty_(node, "notvalid",
 				!XsltForms_browser.getBoolMeta(node, "notrelevant") && !(!(XsltForms_browser.getBoolMeta(node, "required") && (!value || value === "")) &&
-				(XsltForms_browser.getNil(node) ? value === "" : !schtyp || schtyp.validate(value)) &&
+				(XsltForms_browser.getNil(node) ? value === "" : !schtyp || schtyp.validate(value) && !XsltForms_browser.getBoolMeta(node, "unsafe")) &&
 				(!bind.constraint || bind.constraint.evaluate(ctx, node))));
 			XsltForms_browser.copyArray(ctx.depsNodes, bind.depsNodes);
 		}
 	} else {
 		this.setProperty_(node, "notrelevant", notrelevant);
 		this.setProperty_(node, "readonly", readonly);
-		this.setProperty_(node, "notvalid", schtyp && !schtyp.validate(value));
+		this.setProperty_(node, "notvalid", schtyp && (!schtyp.validate(value) || XsltForms_browser.getBoolMeta(node, "unsafe")));
 	}
 };
 

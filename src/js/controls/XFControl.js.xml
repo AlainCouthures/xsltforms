@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFControl.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2009-04-07</cm:lastupdate>
+	<cm:lastupdate>2015-01-25</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -44,7 +44,9 @@ XsltForms_control.prototype.initFocus = function(element, principal) {
 		this.focusControl = element;
 	}
 	XsltForms_browser.events.attach(element, "focus", XsltForms_control.focusHandler);
+	//XsltForms_browser.events.attach(element, "mousein", XsltForms_control.focusHandler);
 	XsltForms_browser.events.attach(element, "blur", XsltForms_control.blurHandler);
+	//XsltForms_browser.events.attach(element, "mouseout", XsltForms_control.blurHandler);
 };
 
 ]]>
@@ -141,9 +143,25 @@ XsltForms_control.prototype.refresh = function() {
 			this.eventDispatch("xforms-disabled", "xforms-enabled", false);
 		}
 	} else if (node) {
-		var value = XsltForms_browser.getValue(node, true, this.complex);
+		var value = this.value instanceof Array ? XsltForms_browser.getValueItemsetCopy(node) : XsltForms_browser.getValue(node, true, this.complex);
 		XsltForms_globals.openAction("XsltForms_control.prototype.refresh");
-		var changed = value !== this.currentValue || this.nodeChanged;
+		var changed;
+		if (this.currentValue instanceof Array) {
+			changed = false;
+			if (this.currentValue.length !== value.length) {
+				changed = true;
+			} else {
+				for (var i = 0, l = this.currentValue.length; i < l; i++) {
+					if (this.currentValue[i] !== value[i]) {
+						changed = true;
+						break;
+					}
+				}
+			}
+			changed = changed || this.nodeChanged;
+		} else {
+			changed = value !== this.currentValue || this.nodeChanged;
+		}
 		if (this.relevant) {
 			XsltForms_browser.setClass(element, "xforms-disabled", false);
 		}
@@ -151,7 +169,7 @@ XsltForms_control.prototype.refresh = function() {
 		this.changeProp(node, "notrelevant", "xforms-disabled", "xforms-enabled", changed, value);
 		this.changeProp(node, "readonly", "xforms-readonly", "xforms-readwrite", changed, value);
 		this.changeProp(node, "notvalid", "xforms-invalid", "xforms-valid", changed, value);
-		this.currentValue = value;
+		this.currentValue = value instanceof Array ? value.slice(0) : value;
 		if (changed) {
 			this.setValue(value);
 			if (!this.nodeChanged && !this.isTrigger) {
@@ -196,20 +214,44 @@ XsltForms_control.prototype.changeProp = function(node, prop, onTrue, onFalse, c
 		<cm:wiki>
 * '''valueChanged''' method : changes the value of this control and dispatches the "xforms-recalculate" event</cm:wiki>
 <![CDATA[
-XsltForms_control.prototype.valueChanged = function(value) {
+XsltForms_control.prototype.valueChanged = function(value, force) {
 	var node = this.element.node;
 	var model = document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement;
 	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
-	if (value && value.length > 0 && schtyp.parse) {
+	if (value && !(value instanceof Array) && value.length > 0 && schtyp.parse) {
 		try { value = schtyp.parse(value); } catch(e) { }
 	}
-	if (value !== XsltForms_browser.getValue(node)) {
-		XsltForms_globals.openAction("XsltForms_control.prototype.valueChanged");
-		XsltForms_browser.setValue(node, value);
-		model.addChange(node);
-		XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
-		XsltForms_globals.refresh();
-		XsltForms_globals.closeAction("XsltForms_control.prototype.valueChanged");
+	var changed;
+	if (value instanceof Array) {
+		var prevvalue = XsltForms_browser.getValueItemsetCopy(node);
+		changed = true;
+		var i = 0, l = value.length;
+		if (prevvalue.length === l) {
+			changed = false;
+			for (; i < l; i++) {
+				if (prevvalue[i] !== value[i]) {
+					changed = true;
+					break;
+				}
+			}
+		}
+	} else {
+		changed = value !== XsltForms_browser.getValue(node);
+	}
+	if (changed || force) {
+		if (value instanceof Array || this.currentValue instanceof Array) {
+			XsltForms_browser.setValue(node, value);
+			model.addChange(node);
+			XsltForms_globals.addChange(model);
+			model.setRebuilded(true);
+		} else {
+			XsltForms_globals.openAction("XsltForms_control.prototype.valueChanged");
+			XsltForms_browser.setValue(node, value);
+			model.addChange(node);
+			XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
+			XsltForms_globals.refresh();
+			XsltForms_globals.closeAction("XsltForms_control.prototype.valueChanged");
+		}
 	}
 };
 
@@ -249,7 +291,8 @@ XsltForms_control.focusHandler = function() {
 XsltForms_control.blurHandler = function() {
 	if (XsltForms_control.getXFElement(this) === XsltForms_globals.focus) {
 		XsltForms_globals.posibleBlur = true;
-		setTimeout(function(){XsltForms_globals.blur();}, 200);
+		//setTimeout(function(){XsltForms_globals.blur();}, 200);
+		XsltForms_globals.blur();
 	}
 };
     ]]>

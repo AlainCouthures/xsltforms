@@ -2099,6 +2099,19 @@ XsltForms_browser.getValue = function(node, format, serialize) {
 
 ]]>
 		<cm:wiki>
+* '''getValueItemsetCopy''' function : gets a node value for itemset/copy</cm:wiki>
+		<![CDATA[
+XsltForms_browser.getValueItemsetCopy = function(node) {
+	XsltForms_browser.assert(node);
+	var value = [];
+	for (var i = 0, l = node.children.length; i < l ; i++) {
+		value.push(XsltForms_browser.saveXML(node.children[i]));
+	}
+	return value;
+};
+
+]]>
+		<cm:wiki>
 * '''setValue''' function : sets the value of a node</cm:wiki>
 <![CDATA[
 XsltForms_browser.setValue = function(node, value) {
@@ -2112,11 +2125,19 @@ XsltForms_browser.setValue = function(node, value) {
 			node.removeChild(node.firstChild);
 		}
 		if (value) {
-			for (var i = 0, l = value.length; i < l; i += 4096) {
-				try {
-					node.appendChild(node.ownerDocument.createTextNode(value.substr(i, 4096)));
-				} catch (e) {
-					XsltForms_browser.debugConsole.write("ERROR: Cannot set value " + value + " on " + XsltForms_browser.name2string(node) + "; " + e.message);
+			if (value instanceof Array) {
+				for (var i = 0, l = value.length; i < l; i++) {
+					var dummy = node.ownerDocument.createElement("dummy");
+					node.appendChild(dummy);
+					XsltForms_browser.loadXML(dummy, value[i]);
+				}
+			} else {
+				for (var j = 0, l2 = value.length; j < l2; j += 4096) {
+					try {
+						node.appendChild(node.ownerDocument.createTextNode(value.substr(j, 4096)));
+					} catch (e) {
+						XsltForms_browser.debugConsole.write("ERROR: Cannot set value " + value + " on " + XsltForms_browser.name2string(node) + "; " + e.message);
+					}
 				}
 			}
 		}

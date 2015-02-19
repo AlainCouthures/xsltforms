@@ -28,14 +28,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="appearance" select="false()"/>
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
+			<xsl:variable name="inputid"><xsl:choose><xsl:when test="@id"><xsl:value-of select="concat($id_pf, 'input-', @id)"/></xsl:when><xsl:otherwise><xsl:value-of select="concat($id_pf, 'input-', local-name(), '-', $workid)"/></xsl:otherwise></xsl:choose></xsl:variable>
 			<xsl:call-template name="field">
 				<xsl:with-param name="workid" select="$workid"/>
 				<xsl:with-param name="appearance" select="$appearance"/>
 				<xsl:with-param name="body">
-					<input type="text">
+					<input type="text" id="{$inputid}">
 						<xsl:call-template name="comun"/>
 					</input>
 				</xsl:with-param>
+				<xsl:with-param name="inputid" select="$inputid"/>
 			</xsl:call-template>
 		</xsl:template>
 	</cm:source>

@@ -83,7 +83,7 @@ var XsltForms_globals = {
 		select: 0,
 		trigger: 0,
 		upload: 0,
-		var: 0
+		xvar: 0
 	},
 	nbsubforms: 0,
 	componentLoads: [],
@@ -663,15 +663,20 @@ var XsltForms_globals = {
 						curctx = newctx;
 					}
 					if (!childs[i].getAttribute("cloned")) {
+						var samechild = childs[i];
 						var br = this.build(childs[i], curctx, selected, varresolver);
-						if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
-							nbsiblings = childs[i].xfElement.nbsiblings;
-							nodes = childs[i].xfElement.nodes;
-							nbnodes = nodes.length;
-							inodes = 0;
-							isiblings = nbsiblings;
+						if (childs[i] !== samechild) {
+							i--;
+						} else {
+							if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
+								nbsiblings = childs[i].xfElement.nbsiblings;
+								nodes = childs[i].xfElement.nodes;
+								nbnodes = nodes.length;
+								inodes = 0;
+								isiblings = nbsiblings;
+							}
+							hasXFElement = br.hasXFElement || hasXFElement;
 						}
-						hasXFElement = br.hasXFElement || hasXFElement;
 					}
 				}
 			}

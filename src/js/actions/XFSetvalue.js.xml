@@ -45,12 +45,13 @@ XsltForms_setvalue.prototype = new XsltForms_abstractAction();
 * '''run''' method : sets the value of a node and records it in the changes collection</cm:wiki>
 <![CDATA[
 XsltForms_setvalue.prototype.run = function(element, ctx) {
-	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx)[0];
+	var varresolver = this.parentAction ? this.parentAction.varResolver : element.xfElement.varResolver;
+	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx, varresolver)[0];
 	if (node) {
 		if (this.context) {
-			ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx)[0];
+			ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx, null, varresolver)[0];
 		}
-		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform)) : this.literal;
+		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform, varresolver) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform, varresolver)) : this.literal;
 		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
 		try {
 			XsltForms_browser.setValue(node, value || "");

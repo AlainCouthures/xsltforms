@@ -28,6 +28,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="appearance" select="'undefined'"/>
 			<xsl:param name="parentworkid"/>
 			<xsl:param name="workid" select="concat(position(),'_',$parentworkid)"/>
+			<xsl:param name="inputid"/>
+			<xsl:variable name="inputidfor">
+				<xsl:choose>
+					<xsl:when test="@for != ''">
+						<xsl:value-of select="concat($id_pf, 'input-', @for)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$inputid"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<xsl:choose>
 				<xsl:when test="$appearance = 'groupTitle'">
 					<div>
@@ -123,7 +134,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</span>
 				</xsl:when>
 				<xsl:when test="$appearance = 'item'">
-					<span>
+					<label>
+						<xsl:if test="$inputidfor != ''">
+							<xsl:attribute name="for"><xsl:value-of select="$inputidfor"/></xsl:attribute>
+						</xsl:if>
 						<xsl:call-template name="genid">
 							<xsl:with-param name="workid" select="$workid"/>
 						</xsl:call-template>
@@ -138,7 +152,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							</xsl:when>
 							<xsl:otherwise>&#160;<xsl:text/></xsl:otherwise>
 						</xsl:choose>
-					</span>
+					</label>
 				</xsl:when>
 				<xsl:when test="$appearance = 'field-minimal' and ../xforms:help[@appearance='minimal' and @href]">
 					<a class="xforms-help xforms-minimal-help-link" href="{../xforms:help/@href}">
@@ -160,6 +174,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</xsl:when>
 				<xsl:when test="$appearance = 'field-minimal' and not(../xforms:help[@appearance='minimal' and @href])">
 					<label>
+						<xsl:if test="$inputidfor != ''">
+							<xsl:attribute name="for"><xsl:value-of select="$inputidfor"/></xsl:attribute>
+						</xsl:if>
 						<xsl:call-template name="comunLabel">
 							<xsl:with-param name="workid" select="$workid"/>
 							<xsl:with-param name="class">xforms-appearance-minimal</xsl:with-param>
@@ -275,6 +292,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</xsl:when>
 				<xsl:otherwise>
 					<label>
+						<xsl:if test="$inputidfor != ''">
+							<xsl:attribute name="for"><xsl:value-of select="$inputidfor"/></xsl:attribute>
+						</xsl:if>
 						<xsl:call-template name="comunLabel">
 							<xsl:with-param name="workid" select="$workid"/>
 						</xsl:call-template>

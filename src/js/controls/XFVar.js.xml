@@ -27,7 +27,7 @@ Var Control  Class
 * constructor function : initializes specific properties and initializes scope</cm:wiki>
 		<![CDATA[
 function XsltForms_var(subform, id, name, binding) {
-	XsltForms_globals.counters.var++;
+	XsltForms_globals.counters.xvar++;
 	this.init(subform, id);
 	if (!this.element.parentNode.varScope) {
 		this.element.parentNode.varScope = {};
@@ -55,7 +55,7 @@ XsltForms_var.prototype.clone = function(id) {
 * '''dispose''' method : clears properties of this control and calls the parent dispose() method</cm:wiki>
 <![CDATA[
 XsltForms_var.prototype.dispose = function() {
-	XsltForms_globals.counters.var--;
+	XsltForms_globals.counters.xvar--;
 	XsltForms_control.prototype.dispose.call(this);
 };
 

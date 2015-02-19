@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="workid"/>
 			<xsl:param name="appearance" select="false()"/>
 			<xsl:param name="body"/>
+			<xsl:param name="inputid"/>
 			<xsl:choose>
 				<xsl:when test="namespace-uri(parent::*) = 'http://www.w3.org/2000/svg'">
 					<xsl:element name="tspan" namespace="http://www.w3.org/2000/svg">
@@ -80,11 +81,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 									<xsl:apply-templates select="node()">
 										<xsl:with-param name="parentworkid" select="$workid"/>
 										<xsl:with-param name="appearance">field-minimal</xsl:with-param>
+										<xsl:with-param name="inputid" select="$inputid"/>
 									</xsl:apply-templates>
 								</xsl:when>
 								<xsl:otherwise>
 									<xsl:apply-templates select="node()">
 										<xsl:with-param name="parentworkid" select="$workid"/>
+										<xsl:with-param name="inputid" select="$inputid"/>
 									</xsl:apply-templates>
 								</xsl:otherwise>
 							</xsl:choose>

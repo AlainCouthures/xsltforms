@@ -29,13 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ItemSet Element  Class
 * constructor function : initializes specific properties</cm:wiki>
 		<![CDATA[
-function XsltForms_itemset(subform, id, nodesetBinding, labelBinding, valueBinding) {
+function XsltForms_itemset(subform, id, nodesetBinding, labelBinding, valueBinding, copyBinding) {
 	XsltForms_globals.counters.itemset++;
 	this.init(subform, id);
 	this.controlName = "itemset";
 	this.nodesetBinding = nodesetBinding;
 	this.labelBinding = labelBinding;
 	this.valueBinding = valueBinding;
+	this.copyBinding = copyBinding;
 	this.hasBinding = true;
 }
 
@@ -121,7 +122,7 @@ XsltForms_itemset.prototype.refresh = function() {
 * '''clone''' method : creates a new itemset control with the given id</cm:wiki>
 <![CDATA[
 XsltForms_itemset.prototype.clone = function(id) {
-	return new XsltForms_itemset(this.subform, id, this.nodesetBinding, this.labelBinding, this.valueBinding);
+	return new XsltForms_itemset(this.subform, id, this.nodesetBinding, this.labelBinding, this.valueBinding, this.copyBinding);
 };
 
 ]]>
@@ -140,7 +141,8 @@ XsltForms_itemset.prototype.dispose = function() {
 XsltForms_itemset.prototype.refresh_ = function(element, cont) {
 	var ctx = this.nodes[cont];
 	var nodeLabel = this.evaluateBinding(this.labelBinding, ctx)[0];
-	var nodeValue = this.evaluateBinding(this.valueBinding, ctx)[0];
+	var nodeValue = this.valueBinding ? this.evaluateBinding(this.valueBinding, ctx)[0] : null;
+	var nodeCopy = this.copyBinding ? this.evaluateBinding(this.copyBinding, ctx)[0] : null;
 	if (nodeLabel) {
 		this.depsNodesRefresh.push(nodeLabel);
 		try {
@@ -148,11 +150,18 @@ XsltForms_itemset.prototype.refresh_ = function(element, cont) {
 		} catch(e) {
 		}
 	}
-	if (nodeValue) {
+	if (this.valueBinding && nodeValue) {
 		this.depsNodesRefresh.push(nodeValue);
 		try {
 			element.value = XsltForms_browser.getValue(nodeValue);
 		} catch(e2) {
+		}
+	}
+	if (this.copyBinding && nodeCopy) {
+		this.depsNodesRefresh.push(nodeCopy);
+		try {
+			element.value = element.copy = XsltForms_browser.saveXML(nodeCopy);
+		} catch(e3) {
 		}
 	}
 };
