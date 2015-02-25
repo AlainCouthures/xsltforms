@@ -52,11 +52,18 @@ XsltForms_action.prototype.add = function(action) {
 * '''run''' method : executes each child action of this action</cm:wiki>
 <![CDATA[
 XsltForms_action.prototype.run = function(element, ctx, evt) {
-	if (element.xfElement.varResolver) {
-		this.varResolver = {};
-		for (var v in element.xfElement.varResolver) {
-			this.varResolver[v] = element.xfElement.varResolver[v];
+	var p = element;
+	while (p) {
+		if (p.xfElement) {
+			if (p.xfElement.varResolver) {
+				this.varResolver = {};
+				for (var v in p.xfElement.varResolver) {
+					this.varResolver[v] = p.xfElement.varResolver[v];
+				}
+			}
+			break;
 		}
+		p = p.parentNode;
 	}
 	XsltForms_browser.forEach(this.childs, "execute", element, ctx, evt);
 };

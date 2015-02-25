@@ -1741,11 +1741,11 @@ XsltForms_browser.i18n = {
 * '''get''' method : get a property value for the current language</cm:wiki>
 <![CDATA[
 	get : function(key) {
-		if (!XsltForms_browser.config) {
+		if (!XsltForms_browser.config || XsltForms_browser.config.nodeName === "dummy") {
 			return "Initializing";
 		}
 		if (XsltForms_globals.language === "navigator" || XsltForms_globals.language !== XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config)) {
-			var lan = XsltForms_globals.language === "navigator" ? (navigator.language || navigator.userLanguage || "undefined") : XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
+			var lan = XsltForms_globals.language === "navigator" ? (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || "undefined")) : XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
 			lan = lan.replace("-", "_").toLowerCase();
 			var found = XsltForms_browser.inArray(lan, XsltForms_browser.i18n.langs);
 			if (!found) {

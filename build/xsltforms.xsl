@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<!-- Rev. 609
+<!-- Rev. 610
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
 
@@ -23,11 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <xsl:stylesheet xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ajx="http://www.ajaxforms.net/2006/ajx" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:exslt="http://exslt.org/common" xmlns:txs="http://www.agencexml.com/txs" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" exclude-result-prefixes="xhtml xforms ev exslt msxsl"><rdf:RDF>
 		<rdf:Description rdf:about="http://www.agencexml.com/xsltforms/xsltforms.xsl">
 			<dcterms:title>XSLT 1.0 Stylesheet for XSLTForms</dcterms:title>
-			<dcterms:hasVersion>609</dcterms:hasVersion>
+			<dcterms:hasVersion>610</dcterms:hasVersion>
 			<dcterms:creator>Alain Couthures - agenceXML</dcterms:creator>
 			<dcterms:conformsTo>XForms 1.1</dcterms:conformsTo>
-			<dcterms:created>2015-02-19</dcterms:created>
-			<dcterms:description>itemset/copy + label/@for Support</dcterms:description>
+			<dcterms:created>2015-02-25</dcterms:created>
+			<dcterms:description>Language setting with PI</dcterms:description>
 			<dcterms:format>text/xsl</dcterms:format>
 		</rdf:Description>
 	</rdf:RDF><xsl:output method="html" encoding="utf-8" omit-xml-declaration="yes" indent="no" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN" doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
@@ -41,7 +41,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<xsl:param xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="xsltforms_config"/>
 		<xsl:param xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="xsltforms_debug"/>
 		<xsl:param xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="xsltforms_lang"/>
-		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="configdoc" select="document(concat($xsltforms_home,'config.xsl'))/xsl:stylesheet/xsl:template[@name='config']"/>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="xsltformspivalue" select="translate(normalize-space(/processing-instruction('xsltforms-options')[1]), ' ', '')"/>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="lang">
+			<xsl:choose>
+				<xsl:when test="$xsltforms_lang != ''"><xsl:value-of select="$xsltforms_lang"/></xsl:when>
+				<xsl:when test="substring(substring-after($xsltformspivalue, 'lang='), 1, 1) != ''">
+					<xsl:variable name="langquote" select="substring(substring-after($xsltformspivalue, 'lang='), 1, 1)"/>
+					<xsl:value-of select="substring-before(substring-after($xsltformspivalue, concat('lang=', $langquote)), $langquote)"/>
+				</xsl:when>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="langextension">
+			<xsl:choose>
+				<xsl:when test="$lang != '' and $lang != 'navigator'">_<xsl:value-of select="$lang"/></xsl:when>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="configdoc" select="document(concat($xsltforms_home,'config',$langextension,'.xsl'))/xsl:stylesheet/xsl:template[@name='config']"/>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="configlang" select="$configdoc/properties/language"/>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="doc_id" select="'xsltforms-mainform'"/>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="id_pf" select="'xsltforms-mainform-'"/>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="jsid_pf" select="'xsltforms_subform.id + &quot;-'"/>
@@ -108,7 +124,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</config>
 			</script>
 		</xsl:variable>
-		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="xsltformspivalue" select="translate(normalize-space(/processing-instruction('xsltforms-options')[1]), ' ', '')"/>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="required-position">
 			<xsl:choose>
 				<xsl:when test="$configdoc/properties/required-position">
@@ -289,21 +304,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
-			<xsl:variable name="lang">
-				<xsl:choose>
-					<xsl:when test="$xsltforms_lang != ''"><xsl:value-of select="$xsltforms_lang"/></xsl:when>
-					<xsl:when test="$script/config/properties/language">
-						<xsl:value-of select="$script/config/properties/language"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:variable name="langquote" select="substring(substring-after($xsltformspivalue, 'lang='), 1, 1)"/>
-						<xsl:value-of select="substring-before(substring-after($xsltformspivalue, concat('lang=', $langquote)), $langquote)"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:variable>
 			<html>
 				<xsl:copy-of select="@*"/>
-				<xsl:comment>HTML elements and Javascript instructions generated by XSLTForms r609 - Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES - http://www.agencexml.com</xsl:comment>
+				<xsl:comment>HTML elements and Javascript instructions generated by XSLTForms r610 - Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES - http://www.agencexml.com</xsl:comment>
 				<xsl:variable name="option"> debug="yes" </xsl:variable>
 				<xsl:variable name="optionno"> debug="no" </xsl:variable>
 				<xsl:variable name="displaydebug">
@@ -338,7 +341,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:with-param name="config" select="$script/config"/>
 					</xsl:apply-templates>
 					<script id="xsltforms-src" src="{$resourcesdir}xsltforms.js" type="text/javascript" data-uri="http://www.agencexml.com/xsltforms">
-						<xsl:attribute name="data-version">609</xsl:attribute>
+						<xsl:attribute name="data-version">610</xsl:attribute>
 						<xsl:text>/* */</xsl:text>
 					</script>
 					<xsl:for-each select="$script/config/jsextensions">
@@ -358,8 +361,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 </xsl:text>
 						<xsl:text>XsltForms_globals.language = "</xsl:text>
 						<xsl:choose>
-							<xsl:when test="$lang != ''">
-								<xsl:value-of select="$lang"/>
+							<xsl:when test="$configlang != ''">
+								<xsl:value-of select="$configlang"/>
 							</xsl:when>
 							<xsl:otherwise>default</xsl:otherwise>
 						</xsl:choose>
@@ -5469,7 +5472,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:variable name="element" select="."/>
 			<xsl:choose>
 				<xsl:when test="namespace::*">
-					<xsl:for-each select="(namespace::* | @*/namespace::*)[name()!='xml']">
+					<xsl:for-each select="namespace::*[name()!='xml']">
 						<xsl:variable name="prefix" select="name()"/>
 						<xsl:variable name="uri" select="."/>
 						<xsl:if test="(not($parent/namespace::*[name()=$prefix and . = $uri]) or $root) and (($element|$element//*|$element//@*)[namespace-uri()=$uri])"> xmlns<xsl:if test="$prefix">:<xsl:value-of select="$prefix"/></xsl:if>="<xsl:value-of select="$uri"/>"</xsl:if>

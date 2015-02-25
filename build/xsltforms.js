@@ -1,4 +1,4 @@
-/* Rev. 609
+/* Rev. 610
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -1747,11 +1747,11 @@ XsltForms_browser.i18n = {
 		
 
 	get : function(key) {
-		if (!XsltForms_browser.config) {
+		if (!XsltForms_browser.config || XsltForms_browser.config.nodeName === "dummy") {
 			return "Initializing";
 		}
 		if (XsltForms_globals.language === "navigator" || XsltForms_globals.language !== XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config)) {
-			var lan = XsltForms_globals.language === "navigator" ? (navigator.language || navigator.userLanguage || "undefined") : XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
+			var lan = XsltForms_globals.language === "navigator" ? (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || "undefined")) : XsltForms_browser.selectSingleNodeText('language', XsltForms_browser.config);
 			lan = lan.replace("-", "_").toLowerCase();
 			var found = XsltForms_browser.inArray(lan, XsltForms_browser.i18n.langs);
 			if (!found) {
@@ -2237,8 +2237,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "609",
-	fileVersionNumber: 609,
+	fileVersion: "610",
+	fileVersionNumber: 610,
 
 	language: "navigator",
 	debugMode: false,
@@ -8736,11 +8736,18 @@ XsltForms_action.prototype.add = function(action) {
 		
 
 XsltForms_action.prototype.run = function(element, ctx, evt) {
-	if (element.xfElement.varResolver) {
-		this.varResolver = {};
-		for (var v in element.xfElement.varResolver) {
-			this.varResolver[v] = element.xfElement.varResolver[v];
+	var p = element;
+	while (p) {
+		if (p.xfElement) {
+			if (p.xfElement.varResolver) {
+				this.varResolver = {};
+				for (var v in p.xfElement.varResolver) {
+					this.varResolver[v] = p.xfElement.varResolver[v];
+				}
+			}
+			break;
 		}
+		p = p.parentNode;
 	}
 	XsltForms_browser.forEach(this.childs, "execute", element, ctx, evt);
 };
