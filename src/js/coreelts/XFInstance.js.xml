@@ -230,6 +230,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 	}
 	if (instid === XsltForms_browser.idPf + "instance-config") {
 		XsltForms_browser.config = this.doc.documentElement;
+		XsltForms_globals.htmlversion = XsltForms_browser.i18n.get("html");
 	}
 };
         

@@ -1,7 +1,7 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFInput.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2015-02-05</cm:lastupdate>
+	<cm:lastupdate>2015-03-09</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
@@ -322,21 +322,24 @@ XsltForms_input.prototype.changeReadonly = function() {
 * '''initEvents''' method : initializes the event management according to incremental capability</cm:wiki>
 <![CDATA[
 XsltForms_input.prototype.initEvents = function(input, canActivate) {
+	var changeEventName = "keyup";
+	if (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari)) {
+		changeEventName = "input";
+	}
 	if (this.inputmode) {
-		XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpInputMode);
+		XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpInputMode);
 	}
 	if (canActivate) {
-		//XsltForms_browser.events.attach(input, "input", XsltForms_input.inputActivate);
 		XsltForms_browser.events.attach(input, "keydown", XsltForms_input.keyDownActivate);
 		XsltForms_browser.events.attach(input, "keypress", XsltForms_input.keyPressActivate);
 		if (this.incremental) {
-			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpIncrementalActivate);
+			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpIncrementalActivate);
 		} else {
-			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpActivate);
+			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpActivate);
 		}
 	} else {
 		if (this.incremental) {
-			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpIncremental);
+			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpIncremental);
 		}
 	}
 };

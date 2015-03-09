@@ -1,4 +1,4 @@
-/* Rev. 610
+/* Rev. 611
 
 Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2237,8 +2237,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "610",
-	fileVersionNumber: 610,
+	fileVersion: "611",
+	fileVersionNumber: 611,
 
 	language: "navigator",
 	debugMode: false,
@@ -3309,7 +3309,7 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, 
 		if (event.target && event.target.nodeType === 3) {
 			event.target = event.target.parentNode;
 		}
-		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName.toUpperCase() === "BUTTON" || (XsltForms_browser.isChrome && event.eventPhase === 3 && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
+		if (event.currentTarget && event.type === "DOMActivate" && (event.target.nodeName.toUpperCase() === "BUTTON" || event.target.nodeName.toUpperCase() === "A" || (XsltForms_browser.isChrome && event.eventPhase === 3 && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
 //		if (event.eventPhase === 3 && !event.target.xfElement && !XsltForms_browser.isFF2) {
@@ -7134,6 +7134,7 @@ XsltForms_instance.prototype.setDoc = function(xml, isReset, preserveOld) {
 	}
 	if (instid === XsltForms_browser.idPf + "instance-config") {
 		XsltForms_browser.config = this.doc.documentElement;
+		XsltForms_globals.htmlversion = XsltForms_browser.i18n.get("html");
 	}
 };
         
@@ -8090,8 +8091,9 @@ XsltForms_submission.prototype.submit = function() {
 		}
 		if ((method === "get" || method === "delete") && this.serialization !== "none" && action.substr(0, 9) !== "opener://" && action.substr(0, 8) !== "local://") {
 			var tourl = XsltForms_submission.toUrl_(node, this.separator);
-			action += (action.indexOf('?') === -1? '?' : this.separator) +
-				tourl.substr(0, tourl.length - this.separator.length);
+			if (tourl.length > 0) {
+				action += (action.indexOf('?') === -1? '?' : this.separator) + tourl.substr(0, tourl.length - this.separator.length);
+			}
 		}
 	}
 	var ser = "";
@@ -10582,21 +10584,24 @@ XsltForms_input.prototype.changeReadonly = function() {
 		
 
 XsltForms_input.prototype.initEvents = function(input, canActivate) {
+	var changeEventName = "keyup";
+	if (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari)) {
+		changeEventName = "input";
+	}
 	if (this.inputmode) {
-		XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpInputMode);
+		XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpInputMode);
 	}
 	if (canActivate) {
-		//XsltForms_browser.events.attach(input, "input", XsltForms_input.inputActivate);
 		XsltForms_browser.events.attach(input, "keydown", XsltForms_input.keyDownActivate);
 		XsltForms_browser.events.attach(input, "keypress", XsltForms_input.keyPressActivate);
 		if (this.incremental) {
-			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpIncrementalActivate);
+			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpIncrementalActivate);
 		} else {
-			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpActivate);
+			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpActivate);
 		}
 	} else {
 		if (this.incremental) {
-			XsltForms_browser.events.attach(input, "keyup", XsltForms_input.keyUpIncremental);
+			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpIncremental);
 		}
 	}
 };

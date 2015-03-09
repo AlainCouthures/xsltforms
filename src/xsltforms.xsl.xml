@@ -1,7 +1,7 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" xmlns:dcterms="http://purl.org/dc/terms/" name="xsltforms.xsl">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-08</cm:creationdate>
-	<cm:lastupdate>2015-01-13</cm:lastupdate>
+	<cm:lastupdate>2015-03-09</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : info@agencexml.com
@@ -26,11 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/">
 		<rdf:Description rdf:about="http://www.agencexml.com/xsltforms/xsltforms.xsl">
 			<dcterms:title>XSLT 1.0 Stylesheet for XSLTForms</dcterms:title>
-			<dcterms:hasVersion>610</dcterms:hasVersion>
+			<dcterms:hasVersion>611</dcterms:hasVersion>
 			<dcterms:creator>Alain Couthures - agenceXML</dcterms:creator>
 			<dcterms:conformsTo>XForms 1.1</dcterms:conformsTo>
-			<dcterms:created>2015-02-25</dcterms:created>
-			<dcterms:description>Language setting with PI</dcterms:description>
+			<dcterms:created>2015-03-09</dcterms:created>
+			<dcterms:description>HTML5 Spinner Control Support</dcterms:description>
 			<dcterms:format>text/xsl</dcterms:format>
 		</rdf:Description>
 	</rdf:RDF>
