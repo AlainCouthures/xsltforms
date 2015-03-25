@@ -79,7 +79,7 @@ XsltForms_item.prototype.build_ = function(ctx) {
 	var element = this.element;
 	var xf = element.parentNode.xfElement;
 	if (xf && xf.isRepeat) {
-		ctx = element.node;
+		this.ctx = ctx = element.node;
 	} else {
 		element.node = ctx;
 	}

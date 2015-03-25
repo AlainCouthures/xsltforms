@@ -142,13 +142,13 @@ XsltForms_input.prototype.initInput = function(type) {
 									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.innerHTML || "");
 								});
 								ed.on("Change", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
 								});
 								ed.on("Undo", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
 								});
 								ed.on("Redo", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
 								});
 							};
 							initinfo.selector = "#" + input.id;
@@ -179,10 +179,7 @@ XsltForms_input.prototype.initInput = function(type) {
 					};
 					this.rte.on("change", eltRefresh);
 					this.rte.on("blur", eltRefresh);
-					this.rte.on("mode", function(evt) {
-						var ctl = XsltForms_control.getXFElement(document.getElementById(evt.editor.name));
-						XsltForms_browser.setBoolMeta(ctl.element.node, "unsafe", evt.editor.mode === "source");
-					});
+					this.rte.on("mode", eltRefresh);
 			}
 		}
 		this.initEvents(input, false);
@@ -273,7 +270,7 @@ XsltForms_input.prototype.setValue = function(value) {
 //	}
 	if (type["class"] === "boolean") {
 		this.input.checked = value === "true";
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) && (!XsltForms_globals.jslibraries["http://www.tinymce.com"] || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3." ? tinymce.get(this.input.id).getContent() : tinymce.get(this.input.id).contentDocument.body.innerHTML) !== value) {
 		this.input.value = value || "";
 		if (tinymce.get(this.input.id)) {
 			tinymce.get(this.input.id).setContent(value);

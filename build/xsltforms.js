@@ -1,6 +1,6 @@
-/* Rev. 611
+/* Rev. 612
 
-Copyright (C) 2008-2014 agenceXML - Alain COUTHURES
+Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -414,6 +414,9 @@ for (var __i = 0, __len = XsltForms_browser.scripts.length; __i < __len; __i++) 
 	var __src = XsltForms_browser.scripts[__i].src;
 	if (__src.indexOf(XsltForms_browser.jsFileName) !== -1) {
 		XsltForms_browser.ROOT = __src.replace(XsltForms_browser.jsFileName, "");
+		if (XsltForms_browser.ROOT.indexOf("?") != -1) {
+			XsltForms_browser.ROOT = XsltForms_browser.ROOT.substring(0, XsltForms_browser.ROOT.indexOf("?"));
+		}
 		break;
 	}
 }
@@ -2237,8 +2240,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "611",
-	fileVersionNumber: 611,
+	fileVersion: "612",
+	fileVersionNumber: 612,
 
 	language: "navigator",
 	debugMode: false,
@@ -10407,13 +10410,13 @@ XsltForms_input.prototype.initInput = function(type) {
 									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.innerHTML || "");
 								});
 								ed.on("Change", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
 								});
 								ed.on("Undo", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
 								});
 								ed.on("Redo", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
 								});
 							};
 							initinfo.selector = "#" + input.id;
@@ -10444,10 +10447,7 @@ XsltForms_input.prototype.initInput = function(type) {
 					};
 					this.rte.on("change", eltRefresh);
 					this.rte.on("blur", eltRefresh);
-					this.rte.on("mode", function(evt) {
-						var ctl = XsltForms_control.getXFElement(document.getElementById(evt.editor.name));
-						XsltForms_browser.setBoolMeta(ctl.element.node, "unsafe", evt.editor.mode === "source");
-					});
+					this.rte.on("mode", eltRefresh);
 			}
 		}
 		this.initEvents(input, false);
@@ -10537,7 +10537,7 @@ XsltForms_input.prototype.setValue = function(value) {
 //	}
 	if (type["class"] === "boolean") {
 		this.input.checked = value === "true";
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) && tinymce.get(this.input.id).getContent() !== value) {
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) && (!XsltForms_globals.jslibraries["http://www.tinymce.com"] || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3." ? tinymce.get(this.input.id).getContent() : tinymce.get(this.input.id).contentDocument.body.innerHTML) !== value) {
 		this.input.value = value || "";
 		if (tinymce.get(this.input.id)) {
 			tinymce.get(this.input.id).setContent(value);
@@ -10832,7 +10832,7 @@ XsltForms_item.prototype.build_ = function(ctx) {
 	var element = this.element;
 	var xf = element.parentNode.xfElement;
 	if (xf && xf.isRepeat) {
-		ctx = element.node;
+		this.ctx = ctx = element.node;
 	} else {
 		element.node = ctx;
 	}

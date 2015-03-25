@@ -386,6 +386,9 @@ for (var __i = 0, __len = XsltForms_browser.scripts.length; __i < __len; __i++) 
 	var __src = XsltForms_browser.scripts[__i].src;
 	if (__src.indexOf(XsltForms_browser.jsFileName) !== -1) {
 		XsltForms_browser.ROOT = __src.replace(XsltForms_browser.jsFileName, "");
+		if (XsltForms_browser.ROOT.indexOf("?") != -1) {
+			XsltForms_browser.ROOT = XsltForms_browser.ROOT.substring(0, XsltForms_browser.ROOT.indexOf("?"));
+		}
 		break;
 	}
 }
