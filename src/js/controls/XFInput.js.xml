@@ -1,7 +1,7 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFInput.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2015-03-09</cm:lastupdate>
+	<cm:lastupdate>2015-04-06</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
@@ -291,6 +291,10 @@ XsltForms_input.prototype.setValue = function(value) {
 			this.rte.setData(value);
 			//this.input.value = this.rte.getData() || "";
 		}
+	} else if (this.input.type.substr(0, 4) === "date") {
+		if (this.input.value !== XsltForms_browser.getValue(node).substr(0, 15)) {
+			this.input.value = XsltForms_browser.getValue(node).substr(0, 15);
+		}
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";
 	}
@@ -356,7 +360,7 @@ XsltForms_input.prototype.blur = function(target) {
 	} else {
 		var node = this.element.node;
 		value = input.value;
-		if (value && value.length > 0 && XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format) {
+		if (value && value.length > 0 && input.type.substr(0, 4) !== "date" && XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format) {
 			try { input.value = XsltForms_browser.getValue(node, true); } catch(e) { }
 		}
 		if (this.timer) {

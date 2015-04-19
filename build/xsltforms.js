@@ -1,4 +1,4 @@
-/* Rev. 612
+/* Rev. 613
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -1047,6 +1047,19 @@ XsltForms_browser.escape = function(text) {
 		text = text.replace(/&/g, "&amp;");
 		text = text.replace(/</g, "&lt;");
 		text = text.replace(/>/g, "&gt;");
+	}
+	return text;
+};
+XsltForms_browser.escapeJS = function(text) {
+	if (!text) {
+		return "";
+	}
+	if (typeof(text) === "string") {
+		text = text.replace(/\\/gm, "\\\\");
+		text = text.replace(/\t/gm, "\\t");
+		text = text.replace(/\n/gm, "\\n");
+		text = text.replace(/\r/gm, "\\r");
+		text = text.replace(/\"/gm, "\\\"");
 	}
 	return text;
 };
@@ -2240,8 +2253,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "612",
-	fileVersionNumber: 612,
+	fileVersion: "613",
+	fileVersionNumber: 613,
 
 	language: "navigator",
 	debugMode: false,
@@ -2732,7 +2745,7 @@ var XsltForms_globals = {
 		var changes = this.changes;
 		for (var i = 0, len = changes.length; i < len; i++) {
 			var change = changes[i];
-			if (change.instances) {//Model
+			if (change && change.instances) {//Model
 				if (change.rebuilded) {
 					XsltForms_xmlevents.dispatch(change, "xforms-rebuild");
 				} else {
@@ -2934,6 +2947,299 @@ var XsltForms_globals = {
 			this.posibleBlur = false;
 			this.focus = null;
 		}
+	},
+
+		
+
+	add32 : function(x, y) {
+		var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+		return ((((x >>> 16) + (y >>> 16) + (lsw >>> 16)) & 0xFFFF)<< 16) | (lsw & 0xFFFF);
+		// return (x + y) & 0xFFFFFFFF;
+	},
+	str2msg : function(str) {
+		var i, msg = {length: str.length, arr: []};
+		for(i = 0; i < msg.length; i++){
+			msg.arr[i >> 2] |= (str.charCodeAt(i) & 0xFF) << ((3 - i % 4) << 3);
+		}
+		return msg;
+	},
+	crypto : function(msg, algo) {
+		var res, i, add32 = XsltForms_globals.add32;
+		switch (algo) {
+			case "SHA-1":
+				var bl = msg.length * 8;
+				msg.arr[bl >> 5] |= 0x80 << (24 - bl % 32);
+				msg.arr[((bl + 65 >> 9) << 4) + 15] = bl;
+				var a, b, c, d, e, T;
+				var l = msg.arr.length;
+				var W = [];
+				res = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
+				var rotl = function(x, n) {
+					return (x <<  n) | (x >>> (32 - n));
+				};
+				for(i = 0; i < l; i += 16){
+					a = res[0];
+					b = res[1];
+					c = res[2];
+					d = res[3];
+					e = res[4];
+					for(t = 0; t<20; t++){
+						T = add32(add32(add32(add32(rotl(a,5),(b & c)^(~b & d)),e),0x5a827999),W[t] = t<16 ? msg.arr[t+i] : rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					for(t = 20; t<40; t++){
+						T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0x6ed9eba1),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					for(t = 40; t<60; t++){
+						T = add32(add32(add32(add32(rotl(a,5),(b & c)^(b & d)^(c & d)),e),0x8f1bbcdc),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					for(t = 60; t<80; t++){
+						T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0xca62c1d6),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					res[0] = add32(a, res[0]);
+					res[1] = add32(b, res[1]);
+					res[2] = add32(c, res[2]);
+					res[3] = add32(d, res[3]);
+					res[4] = add32(e, res[4]);
+				}
+				return {length: 20, arr: res};
+			case "MD5":
+				var n = msg.length, t;
+				var cmn = function(q, a, b, x, s, t) {
+					a = add32(add32(a, q), add32(x, t));
+					return add32((a << s) | (a >>> (32 - s)), b);
+				};
+				var f1 = function(a, b, c, d, x, s, t) {
+					return cmn((b & c) | ((~b) & d), a, b, x, s, t);
+				};
+				var f2 = function(a, b, c, d, x, s, t) {
+					return cmn((b & d) | (c & (~d)), a, b, x, s, t);
+				};
+				var f3 = function(a, b, c, d, x, s, t) {
+					return cmn(b ^ c ^ d, a, b, x, s, t);
+				};
+				var f4 = function(a, b, c, d, x, s, t) {
+					return cmn(c ^ (b | (~d)), a, b, x, s, t);
+				};
+				var cycle = function (w, t) {
+					var a = w[0], b = w[1], c = w[2], d = w[3];
+					a = f1(a, b, c, d, t[0], 7, -680876936);
+					d = f1(d, a, b, c, t[1], 12, -389564586);
+					c = f1(c, d, a, b, t[2], 17,  606105819);
+					b = f1(b, c, d, a, t[3], 22, -1044525330);
+					a = f1(a, b, c, d, t[4], 7, -176418897);
+					d = f1(d, a, b, c, t[5], 12,  1200080426);
+					c = f1(c, d, a, b, t[6], 17, -1473231341);
+					b = f1(b, c, d, a, t[7], 22, -45705983);
+					a = f1(a, b, c, d, t[8], 7,  1770035416);
+					d = f1(d, a, b, c, t[9], 12, -1958414417);
+					c = f1(c, d, a, b, t[10], 17, -42063);
+					b = f1(b, c, d, a, t[11], 22, -1990404162);
+					a = f1(a, b, c, d, t[12], 7,  1804603682);
+					d = f1(d, a, b, c, t[13], 12, -40341101);
+					c = f1(c, d, a, b, t[14], 17, -1502002290);
+					b = f1(b, c, d, a, t[15], 22,  1236535329);
+					a = f2(a, b, c, d, t[1], 5, -165796510);
+					d = f2(d, a, b, c, t[6], 9, -1069501632);
+					c = f2(c, d, a, b, t[11], 14,  643717713);
+					b = f2(b, c, d, a, t[0], 20, -373897302);
+					a = f2(a, b, c, d, t[5], 5, -701558691);
+					d = f2(d, a, b, c, t[10], 9,  38016083);
+					c = f2(c, d, a, b, t[15], 14, -660478335);
+					b = f2(b, c, d, a, t[4], 20, -405537848);
+					a = f2(a, b, c, d, t[9], 5,  568446438);
+					d = f2(d, a, b, c, t[14], 9, -1019803690);
+					c = f2(c, d, a, b, t[3], 14, -187363961);
+					b = f2(b, c, d, a, t[8], 20,  1163531501);
+					a = f2(a, b, c, d, t[13], 5, -1444681467);
+					d = f2(d, a, b, c, t[2], 9, -51403784);
+					c = f2(c, d, a, b, t[7], 14,  1735328473);
+					b = f2(b, c, d, a, t[12], 20, -1926607734);
+					a = f3(a, b, c, d, t[5], 4, -378558);
+					d = f3(d, a, b, c, t[8], 11, -2022574463);
+					c = f3(c, d, a, b, t[11], 16,  1839030562);
+					b = f3(b, c, d, a, t[14], 23, -35309556);
+					a = f3(a, b, c, d, t[1], 4, -1530992060);
+					d = f3(d, a, b, c, t[4], 11,  1272893353);
+					c = f3(c, d, a, b, t[7], 16, -155497632);
+					b = f3(b, c, d, a, t[10], 23, -1094730640);
+					a = f3(a, b, c, d, t[13], 4,  681279174);
+					d = f3(d, a, b, c, t[0], 11, -358537222);
+					c = f3(c, d, a, b, t[3], 16, -722521979);
+					b = f3(b, c, d, a, t[6], 23,  76029189);
+					a = f3(a, b, c, d, t[9], 4, -640364487);
+					d = f3(d, a, b, c, t[12], 11, -421815835);
+					c = f3(c, d, a, b, t[15], 16,  530742520);
+					b = f3(b, c, d, a, t[2], 23, -995338651);
+					a = f4(a, b, c, d, t[0], 6, -198630844);
+					d = f4(d, a, b, c, t[7], 10,  1126891415);
+					c = f4(c, d, a, b, t[14], 15, -1416354905);
+					b = f4(b, c, d, a, t[5], 21, -57434055);
+					a = f4(a, b, c, d, t[12], 6,  1700485571);
+					d = f4(d, a, b, c, t[3], 10, -1894986606);
+					c = f4(c, d, a, b, t[10], 15, -1051523);
+					b = f4(b, c, d, a, t[1], 21, -2054922799);
+					a = f4(a, b, c, d, t[8], 6,  1873313359);
+					d = f4(d, a, b, c, t[15], 10, -30611744);
+					c = f4(c, d, a, b, t[6], 15, -1560198380);
+					b = f4(b, c, d, a, t[13], 21,  1309151649);
+					a = f4(a, b, c, d, t[4], 6, -145523070);
+					d = f4(d, a, b, c, t[11], 10, -1120210379);
+					c = f4(c, d, a, b, t[2], 15,  718787259);
+					b = f4(b, c, d, a, t[9], 21, -343485551);
+					w[0] = add32(a, w[0]);
+					w[1] = add32(b, w[1]);
+					w[2] = add32(c, w[2]);
+					w[3] = add32(d, w[3]);
+				};
+				res = [1732584193, -271733879, -1732584194, 271733878];
+				i = 0;
+				while (i <= n - 64) {
+					t = [];
+					do {
+						t.push(((msg.arr[i >> 2] & 0xFF000000) >>> 24) | ((msg.arr[i >> 2] & 0x00FF0000) >>> 8) | ((msg.arr[i >> 2] & 0x0000FF00) << 8) | ((msg.arr[i >> 2] & 0x000000FF) << 24));
+						i += 4;
+					} while ( i % 64 !== 0 );
+					cycle(res, t);
+				}
+				t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				var j = 0;
+				while ( i < n ) {
+					t[j >> 2] = ((msg.arr[i >> 2] & 0xFF000000) >>> 24) | ((msg.arr[i >> 2] & 0x00FF0000) >>> 8) | ((msg.arr[i >> 2] & 0x0000FF00) << 8) | ((msg.arr[i >> 2] & 0x000000FF) << 24);
+					i++;
+					j++;
+				}
+				t[j >> 2] |= 0x80 << ((j % 4) << 3);
+				if (j > 55) {
+					cycle(res, t);
+					t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				}
+				t[14] = n * 8;
+				cycle(res, t);
+				var k;
+				for (k = 0, l = res.length; k < l; k++) {
+					res[k] = ((res[k] & 0xFF) << 24) | (((res[k] >> 8) & 0xFF) << 16) | (((res[k] >> 16) & 0xFF) << 8) | ((res[k] >> 24) & 0xFF);
+				}
+				return {length: 16, arr: res};
+			case "SHA-256":
+				var bl = msg.length * 8;
+				msg.arr[bl >> 5] |= 0x80 << (24 - bl % 32);
+				msg.arr[((bl + 65 >> 9) << 4) + 15] = bl;
+				var K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+					0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+					0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+					0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+					0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+					0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+					0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+					0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+				var W = [];
+				res = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+				var a, b, c, d, e, f, g, h, T;
+				var l = msg.arr.length;
+				for(i = 0; i < l; i += 16){
+					a = res[0];
+					b = res[1];
+					c = res[2];
+					d = res[3];
+					e = res[4];
+					f = res[5];
+					g = res[6];
+					h = res[7];
+					for(t = 0; t < 64; t++){
+						if (t < 16) {
+							W[t] = msg.arr[i + t];
+						} else {
+							var g0 = W[t - 15];
+							var g1 = W[t - 2];
+							W[t] = add32(add32(add32(((g0 << 25) | (g0 >>> 7)) ^ ((g0 << 14) | (g0 >>> 18)) ^ (g0 >>> 3), W[t - 7]), ((g1 << 15) | (g1 >>> 17)) ^ ((g1 << 13) | (g1 >>> 19)) ^ (g1 >>> 10)), W[t - 16]);
+						}
+						var a1 = add32(add32(add32(add32(h, ((e << 26) | (e >>> 6)) ^ ((e << 21) | (e >>> 11)) ^ ((e << 7) | (e >>> 25))), (e & f) ^ (~e & g)), K[t]), W[t]);
+						var a2 = add32(((a << 30) | (a >>> 2)) ^ ((a << 19) | (a >>> 13)) ^ ((a << 10) | (a >>> 22)), (a & b) ^ (a & c) ^ (b & c));
+						h = g;
+						g = f;
+						f = e;
+						e = add32(d, a1);
+						d = c;
+						c = b;
+						b = a;
+						a = add32(a1, a2);
+					}
+					res[0] = add32(a, res[0]);
+					res[1] = add32(b, res[1]);
+					res[2] = add32(c, res[2]);
+					res[3] = add32(d, res[3]);
+					res[4] = add32(e, res[4]);
+					res[5] = add32(f, res[5]);
+					res[6] = add32(g, res[6]);
+					res[7] = add32(h, res[7]);
+				}
+				return {length: 32, arr: res};
+			case "BASE64":
+				str = str.replace(/\r\n/g,"\n");
+				var l2b = str.length;
+				str2 = "";
+				for (i = 0; i < l2b; i++) {
+					var c0 = str.charCodeAt(i);
+					str2 += c0 < 128 ? str.charAt(i) : c0 > 127 && c0 < 2048 ? String.fromCharCode(c0 >> 6 | 192, c0 & 63 | 128) : String.fromCharCode(c0 >> 12 | 224, c0 >> 6 & 63 | 128, c0 & 63 | 128);
+				}
+				l2b = str2.length;
+				var res = "";
+				for (i = 0; i < l2b; i += 3) {
+					var c1b = str2.charCodeAt(i);
+					var c2b = i + 1 < l2b ? str2.charCodeAt(i + 1) : 0;
+					var c3b = i + 2 < l2b ? str2.charCodeAt(i + 2) : 0;
+					res += b64.charAt(c1b >> 2) + b64.charAt((c1b & 3) << 4 | c2b >> 4) + (i + 1 < l2b ? b64.charAt((c2b & 15) << 2 | c3b >> 6) : "=") + (i + 2 < l2b ? b64.charAt(c3b & 63) : "=");
+				}
+				return res;
+		}
+	},
+
+		
+
+	hex32 : function(v) {
+		var h = v >>> 16;
+		var l = v & 0xFFFF;
+		return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000") + h.toString(16) + (l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000") + l.toString(16);
+	},
+	encode : function(msg, enco) {
+		var str = "", l, i, c1, c2, c3, b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+		if (enco === "base64") {
+			for (i = 0, l = msg.length; i < l; i += 3) {
+				c1 = (msg.arr[i >> 2] >> (24 - (i % 4) * 8)) & 0xFF;
+				c2 = i + 1 < l ? (msg.arr[(i + 1) >> 2] >> (24 - ((i + 1) % 4) * 8))& 0xFF : 0;
+				c3 = i + 2 < l ? (msg.arr[(i + 2) >> 2] >> (24 - ((i + 2) % 4) * 8))& 0xFF : 0;
+				str += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l ? b64.charAt(c3 & 63) : "=");
+			}
+			return str;
+		}
+		str = "";
+		for (i = 0, l = msg.length >> 2; i < l; i++) {
+			str += XsltForms_globals.hex32(msg.arr[i]);
+		}
+		if (msg.length % 4 !== 0) {
+			str += (msg.arr[msg.length >> 2] >>> (8 * (4 - msg.length % 4))).toString(16);
+		}
+		return str;
 	}
 };
 
@@ -4857,6 +5163,14 @@ var XsltForms_xpathFunctionExceptions = {
 		name : "choose() : Invalid number of arguments",
 		message : "choose() function must have three argument exactly"
 	},
+	digestInvalidArgumentsNumber : {
+		name : "digest() : Invalid number of arguments",
+		message : "digest() function must have two or three arguments"
+	},
+	hmacInvalidArgumentsNumber : {
+		name : "choose() : Invalid number of arguments",
+		message : "choose() function must have three or four arguments"
+	},
 	avgInvalidArgumentsNumber : {
 		name : "avg() : Invalid number of arguments",
 		message : "avg() function must have one argument exactly"
@@ -5985,269 +6299,64 @@ var XsltForms_xpathCoreFunctions = {
 
 		
 
-/*jshint bitwise:false */
 	"http://www.w3.org/2002/xforms digest" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(str, algo, enco) {
 			if (arguments.length !== 2 && arguments.length !== 3) {
 				throw XsltForms_xpathFunctionExceptions.digestInvalidArgumentsNumber;
 			}
-			str = XsltForms_globals.stringValue(str);
 			algo = XsltForms_globals.stringValue(algo);
-			enco = enco ? XsltForms_globals.stringValue(enco) : "base64";
-			var i;
-			var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-			var add32, hex32, t, str2;
-			switch (algo) {
-				case "SHA-1":
-					var l = str.length;
-					var bl = l*8;
-					var W = [];
-					var H0 = 0x67452301;
-					var H1 = 0xefcdab89;
-					var H2 = 0x98badcfe;
-					var H3 = 0x10325476;
-					var H4 = 0xc3d2e1f0;
-					var a, b, c, d, e, T;
-					var msg = [];
-					for(i = 0; i < l; i++){
-						msg[i >> 2] |= (str.charCodeAt(i)& 0xFF)<<((3-i%4)<<3);
-					}
-					msg[bl >> 5] |= 0x80 <<(24-bl%32);
-					msg[((bl+65 >> 9)<< 4)+ 15] = bl;
-					l = msg.length;
-					var rotl = function(x,n) {
-						return(x <<  n)|(x >>>(32-n));
-					};
-					add32 = function(x,y) {
-						var lsw = (x & 0xFFFF)+(y & 0xFFFF);
-						return ((((x >>> 16)+(y >>> 16)+(lsw >>> 16)) & 0xFFFF)<< 16)|(lsw & 0xFFFF);
-					};
-					for(i = 0; i < l; i += 16){
-						a = H0;
-						b = H1;
-						c = H2;
-						d = H3;
-						e = H4;
-						for(t = 0; t<20; t++){
-							T = add32(add32(add32(add32(rotl(a,5),(b & c)^(~b & d)),e),0x5a827999),W[t] = t<16 ? msg[t+i] : rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-							e = d;
-							d = c;
-							c = rotl(b,30);
-							b = a;
-							a = T;
-						}
-						for(t = 20; t<40; t++){
-							T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0x6ed9eba1),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-							e = d;
-							d = c;
-							c = rotl(b,30);
-							b = a;
-							a = T;
-						}
-						for(t = 40; t<60; t++){
-							T = add32(add32(add32(add32(rotl(a,5),(b & c)^(b & d)^(c & d)),e),0x8f1bbcdc),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-							e = d;
-							d = c;
-							c = rotl(b,30);
-							b = a;
-							a = T;
-						}
-						for(t = 60; t<80; t++){
-							T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0xca62c1d6),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-							e = d;
-							d = c;
-							c = rotl(b,30);
-							b = a;
-							a = T;
-						}
-						H0 = add32(a,H0);
-						H1 = add32(b,H1);
-						H2 = add32(c,H2);
-						H3 = add32(d,H3);
-						H4 = add32(e,H4);
-					}
-					switch (enco) {
-						case "hex" :
-							hex32 = function(v) {
-								var h = v >>> 16;
-								var l = v & 0xFFFF;
-								return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000")+h.toString(16)+(l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000")+l.toString(16);
-							};
-							return hex32(H0)+hex32(H1)+hex32(H2)+hex32(H3)+hex32(H4);
-						case "base64" :
-							var b12 = function(v) {
-								return b64.charAt((v >>> 6) & 0x3F)+b64.charAt(v & 0x3F);
-							};
-							var b30 = function(v) {
-								return b64.charAt(v >>> 24)+b64.charAt((v >>> 18) & 0x3F)+b64.charAt((v >>> 12) & 0x3F)+b64.charAt((v >>> 6) & 0x3F)+b64.charAt(v & 0x3F);
-							};
-							return b30(H0 >>> 2)+b30(((H0 & 0x3) << 28) | (H1 >>> 4))+b30(((H1 & 0xF) << 26) | (H2 >>> 6))+b30(((H2 & 0x3F) << 24) | (H3 >>> 8))+b30(((H3 & 0xFF) << 22) | (H4 >>> 10))+b12((H4 & 0x3FF)<<2)+"=";
-					}
-					break;
-				case "MD5":
-					var n = str.length;
-					add32 = function (a, b) {
-						return (a + b) & 0xFFFFFFFF;
-					};
-					var cmn = function(q, a, b, x, s, t) {
-						a = add32(add32(a, q), add32(x, t));
-						return add32((a << s) | (a >>> (32 - s)), b);
-					};
-					var f1 = function(a, b, c, d, x, s, t) {
-						return cmn((b & c) | ((~b) & d), a, b, x, s, t);
-					};
-					var f2 = function(a, b, c, d, x, s, t) {
-						return cmn((b & d) | (c & (~d)), a, b, x, s, t);
-					};
-					var f3 = function(a, b, c, d, x, s, t) {
-						return cmn(b ^ c ^ d, a, b, x, s, t);
-					};
-					var f4 = function(a, b, c, d, x, s, t) {
-						return cmn(c ^ (b | (~d)), a, b, x, s, t);
-					};
-					var cycle = function (w, t) {
-						var a = w[0], b = w[1], c = w[2], d = w[3];
-						a = f1(a, b, c, d, t[0], 7, -680876936);
-						d = f1(d, a, b, c, t[1], 12, -389564586);
-						c = f1(c, d, a, b, t[2], 17,  606105819);
-						b = f1(b, c, d, a, t[3], 22, -1044525330);
-						a = f1(a, b, c, d, t[4], 7, -176418897);
-						d = f1(d, a, b, c, t[5], 12,  1200080426);
-						c = f1(c, d, a, b, t[6], 17, -1473231341);
-						b = f1(b, c, d, a, t[7], 22, -45705983);
-						a = f1(a, b, c, d, t[8], 7,  1770035416);
-						d = f1(d, a, b, c, t[9], 12, -1958414417);
-						c = f1(c, d, a, b, t[10], 17, -42063);
-						b = f1(b, c, d, a, t[11], 22, -1990404162);
-						a = f1(a, b, c, d, t[12], 7,  1804603682);
-						d = f1(d, a, b, c, t[13], 12, -40341101);
-						c = f1(c, d, a, b, t[14], 17, -1502002290);
-						b = f1(b, c, d, a, t[15], 22,  1236535329);
-						a = f2(a, b, c, d, t[1], 5, -165796510);
-						d = f2(d, a, b, c, t[6], 9, -1069501632);
-						c = f2(c, d, a, b, t[11], 14,  643717713);
-						b = f2(b, c, d, a, t[0], 20, -373897302);
-						a = f2(a, b, c, d, t[5], 5, -701558691);
-						d = f2(d, a, b, c, t[10], 9,  38016083);
-						c = f2(c, d, a, b, t[15], 14, -660478335);
-						b = f2(b, c, d, a, t[4], 20, -405537848);
-						a = f2(a, b, c, d, t[9], 5,  568446438);
-						d = f2(d, a, b, c, t[14], 9, -1019803690);
-						c = f2(c, d, a, b, t[3], 14, -187363961);
-						b = f2(b, c, d, a, t[8], 20,  1163531501);
-						a = f2(a, b, c, d, t[13], 5, -1444681467);
-						d = f2(d, a, b, c, t[2], 9, -51403784);
-						c = f2(c, d, a, b, t[7], 14,  1735328473);
-						b = f2(b, c, d, a, t[12], 20, -1926607734);
-						a = f3(a, b, c, d, t[5], 4, -378558);
-						d = f3(d, a, b, c, t[8], 11, -2022574463);
-						c = f3(c, d, a, b, t[11], 16,  1839030562);
-						b = f3(b, c, d, a, t[14], 23, -35309556);
-						a = f3(a, b, c, d, t[1], 4, -1530992060);
-						d = f3(d, a, b, c, t[4], 11,  1272893353);
-						c = f3(c, d, a, b, t[7], 16, -155497632);
-						b = f3(b, c, d, a, t[10], 23, -1094730640);
-						a = f3(a, b, c, d, t[13], 4,  681279174);
-						d = f3(d, a, b, c, t[0], 11, -358537222);
-						c = f3(c, d, a, b, t[3], 16, -722521979);
-						b = f3(b, c, d, a, t[6], 23,  76029189);
-						a = f3(a, b, c, d, t[9], 4, -640364487);
-						d = f3(d, a, b, c, t[12], 11, -421815835);
-						c = f3(c, d, a, b, t[15], 16,  530742520);
-						b = f3(b, c, d, a, t[2], 23, -995338651);
-						a = f4(a, b, c, d, t[0], 6, -198630844);
-						d = f4(d, a, b, c, t[7], 10,  1126891415);
-						c = f4(c, d, a, b, t[14], 15, -1416354905);
-						b = f4(b, c, d, a, t[5], 21, -57434055);
-						a = f4(a, b, c, d, t[12], 6,  1700485571);
-						d = f4(d, a, b, c, t[3], 10, -1894986606);
-						c = f4(c, d, a, b, t[10], 15, -1051523);
-						b = f4(b, c, d, a, t[1], 21, -2054922799);
-						a = f4(a, b, c, d, t[8], 6,  1873313359);
-						d = f4(d, a, b, c, t[15], 10, -30611744);
-						c = f4(c, d, a, b, t[6], 15, -1560198380);
-						b = f4(b, c, d, a, t[13], 21,  1309151649);
-						a = f4(a, b, c, d, t[4], 6, -145523070);
-						d = f4(d, a, b, c, t[11], 10, -1120210379);
-						c = f4(c, d, a, b, t[2], 15,  718787259);
-						b = f4(b, c, d, a, t[9], 21, -343485551);
-						w[0] = add32(a, w[0]);
-						w[1] = add32(b, w[1]);
-						w[2] = add32(c, w[2]);
-						w[3] = add32(d, w[3]);
-					};
-					var w = [1732584193, -271733879, -1732584194, 271733878];
-					i = 0;
-					while (i <= n-64) {
-						t = [];
-						do {
-							t.push(str.charCodeAt(i) + (str.charCodeAt(i+1) << 8) + (str.charCodeAt(i+2) << 16) + (str.charCodeAt(i+3) << 24));
-							i += 4;
-						} while ( i%64 !== 0 );
-						cycle(w, t);
-					}
-					t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-					var j = 0;
-					while ( i < n ) {
-						t[j>>2] |= str.charCodeAt(i) << ((j%4) << 3);
-						i++;
-						j++;
-					}
-					t[j>>2] |= 0x80 << ((j%4) << 3);
-					if (j > 55) {
-						cycle(w, t);
-						t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-					}
-					t[14] = n*8;
-					cycle(w, t);
-					var k;
-					for (k = 0, l = w.length; k < l; k++) {
-						w[k] = ((w[k] & 0xFF) << 24) | (((w[k] >> 8) & 0xFF) << 16) | (((w[k] >> 16) & 0xFF) << 8) | ((w[k] >> 24) & 0xFF);
-					}
-					switch (enco) {
-						case "hex" :
-							hex32 = function(v) {
-								var h = v >>> 16;
-								var l = v & 0xFFFF;
-								return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000")+h.toString(16)+(l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000")+l.toString(16);
-							};
-							str2 = "";
-							for (k = 0, l = w.length; k < l; k++) {
-								str2 += hex32(w[k]);
-							}
-							return str2;
-						case "base64" :
-							var l2 = w.length*4;
-							str2 = "";
-							for (i = 0; i < l2; i += 3) {
-								var c1 = (w[i >> 2] >> (24 - (i%4)*8))& 0xFF;
-								var c2 = i + 1 < l2 ? (w[(i + 1) >> 2] >> (24 - ((i+1)%4)*8))& 0xFF : 0;
-								var c3 = i + 2 < l2 ? (w[(i + 2) >> 2] >> (24 - ((i+2)%4)*8))& 0xFF : 0;
-								str2 += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l2 ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l2 ? b64.charAt(c3 & 63) : "=");
-							}
-							return str2;
-					}
-					break;
-				case "BASE64":
-					str = str.replace(/\r\n/g,"\n");
-					var l2b = str.length;
-					str2 = "";
-					for (i = 0; i < l2b; i++) {
-						var c0 = str.charCodeAt(i);
-						str2 += c0 < 128 ? str.charAt(i) : c0 > 127 && c0 < 2048 ? String.fromCharCode(c0 >> 6 | 192, c0 & 63 | 128) : String.fromCharCode(c0 >> 12 | 224, c0 >> 6 & 63 | 128, c0 & 63 | 128);
-					}
-					l2b = str2.length;
-					var res = "";
-					for (i = 0; i < l2b; i += 3) {
-						var c1b = str2.charCodeAt(i);
-						var c2b = i + 1 < l2b ? str2.charCodeAt(i + 1) : 0;
-						var c3b = i + 2 < l2b ? str2.charCodeAt(i + 2) : 0;
-						res += b64.charAt(c1b >> 2) + b64.charAt((c1b & 3) << 4 | c2b >> 4) + (i + 1 < l2b ? b64.charAt((c2b & 15) << 2 | c3b >> 6) : "=") + (i + 2 < l2b ? b64.charAt(c3b & 63) : "=");
-					}
-					return res;
+			if (algo !== "SHA-1" && algo !== "MD5" && algo !== "SHA-256" && algo !== "BASE64") {
+				XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-binding-exception", "Invalid crypting method");
+				return "unsupported";
 			}
-			XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-binding-exception", "Invalid encoding method");
-			return "unsupported";
+			enco = enco ? XsltForms_globals.stringValue(enco) : "base64";
+			if (enco !== "hex" && enco !== "base64") {
+				XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-binding-exception", "Invalid encoding method");
+				return "unsupported";
+			}
+			str = XsltForms_globals.stringValue(str);
+			return XsltForms_globals.encode(XsltForms_globals.crypto(XsltForms_globals.str2msg(str), algo), enco);
+		} ),
+
+		
+
+/*jshint bitwise:false */
+	"http://www.w3.org/2002/xforms hmac" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(key, str, algo, enco) {
+			if (arguments.length !== 3 && arguments.length !== 4) {
+				throw XsltForms_xpathFunctionExceptions.hmacInvalidArgumentsNumber;
+			}
+			algo = XsltForms_globals.stringValue(algo);
+			if (algo !== "SHA-1" && algo !== "MD5" && algo !== "SHA-256" && algo !== "BASE64") {
+				XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-binding-exception", "Invalid crypting method");
+				return "unsupported";
+			}
+			enco = enco ? XsltForms_globals.stringValue(enco) : "base64";
+			if (enco !== "hex" && enco !== "base64") {
+				XsltForms_globals.error(XsltForms_globals.defaultModel, "xforms-binding-exception", "Invalid encoding method");
+				return "unsupported";
+			}
+			key = XsltForms_globals.stringValue(key);
+			str = XsltForms_globals.stringValue(str);
+			var i, ik = [], ok = [];
+			var k = XsltForms_globals.str2msg(key);
+			if (k.length > 64) {
+				k = XsltForms_globals.crypto(k, algo);
+			}
+			for (i = (k.length + 3) >> 2; i < 16; i++) {
+				k.arr[i] = 0;
+			}
+			for (i = 0; i < 16; i++) {
+				ik[i] = k.arr[i] ^ 0x36363636;
+				ok[i] = k.arr[i] ^ 0x5c5c5c5c;
+			}
+			var a1 = XsltForms_globals.str2msg(str);
+			a1.length += 64;
+			a1.arr = ik.concat(a1.arr);
+			var a2 = XsltForms_globals.crypto(a1, algo);
+			a2.length += 64;
+			a2.arr = ok.concat(a2.arr);
+			return XsltForms_globals.encode(XsltForms_globals.crypto(a2, algo), enco);
 		} ),
 /*jshint bitwise:true */
 
@@ -7345,7 +7454,7 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 		fullname = " exml:fullname=\"" + XsltForms_browser.escape(name) + "\"";
 		name = "________";
 	}
-	var ret = root ? "<exml:anonymous xmlns:exml=\"http://www.agencexml.com/exml\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:exsi=\"http://www.agencexml.com/exi\" xmlns=\"\">" : "";
+	var ret = root ? "<exml:anonymous xmlns:exml=\"http://www.agencexml.com/exml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:exsi=\"http://www.agencexml.com/exi\" xmlns=\"\">" : "";
 	if (json instanceof Array) {
 		if (inarray) {
 			ret += "<exml:anonymous exsi:maxOccurs=\"unbounded\">";
@@ -7363,6 +7472,9 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 	} else {
 		var xsdtype = "";
 		switch(typeof(json)) {
+			case "string":
+				xsdtype = " xsi:type=\"xsd:string\"";
+				break;
 			case "number":
 				xsdtype = " xsi:type=\"xsd:double\"";
 				break;
@@ -7375,7 +7487,13 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 				}
 				break;
 		}
-		ret += name === "" ? "" : "<"+name+fullname+(inarray?" exsi:maxOccurs=\"unbounded\"":"")+xsdtype+">";
+		if (name === "") {
+			if (root && xsdtype !== "") {
+				ret = ret.substr(0, ret.length - 1) + xsdtype + ">";
+			}
+		} else {
+			ret += "<"+name+fullname+(inarray?" exsi:maxOccurs=\"unbounded\"":"")+xsdtype+">";
+		}
 		if (typeof(json) === "object" && !(json instanceof Date)) {
 			for (var m in json) {
 				if (json.hasOwnProperty(m)) {
@@ -7398,6 +7516,75 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 	}
 	ret += root ? "</exml:anonymous>" : "";
 	return ret;
+};
+
+		
+
+XsltForms_browser.node2json = function(node, comma) {
+	var xsdtype, inarray, att, lname, s = "", i, l, lc, t;
+	if (node.nodeType !== XsltForms_nodeType.ELEMENT) {
+		return "";
+	}
+	lname = node.localName ? node.localName : node.baseName;
+	if (node.getAttributeNS) {
+		xsdtype = node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type");
+		inarray = node.getAttributeNS("http://www.agencexml.com/exi", "maxOccurs") === "unbounded";
+		if (lname === "________") {
+			lname = node.getAttributeNS("http://www.agencexml.com/exml", "fullname");
+		}
+	} else {
+		att = node.selectSingleNode("@*[local-name()='type' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
+		xsdtype = att ? att.value : "";
+		att = node.selectSingleNode("@*[local-name()='maxOccurs' and namespace-uri()='http://www.agencexml.com/exi']");
+		inarray = att ? att.value === "unbounded" : false;
+		if (lname === "________") {
+			att = node.selectSingleNode("@*[local-name()='fullname' and namespace-uri()='http://www.agencexml.com/exml']");
+			lname = att ? att.value : "";
+		}
+	}
+	s = "";
+	if (lname !== "anonymous" || node.namespaceURI !== "http://www.agencexml.com/exml") {
+		s += lname + ":";
+	}
+	if (inarray) {
+		s = "[";
+		lc = 0;
+		for (i = 0, l = node.childNodes.length; i < l; i++) {
+			if (node.childNodes[i].nodeType === XsltForms_nodeType.ELEMENT) {
+				lc = i;
+			}
+		}
+		for (i = 0; i <= lc; i++) {
+			s += XsltForms_browser.node2json(node.childNodes[i], (i === lc ? "" : ","));
+		}
+		return s + "]" + comma;
+	}
+	t = node.text || node.textContent;
+	switch (xsdtype) {
+		case "xsd:string":
+			return s + '"' + XsltForms_browser.escapeJS(t) + '"' + comma;
+		case "xsd:double":
+		case "xsd:boolean":
+			return s + t + comma;
+		case "xsd:dateTime":
+			return s + 'new Date("' + t + '")' + comma;
+		default:
+			s += "{";
+			lc = 0;
+			for (i = 0, l = node.childNodes.length; i < l; i++) {
+				if (node.childNodes[i].nodeType === XsltForms_nodeType.ELEMENT) {
+					lc = i;
+				}
+			}
+			for (i = 0; i <= lc; i++) {
+				s += XsltForms_browser.node2json(node.childNodes[i], (i === lc ? "" : ","));
+			}
+			return s + "}" + comma;
+	}
+}
+XsltForms_browser.xml2json = function(s) {
+	var d = XsltForms_browser.createXMLDocument(s);
+	return XsltForms_browser.node2json(d.documentElement, "");
 };
 
 		
@@ -8024,6 +8211,7 @@ function XsltForms_submission(subform, id, model, ref, value, bind, action, meth
 			return this.model.getInstanceDocument();
 		};
 	}
+	this.pending = false;
 }
 
 XsltForms_submission.prototype = new XsltForms_coreElement();
@@ -8052,12 +8240,22 @@ XsltForms_submission.prototype.xml2data = function(node, method) {
 	if (this.mediatype === "text/csv" && typeof node !== "string") { 
 		return XsltForms_browser.xml2csv(ser, this.separator);
 	}
+	if ((this.mediatype === "application/json" || this.mediatype === "text/json") && typeof node !== "string") {
+		return XsltForms_browser.xml2json(ser);
+	}
 	return ser;
 };
 
 		
 
 XsltForms_submission.prototype.submit = function() {
+	if (this.pending) {
+		XsltForms_globals.openAction("XsltForms_submission.prototype.submit");
+		this.issueSubmitException_({"error-type": "concurrent submission"});
+		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+		return;
+	}
+	this.pending = true;
 	var ctxnode, targetnode, inst, body, scriptelt;
 	XsltForms_globals.openAction("XsltForms_submission.prototype.submit");
 	var node = this.eval_();
@@ -8079,6 +8277,7 @@ XsltForms_submission.prototype.submit = function() {
 		evcontext["error-type"] = "validation-error";
 		this.issueSubmitException_(evcontext, null, {message: "local:// submission not supported"});
 		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+		this.pending = false;
 		return;
 	}
 	if (node) {
@@ -8090,6 +8289,7 @@ XsltForms_submission.prototype.submit = function() {
 			evcontext["error-type"] = "validation-error";
 			this.issueSubmitException_(evcontext, null, null);
 			XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+			this.pending = false;
 			return;
 		}
 		if ((method === "get" || method === "delete") && this.serialization !== "none" && action.substr(0, 9) !== "opener://" && action.substr(0, 8) !== "local://") {
@@ -8133,6 +8333,7 @@ XsltForms_submission.prototype.submit = function() {
 			} catch (e) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+				this.pending = false;
 				return;
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
@@ -8142,6 +8343,7 @@ XsltForms_submission.prototype.submit = function() {
 			} catch (e) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+				this.pending = false;
 				return;
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
@@ -8151,6 +8353,7 @@ XsltForms_submission.prototype.submit = function() {
 			} catch (e) {
 				XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+				this.pending = false;
 				return;
 			}
 			XsltForms_xmlevents.dispatch(subm, "xforms-submit-done");
@@ -8163,6 +8366,7 @@ XsltForms_submission.prototype.submit = function() {
 				} catch (e) {
 					XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 					XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+					this.pending = false;
 					return;
 				} 
 			} else if (action.substr(0, 9) === "opener://") {
@@ -8171,6 +8375,7 @@ XsltForms_submission.prototype.submit = function() {
 				} catch (e) {
 					XsltForms_xmlevents.dispatch(subm, "xforms-submit-error");
 					XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+					this.pending = false;
 					return;
 				} 
 			} else {
@@ -8200,6 +8405,7 @@ XsltForms_submission.prototype.submit = function() {
 			}
 		}
 		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+		this.pending = false;
 		return;
 	}
 	if (action.substr(0,11) === "javascript:") {
@@ -8229,6 +8435,7 @@ XsltForms_submission.prototype.submit = function() {
 			}
 		}
 		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+		this.pending = false;
 		return;
 	}
 	var synchr = this.synchr;
@@ -8279,6 +8486,7 @@ XsltForms_submission.prototype.submit = function() {
 			if (!node && (method !== "get" || method !== "delete")) {
 				evcontext["error-type"] = "no-data";
 				this.issueSubmitException_(evcontext, null, null);
+				this.pending = false;
 				return;
 			}
 			var req = null;
@@ -8298,6 +8506,7 @@ XsltForms_submission.prototype.submit = function() {
 							evcontext["error-type"] = "resource-error";
 							subm.issueSubmitException_(evcontext, req, null);
 							XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+							this.pending = false;
 							return;
 						}
 						if (subm.replace === "instance" || (subm.targetref && subm.replace === "text")) {
@@ -8361,6 +8570,7 @@ XsltForms_submission.prototype.submit = function() {
 						subm.issueSubmitException_(evcontext, req, e);
 						XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
 					}
+					subm.pending = false;
 				};
 				if (!synchr) {
 					req.onreadystatechange = func;
@@ -8471,6 +8681,7 @@ XsltForms_submission.prototype.submit = function() {
 				evcontext["error-type"] = "resource-error";
 				subm.issueSubmitException_(evcontext, req, e);
 				XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
+				subm.pending = false;
 			}
 		}
 	}
@@ -10558,6 +10769,10 @@ XsltForms_input.prototype.setValue = function(value) {
 			this.rte.setData(value);
 			//this.input.value = this.rte.getData() || "";
 		}
+	} else if (this.input.type.substr(0, 4) === "date") {
+		if (this.input.value !== XsltForms_browser.getValue(node).substr(0, 15)) {
+			this.input.value = XsltForms_browser.getValue(node).substr(0, 15);
+		}
 	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
 		this.input.value = value || "";
 	}
@@ -10620,7 +10835,7 @@ XsltForms_input.prototype.blur = function(target) {
 	} else {
 		var node = this.element.node;
 		value = input.value;
-		if (value && value.length > 0 && XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format) {
+		if (value && value.length > 0 && input.type.substr(0, 4) !== "date" && XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format) {
 			try { input.value = XsltForms_browser.getValue(node, true); } catch(e) { }
 		}
 		if (this.timer) {
@@ -11560,10 +11775,22 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 			}
 		}
 	}
-	if (this.index > n) {
-		this.index = 1;
+	for (var ii = 0; ii < n; ii++) {
+		if (this.element.node === nodes[ii]) {
+			if (this.index !== ii + 1) {
+				this.index = ii + 1;
+				XsltForms_globals.addChange(this);
+				XsltForms_globals.addChange(this.element.node.ownerDocument.model);
+			}
+			return;
+		}
 	}
-	this.element.node = nodes[this.index - 1];
+	this.element.node = nodes[0];
+	if (this.index !== 1) {
+		this.index = 1;
+		XsltForms_globals.addChange(this);
+		XsltForms_globals.addChange(this.element.node.ownerDocument.model);
+	}
 };
 
 
@@ -12106,13 +12333,16 @@ function XsltForms_upload(subform, id, valoff, binding, incremental, filename, m
 	this.valoff = valoff;
 	this.cell = cells[valoff];
 	this.input = this.cell.children[0];
+	if (this.input.nodeName.toLowerCase() === "form") {
+		this.input = this.input.children[0];
+	}
 	this.isClone = clone;
 	this.hasBinding = true;
 	this.bolAidButton = aidButton;
 	this.mediatype = mediatype;
 	this.value = "";
 	this.headers = [];
-	this.initFocus(this.cell.children[0], true);
+	this.initFocus(this.input, true);
 	if (!window.FileReader && !(document.applets.xsltforms || document.getElementById("xsltforms_applet"))) {
 		XsltForms_browser.loadapplet();
 	}
@@ -12164,6 +12394,9 @@ XsltForms_upload.prototype.setValue = function(value) {
 	this.type = node ? XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string") : XsltForms_schema.getType("xsd_:string");
 	if (this.value !== value) {
 		this.value = value || "";
+		if (this.input.parentElement.nodeName.toLowerCase() === "form") {
+			this.input.form.reset();
+		}
 	}
 	if (this.resource && typeof plupload !== "undefined") {
 		if (!this.uploader) {
@@ -12328,8 +12561,8 @@ XsltForms_upload.prototype.directclick = function() {
 		if (this.incremental) {
 			this.valueChanged(this.value);
 		}
-		if(this.filename && this.filename.evaluate) {
-			var filenameref = this.filename.evaluate(this.element.node)[0];
+		if(this.filename && this.filename.bind_evaluate) {
+			var filenameref = this.filename.bind_evaluate(this.element.node)[0];
 			if (filenameref) {
 				XsltForms_globals.openAction("XsltForms_upload.prototype.directclick");
 				XsltForms_browser.setValue(filenameref, filename || "");
@@ -12435,8 +12668,8 @@ XsltForms_upload.prototype.change = function() {
 				xf.valueChanged(xf.value);
 			}
 		}
-		if(this.filename && this.filename.evaluate) {
-			var filenameref = this.filename.evaluate(this.element.node)[0];
+		if(this.filename && this.filename.bind_evaluate) {
+			var filenameref = this.filename.bind_evaluate(this.element.node)[0];
 			if (filenameref) {
 				XsltForms_globals.openAction("XsltForms_upload.prototype.change");
 				XsltForms_browser.setValue(filenameref, filename || "");

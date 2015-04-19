@@ -1,7 +1,7 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="XFUpload.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2012-03-29</cm:creationdate>
-	<cm:lastupdate>2015-01-22</cm:lastupdate>
+	<cm:lastupdate>2015-04-09</cm:lastupdate>
 	<cm:licence>
 Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
@@ -40,13 +40,16 @@ function XsltForms_upload(subform, id, valoff, binding, incremental, filename, m
 	this.valoff = valoff;
 	this.cell = cells[valoff];
 	this.input = this.cell.children[0];
+	if (this.input.nodeName.toLowerCase() === "form") {
+		this.input = this.input.children[0];
+	}
 	this.isClone = clone;
 	this.hasBinding = true;
 	this.bolAidButton = aidButton;
 	this.mediatype = mediatype;
 	this.value = "";
 	this.headers = [];
-	this.initFocus(this.cell.children[0], true);
+	this.initFocus(this.input, true);
 	if (!window.FileReader && !(document.applets.xsltforms || document.getElementById("xsltforms_applet"))) {
 		XsltForms_browser.loadapplet();
 	}
@@ -103,6 +106,9 @@ XsltForms_upload.prototype.setValue = function(value) {
 	this.type = node ? XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string") : XsltForms_schema.getType("xsd_:string");
 	if (this.value !== value) {
 		this.value = value || "";
+		if (this.input.parentElement.nodeName.toLowerCase() === "form") {
+			this.input.form.reset();
+		}
 	}
 	if (this.resource && typeof plupload !== "undefined") {
 		if (!this.uploader) {
@@ -269,8 +275,8 @@ XsltForms_upload.prototype.directclick = function() {
 		if (this.incremental) {
 			this.valueChanged(this.value);
 		}
-		if(this.filename && this.filename.evaluate) {
-			var filenameref = this.filename.evaluate(this.element.node)[0];
+		if(this.filename && this.filename.bind_evaluate) {
+			var filenameref = this.filename.bind_evaluate(this.element.node)[0];
 			if (filenameref) {
 				XsltForms_globals.openAction("XsltForms_upload.prototype.directclick");
 				XsltForms_browser.setValue(filenameref, filename || "");
@@ -377,8 +383,8 @@ XsltForms_upload.prototype.change = function() {
 				xf.valueChanged(xf.value);
 			}
 		}
-		if(this.filename && this.filename.evaluate) {
-			var filenameref = this.filename.evaluate(this.element.node)[0];
+		if(this.filename && this.filename.bind_evaluate) {
+			var filenameref = this.filename.bind_evaluate(this.element.node)[0];
 			if (filenameref) {
 				XsltForms_globals.openAction("XsltForms_upload.prototype.change");
 				XsltForms_browser.setValue(filenameref, filename || "");

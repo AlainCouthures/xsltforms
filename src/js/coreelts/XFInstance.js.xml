@@ -441,7 +441,7 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 		fullname = " exml:fullname=\"" + XsltForms_browser.escape(name) + "\"";
 		name = "________";
 	}
-	var ret = root ? "<exml:anonymous xmlns:exml=\"http://www.agencexml.com/exml\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:exsi=\"http://www.agencexml.com/exi\" xmlns=\"\">" : "";
+	var ret = root ? "<exml:anonymous xmlns:exml=\"http://www.agencexml.com/exml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:exsi=\"http://www.agencexml.com/exi\" xmlns=\"\">" : "";
 	if (json instanceof Array) {
 		if (inarray) {
 			ret += "<exml:anonymous exsi:maxOccurs=\"unbounded\">";
@@ -459,6 +459,9 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 	} else {
 		var xsdtype = "";
 		switch(typeof(json)) {
+			case "string":
+				xsdtype = " xsi:type=\"xsd:string\"";
+				break;
 			case "number":
 				xsdtype = " xsi:type=\"xsd:double\"";
 				break;
@@ -471,7 +474,13 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 				}
 				break;
 		}
-		ret += name === "" ? "" : "<"+name+fullname+(inarray?" exsi:maxOccurs=\"unbounded\"":"")+xsdtype+">";
+		if (name === "") {
+			if (root && xsdtype !== "") {
+				ret = ret.substr(0, ret.length - 1) + xsdtype + ">";
+			}
+		} else {
+			ret += "<"+name+fullname+(inarray?" exsi:maxOccurs=\"unbounded\"":"")+xsdtype+">";
+		}
 		if (typeof(json) === "object" && !(json instanceof Date)) {
 			for (var m in json) {
 				if (json.hasOwnProperty(m)) {
@@ -494,6 +503,76 @@ XsltForms_browser.json2xml = function(name, json, root, inarray) {
 	}
 	ret += root ? "</exml:anonymous>" : "";
 	return ret;
+};
+]]>
+		<cm:wiki>
+* '''xml2json''' function : converts xml to json notation</cm:wiki>
+<![CDATA[
+XsltForms_browser.node2json = function(node, comma) {
+	var xsdtype, inarray, att, lname, s = "", i, l, lc, t;
+	if (node.nodeType !== XsltForms_nodeType.ELEMENT) {
+		return "";
+	}
+	lname = node.localName ? node.localName : node.baseName;
+	if (node.getAttributeNS) {
+		xsdtype = node.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type");
+		inarray = node.getAttributeNS("http://www.agencexml.com/exi", "maxOccurs") === "unbounded";
+		if (lname === "________") {
+			lname = node.getAttributeNS("http://www.agencexml.com/exml", "fullname");
+		}
+	} else {
+		att = node.selectSingleNode("@*[local-name()='type' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance']");
+		xsdtype = att ? att.value : "";
+		att = node.selectSingleNode("@*[local-name()='maxOccurs' and namespace-uri()='http://www.agencexml.com/exi']");
+		inarray = att ? att.value === "unbounded" : false;
+		if (lname === "________") {
+			att = node.selectSingleNode("@*[local-name()='fullname' and namespace-uri()='http://www.agencexml.com/exml']");
+			lname = att ? att.value : "";
+		}
+	}
+	s = "";
+	if (lname !== "anonymous" || node.namespaceURI !== "http://www.agencexml.com/exml") {
+		s += lname + ":";
+	}
+	if (inarray) {
+		s = "[";
+		lc = 0;
+		for (i = 0, l = node.childNodes.length; i < l; i++) {
+			if (node.childNodes[i].nodeType === XsltForms_nodeType.ELEMENT) {
+				lc = i;
+			}
+		}
+		for (i = 0; i <= lc; i++) {
+			s += XsltForms_browser.node2json(node.childNodes[i], (i === lc ? "" : ","));
+		}
+		return s + "]" + comma;
+	}
+	t = node.text || node.textContent;
+	switch (xsdtype) {
+		case "xsd:string":
+			return s + '"' + XsltForms_browser.escapeJS(t) + '"' + comma;
+		case "xsd:double":
+		case "xsd:boolean":
+			return s + t + comma;
+		case "xsd:dateTime":
+			return s + 'new Date("' + t + '")' + comma;
+		default:
+			s += "{";
+			lc = 0;
+			for (i = 0, l = node.childNodes.length; i < l; i++) {
+				if (node.childNodes[i].nodeType === XsltForms_nodeType.ELEMENT) {
+					lc = i;
+				}
+			}
+			for (i = 0; i <= lc; i++) {
+				s += XsltForms_browser.node2json(node.childNodes[i], (i === lc ? "" : ","));
+			}
+			return s + "}" + comma;
+	}
+}
+XsltForms_browser.xml2json = function(s) {
+	var d = XsltForms_browser.createXMLDocument(s);
+	return XsltForms_browser.node2json(d.documentElement, "");
 };
 ]]>
 		<cm:wiki>

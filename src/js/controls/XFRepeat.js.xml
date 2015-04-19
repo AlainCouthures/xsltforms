@@ -204,10 +204,22 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 			}
 		}
 	}
-	if (this.index > n) {
-		this.index = 1;
+	for (var ii = 0; ii < n; ii++) {
+		if (this.element.node === nodes[ii]) {
+			if (this.index !== ii + 1) {
+				this.index = ii + 1;
+				XsltForms_globals.addChange(this);
+				XsltForms_globals.addChange(this.element.node.ownerDocument.model);
+			}
+			return;
+		}
 	}
-	this.element.node = nodes[this.index - 1];
+	this.element.node = nodes[0];
+	if (this.index !== 1) {
+		this.index = 1;
+		XsltForms_globals.addChange(this);
+		XsltForms_globals.addChange(this.element.node.ownerDocument.model);
+	}
 };
 
 ]]>

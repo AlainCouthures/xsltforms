@@ -40,9 +40,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							</span>
 						</xsl:when>
 						<xsl:otherwise>
-							<input type="file" onclick="return this.parentElement.parentElement.xfElement.directclick();" onchange="this.parentElement.parentElement.xfElement.change()">
-								<xsl:call-template name="comun"/>
-							</input>
+							<form style="display:inline!important;">
+								<input type="file" onclick="return this.parentElement.parentElement.parentElement.xfElement.directclick();" onchange="this.parentElement.parentElement.parentElement.xfElement.change()">
+									<xsl:call-template name="comun"/>
+								</input>
+							</form>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:with-param>
