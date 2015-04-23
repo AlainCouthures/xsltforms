@@ -320,7 +320,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:text>} /* XsltForms_MagicSeparator */ };
 </xsl:text>
 						<xsl:if test="$xsltforms_caller = 'true'">
-							<xsl:value-of select="$vn_pf"/><xsl:text>initImpl();if (window.xf_user_init) xf_user_init();</xsl:text>
+							<xsl:text>if (window.xf_pre_init) xf_pre_init();</xsl:text><xsl:value-of select="$vn_pf"/><xsl:text>initImpl();if (window.xf_user_init) xf_user_init();</xsl:text>
 							<xsl:value-of select="$initdebug"/>
 							<xsl:value-of select="xhtml:body/@onload"/>
 							<xsl:value-of select="body/@onload"/>
@@ -334,6 +334,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:text>init() {
 </xsl:text>
 						<xsl:text>try {
+</xsl:text>
+						<xsl:text>if (window.xf_pre_init) xf_pre_init();
 </xsl:text>
 						<xsl:value-of select="$vn_pf"/>
 						<xsl:text>initImpl();

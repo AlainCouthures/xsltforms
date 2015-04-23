@@ -1,9 +1,9 @@
 <cm:component xmlns:cm="http://www.agencexml.com/cm" name="subforms.js">
 	<cm:author>Alain Couthures</cm:author>
 	<cm:creationdate>2009-04-07</cm:creationdate>
-	<cm:lastupdate>2010-06-11</cm:lastupdate>
+	<cm:lastupdate>2015-04-23</cm:lastupdate>
 	<cm:licence>
-Copyright (C) 2008-2010 &lt;agenceXML&gt; - Alain COUTHURES
+Copyright (C) 2008-2015 &lt;agenceXML&gt; - Alain COUTHURES
 Contact at : &lt;info@agencexml.com&gt;
 
 Copyright (C) 2006 AJAXForms S.L.
@@ -52,7 +52,7 @@ function XsltForms_subform(subform, id, eltid) {
 	XsltForms_subform.subforms[id] = this;
 }
 
-XsltForms_subform.subforms = [];
+XsltForms_subform.subforms = {};
 ]]>
 		<cm:wiki>
 * '''construct''' method : reconstructs the models for this object</cm:wiki>

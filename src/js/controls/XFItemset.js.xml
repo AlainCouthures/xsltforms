@@ -139,24 +139,32 @@ XsltForms_itemset.prototype.dispose = function() {
 * '''refresh_''' method : refreshes this ItemSet Control at a given position</cm:wiki>
 <![CDATA[
 XsltForms_itemset.prototype.refresh_ = function(element, cont) {
-	var ctx = this.nodes[cont];
-	var nodeLabel = this.evaluateBinding(this.labelBinding, ctx)[0];
-	var nodeValue = this.valueBinding ? this.evaluateBinding(this.valueBinding, ctx)[0] : null;
-	var nodeCopy = this.copyBinding ? this.evaluateBinding(this.copyBinding, ctx)[0] : null;
-	if (nodeLabel) {
+	var result, ctx = this.nodes[cont], nodeLabel, nodeValue;
+	result = this.evaluateBinding(this.labelBinding, ctx);
+	if (typeof result === "object") {
+		nodeLabel = result[0];
 		this.depsNodesRefresh.push(nodeLabel);
 		try {
 			element.text = XsltForms_browser.getValue(nodeLabel, true);
 		} catch(e) {
 		}
+	} else {
+		element.text = result;
 	}
-	if (this.valueBinding && nodeValue) {
-		this.depsNodesRefresh.push(nodeValue);
-		try {
-			element.value = XsltForms_browser.getValue(nodeValue);
-		} catch(e2) {
+	result = this.valueBinding ? this.evaluateBinding(this.valueBinding, ctx) : null;
+	if (this.valueBinding && result) {
+		if (typeof result === "object") {
+			nodeValue = result[0];
+			this.depsNodesRefresh.push(nodeValue);
+			try {
+				element.value = XsltForms_browser.getValue(nodeValue);
+			} catch(e2) {
+			}
+		} else {
+			element.value = result;
 		}
 	}
+	var nodeCopy = this.copyBinding ? this.evaluateBinding(this.copyBinding, ctx)[0] : null;
 	if (this.copyBinding && nodeCopy) {
 		this.depsNodesRefresh.push(nodeCopy);
 		try {

@@ -43,6 +43,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<cm:import-components path="calc.xsl.xml"/>
 		<cm:import-components path="getNumber.xsl.xml"/>
 		<cm:import-components path="getName.xsl.xml"/>
+		<cm:import-components path="getString.xsl.xml"/>
+		<cm:import-components path="useEntity.xsl.xml"/>
 		<cm:import-components path="getLocationPath.xsl.xml"/>
 		<cm:import-components path="getPredicates.xsl.xml"/>
 		<cm:import-components path="fctfullname.xsl.xml"/>

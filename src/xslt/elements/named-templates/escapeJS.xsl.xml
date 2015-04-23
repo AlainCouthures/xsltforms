@@ -35,7 +35,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:when test="$c = $newline">\n</xsl:when>
 						<xsl:when test="$c = $carriagereturn">\r</xsl:when>
 						<xsl:when test="$c = '&#9;'">\t</xsl:when>
-						<xsl:when test="$c = '&quot;'">\"</xsl:when>
+						<xsl:when test="$c = $quot">\"</xsl:when>
+						<xsl:when test="$c = $apos">\'</xsl:when>
 						<xsl:when test="$c = '\'">\\</xsl:when>
 					</xsl:choose>
 					<xsl:call-template name="escapeJS">
@@ -50,7 +51,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:when test="$c = $newline">\n</xsl:when>
 						<xsl:when test="$c = $carriagereturn">\r</xsl:when>
 						<xsl:when test="$c = $tab">\t</xsl:when>
-						<xsl:when test="$c = '&quot;'">\"</xsl:when>
+						<xsl:when test="$c = $quot">\"</xsl:when>
+						<xsl:when test="$c = $apos">\'</xsl:when>
 						<xsl:when test="$c = '\'">\\</xsl:when>
 					</xsl:choose>
 					<xsl:call-template name="escapeJS">

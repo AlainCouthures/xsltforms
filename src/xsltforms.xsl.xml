@@ -26,11 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/">
 		<rdf:Description rdf:about="http://www.agencexml.com/xsltforms/xsltforms.xsl">
 			<dcterms:title>XSLT 1.0 Stylesheet for XSLTForms</dcterms:title>
-			<dcterms:hasVersion>613</dcterms:hasVersion>
+			<dcterms:hasVersion>614</dcterms:hasVersion>
 			<dcterms:creator>Alain Couthures - agenceXML</dcterms:creator>
 			<dcterms:conformsTo>XForms 1.1</dcterms:conformsTo>
-			<dcterms:created>2015-04-19</dcterms:created>
-			<dcterms:description>SHA-256 + HMAC Support</dcterms:description>
+			<dcterms:created>2015-04-23</dcterms:created>
+			<dcterms:description>Adjacent Apostrophes and Quotes Support</dcterms:description>
 			<dcterms:format>text/xsl</dcterms:format>
 		</rdf:Description>
 	</rdf:RDF>
