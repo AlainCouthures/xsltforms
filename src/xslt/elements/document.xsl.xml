@@ -48,7 +48,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="configdoc" select="document(concat($xsltforms_home,'config',$langextension,'.xsl'))/xsl:stylesheet/xsl:template[@name='config']"/>
-		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="configlang" select="$configdoc/properties/language"/>
+		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="configlang">
+			<xsl:choose>
+				<xsl:when test="$xsltforms_lang != ''"><xsl:value-of select="$xsltforms_lang"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="$configdoc/properties/language"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="doc_id" select="'xsltforms-mainform'"/>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="id_pf" select="'xsltforms-mainform-'"/>
 		<xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="jsid_pf" select="'xsltforms_subform.id + &quot;-'"/>
@@ -77,6 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</collect>
 				<config>
 					<xsl:choose>
+						<xsl:when test="$xsltforms_config != ''"/>
 						<xsl:when test="$configdoc/properties"><xsl:copy-of select="$configdoc/*"/></xsl:when>
 						<xsl:otherwise>
 								<options>

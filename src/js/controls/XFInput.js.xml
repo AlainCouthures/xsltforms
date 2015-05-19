@@ -139,16 +139,16 @@ XsltForms_input.prototype.initInput = function(type) {
 						} else {
 							initinfo.setup = function(ed) {
 								ed.on("KeyUp", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.innerHTML || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(this.getContent() || "");
 								});
 								ed.on("Change", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
 								});
 								ed.on("Undo", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
 								});
 								ed.on("Redo", function(ed) {
-									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.contentDocument.body.innerHTML || "");
+									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(ed.target.getContent() || "");
 								});
 							};
 							initinfo.selector = "#" + input.id;
@@ -273,8 +273,11 @@ XsltForms_input.prototype.setValue = function(value) {
 	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) && (!XsltForms_globals.jslibraries["http://www.tinymce.com"] || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3." ? tinymce.get(this.input.id).getContent() : tinymce.get(this.input.id).contentDocument.body.innerHTML) !== value) {
 		this.input.value = value || "";
 		if (tinymce.get(this.input.id)) {
-			tinymce.get(this.input.id).setContent(value);
-			this.input.value = tinymce.get(this.input.id).getContent() || "";
+			var prevalue = tinymce.get(this.input.id).getContent();
+			if (prevalue !== value) {
+				tinymce.get(this.input.id).setContent(value);
+				this.input.value = tinymce.get(this.input.id).getContent() || "";
+			}
 			XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
 		}
 		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
@@ -324,7 +327,7 @@ XsltForms_input.prototype.changeReadonly = function() {
 <![CDATA[
 XsltForms_input.prototype.initEvents = function(input, canActivate) {
 	var changeEventName = "keyup";
-	if (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari)) {
+	if (XsltForms_browser.isEdge || (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari))) {
 		changeEventName = "input";
 	}
 	if (this.inputmode) {

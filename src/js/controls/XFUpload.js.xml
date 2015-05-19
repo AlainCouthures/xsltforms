@@ -40,9 +40,9 @@ function XsltForms_upload(subform, id, valoff, binding, incremental, filename, m
 	this.valoff = valoff;
 	this.cell = cells[valoff];
 	this.input = this.cell.children[0];
-	if (this.input.nodeName.toLowerCase() === "form") {
-		this.input = this.input.children[0];
-	}
+	//if (this.input.nodeName.toLowerCase() === "form") {
+	//	this.input = this.input.children[0];
+	//}
 	this.isClone = clone;
 	this.hasBinding = true;
 	this.bolAidButton = aidButton;
