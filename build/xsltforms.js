@@ -1,4 +1,4 @@
-/* Rev. 615
+/* Rev. 616
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2274,8 +2274,8 @@ String.prototype.addslashes = function() {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "615",
-	fileVersionNumber: 615,
+	fileVersion: "616",
+	fileVersionNumber: 616,
 
 	language: "navigator",
 	debugMode: false,
@@ -6681,10 +6681,24 @@ var XsltForms_xpathCoreFunctions = {
 	"http://www.w3.org/2005/xpath-functions fromtostep" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(from, to, step) {
 			var res = [];
-			for( var i = from; i <= to; i += step ) {
+			for (var i = from; i <= to; i += step) {
 				res.push({localName:"repeatitem",text:i+"",documentElement:"dummy"});
 			}
 			return res;
+		} ),
+
+		
+
+	"http://www.w3.org/2005/xpath-functions tokenize" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(input, pattern) {
+			var tokens = [];
+			input = XsltForms_globals.stringValue(input);
+			pattern = new RegExp(XsltForms_globals.stringValue(pattern.replace(/\\/g, "\\")));
+			var res = input.split(pattern);
+			for (var i = 0, l = res.length; i < l; i++) {
+				tokens.push({localName:"#text",text:res[i],documentElement:"dummy"});
+			}
+			return tokens;
 		} )
 };
 
@@ -13355,32 +13369,29 @@ XsltForms_listType.prototype.setItemType = function(itemType) {
 
 		
 
-XsltForms_listType.prototype.validate = function (value) {
-	var items = this.baseType.canonicalValue.call(this, value).split(" ");
-	value = "";
-	if (items.length === 1 && items[0] === "") {
-		items = [];
-	}
+XsltForms_listType.prototype.validate = function(value) {
+	var l = 0, items = this.itemType.canonicalValue.call(this, value).split(" ");
 	for (var i = 0, len = items.length; i < len; i++) {
-		var item = XsltForms_itemType.validate(items[i]);
-		if (!item) {
-			return null;
+		if (items[i] !== "") {
+			l++;
+			var item = this.itemType.validate(items[i]);
+			if (!item) {
+				return false;
+			}
 		}
-		value += value.length === 0? item : " " + item;
 	}
-	if ( (this.length && this.length !== 1) ||
-		(this.minLength && 1 < this.minLength) ||
-		(this.maxLength && 1 > this.maxLength)) {
-		return null;
+	if ( (this.minLength && l < this.minLength) ||
+		(this.maxLength && l > this.maxLength)) {
+		return false;
 	}
-	return null;
+	return true;
 };
 
 
 		
 
 XsltForms_listType.prototype.canonicalValue = function(value) {
-	var items = this.baseType.canonicalValue(value).split(" ");
+	var items = this.itemType.canonicalValue(value).split(" ");
 	var cvalue = "";
 	for (var i = 0, len = items.length; i < len; i++) {
 		var item = this.itemType.canonicalValue(items[i]);

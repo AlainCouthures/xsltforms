@@ -76,7 +76,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 								<xsl:text>"</xsl:text>
 								<xsl:call-template name="escapeJS">
 									<xsl:with-param name="text" select="."/>
-									<xsl:with-param name="trtext" select="translate(.,concat($newline,$carriagereturn,'\&quot;'),concat($tab,$tab,$tab,$tab))"/>
+									<xsl:with-param name="trtext" select="translate(.,concat(' ',$newline,$carriagereturn,'\&quot;'),concat($tab,$tab,$tab,$tab,$tab))"/>
 								</xsl:call-template>
 								<xsl:text>"</xsl:text>
 							</xsl:when>

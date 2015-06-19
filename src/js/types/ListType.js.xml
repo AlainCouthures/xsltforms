@@ -48,25 +48,22 @@ XsltForms_listType.prototype.setItemType = function(itemType) {
 		<cm:wiki>
 * '''validate''' method : validates a value against this ListType object</cm:wiki>
 <![CDATA[
-XsltForms_listType.prototype.validate = function (value) {
-	var items = this.baseType.canonicalValue.call(this, value).split(" ");
-	value = "";
-	if (items.length === 1 && items[0] === "") {
-		items = [];
-	}
+XsltForms_listType.prototype.validate = function(value) {
+	var l = 0, items = this.itemType.canonicalValue.call(this, value).split(" ");
 	for (var i = 0, len = items.length; i < len; i++) {
-		var item = XsltForms_itemType.validate(items[i]);
-		if (!item) {
-			return null;
+		if (items[i] !== "") {
+			l++;
+			var item = this.itemType.validate(items[i]);
+			if (!item) {
+				return false;
+			}
 		}
-		value += value.length === 0? item : " " + item;
 	}
-	if ( (this.length && this.length !== 1) ||
-		(this.minLength && 1 < this.minLength) ||
-		(this.maxLength && 1 > this.maxLength)) {
-		return null;
+	if ( (this.minLength && l < this.minLength) ||
+		(this.maxLength && l > this.maxLength)) {
+		return false;
 	}
-	return null;
+	return true;
 };
 
 ]]>
@@ -74,7 +71,7 @@ XsltForms_listType.prototype.validate = function (value) {
 * '''canonicalValue''' method : computes the canonical value of a list value</cm:wiki>
 <![CDATA[
 XsltForms_listType.prototype.canonicalValue = function(value) {
-	var items = this.baseType.canonicalValue(value).split(" ");
+	var items = this.itemType.canonicalValue(value).split(" ");
 	var cvalue = "";
 	for (var i = 0, len = items.length; i < len; i++) {
 		var item = this.itemType.canonicalValue(items[i]);

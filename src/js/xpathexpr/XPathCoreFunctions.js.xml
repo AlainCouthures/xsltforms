@@ -1795,10 +1795,25 @@ var XsltForms_xpathCoreFunctions = {
 	"http://www.w3.org/2005/xpath-functions fromtostep" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(from, to, step) {
 			var res = [];
-			for( var i = from; i <= to; i += step ) {
+			for (var i = from; i <= to; i += step) {
 				res.push({localName:"repeatitem",text:i+"",documentElement:"dummy"});
 			}
 			return res;
+		} ),
+]]>
+		<cm:wiki>
+* '''tokenize(input, pattern)'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions tokenize" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(input, pattern) {
+			var tokens = [];
+			input = XsltForms_globals.stringValue(input);
+			pattern = new RegExp(XsltForms_globals.stringValue(pattern.replace(/\\/g, "\\")));
+			var res = input.split(pattern);
+			for (var i = 0, l = res.length; i < l; i++) {
+				tokens.push({localName:"#text",text:res[i],documentElement:"dummy"});
+			}
+			return tokens;
 		} )
 };
 

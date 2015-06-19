@@ -25,10 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="@*" mode="xml2string" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-			<xsl:text> </xsl:text>
+			<xsl:text>\x20</xsl:text>
 			<xsl:value-of select="name()"/>
 			<xsl:text>="</xsl:text>
-			<xsl:call-template name="escapeEntities"><xsl:with-param name="text" select="."/><xsl:with-param name="trtext" select="translate(., $trEntities1, $trEntities2)"/></xsl:call-template>
+			<xsl:variable name="attrvalue"><xsl:call-template name="escapeEntities"><xsl:with-param name="text" select="."/><xsl:with-param name="trtext" select="translate(., $trEntities1, $trEntities2)"/></xsl:call-template></xsl:variable>
+			<xsl:call-template name="escapeJS">
+				<xsl:with-param name="text" select="$attrvalue"/>
+				<xsl:with-param name="trtext" select="translate($attrvalue,concat(' ',$newline,$carriagereturn,$quot,$apos),concat($tab,$tab,$tab,$tab,$tab))"/>
+			</xsl:call-template>
 			<xsl:text>"</xsl:text>
 		</xsl:template>
 	</cm:source>

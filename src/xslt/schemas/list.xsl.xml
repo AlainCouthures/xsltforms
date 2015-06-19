@@ -25,16 +25,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
 		<xsl:template match="xsd:list" mode="schema" priority="1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-			<xsl:text>new XsltForms_listType(</xsl:text>
-			<xsl:if test="@itemType">
-				<xsl:text>"</xsl:text>
-				<xsl:value-of select="@itemType"/>
-				<xsl:text>"</xsl:text>
-			</xsl:if>
-			<xsl:text>).setSchema(schema)</xsl:text>
+			<xsl:text>new XsltForms_listType().setSchema(schema)</xsl:text>
 			<xsl:if test="local-name(../..) = 'schema'">
 				<xsl:text>.setName("</xsl:text>
 				<xsl:value-of select="../@name"/>
+				<xsl:text>")</xsl:text>
+			</xsl:if>
+			<xsl:if test="@itemType">
+				<xsl:text>.setItemType("</xsl:text>
+				<xsl:value-of select="@itemType"/>
 				<xsl:text>")</xsl:text>
 			</xsl:if>
 			<xsl:if test="xsd:simpleType">
