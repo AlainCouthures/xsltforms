@@ -73,7 +73,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<collect>
 					<xsl:choose>
 						<xsl:when test="$piform != '' and count($piformdoc/*) != 0">
-							<xsl:apply-templates select="$piformdoc/*" mode="script"/>
+							<xsl:apply-templates select="$piformdoc/*" mode="script">
+								<xsl:with-param name="workid">2_</xsl:with-param>
+							</xsl:apply-templates>
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:apply-templates select="/" mode="script"/>

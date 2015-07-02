@@ -1018,6 +1018,9 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 					} catch (e) {
 						return XsltForms_browser.StringToBinary(z);
 					}
+				} else if (indent) {
+					var ser = new Fleur.XMLSerializer();
+					return ser.serializeToString(resultDocument, true);
 				} else {
 					return XsltForms_browser.serializer.serializeToString(resultDocument);
 				}

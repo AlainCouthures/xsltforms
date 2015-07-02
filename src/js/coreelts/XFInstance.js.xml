@@ -371,10 +371,12 @@ XsltForms_instance.prototype.validation_ = function(node, readonly, notrelevant)
 			this.validation_(atts2[i2], readonly, notrelevant);
 		}
 	}
-	for (var j = 0, len1 = node.childNodes.length; j < len1; j++) {
-		var child = node.childNodes[j];
-		if (child.nodeType === XsltForms_nodeType.ELEMENT) {
-			this.validation_(child, readonly, notrelevant);
+	if (node.childNodes) {
+		for (var j = 0, len1 = node.childNodes.length; j < len1; j++) {
+			var child = node.childNodes[j];
+			if (child.nodeType === XsltForms_nodeType.ELEMENT) {
+				this.validation_(child, readonly, notrelevant);
+			}
 		}
 	}
 };
