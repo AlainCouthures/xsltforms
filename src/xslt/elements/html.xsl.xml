@@ -93,7 +93,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:copy-of select="@*"/>
 						</meta>
 					</xsl:for-each>
-					<script id="xsltforms-initialdate" type="text/javascript">
+					<script type="text/javascript" id="xsltforms-initialdate">
 						<xsl:text>CKEDITOR = null;
 </xsl:text>
 						<xsl:text>var xsltforms_d0 = new Date();
@@ -105,7 +105,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:with-param name="config" select="$script/config"/>
 					</xsl:apply-templates>
 					<xsl:variable name="jsrevision"><xsl:if test="$script/config/properties/jsrevision != ''">?<xsl:value-of select="$script/config/properties/jsrevision"/>=<cm:value name="versionNumber"/></xsl:if></xsl:variable>
-					<script id="xsltforms-src" src="{$resourcesdir}xsltforms.js{$jsrevision}" type="text/javascript" data-uri="http://www.agencexml.com/xsltforms">
+					<script type="text/javascript" id="xsltforms-src" src="{$resourcesdir}xsltforms.js{$jsrevision}" data-uri="http://www.agencexml.com/xsltforms">
 						<xsl:attribute name="data-version"><cm:value name="versionNumber"/></xsl:attribute>
 						<xsl:text>/* */</xsl:text>
 					</script>
@@ -117,7 +117,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:copy-of select="$script/config/extensions/*"/>
 					</xsl:if>
 					<xsl:copy-of select="$script/config/extensions/beforeInit/*"/>
-					<script id="xsltforms-generatedscript" type="text/javascript">
+					<script type="text/javascript" id="xsltforms-generatedscript">
 						<xsl:text>/* XsltForms_MagicSeparator */
 </xsl:text>
 						<xsl:text>function </xsl:text>
@@ -338,7 +338,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 </xsl:text>
 						</xsl:if>
 					</script>
-					<script id="xsltforms-launcher" type="text/javascript">
+					<script type="text/javascript" id="xsltforms-launcher">
 						<xsl:text>function </xsl:text>
 						<xsl:value-of select="$vn_pf"/>
 						<xsl:text>init() {

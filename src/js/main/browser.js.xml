@@ -694,7 +694,7 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 			XsltForms_globals.error(document.getElementById(XsltForms_browser.getMeta(dest.ownerDocument.documentElement, "model")).xfElement, "xforms-link-exception", "Unable to parse XML");
 		}
 	};
-	XsltForms_browser.saveXML = function(node, relevant, indent, related) {
+	XsltForms_browser.saveXML = function(node, relevant, indent, related, cdataSectionElements) {
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
 			return node.nodeValue;
 		} else {
@@ -709,6 +709,32 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 				var xmlDoc = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 				xmlDoc.setProperty("SelectionLanguage", "XPath"); 
 				xmlDoc.appendChild(node.documentElement ? node.documentElement.cloneNode(true) : node.cloneNode(true));
+				if (cdataSectionElements) {
+					if (relevant) {
+						var ns = xmlDoc.documentElement.selectNodes("descendant::*[@xsltforms_notrelevant = 'true']");
+						for( var i = 0, l = ns.length; i < l ; i++) {
+							var n = ns[i];
+							try {
+								n.parentNode.removeChild(n);
+							} catch (e) {
+							}
+						}
+					}
+					var ns2 = xmlDoc.documentElement.selectNodes("descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]");
+					for( var j = 0, l2 = ns2.length; j < l2 ; j++) {
+						var n2 = ns2[j];
+						var k = 0;
+						while (k < n2.attributes.length) {
+							if (n2.attributes[k].name.substring(0, 10) === "xsltforms_") {
+								n2.removeAttribute(n2.attributes[k].name);
+							} else {
+								k++;
+							}
+						}
+					}
+					var ser = new Fleur.XMLSerializer();
+					return ser.serializeToString(xmlDoc, indent, cdataSectionElements);
+				}
 				if (indent) {
 					return xmlDoc.transformNode(XsltForms_browser.xsltDocIndent);
 				}
@@ -901,7 +927,7 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 			XsltForms_globals.error(document.getElementById(XsltForms_browser.getMeta(dest.ownerDocument.documentElement, "model")).xfElement, "xforms-link-exception", "Unable to parse XML");
 		}
 	};
-	XsltForms_browser.saveXML = function(node, relevant, indent, related) {
+	XsltForms_browser.saveXML = function(node, relevant, indent, related, cdataSectionElements) {
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
 			return node.nodeValue;
 		} else {
@@ -1018,9 +1044,9 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 					} catch (e) {
 						return XsltForms_browser.StringToBinary(z);
 					}
-				} else if (indent) {
+				} else if (indent || cdataSectionElements) {
 					var ser = new Fleur.XMLSerializer();
-					return ser.serializeToString(resultDocument, true);
+					return ser.serializeToString(resultDocument, indent, cdataSectionElements);
 				} else {
 					return XsltForms_browser.serializer.serializeToString(resultDocument);
 				}

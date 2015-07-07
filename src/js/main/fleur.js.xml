@@ -55,7 +55,7 @@ Fleur.Serializer = function() {};
 Fleur.Serializer.escapeXML = function(s) {
 	return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 };
-Fleur.Serializer.prototype._serializeXMLToString = function(node, indent, offset) {
+Fleur.Serializer.prototype._serializeXMLToString = function(node, indent, offset, cdataSectionElements) {
 	var s, i, l;
 	switch (node.nodeType) {
 		case Fleur.Node.ELEMENT_NODE:
@@ -78,8 +78,20 @@ Fleur.Serializer.prototype._serializeXMLToString = function(node, indent, offset
 				return s + (indent ? "/\x3E\n" : "/\x3E");
 			}
 			s += indent && (node.childNodes[0].nodeType !== Fleur.Node.TEXT_NODE || node.childNodes[0].data.match(/^[ \t\n\r]*$/)) ? "\x3E\n" : "\x3E";
-			for (i = 0, l = node.childNodes.length; i < l; i++) {
-				s += this._serializeXMLToString(node.childNodes[i], indent, offset + "  ");
+			if (cdataSectionElements.indexOf(" " + node.nodeName + " ") !== -1) {
+				for (i = 0, l = node.childNodes.length; i < l; i++) {
+					if (node.childNodes[i].nodeType === Fleur.Node.TEXT_NODE) {
+						s += "\x3C![CDATA[";
+						s += node.childNodes[i].data;
+						s += "]]\x3E";
+					} else {
+						s += this._serializeXMLToString(node.childNodes[i], indent, offset + "  ", cdataSectionElements);
+					}
+				}
+			} else {
+				for (i = 0, l = node.childNodes.length; i < l; i++) {
+					s += this._serializeXMLToString(node.childNodes[i], indent, offset + "  ", cdataSectionElements);
+				}
 			}
 			return s + (indent && (node.childNodes[0].nodeType !== Fleur.Node.TEXT_NODE || node.childNodes[0].data.match(/^[ \t\n\r]*$/)) ? offset + "\x3C/" : "\x3C/") + node.nodeName + (indent ? "\x3E\n" : "\x3E");
 		case Fleur.Node.TEXT_NODE:
@@ -96,13 +108,13 @@ Fleur.Serializer.prototype._serializeXMLToString = function(node, indent, offset
 		case Fleur.Node.DOCUMENT_NODE:
 			s = '\x3C?xml version="1.0" encoding="UTF-8"?\x3E\r\n';
 			for (i = 0, l = node.childNodes.length; i < l; i++) {
-				s += this._serializeXMLToString(node.childNodes[i], indent, offset);
+				s += this._serializeXMLToString(node.childNodes[i], indent, offset, cdataSectionElements);
 			}
 			return s;
 	}
 };
 
-Fleur.Serializer.prototype.serializeToString = function(node, mediatype, indent) {
+Fleur.Serializer.prototype.serializeToString = function(node, mediatype, indent, cdataSectionElements) {
 	var media = mediatype.split(";"), config = {}, param, paramreg = /^\s*(\S*)\s*=\s*(\S*)\s*$/, i = 1, l = media.length, ser;
 	while (i < l) {
 		param = paramreg.exec(media[i]);
@@ -112,7 +124,7 @@ Fleur.Serializer.prototype.serializeToString = function(node, mediatype, indent)
 	switch (media[0].replace(/^\s+|\s+$/gm,'')) {
 		case "text/xml":
 		case "application/xml":
-			var ser = this._serializeXMLToString(node, indent, "");
+			var ser = this._serializeXMLToString(node, indent, "", " " + cdataSectionElements + " ");
 			if (indent && ser.charAt(ser.length - 1) === "\n") {
 				ser = ser.substr(0, ser.length - 1);
 			}
@@ -122,8 +134,8 @@ Fleur.Serializer.prototype.serializeToString = function(node, mediatype, indent)
 
 Fleur.XMLSerializer = function() {};
 Fleur.XMLSerializer.prototype = new Fleur.Serializer();
-Fleur.XMLSerializer.prototype.serializeToString = function(node, indent) {
-	return Fleur.Serializer.prototype.serializeToString.call(this, node, "application/xml", indent);
+Fleur.XMLSerializer.prototype.serializeToString = function(node, indent, cdataSectionElements) {
+	return Fleur.Serializer.prototype.serializeToString.call(this, node, "application/xml", indent, cdataSectionElements);
 };
 
 })(typeof exports === 'undefined'? this.Fleur = {}: exports);
