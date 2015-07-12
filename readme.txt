@@ -4,7 +4,9 @@ XSLTForms Source Management
 1. About
 --------
 
-XForms to XHTML+Javascript (AJAX) conversion based on a unique XSL transformation. Suitable server-side (PHP) or client-side (Internet Explorer, Mozilla FireFox, Opera, Safari) browser treatment where an XSLT 1.0 engine is available.
+XForms to XHTML+Javascript (AJAX) conversion based on a unique XSL transformation.
+Suitable server-side (PHP) or client-side (Internet Explorer, Mozilla FireFox, 
+Opera, Safari) browser treatment where an XSLT 1.0 engine is available.
 
 
 2. Source files
