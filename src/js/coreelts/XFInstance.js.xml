@@ -437,9 +437,10 @@ XsltForms_instance.prototype.setProperty_ = function (node, property, value) {
 		<cm:wiki>
 * '''json2xml''' function : converts json to xml notation</cm:wiki>
 <![CDATA[
+XsltForms_browser.json2xmlreg = new RegExp("^[A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF][A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF\-\.0-9\xB7]*$");
 XsltForms_browser.json2xml = function(name, json, root, inarray) {
 	var fullname = "";
-	if (name === "________") {
+	if (name === "________" || name !== "" && !XsltForms_browser.json2xmlreg.test(name)) {
 		fullname = " exml:fullname=\"" + XsltForms_browser.escape(name) + "\"";
 		name = "________";
 	}

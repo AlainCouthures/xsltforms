@@ -1905,6 +1905,13 @@ XsltForms_browser.i18n = {
 	},
  ]]>
 		<cm:wiki>
+* '''formatDateTime''' method : direct method for dateandtime formatting</cm:wiki>
+<![CDATA[
+	formatDateTime : function(str) {
+		return XsltForms_browser.i18n.format(str, XsltForms_browser.i18n.get("format.datetime"), true);
+	},
+ ]]>
+		<cm:wiki>
 * '''formatNumber''' method : direct method for number formatting</cm:wiki>
 <![CDATA[
 	formatNumber : function(number, decimals) {

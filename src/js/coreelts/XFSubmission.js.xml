@@ -389,7 +389,7 @@ XsltForms_submission.prototype.submit = function() {
 							evcontext["error-type"] = "resource-error";
 							subm.issueSubmitException_(evcontext, req, null);
 							XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
-							this.pending = false;
+							subm.pending = false;
 							return;
 						}
 						if (subm.replace === "instance" || (subm.targetref && subm.replace === "text")) {
@@ -467,6 +467,7 @@ XsltForms_submission.prototype.submit = function() {
 				}
 				XsltForms_browser.debugConsole.write("Submit " + this.method + " - " + mt + " - " + action + " - " + synchr);
 				var len = this.headers.length;
+				var acceptValue = "";
 				if (len !== 0) {
 					var headers = [];
 					for (var i = 0, len0 = this.headers.length; i < len0; i++) {
@@ -525,22 +526,36 @@ XsltForms_submission.prototype.submit = function() {
 					}
 					for (var k = 0, len4 = headers.length; k < len4; k++) {
 						req.setRequestHeader(headers[k].name, headers[k].value);
+						if (headers[k].name.toLowerCase() === "accept") {
+							acceptValue = headers[k].value;
+						}
 					}
 				}
 				if (method === "get" || method === "delete") {
-					if (media === XsltForms_submission.SOAP_) {
-						req.setRequestHeader("Accept", mt);
-					} else {
-						if (subm.replace === "instance") {
-							req.setRequestHeader("Accept", "application/xml,text/xml");
+					if (acceptValue === "") {
+						if (media === XsltForms_submission.SOAP_) {
+							req.setRequestHeader("Accept", mt);
+							acceptValue = mt;
+						} else {
+							if (subm.replace === "instance") {
+								req.setRequestHeader("Accept", "application/xml,text/xml");
+								acceptValue = "application/xml,text/xml";
+							} else {
+								req.setRequestHeader("Accept", "text/plain");
+								acceptValue = "text/plain";
+							}
 						}
 					}
-					if ((subm.mediatype === "application/zip" || subm.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )&& req.overrideMimeType) {
-						req.overrideMimeType('text/plain; charset=x-user-defined');
-					};
-					if ((subm.mediatype === "text/csv" )&& req.overrideMimeType) {
-						req.overrideMimeType('text/csv; charset=ISO-8859-1');
-					};
+					if (req.overrideMimeType) {
+						req.overrideMimeType(acceptValue.split(",")[0].split(";")[0]);
+						/*
+						if (subm.mediatype === "application/zip" || subm.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ) {
+							req.overrideMimeType('text/plain; charset=x-user-defined');
+						} else if (subm.mediatype && subm.mediatype.indexOf("/xml") === -1 && subm.mediatype.indexOf("+xml") === -1) {
+							req.overrideMimeType(subm.mediatype + '; charset=ISO-8859-1');
+						}
+						*/
+					}
 					//req.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2005 00:00:00 GMT");
 					req.send(null);
 				} else {

@@ -1,4 +1,4 @@
-/* Rev. 618
+/* Rev. 619
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -1908,6 +1908,12 @@ XsltForms_browser.i18n = {
  
 		
 
+	formatDateTime : function(str) {
+		return XsltForms_browser.i18n.format(str, XsltForms_browser.i18n.get("format.datetime"), true);
+	},
+ 
+		
+
 	formatNumber : function(number, decimals) {
 		if (isNaN(number)) {
 			return number;
@@ -2419,8 +2425,8 @@ Fleur.XMLSerializer.prototype.serializeToString = function(node, indent, cdataSe
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "618",
-	fileVersionNumber: 618,
+	fileVersion: "619",
+	fileVersionNumber: 619,
 
 	language: "navigator",
 	debugMode: false,
@@ -7630,9 +7636,10 @@ XsltForms_instance.prototype.setProperty_ = function (node, property, value) {
 
 		
 
+XsltForms_browser.json2xmlreg = new RegExp("^[A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF][A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF\-\.0-9\xB7]*$");
 XsltForms_browser.json2xml = function(name, json, root, inarray) {
 	var fullname = "";
-	if (name === "________") {
+	if (name === "________" || name !== "" && !XsltForms_browser.json2xmlreg.test(name)) {
 		fullname = " exml:fullname=\"" + XsltForms_browser.escape(name) + "\"";
 		name = "________";
 	}
@@ -8688,7 +8695,7 @@ XsltForms_submission.prototype.submit = function() {
 							evcontext["error-type"] = "resource-error";
 							subm.issueSubmitException_(evcontext, req, null);
 							XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
-							this.pending = false;
+							subm.pending = false;
 							return;
 						}
 						if (subm.replace === "instance" || (subm.targetref && subm.replace === "text")) {
@@ -8766,6 +8773,7 @@ XsltForms_submission.prototype.submit = function() {
 				}
 				XsltForms_browser.debugConsole.write("Submit " + this.method + " - " + mt + " - " + action + " - " + synchr);
 				var len = this.headers.length;
+				var acceptValue = "";
 				if (len !== 0) {
 					var headers = [];
 					for (var i = 0, len0 = this.headers.length; i < len0; i++) {
@@ -8824,22 +8832,36 @@ XsltForms_submission.prototype.submit = function() {
 					}
 					for (var k = 0, len4 = headers.length; k < len4; k++) {
 						req.setRequestHeader(headers[k].name, headers[k].value);
+						if (headers[k].name.toLowerCase() === "accept") {
+							acceptValue = headers[k].value;
+						}
 					}
 				}
 				if (method === "get" || method === "delete") {
-					if (media === XsltForms_submission.SOAP_) {
-						req.setRequestHeader("Accept", mt);
-					} else {
-						if (subm.replace === "instance") {
-							req.setRequestHeader("Accept", "application/xml,text/xml");
+					if (acceptValue === "") {
+						if (media === XsltForms_submission.SOAP_) {
+							req.setRequestHeader("Accept", mt);
+							acceptValue = mt;
+						} else {
+							if (subm.replace === "instance") {
+								req.setRequestHeader("Accept", "application/xml,text/xml");
+								acceptValue = "application/xml,text/xml";
+							} else {
+								req.setRequestHeader("Accept", "text/plain");
+								acceptValue = "text/plain";
+							}
 						}
 					}
-					if ((subm.mediatype === "application/zip" || subm.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )&& req.overrideMimeType) {
-						req.overrideMimeType('text/plain; charset=x-user-defined');
-					};
-					if ((subm.mediatype === "text/csv" )&& req.overrideMimeType) {
-						req.overrideMimeType('text/csv; charset=ISO-8859-1');
-					};
+					if (req.overrideMimeType) {
+						req.overrideMimeType(acceptValue.split(",")[0].split(";")[0]);
+						/*
+						if (subm.mediatype === "application/zip" || subm.mediatype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ) {
+							req.overrideMimeType('text/plain; charset=x-user-defined');
+						} else if (subm.mediatype && subm.mediatype.indexOf("/xml") === -1 && subm.mediatype.indexOf("+xml") === -1) {
+							req.overrideMimeType(subm.mediatype + '; charset=ISO-8859-1');
+						}
+						*/
+					}
 					//req.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2005 00:00:00 GMT");
 					req.send(null);
 				} else {
@@ -13691,7 +13713,7 @@ XsltForms_typeDefs.Default = {
 		"format" : function(value) {
 			var reg = new RegExp("^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?$");
 			if (reg.test(value)) {
-				return XsltForms_browser.i18n.formatDate(XsltForms_browser.i18n.parse(value, "yyyy-MM-ddThh:mm:ss"), null, true);
+				return XsltForms_browser.i18n.formatDateTime(XsltForms_browser.i18n.parse(value, "yyyy-MM-ddThh:mm:ss"), null, true);
 			} else {
 				return value;
 			}
@@ -14065,7 +14087,7 @@ XsltForms_typeDefs.XForms = {
 		"format" : function(value) {
 			var reg = new RegExp("^(([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|[+\\-]([01][0-9]|2[0-3]):[0-5][0-9])?)?$");
 			if (reg.test(value)) {
-				return XsltForms_browser.i18n.formatDate(XsltForms_browser.i18n.parse(value, "yyyy-MM-ddThh:mm:ss"), null, true);
+				return XsltForms_browser.i18n.formatDateTime(XsltForms_browser.i18n.parse(value, "yyyy-MM-ddThh:mm:ss"), null, true);
 			} else {
 				return value;
 			}
