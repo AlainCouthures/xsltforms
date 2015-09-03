@@ -1,7 +1,15 @@
 XSLTForms Source Management
 =====================
 
-1. Source files
+1. About
+--------
+
+XForms to XHTML+Javascript (AJAX) conversion based on a unique XSL transformation.
+Suitable server-side (PHP) or client-side (Internet Explorer, Mozilla FireFox, 
+Opera, Safari) browser treatment where an XSLT 1.0 engine is available.
+
+
+2. Source files
 ----------------
 
 XSLTForms is composed of the following files :
@@ -14,7 +22,7 @@ Those files are relatively big and complex. They are generated from numerous
 components.
 
 
-2. Components
+3. Components
 -----------------
 
 Components are elementary source elements. Each is stored as an XML document
@@ -29,7 +37,7 @@ The main components for XSLTForms are :
 "xsltforms.css.xml"
 
 
-3. tXs
+4. tXs
 ------
 
 tXs is an XML script engine written in PHP 5. It is composed of an unique file
@@ -51,7 +59,7 @@ To check that URL rewriting is correctly installed, get
 should be an XHTML page with "tXs Echo Script" as title.
 
 
-4. Dynamic build of XSLTForms files
+5. Dynamic build of XSLTForms files
 -----------------------------------------
 
 Because of URL rewriting, .js, .xsl and .css files are not directly delivered.
@@ -65,7 +73,7 @@ So, main files are obtains with URLs like those :
 "http://localhost/XSLTFormsRoot/trunk/src/xsltforms.css"
 
 
-5. Static build of XSLTForms files
+6. Static build of XSLTForms files
 -------------------------------------
 
 To build a component, just add "?build" at the end of the
@@ -78,7 +86,7 @@ So, main files are built with URLs like those :
 "http://localhost/XSLTFormsRoot/trunk/src/xsltforms.css?build"
 
 
-6. Unit tests
+7. Unit tests
 --------------
 
 Unit tests are based on JsUnitTest (http://jsunittest.com/).
@@ -92,7 +100,7 @@ Examples :
 "http://localhost/XSLTFormsRoot/trunk/src/js/types/TypeDefs.js?ut"
 
 
-7. Test Suites
+8. Test Suites
 ---------------
 
 Test Suites are stored separately from components in the "testsuite" folder.
@@ -108,7 +116,7 @@ Examples :
 "http://localhost/XSLTFormsRoot/trunk/src/testsuite/Xforms1.1/Edition1/Chapt02/2.4.a.xhtml"
 
 
-8. Feature switching
+9. Feature switching
 ----------------------
 
 Feature switching is based on files named "*-options.xml" to be placed in the
