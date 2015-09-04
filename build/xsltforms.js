@@ -1,4 +1,4 @@
-/* Rev. 619
+/* Rev. 620
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2425,8 +2425,8 @@ Fleur.XMLSerializer.prototype.serializeToString = function(node, indent, cdataSe
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "619",
-	fileVersionNumber: 619,
+	fileVersion: "620",
+	fileVersionNumber: 620,
 
 	language: "navigator",
 	debugMode: false,
@@ -3802,7 +3802,7 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, 
 		if (evtTarget && event.target !== evtTarget) {
 			effectiveTarget = false;
 		}
-		if (effectiveTarget) {
+		if (effectiveTarget && !(event instanceof UIEvent)) {
 			XsltForms_browser.debugConsole.write("Captured event " + name + " on <" + event.target.nodeName +
 				(event.target.className? " class=\"" + (typeof event.target.className === "string" ? event.target.className : event.target.className.baseVal) + "\"" : "") +
 				(event.target.id? " id=\"" + event.target.id + "\"" : "") + "/>");

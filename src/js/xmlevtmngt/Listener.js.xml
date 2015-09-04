@@ -99,7 +99,7 @@ function XsltForms_listener(subform, observer, evtTarget, name, phase, handler, 
 		if (evtTarget && event.target !== evtTarget) {
 			effectiveTarget = false;
 		}
-		if (effectiveTarget) {
+		if (effectiveTarget && !(event instanceof UIEvent)) {
 			XsltForms_browser.debugConsole.write("Captured event " + name + " on <" + event.target.nodeName +
 				(event.target.className? " class=\"" + (typeof event.target.className === "string" ? event.target.className : event.target.className.baseVal) + "\"" : "") +
 				(event.target.id? " id=\"" + event.target.id + "\"" : "") + "/>");
