@@ -91,6 +91,12 @@ XsltForms_element.prototype.dispose = function() {
 		}
 	}
 	this.depsNodesRefresh = null;
+	for (var key in this) {
+		if (this.hasOwnProperty(key)) {
+			this[key] = null;
+			delete this[key];
+		}
+	}   
 };
 
 ]]>

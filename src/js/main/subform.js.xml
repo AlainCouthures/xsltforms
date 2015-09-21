@@ -77,23 +77,28 @@ XsltForms_subform.prototype.dispose = function() {
 	scriptelt.parentNode.removeChild(scriptelt);
 	for (var h = 0, len0 = this.subforms.length; h < len0; h++) {
 		this.subforms[0].dispose();
+		this.subforms[0] = null;
 	}
 	this.subforms = null;
 	XsltForms_globals.dispose(document.getElementById(this.eltid));
 	for (var i0 = 0, len00 = this.schemas.length; i0 < len00; i0++) {
 		this.schemas[i0].dispose(this);
+		this.schemas[i0] = null;
 	}
 	this.schemas = null;
 	for (var j = 0, len2 = this.instances.length; j < len2; j++) {
 		this.instances[j].dispose(this);
+		this.instances[j] = null;
 	}
 	this.instances = null;
 	for (var i = 0, len = this.models.length; i < len; i++) {
 		this.models[i].dispose(this);
+		this.models[i] = null;
 	}
 	this.models = null;
 	for (var k = 0, len3 = this.xpaths.length; k < len3; k++) {
 		this.xpaths[k].dispose(this);
+		this.xpaths[k] = null;
 	}
 	this.xpaths = null;
 	this.binds = null;
@@ -113,6 +118,7 @@ XsltForms_subform.prototype.dispose = function() {
 	}
 	for (var m = 0, len5 = this.listeners.length; m < len5; m++) {
 		this.listeners[m].detach();
+		this.listeners[m] = null;
 	}
 	this.listeners = null;
 };

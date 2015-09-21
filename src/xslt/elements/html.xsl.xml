@@ -296,11 +296,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:text>var sf = document.getElementById(xsltforms_subform_eltid).xfElement;
 </xsl:text>
 						<xsl:text>if (!sf || !sf.isComponent) {</xsl:text>
-						<xsl:text>XsltForms_globals.openAction();
+						<xsl:text>XsltForms_globals.openAction("XsltForms_subform.prototype.construct");
 </xsl:text>
-						<xsl:text>XsltForms_globals.refresh();
+						<xsl:text>XsltForms_globals.closeChanges();
 </xsl:text>
-						<xsl:text>XsltForms_globals.closeAction();
+						<xsl:text>XsltForms_globals.closeAction("XsltForms_subform.prototype.construct");
 </xsl:text>
 						<xsl:text>}
 </xsl:text>

@@ -492,13 +492,6 @@ var XsltForms_globals = {
 			this.body = null;
 			this.cont = 0;
 			this.dispose(document.documentElement);
-			//XsltForms_browser.events.flush_();
-			if (XsltForms_browser.events.cache) {
-				for (var j = XsltForms_browser.events.cache.length - 1; j >= 0; j--) {
-					var item = XsltForms_browser.events.cache[j];
-					XsltForms_browser.events.detach(item[0], item[1], item[2], item[3]);
-				}
-			}
 			XsltForms_listener.destructs = [];
 			XsltForms_schema.all = {};
 			XsltForms_typeDefs.initAll();
@@ -514,6 +507,7 @@ var XsltForms_globals = {
 <![CDATA[
 	openActions : [],
 	openAction : function(action) {
+		//console.log("openAction(" + action + "): changes = " + this.changes.length + " / cont = " + this.cont);
 		this.openActions.push(action);
 		if (this.cont++ === 0) {
 			XsltForms_browser.debugConsole.clear();
@@ -524,6 +518,7 @@ var XsltForms_globals = {
 * '''closeAction''' method : calls the '''closeChanges()''' method when every action has been performed</cm:wiki>
 <![CDATA[
 	closeAction : function(action) {
+		//console.log("closeAction(" + action + "): " + this.changes.length + "/" + this.cont);
 		var lastaction = this.openActions.pop();
 		/*
 		if (lastaction !== action) {

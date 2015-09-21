@@ -26,8 +26,8 @@
 			<calendar.month9>10 月</calendar.month9>
 			<calendar.month10>11 月</calendar.month10>
 			<calendar.month11>12 月</calendar.month11>
-			<format.date>MM/dd/yyyy</format.date>
-			<format.datetime>MM/dd/yyyy hh:mm:ss</format.datetime>
+			<format.date>yyyy/MM/dd</format.date>
+			<format.datetime>yyyy/MM/dd hh:mm:ss</format.datetime>
 			<format.decimal>.</format.decimal>
 			<status>... 正在載入 ...</status>
 		</properties>

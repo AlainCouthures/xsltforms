@@ -92,7 +92,6 @@ XsltForms_load.prototype.run = function(element, ctx) {
 					return;
 				}
 				XsltForms_submission.requesteventlog(evcontext, req);
-				XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 				var resp = req.responseText;
 				var piindex = resp.indexOf("<?xml-stylesheet", 0);
 				while ( piindex !== -1) {

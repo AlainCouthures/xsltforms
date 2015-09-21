@@ -53,6 +53,19 @@ XsltForms_unload.prototype.run = function(element, ctx) {
 		targetelt = targetelt.children[targetelt.children.length - 1];
 	}
 	targetelt.innerHTML = "";
+	/*
+	var node = targetelt.firstChild;
+	alert("avant " + (node.remove? "remove" : "removeChild"));
+	while (node = targetelt.firstChild) {
+		if (node.remove) {
+			node.remove();
+		} else {
+			targetelt.removeChild(node);
+		}
+		node = null;
+	}
+	alert("après");
+	*/
 	targetelt.hasXFElement = null;
 	XsltForms_browser.setClass(targetelt, "xforms-subform-loaded", false);
 	if (targetxf) {
