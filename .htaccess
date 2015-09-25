@@ -40,3 +40,16 @@ RewriteRule ^(.*-transform/)?branches/(.*)/(src|test)/(.*\.(js|css|xsl))$						t
 RewriteRule ^(.*-transform/)?branches/(.*)/(src|test)/(.*\.(js|css|xsl))$   					txs/txs.php?exec=cm.txs&file=../branches/$2/$3/$4 [L]
 RewriteRule ^(.*-transform/)?branches/(.*)/(.*)$   												branches/$2/$3 [L]
 RewriteRule ^txs/(.*\.txs)																		txs/txs.php?exec=$1 [QSA,L]
+
+RewriteRule (build|src|test|short)/testsuite/(.*\.xml)$									testsuite/$2
+RewriteRule (build|src|test|short)/(.*)-transform/testsuite/(.*\.xhtml)$					txs/xforms.txs?transform=$2&file=testsuite/$3&requesturi=%{REQUEST_URI}&httphost=%{HTTP_HOST}
+RewriteRule (build|src|test|short)/(.*)-transform/testsuite/(.*\.css)$						txs/css.txs?file=testsuite/$3&referer=%{HTTP_REFERER}
+RewriteRule (build|src|test|short)/(.*)-transform/testsuite/(.*)$							testsuite/$3 [L]
+RewriteRule (build|src|test|short)/testsuite/(.*\.xhtml)$									txs/xforms.txs?file=testsuite/$2
+RewriteRule (build|src|test|short)/testsuite/(.*\.css)$										txs/css.txs?file=testsuite/$2&referer=%{HTTP_REFERER}
+RewriteRule (build|src|test|short)/testsuite/(.*)$											testsuite/$2 [L]
+RewriteCond %{QUERY_STRING}																		.+
+RewriteRule ^(.*-transform/)?(src|test)/(.*\.(js|css|xsl))$								txs/txs.php?exec=%{QUERY_STRING}.txs&file=../$2/$3 [L]
+RewriteRule ^(.*-transform/)?(src|test)/(.*\.(js|css|xsl))$   							txs/txs.php?exec=cm.txs&file=../$2/$3 [L]
+RewriteRule ^(.*-transform/)?(.*)$   														$2 [L]
+
