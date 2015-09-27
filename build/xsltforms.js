@@ -8401,7 +8401,7 @@ XsltForms_submission.prototype.xml2data = function(node, method) {
 		}
 		return XsltForms_browser.xml2zip(instance.archive, this.mediatype);
 	}
-	var ser = node ? typeof node === "string" ? node : XsltForms_browser.saveXML(node, this.relevant, false, method === "multipart-post", this.cdataSectionElements) : "";
+	var ser = node ? typeof node === "string" ? node : method === "urlencoded-post" ? XsltForms_submission.toUrl_(node, this.separator) : XsltForms_browser.saveXML(node, this.relevant, false, method === "multipart-post", this.cdataSectionElements) : "";
 	if (this.mediatype === "text/csv" && typeof node !== "string") { 
 		return XsltForms_browser.xml2csv(ser, this.separator);
 	}
@@ -8841,6 +8841,9 @@ XsltForms_submission.prototype.submit = function() {
 					//req.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2005 00:00:00 GMT");
 					req.send(null);
 				} else {
+					if (method === "urlencoded-post") {
+						mt = "application/x-www-form-urlencoded";
+					}
 					req.setRequestHeader("Content-Type", mt);
 					if (media === XsltForms_submission.SOAP_) {
 						req.setRequestHeader("SOAPAction", this.soapAction);
