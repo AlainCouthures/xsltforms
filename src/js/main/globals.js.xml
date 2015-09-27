@@ -534,7 +534,7 @@ var XsltForms_globals = {
 		<cm:wiki>
 * '''closeChanges''' method : rebuild or recalculate after changes</cm:wiki>
 <![CDATA[
-	closeChanges : function() {
+	closeChanges : function(force) {
 		var changes = this.changes;
 		for (var i = 0, len = changes.length; i < len; i++) {
 			var change = changes[i];
@@ -547,7 +547,7 @@ var XsltForms_globals = {
 			//} else { // Repeat or tree
 			}
 		}
-		if (changes.length > 0) {
+		if (changes.length > 0 || force) {
 			this.refresh();
 			if (this.changes.length > 0) {
 				this.closeChanges();

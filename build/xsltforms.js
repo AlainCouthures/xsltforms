@@ -1,4 +1,4 @@
-/* Rev. 621
+/* Rev. 622
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -2400,8 +2400,8 @@ Fleur.XMLSerializer.prototype.serializeToString = function(node, indent, cdataSe
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "621",
-	fileVersionNumber: 621,
+	fileVersion: "622",
+	fileVersionNumber: 622,
 
 	language: "navigator",
 	debugMode: false,
@@ -2883,7 +2883,7 @@ var XsltForms_globals = {
 
 		
 
-	closeChanges : function() {
+	closeChanges : function(force) {
 		var changes = this.changes;
 		for (var i = 0, len = changes.length; i < len; i++) {
 			var change = changes[i];
@@ -2896,7 +2896,7 @@ var XsltForms_globals = {
 			//} else { // Repeat or tree
 			}
 		}
-		if (changes.length > 0) {
+		if (changes.length > 0 || force) {
 			this.refresh();
 			if (this.changes.length > 0) {
 				this.closeChanges();
@@ -9454,6 +9454,7 @@ XsltForms_load.prototype.run = function(element, ctx) {
 					return;
 				}
 				XsltForms_submission.requesteventlog(evcontext, req);
+				XsltForms_globals.closeAction("XsltForms_load.prototype.run");
 				var resp = req.responseText;
 				var piindex = resp.indexOf("<?xml-stylesheet", 0);
 				while ( piindex !== -1) {
