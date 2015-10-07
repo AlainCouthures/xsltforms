@@ -1,4 +1,4 @@
-/* Rev. 622
+/* Rev. 623
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -59,6 +59,1009 @@ var XsltForms_nodeType = {
 	DOCUMENT_TYPE : 10,
 	DOCUMENT_FRAGMENT : 11,
 	NOTATION : 12
+};
+
+	
+		
+		
+		
+/*jshint noarg:false, forin:true, noempty:true, eqeqeq:true, evil:true, bitwise:true, loopfunc:true, scripturl:true, strict:true, undef:true, curly:true, browser:true, devel:true, maxerr:100, newcap:true */
+//"use strict";
+/*members */
+/*global ActiveXObject, alert, Document, XDocument, Element, DOMParser, XMLSerializer, XSLTProcessor */
+/*global tinyMCE */
+/*global XMLDocument : true */
+/*global XsltForms_browser : true, XsltForms_nodeType : true, XsltForms_schema : true */
+/*global XsltForms_calendar : true, XsltForms_numberList : true, XsltForms_xmlevents : true */
+/*global XsltForms_abstractAction : true, XsltForms_repeat : true, XsltForms_element : true */
+/*global XsltForms_control : true, XsltForms_xpathCoreFunctions : true, XsltForms_xpathFunctionExceptions : true */
+/*global XsltForms_idManager : true, XsltForms_xpath : true, XsltForms_listener : true */
+/*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
+var XsltForms_globals = {
+
+	fileVersion: "623",
+	fileVersionNumber: 623,
+
+	language: "navigator",
+	debugMode: false,
+	debugButtons: [
+		{label: "Profiler", name: "profiler"}
+		,{label: "Trace Log", name: "tracelog"}
+		/*
+		,{label: "Validator"},
+		,{label: "XPath Evaluator"}
+		*/
+	],
+	cont : 0,
+	ready : false,
+	body : null,
+	models : [],
+	changes : [],
+	newChanges : [],
+	building : false,
+	posibleBlur : false,
+	bindErrMsgs : [],		// binding-error messages gathered during refreshing
+	transformtime: "unknown",
+	htmltime: 0,
+	creatingtime: 0,
+	inittime: 0,
+	refreshtime: 0,
+	refreshcount: 0,
+	validationError: true,
+	counters: {
+		component: 0,
+		group: 0,
+		input: 0,
+		item: 0,
+		itemset: 0,
+		label: 0,
+		output: 0,
+		repeat: 0,
+		select: 0,
+		trigger: 0,
+		upload: 0,
+		xvar: 0
+	},
+	nbsubforms: 0,
+	componentLoads: [],
+	jslibraries: {},
+	htmlversion: "4",
+
+		
+
+	debugging : function() {
+		if (document.documentElement.childNodes[0].nodeType === 8 || (XsltForms_browser.isIE && document.documentElement.childNodes[0].childNodes[1] && document.documentElement.childNodes[0].childNodes[1].nodeType === 8)) {
+			var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+			if (this.debugMode) {
+				var dbg = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "div") : document.createElement("div");
+				dbg.setAttribute("style", "border-bottom: thin solid #888888;");
+				dbg.setAttribute("id", "xsltforms_debug");
+				var img = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
+				img.setAttribute("src", XsltForms_browser.ROOT+"magnify.png");
+				img.setAttribute("style", "vertical-align:middle;border:0;");
+				dbg.appendChild(img);
+				var spn = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
+				spn.setAttribute("style", "font-size:16pt");
+				var txt = document.createTextNode(" Debug Mode");
+				spn.appendChild(txt);
+				dbg.appendChild(spn);
+				var spn2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
+				spn2.setAttribute("style", "font-size:11pt");
+				var txt2 = document.createTextNode(" ("+this.fileVersion+") \xA0\xA0\xA0");
+				spn2.appendChild(txt2);
+				dbg.appendChild(spn2);
+				var a = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
+				a.setAttribute("href", "http://www.w3.org/TR/xforms11/");
+				a.setAttribute("style", "text-decoration:none;");
+				var img2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
+				img2.setAttribute("src", XsltForms_browser.ROOT+"valid-xforms11.png");
+				img2.setAttribute("style", "vertical-align:middle;border:0;");
+				a.appendChild(img2);
+				dbg.appendChild(a);
+				var a2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
+				a2.setAttribute("href", "http://www.agencexml.com/xsltforms");
+				a2.setAttribute("style", "text-decoration:none;");
+				var img3 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
+				img3.setAttribute("src", XsltForms_browser.ROOT+"poweredbyXSLTForms.png");
+				img3.setAttribute("style", "vertical-align:middle;border:0;");
+				a2.appendChild(img3);
+				dbg.appendChild(a2);
+				var spn3 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
+				spn3.setAttribute("style", "font-size:11pt");
+				var txt3 = document.createTextNode(" Press ");
+				spn3.appendChild(txt3);
+				dbg.appendChild(spn3);
+				var a3 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
+				a3.setAttribute("onClick", "XsltForms_globals.debugMode=false;XsltForms_globals.debugging();return false;");
+				a3.setAttribute("style", "text-decoration:none;");
+				a3.setAttribute("href", "#");
+				var img4 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
+				img4.setAttribute("src", XsltForms_browser.ROOT+"F1.png");
+				img4.setAttribute("style", "vertical-align:middle;border:0;");
+				a3.appendChild(img4);
+				dbg.appendChild(a3);
+				var spn4 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
+				spn4.setAttribute("style", "font-size:11pt");
+				var txt4 = document.createTextNode(" to toggle mode ");
+				spn4.appendChild(txt4);
+				dbg.appendChild(spn4);
+				var br = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "br") : document.createElement("br");
+				dbg.appendChild(br);
+				var txt5 = document.createTextNode(" \xA0\xA0\xA0\xA0\xA0\xA0");
+				dbg.appendChild(txt5);
+				for (var i = 0, len = XsltForms_globals.debugButtons.length; i < len; i++) {
+					if (XsltForms_globals.debugButtons[i].name) {
+						var btn = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "button") : document.createElement("button");
+						btn.setAttribute("type", "button");
+						btn.setAttribute("onClick", "XsltForms_globals.opentab('" + XsltForms_globals.debugButtons[i].name + "');");
+						var txt6 = document.createTextNode(" "+XsltForms_globals.debugButtons[i].label+" ");
+						btn.appendChild(txt6);
+						dbg.appendChild(btn);
+					} else {
+						var a4 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
+						a4.setAttribute("href", "http://www.agencexml.com/xsltforms");
+						var txt7 = document.createTextNode(" Debugging extensions can be downloaded! ");
+						a4.appendChild(txt7);
+						dbg.appendChild(a4);
+						break;
+					}
+				}
+				var br2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "br") : document.createElement("br");
+				dbg.appendChild(br2);
+				var ifr = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "iframe") : document.createElement("iframe");
+				ifr.setAttribute("src", "http://www.agencexml.com/direct/banner.htm");
+				ifr.setAttribute("style", "width:100%;height:90px;border:none;margin:0;");
+				ifr.setAttribute("frameborder", "0");
+				var ids_seen = {};
+				var nodes6 = document.getElementsByTagName('*');
+				for (var i6 = 0, l6 = nodes6.length; i6 < l6; i6++) {
+					var node6 = nodes6[i6];
+					if (node6.id) {
+						var id6 = node6.id;
+						ids_seen[id6] = ids_seen[id6] ? ids_seen[id6]+1 : 1;
+					}
+				}
+				var s6 = "";
+				for (var id6b in ids_seen) {
+					if (ids_seen[id6b] > 1) {
+						s6 += id6b + " ";
+					}
+				}
+				if (s6 !== "") {
+					var txt6b = document.createTextNode("WARNING: Duplicate ids: " + s6);
+					var spn6 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
+					spn6.setAttribute("style", "color:red; font-size: 22pt");
+					spn6.appendChild(txt6b);
+					dbg.appendChild(spn6);
+				}
+				dbg.appendChild(ifr);
+				body.insertBefore(dbg, body.firstChild);
+				document.getElementById("xsltforms_console").style.display = "block";
+			} else {
+				body.removeChild(document.getElementById("xsltforms_debug"));
+				document.getElementById("xsltforms_console").style.display = "none";
+			}
+		}
+	},
+
+		
+
+	xmlrequest : function(method, resource, ser) {
+		if (typeof method !== "string") {
+			return '<error xmlns="">Invalid method "'+method+'"</error>';
+		}
+		method = method.toLowerCase();
+		var instance, modid;
+		switch (method) {
+			case "get":
+				switch (resource) {
+					case "xsltforms-profiler":
+						return XsltForms_globals.profiling_data();
+					case "xsltforms-tracelog":
+						try  {
+							return XsltForms_browser.saveXML(XsltForms_browser.debugConsole.doc_.documentElement, true);
+						} catch (e) {
+							XsltForms_browser.debugConsole.write("ERROR: Could not open xsltforms-tracelog " + e.message);
+							return '<error xmlns="">Could not open xsltforms-tracelog "'+e.message+'"</error>';
+						}
+					default:
+						var slash = resource.indexOf("/");
+						if (slash === -1 ) {
+							instance = document.getElementById(resource);
+							if (!instance) {
+								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+							}
+							return XsltForms_browser.saveXML(instance.xfElement.doc.documentElement, true);
+						} else {
+							var filename = resource.substr(slash+1);
+							instance = document.getElementById(resource.substr(0, slash));
+							if (!instance) {
+								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+							}
+							var f = instance.xfElement.archive[filename];
+							if (!f) {
+								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+							}
+							if (!f.doc) {
+								f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
+								modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
+								XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
+								XsltForms_browser.setMeta(f.doc.documentElement, "instance", idRef);
+								XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
+							}
+							return XsltForms_browser.saveXML(f.doc.documentElement, true);
+						}
+				}
+				break;
+			case "put":
+				instance = document.getElementById(resource);
+				if (!instance) {
+					return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
+				}
+				instance.xfElement.setDoc(ser, false, true);
+				modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
+				XsltForms_globals.addChange(modid);
+				XsltForms_globals.closeChanges();
+				return '<ok xmlns=""/>';
+			default:
+				return '<error xmlns="">Unknown method "'+method+'"</error>';
+		}
+	},
+
+		
+
+	profiling_data : function() {
+		var s = '<xsltforms:dump xmlns:xsltforms="http://www.agencexml.com/xsltforms">';
+		s += '<xsltforms:date>' + XsltForms_browser.i18n.format(new Date(), "yyyy-MM-ddThh:mm:ssz", true) + '</xsltforms:date>';
+		s += '<xsltforms:location>' + XsltForms_browser.escape(window.location.href) + '</xsltforms:location>';
+		s += '<xsltforms:appcodename>' + navigator.appCodeName + '</xsltforms:appcodename>';
+		s += '<xsltforms:appname>' + navigator.appName + '</xsltforms:appname>';
+		s += '<xsltforms:appversion>' + navigator.appVersion + '</xsltforms:appversion>';
+		s += '<xsltforms:platform>' + navigator.platform + '</xsltforms:platform>';
+		s += '<xsltforms:useragent>' + navigator.userAgent + '</xsltforms:useragent>';
+		s += '<xsltforms:xsltengine>' + this.xsltEngine + '</xsltforms:xsltengine>';
+		var xsltsrc = '<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxsl="urn:schemas-microsoft-com:xslt">';
+		xsltsrc += '	<xsl:output method="xml"/>';
+		xsltsrc += '	<xsl:template match="/">';
+		xsltsrc += '		<xsl:variable name="version">';
+		xsltsrc += '			<xsl:if test="system-property(\'xsl:vendor\')=\'Microsoft\'">';
+		xsltsrc += '				<xsl:value-of select="system-property(\'msxsl:version\')"/>';
+		xsltsrc += '			</xsl:if>';
+		xsltsrc += '		</xsl:variable>';
+		xsltsrc += '		<properties><xsl:value-of select="concat(\'|\',system-property(\'xsl:vendor\'),\' \',system-property(\'xsl:vendor-url\'),\' \',$version,\'|\')"/></properties>';
+		xsltsrc += '	</xsl:template>';
+		xsltsrc += '</xsl:stylesheet>';
+		var res = XsltForms_browser.transformText("<dummy/>", xsltsrc, true);
+		var spres = res.split("|");
+		s += '<xsltforms:xsltengine2>' + spres[1] + '</xsltforms:xsltengine2>';
+		s += '<xsltforms:version>' + this.fileVersion + '</xsltforms:version>';
+		s += '<xsltforms:instances>';
+		var pos = 0;
+		for (var m = 0, mlen = XsltForms_globals.models.length; m < mlen; m++) {
+			if (XsltForms_globals.models[m].element.id !== XsltForms_browser.idPf + "model-config") {
+				for (var id in XsltForms_globals.models[m].instances) {
+					if (XsltForms_globals.models[m].instances.hasOwnProperty(id)) {
+						var count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].doc);
+						s += '<xsltforms:instance id="' + id + '">' + count + '</xsltforms:instance>';
+						if (XsltForms_globals.models[m].instances[id].archive) {
+							for (var fn in XsltForms_globals.models[m].instances[id].archive) {
+								if (XsltForms_globals.models[m].instances[id].archive.hasOwnProperty(fn)) {
+									if (!XsltForms_globals.models[m].instances[id].archive[fn].doc) {
+										XsltForms_globals.models[m].instances[id].archive[fn].doc = XsltForms_browser.createXMLDocument("<dummy/>");
+										XsltForms_browser.loadXML(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(XsltForms_globals.models[m].instances[id].archive[fn].compressedFileData)));
+										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "instance", id);
+										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "model", m);
+									}
+									count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].archive[fn].doc);
+									s += '<xsltforms:instance id="' + id + '/' + fn + '">' + count + '</xsltforms:instance>';
+								}
+							}
+						}
+						pos++;
+					}
+				}
+			}
+		}
+		s += '</xsltforms:instances>';
+		s += '<xsltforms:controls>';
+		s += '<xsltforms:control type="group">' + XsltForms_globals.counters.group + '</xsltforms:control>';
+		s += '<xsltforms:control type="input">' + XsltForms_globals.counters.input + '</xsltforms:control>';
+		s += '<xsltforms:control type="item">' + XsltForms_globals.counters.item + '</xsltforms:control>';
+		s += '<xsltforms:control type="itemset">' + XsltForms_globals.counters.itemset + '</xsltforms:control>';
+		s += '<xsltforms:control type="output">' + XsltForms_globals.counters.output + '</xsltforms:control>';
+		s += '<xsltforms:control type="repeat">' + XsltForms_globals.counters.repeat + '</xsltforms:control>';
+		s += '<xsltforms:control type="select">' + XsltForms_globals.counters.select + '</xsltforms:control>';
+		s += '<xsltforms:control type="trigger">' + XsltForms_globals.counters.trigger + '</xsltforms:control>';
+		s += '</xsltforms:controls>';
+		var re = /<\w/g;
+		var hc = 0;
+		var bhtml = document.documentElement.innerHTML;
+		while (re.exec(bhtml)) {
+			hc++;
+		}
+		s += '<xsltforms:htmlelements>' + hc + '</xsltforms:htmlelements>';
+		s += '<xsltforms:transformtime>' + this.transformtime + '</xsltforms:transformtime>';
+		s += '<xsltforms:htmltime>' + this.htmltime + '</xsltforms:htmltime>';
+		s += '<xsltforms:creatingtime>' + this.creatingtime + '</xsltforms:creatingtime>';
+		s += '<xsltforms:inittime>' + this.inittime + '</xsltforms:inittime>';
+		s += '<xsltforms:refreshcount>' + this.refreshcount + '</xsltforms:refreshcount>';
+		s += '<xsltforms:refreshtime>' + this.refreshtime + '</xsltforms:refreshtime>';
+		var exprtab = [];
+		for (var expr in XsltForms_xpath.expressions) {
+			if (XsltForms_xpath.expressions.hasOwnProperty(expr) && XsltForms_xpath.expressions[expr]) {
+				exprtab[exprtab.length] = {expr: expr, evaltime: XsltForms_xpath.expressions[expr].evaltime};
+			}
+		}
+		exprtab.sort(function(a,b) { return b.evaltime - a.evaltime; });
+		var top = 0;
+		s += '<xsltforms:xpaths>';
+		if (exprtab.length > 0) {
+			for (var i = 0; i < exprtab.length && i < 20; i++) {
+				s += '<xsltforms:xpath expr="' + XsltForms_browser.escape(exprtab[i].expr).replace(/\"/g, "&quot;") + '">' + exprtab[i].evaltime + '</xsltforms:xpath>';
+				top += exprtab[i].evaltime;
+			}
+			if (exprtab.length > 20) {
+				var others = 0;
+				for (var j = 20; j < exprtab.length; j++) {
+					others += exprtab[j].evaltime;
+				}
+				s += '<xsltforms:others count="' + (exprtab.length - 20) + '">' + others + '</xsltforms:others>';
+				top += others;
+			}
+			s += '<xsltforms:total>' + top + '</xsltforms:total>';
+		}
+		s += '</xsltforms:xpaths>';
+		s += '</xsltforms:dump>';
+		return s;
+	},
+
+		
+
+	opentab : function(name) {
+		var req = XsltForms_browser.openRequest("GET", XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml", false);
+		if (req.overrideMimeType) {
+			req.overrideMimeType("application/xml");
+		}
+		try {        
+			req.send(null);
+		} catch(e) {
+			alert("File not found: " + XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml");
+		}
+		if (req.status === 200 || req.status === 0) {
+			var s = "";
+			try {
+				s = XsltForms_browser.transformText(req.responseText, XsltForms_browser.ROOT + "xsltforms.xsl", false, "xsltforms_debug", "false", "baseuri", XsltForms_browser.ROOT);
+			} catch (e) {
+				XsltForms_browser.debugConsole.write("ERROR: Could not get contents of xsltforms_debug - " + e.message);
+			}			
+			if (s.substring(0, 21) === '<?xml version="1.0"?>') {
+				s = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + s.substring(21);
+			}
+			var prow = window.open("about:blank","_blank");
+			prow.document.write(s);
+			prow.document.close();
+		} else {
+			XsltForms_browser.debugConsole.write("File not found (" + req.status + "): " + XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml");
+		}
+	},
+
+		
+
+	init: function() {
+		XsltForms_browser.setValue(document.getElementById("statusPanel"), XsltForms_browser.i18n.get("status"));
+		this.htmlversion = XsltForms_browser.i18n.get("html");
+		var b = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
+		this.body = b;
+		document.onhelp = function(){return false;};
+		window.onhelp = function(){return false;};
+		XsltForms_browser.events.attach(document, "keydown", function(evt) {
+			if (evt.keyCode === 112) {
+				XsltForms_globals.debugMode = !XsltForms_globals.debugMode;
+				XsltForms_globals.debugging();
+				if (evt.stopPropagation) {
+					evt.stopPropagation();
+					evt.preventDefault();
+				} else {
+					evt.cancelBubble = true;
+				}
+				return false;
+			}
+		}, false);
+		XsltForms_browser.events.attach(b, "click", function(evt) {
+			var target = XsltForms_browser.events.getTarget(evt);
+			var parent = target;
+			while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+				if (XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
+					XsltForms_repeat.selectItem(parent);
+				}
+				parent = parent.parentNode;
+			}
+			parent = target;
+			while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+				var xf = parent.xfElement;
+				if (xf) {
+					if(typeof parent.node !== "undefined" && parent.node && xf.focus && !XsltForms_browser.getBoolMeta(parent.node, "readonly")) {
+						var name = target.nodeName.toLowerCase();
+						xf.focus(name === "input" || name === "textarea", evt);
+					}
+					if(xf.click && xf.input && !xf.input.disabled) {
+						xf.click(target, evt);
+						break;
+					}
+				}
+				parent = parent.parentNode;
+			}
+		}, false);
+		XsltForms_browser.events.onunload = function() {
+			XsltForms_globals.close();
+		};
+		this.openAction("XsltForms_globals.init");
+		XsltForms_xmlevents.dispatchList(this.models, "xforms-model-construct");
+		for (var i = 0, l = this.componentLoads.length; i < l; i++) {
+			eval(this.componentLoads[i]);
+		}
+		this.refresh();
+		this.closeAction("XsltForms_globals.init");
+		this.ready = true;
+		XsltForms_browser.dialog.hide("statusPanel", false);
+	},
+
+		
+
+	close : function() {
+		if (XsltForms_globals.body) {
+			this.openAction("XsltForms_globals.close");
+			//XsltForms_xmlevents.dispatchList(XsltForms_globals.models, "xforms-model-destruct");
+			for (var i = 0, len = XsltForms_listener.destructs.length; i < len; i++) {
+				XsltForms_listener.destructs[i].callback({target: XsltForms_listener.destructs[i].observer});
+			}
+			this.closeAction("XsltForms_globals.close");
+			XsltForms_idManager.clear();
+			this.defaultModel = null;
+			this.changes = [];
+			this.models = [];
+			this.body = null;
+			this.cont = 0;
+			this.dispose(document.documentElement);
+			XsltForms_listener.destructs = [];
+			XsltForms_schema.all = {};
+			XsltForms_typeDefs.initAll();
+			XsltForms_calendar.INSTANCE = null;
+			this.ready = false;
+			this.building = false;
+			XsltForms_globals.posibleBlur = false;
+		}
+	},
+
+		
+
+	openActions : [],
+	openAction : function(action) {
+		//console.log("openAction(" + action + "): changes = " + this.changes.length + " / cont = " + this.cont);
+		this.openActions.push(action);
+		if (this.cont++ === 0) {
+			XsltForms_browser.debugConsole.clear();
+		}
+	},
+
+		
+
+	closeAction : function(action) {
+		//console.log("closeAction(" + action + "): " + this.changes.length + "/" + this.cont);
+		var lastaction = this.openActions.pop();
+		/*
+		if (lastaction !== action) {
+			alert("Action mismatch: '" + lastaction + "' was expected instead of '" + action + "'");
+		}
+		*/
+		if (this.cont === 1) {
+			this.closeChanges();
+		}
+		this.cont--;
+	},
+
+		
+
+	closeChanges : function(force) {
+		var changes = this.changes;
+		for (var i = 0, len = changes.length; i < len; i++) {
+			var change = changes[i];
+			if (change && change.instances) {//Model
+				if (change.rebuilded) {
+					XsltForms_xmlevents.dispatch(change, "xforms-rebuild");
+				} else {
+					XsltForms_xmlevents.dispatch(change, "xforms-recalculate");
+				}
+			//} else { // Repeat or tree
+			}
+		}
+		if (changes.length > 0 || force) {
+			this.refresh();
+			if (this.changes.length > 0) {
+				this.closeChanges();
+			}
+		}
+	},
+
+		
+
+	error : function(element, event, message, causeMessage) {
+		XsltForms_browser.dialog.hide("statusPanel", false);
+		XsltForms_browser.setValue(document.getElementById("statusPanel"), message);
+		XsltForms_browser.dialog.show("statusPanel", null, false);
+		if (element) {
+			XsltForms_xmlevents.dispatch(element, event);
+		}
+		if (causeMessage) {
+			message += " : " + causeMessage;
+		}
+		XsltForms_browser.debugConsole.write("Error: " + message);
+		throw event;        
+	},
+
+		
+
+	refresh : function() {
+		var d1 = new Date();
+		this.building = true;
+		this.build(this.body, (this.defaultModel.getInstanceDocument() ? this.defaultModel.getInstanceDocument().documentElement : null), true);
+		if (this.newChanges.length > 0) {
+			this.changes = this.newChanges;
+			this.newChanges = [];
+		} else {
+			this.changes.length = 0;
+		}
+		for (var i = 0, len = this.models.length; i < len; i++) {
+			var model = this.models[i];
+			if (model.newNodesChanged.length > 0 || model.newRebuilded) {
+				model.nodesChanged = model.newNodesChanged;
+				model.newNodesChanged = [];
+				model.rebuilded = model.newRebuilded;
+				model.newRebuilded = false;
+			} else {
+				model.nodesChanged.length = 0;
+				model.rebuilded = false;
+			}
+		}
+		this.building = false;
+		// Throw any gathered binding-errors.
+		//
+		if (this.bindErrMsgs.length) {
+			this.error(this.defaultModel, "xforms-binding-exception", "Binding Errors: \n" + this.bindErrMsgs.join("\n  "));
+			this.bindErrMsgs = [];
+		}
+		var d2 = new Date();
+		this.refreshtime += d2 - d1;
+		this.refreshcount++;
+	},
+
+		
+
+	build : function(element, ctx, selected, varresolver) {
+		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
+			return {ctx: ctx, hasXFElement: false};
+		}
+		var xf = element.xfElement;
+		var hasXFElement = !!xf;
+		if (element.getAttribute("mixedrepeat") === "true") {
+			//ctx = element.node || ctx;
+			selected = element.selected;
+		}
+		if (xf) {
+			if (xf instanceof Array) {
+				for (var ixf = 0, lenxf = xf.length; ixf < lenxf; ixf++) {
+					xf[ixf].build(ctx, varresolver);
+				}
+			} else {
+				xf.build(ctx, varresolver);
+				if (xf.isRepeat) {
+					xf.refresh(selected);
+				}
+			}
+		}
+		var newctx = element.node || ctx;
+		var childs = element.children || element.childNodes;
+		var sel = element.selected;
+		if (typeof sel !== "undefined") {
+			selected = sel;
+		}
+		if (!xf || (xf instanceof Array) || !xf.isRepeat || xf.nodes.length > 0) {
+			var nbsiblings = 1, isiblings = 1;
+			var nodes = [], nbnodes = 0, inodes = 0;
+			for (var i = 0; i < childs.length && this.building; i++) {
+				if (childs[i].nodeType !== XsltForms_nodeType.TEXT) {
+					var curctx;
+					if (isiblings !== 1) {
+						curctx = nodes[inodes];
+						isiblings--;
+					} else if (nbnodes !== 0) {
+						nbnodes--;
+						inodes++;
+						curctx = nodes[inodes];
+						isiblings = nbsiblings;
+					} else {
+						curctx = newctx;
+					}
+					if (!childs[i].getAttribute("cloned")) {
+						var samechild = childs[i];
+						var br = this.build(childs[i], curctx, selected, varresolver);
+						if (childs[i] !== samechild) {
+							i--;
+						} else {
+							if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
+								nbsiblings = childs[i].xfElement.nbsiblings;
+								nodes = childs[i].xfElement.nodes;
+								nbnodes = nodes.length;
+								inodes = 0;
+								isiblings = nbsiblings;
+							}
+							hasXFElement = br.hasXFElement || hasXFElement;
+						}
+					}
+				}
+			}
+			element.varScope = null;
+		}
+		if(this.building) {
+			if (xf instanceof Array) {
+				for (var ixf2 = 0, lenxf2 = xf.length; ixf2 < lenxf2; ixf2++) {
+					if (xf[ixf2] && xf[ixf2].changed) {
+						xf[ixf2].refresh(selected);
+						xf[ixf2].changed = false;
+					}
+				}
+			} else {
+				if (xf && xf.changed) {
+					xf.refresh(selected);
+					xf.changed = false;
+				}
+			}
+			if (!element.hasXFElement) {
+				element.hasXFElement = hasXFElement;
+			}
+		}
+		return {ctx: newctx, hasXFElement: hasXFElement};
+	},
+
+		
+
+	addChange : function(element) {
+		var list = this.building? this.newChanges : this.changes;
+		if (!XsltForms_browser.inArray(element, list)) {
+			list.push(element);
+		}
+	},
+
+		
+
+	dispose : function(element) {
+		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console") {
+			return;
+		}
+		var xf = element.xfElement;
+		if (xf && xf.dispose !== undefined) {
+			xf.dispose();
+		}
+		element.listeners = null;
+		element.node = null;
+		element.hasXFElement = null;
+		var childs = element.childNodes;
+		for (var i = 0; i < childs.length; i++) {
+			this.dispose(childs[i]);
+		}
+	},
+
+		
+
+	blur : function(direct) {
+		if ((direct || this.posibleBlur) && this.focus) {
+			if (this.focus.element) {
+				this.openAction("XsltForms_globals.blur");
+				XsltForms_xmlevents.dispatch(this.focus, "DOMFocusOut");
+				XsltForms_browser.setClass(this.focus.element, "xforms-focus", false);
+				try {
+					this.focus.blur();
+				} catch (e){
+				}
+				this.closeAction("XsltForms_globals.blur");
+			}
+			this.posibleBlur = false;
+			this.focus = null;
+		}
+	},
+
+		
+
+	add32 : function(x, y) {
+		var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+		return ((((x >>> 16) + (y >>> 16) + (lsw >>> 16)) & 0xFFFF)<< 16) | (lsw & 0xFFFF);
+		// return (x + y) & 0xFFFFFFFF;
+	},
+	str2msg : function(str) {
+		var i, msg = {length: str.length, arr: []};
+		for(i = 0; i < msg.length; i++){
+			msg.arr[i >> 2] |= (str.charCodeAt(i) & 0xFF) << ((3 - i % 4) << 3);
+		}
+		return msg;
+	},
+	crypto : function(msg, algo) {
+		var res, i, add32 = XsltForms_globals.add32;
+		switch (algo) {
+			case "SHA-1":
+				var bl = msg.length * 8;
+				msg.arr[bl >> 5] |= 0x80 << (24 - bl % 32);
+				msg.arr[((bl + 65 >> 9) << 4) + 15] = bl;
+				var a, b, c, d, e, T;
+				var l = msg.arr.length;
+				var W = [];
+				res = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
+				var rotl = function(x, n) {
+					return (x <<  n) | (x >>> (32 - n));
+				};
+				for(i = 0; i < l; i += 16){
+					a = res[0];
+					b = res[1];
+					c = res[2];
+					d = res[3];
+					e = res[4];
+					for(t = 0; t<20; t++){
+						T = add32(add32(add32(add32(rotl(a,5),(b & c)^(~b & d)),e),0x5a827999),W[t] = t<16 ? msg.arr[t+i] : rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					for(t = 20; t<40; t++){
+						T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0x6ed9eba1),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					for(t = 40; t<60; t++){
+						T = add32(add32(add32(add32(rotl(a,5),(b & c)^(b & d)^(c & d)),e),0x8f1bbcdc),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					for(t = 60; t<80; t++){
+						T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0xca62c1d6),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
+						e = d;
+						d = c;
+						c = rotl(b,30);
+						b = a;
+						a = T;
+					}
+					res[0] = add32(a, res[0]);
+					res[1] = add32(b, res[1]);
+					res[2] = add32(c, res[2]);
+					res[3] = add32(d, res[3]);
+					res[4] = add32(e, res[4]);
+				}
+				return {length: 20, arr: res};
+			case "MD5":
+				var n = msg.length, t;
+				var cmn = function(q, a, b, x, s, t) {
+					a = add32(add32(a, q), add32(x, t));
+					return add32((a << s) | (a >>> (32 - s)), b);
+				};
+				var f1 = function(a, b, c, d, x, s, t) {
+					return cmn((b & c) | ((~b) & d), a, b, x, s, t);
+				};
+				var f2 = function(a, b, c, d, x, s, t) {
+					return cmn((b & d) | (c & (~d)), a, b, x, s, t);
+				};
+				var f3 = function(a, b, c, d, x, s, t) {
+					return cmn(b ^ c ^ d, a, b, x, s, t);
+				};
+				var f4 = function(a, b, c, d, x, s, t) {
+					return cmn(c ^ (b | (~d)), a, b, x, s, t);
+				};
+				var cycle = function (w, t) {
+					var a = w[0], b = w[1], c = w[2], d = w[3];
+					a = f1(a, b, c, d, t[0], 7, -680876936);
+					d = f1(d, a, b, c, t[1], 12, -389564586);
+					c = f1(c, d, a, b, t[2], 17,  606105819);
+					b = f1(b, c, d, a, t[3], 22, -1044525330);
+					a = f1(a, b, c, d, t[4], 7, -176418897);
+					d = f1(d, a, b, c, t[5], 12,  1200080426);
+					c = f1(c, d, a, b, t[6], 17, -1473231341);
+					b = f1(b, c, d, a, t[7], 22, -45705983);
+					a = f1(a, b, c, d, t[8], 7,  1770035416);
+					d = f1(d, a, b, c, t[9], 12, -1958414417);
+					c = f1(c, d, a, b, t[10], 17, -42063);
+					b = f1(b, c, d, a, t[11], 22, -1990404162);
+					a = f1(a, b, c, d, t[12], 7,  1804603682);
+					d = f1(d, a, b, c, t[13], 12, -40341101);
+					c = f1(c, d, a, b, t[14], 17, -1502002290);
+					b = f1(b, c, d, a, t[15], 22,  1236535329);
+					a = f2(a, b, c, d, t[1], 5, -165796510);
+					d = f2(d, a, b, c, t[6], 9, -1069501632);
+					c = f2(c, d, a, b, t[11], 14,  643717713);
+					b = f2(b, c, d, a, t[0], 20, -373897302);
+					a = f2(a, b, c, d, t[5], 5, -701558691);
+					d = f2(d, a, b, c, t[10], 9,  38016083);
+					c = f2(c, d, a, b, t[15], 14, -660478335);
+					b = f2(b, c, d, a, t[4], 20, -405537848);
+					a = f2(a, b, c, d, t[9], 5,  568446438);
+					d = f2(d, a, b, c, t[14], 9, -1019803690);
+					c = f2(c, d, a, b, t[3], 14, -187363961);
+					b = f2(b, c, d, a, t[8], 20,  1163531501);
+					a = f2(a, b, c, d, t[13], 5, -1444681467);
+					d = f2(d, a, b, c, t[2], 9, -51403784);
+					c = f2(c, d, a, b, t[7], 14,  1735328473);
+					b = f2(b, c, d, a, t[12], 20, -1926607734);
+					a = f3(a, b, c, d, t[5], 4, -378558);
+					d = f3(d, a, b, c, t[8], 11, -2022574463);
+					c = f3(c, d, a, b, t[11], 16,  1839030562);
+					b = f3(b, c, d, a, t[14], 23, -35309556);
+					a = f3(a, b, c, d, t[1], 4, -1530992060);
+					d = f3(d, a, b, c, t[4], 11,  1272893353);
+					c = f3(c, d, a, b, t[7], 16, -155497632);
+					b = f3(b, c, d, a, t[10], 23, -1094730640);
+					a = f3(a, b, c, d, t[13], 4,  681279174);
+					d = f3(d, a, b, c, t[0], 11, -358537222);
+					c = f3(c, d, a, b, t[3], 16, -722521979);
+					b = f3(b, c, d, a, t[6], 23,  76029189);
+					a = f3(a, b, c, d, t[9], 4, -640364487);
+					d = f3(d, a, b, c, t[12], 11, -421815835);
+					c = f3(c, d, a, b, t[15], 16,  530742520);
+					b = f3(b, c, d, a, t[2], 23, -995338651);
+					a = f4(a, b, c, d, t[0], 6, -198630844);
+					d = f4(d, a, b, c, t[7], 10,  1126891415);
+					c = f4(c, d, a, b, t[14], 15, -1416354905);
+					b = f4(b, c, d, a, t[5], 21, -57434055);
+					a = f4(a, b, c, d, t[12], 6,  1700485571);
+					d = f4(d, a, b, c, t[3], 10, -1894986606);
+					c = f4(c, d, a, b, t[10], 15, -1051523);
+					b = f4(b, c, d, a, t[1], 21, -2054922799);
+					a = f4(a, b, c, d, t[8], 6,  1873313359);
+					d = f4(d, a, b, c, t[15], 10, -30611744);
+					c = f4(c, d, a, b, t[6], 15, -1560198380);
+					b = f4(b, c, d, a, t[13], 21,  1309151649);
+					a = f4(a, b, c, d, t[4], 6, -145523070);
+					d = f4(d, a, b, c, t[11], 10, -1120210379);
+					c = f4(c, d, a, b, t[2], 15,  718787259);
+					b = f4(b, c, d, a, t[9], 21, -343485551);
+					w[0] = add32(a, w[0]);
+					w[1] = add32(b, w[1]);
+					w[2] = add32(c, w[2]);
+					w[3] = add32(d, w[3]);
+				};
+				res = [1732584193, -271733879, -1732584194, 271733878];
+				i = 0;
+				while (i <= n - 64) {
+					t = [];
+					do {
+						t.push(((msg.arr[i >> 2] & 0xFF000000) >>> 24) | ((msg.arr[i >> 2] & 0x00FF0000) >>> 8) | ((msg.arr[i >> 2] & 0x0000FF00) << 8) | ((msg.arr[i >> 2] & 0x000000FF) << 24));
+						i += 4;
+					} while ( i % 64 !== 0 );
+					cycle(res, t);
+				}
+				t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				var j = 0;
+				while ( i < n ) {
+					t[j >> 2] = ((msg.arr[i >> 2] & 0xFF000000) >>> 24) | ((msg.arr[i >> 2] & 0x00FF0000) >>> 8) | ((msg.arr[i >> 2] & 0x0000FF00) << 8) | ((msg.arr[i >> 2] & 0x000000FF) << 24);
+					i++;
+					j++;
+				}
+				t[j >> 2] |= 0x80 << ((j % 4) << 3);
+				if (j > 55) {
+					cycle(res, t);
+					t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+				}
+				t[14] = n * 8;
+				cycle(res, t);
+				var k;
+				for (k = 0, l = res.length; k < l; k++) {
+					res[k] = ((res[k] & 0xFF) << 24) | (((res[k] >> 8) & 0xFF) << 16) | (((res[k] >> 16) & 0xFF) << 8) | ((res[k] >> 24) & 0xFF);
+				}
+				return {length: 16, arr: res};
+			case "SHA-256":
+				var bl = msg.length * 8;
+				msg.arr[bl >> 5] |= 0x80 << (24 - bl % 32);
+				msg.arr[((bl + 65 >> 9) << 4) + 15] = bl;
+				var K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+					0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+					0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+					0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+					0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+					0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+					0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+					0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+				var W = [];
+				res = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+				var a, b, c, d, e, f, g, h, T;
+				var l = msg.arr.length;
+				for(i = 0; i < l; i += 16){
+					a = res[0];
+					b = res[1];
+					c = res[2];
+					d = res[3];
+					e = res[4];
+					f = res[5];
+					g = res[6];
+					h = res[7];
+					for(t = 0; t < 64; t++){
+						if (t < 16) {
+							W[t] = msg.arr[i + t];
+						} else {
+							var g0 = W[t - 15];
+							var g1 = W[t - 2];
+							W[t] = add32(add32(add32(((g0 << 25) | (g0 >>> 7)) ^ ((g0 << 14) | (g0 >>> 18)) ^ (g0 >>> 3), W[t - 7]), ((g1 << 15) | (g1 >>> 17)) ^ ((g1 << 13) | (g1 >>> 19)) ^ (g1 >>> 10)), W[t - 16]);
+						}
+						var a1 = add32(add32(add32(add32(h, ((e << 26) | (e >>> 6)) ^ ((e << 21) | (e >>> 11)) ^ ((e << 7) | (e >>> 25))), (e & f) ^ (~e & g)), K[t]), W[t]);
+						var a2 = add32(((a << 30) | (a >>> 2)) ^ ((a << 19) | (a >>> 13)) ^ ((a << 10) | (a >>> 22)), (a & b) ^ (a & c) ^ (b & c));
+						h = g;
+						g = f;
+						f = e;
+						e = add32(d, a1);
+						d = c;
+						c = b;
+						b = a;
+						a = add32(a1, a2);
+					}
+					res[0] = add32(a, res[0]);
+					res[1] = add32(b, res[1]);
+					res[2] = add32(c, res[2]);
+					res[3] = add32(d, res[3]);
+					res[4] = add32(e, res[4]);
+					res[5] = add32(f, res[5]);
+					res[6] = add32(g, res[6]);
+					res[7] = add32(h, res[7]);
+				}
+				return {length: 32, arr: res};
+			case "BASE64":
+				str = str.replace(/\r\n/g,"\n");
+				var l2b = str.length;
+				str2 = "";
+				for (i = 0; i < l2b; i++) {
+					var c0 = str.charCodeAt(i);
+					str2 += c0 < 128 ? str.charAt(i) : c0 > 127 && c0 < 2048 ? String.fromCharCode(c0 >> 6 | 192, c0 & 63 | 128) : String.fromCharCode(c0 >> 12 | 224, c0 >> 6 & 63 | 128, c0 & 63 | 128);
+				}
+				l2b = str2.length;
+				var res = "";
+				for (i = 0; i < l2b; i += 3) {
+					var c1b = str2.charCodeAt(i);
+					var c2b = i + 1 < l2b ? str2.charCodeAt(i + 1) : 0;
+					var c3b = i + 2 < l2b ? str2.charCodeAt(i + 2) : 0;
+					res += b64.charAt(c1b >> 2) + b64.charAt((c1b & 3) << 4 | c2b >> 4) + (i + 1 < l2b ? b64.charAt((c2b & 15) << 2 | c3b >> 6) : "=") + (i + 2 < l2b ? b64.charAt(c3b & 63) : "=");
+				}
+				return res;
+		}
+	},
+
+		
+
+	hex32 : function(v) {
+		var h = v >>> 16;
+		var l = v & 0xFFFF;
+		return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000") + h.toString(16) + (l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000") + l.toString(16);
+	},
+	encode : function(msg, enco) {
+		var str = "", l, i, c1, c2, c3, b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+		if (enco === "base64") {
+			for (i = 0, l = msg.length; i < l; i += 3) {
+				c1 = (msg.arr[i >> 2] >> (24 - (i % 4) * 8)) & 0xFF;
+				c2 = i + 1 < l ? (msg.arr[(i + 1) >> 2] >> (24 - ((i + 1) % 4) * 8))& 0xFF : 0;
+				c3 = i + 2 < l ? (msg.arr[(i + 2) >> 2] >> (24 - ((i + 2) % 4) * 8))& 0xFF : 0;
+				str += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l ? b64.charAt(c3 & 63) : "=");
+			}
+			return str;
+		}
+		str = "";
+		for (i = 0, l = msg.length >> 2; i < l; i++) {
+			str += XsltForms_globals.hex32(msg.arr[i]);
+		}
+		if (msg.length % 4 !== 0) {
+			str += (msg.arr[msg.length >> 2] >>> (8 * (4 - msg.length % 4))).toString(16);
+		}
+		return str;
+	}
 };
 
 	
@@ -642,7 +1645,7 @@ XsltForms_browser.xsltsrcrelevany += '		</xsl:copy>';
 XsltForms_browser.xsltsrcrelevany += '	</xsl:template>';
 XsltForms_browser.xsltsrcrelevany += '</xsl:stylesheet>';
 
-if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
+if (XsltForms_domEngine === "" && (XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
 	XsltForms_browser.createXMLDocument = function(xml) {
 		var d = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		d.setProperty("SelectionLanguage", "XPath");
@@ -908,7 +1911,8 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 		}
 	};
 	try {
-		XsltForms_browser.parser = new DOMParser();
+		XsltForms_browser.parser = XsltForms_domEngine === "http://www.agencexml.com/Fleur" ? new Fleur.DOMParser() : new DOMParser();
+		/*
 		XsltForms_browser.xsltDoc = XsltForms_browser.parser.parseFromString(XsltForms_browser.xsltsrc, "text/xml");
 		XsltForms_browser.xsltProcessor = new XSLTProcessor();
 		XsltForms_browser.xsltProcessor.importStylesheet(XsltForms_browser.xsltDoc);
@@ -924,11 +1928,12 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 		XsltForms_browser.xsltDocIndent = XsltForms_browser.parser.parseFromString(XsltForms_browser.xsltsrcindent, "text/xml");
 		XsltForms_browser.xsltProcessorIndent = new XSLTProcessor();
 		XsltForms_browser.xsltProcessorIndent.importStylesheet(XsltForms_browser.xsltDocIndent);
+		*/
 	} catch (xsltforms_e) {
 	}
-	XsltForms_browser.serializer = new XMLSerializer();
+	XsltForms_browser.serializer = XsltForms_domEngine === "http://www.agencexml.com/Fleur" ? new Fleur.XMLSerializer() : new XMLSerializer();
 	XsltForms_browser.loadNode = function(dest, src) {
-		var r = src.cloneNode(true);
+		var r = dest.ownerDocument.importNode(src, true);
 		dest.parentNode.replaceChild(r, dest);
 	};
 	XsltForms_browser.loadTextNode = function(dest, txt) {
@@ -944,11 +1949,30 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 	XsltForms_browser.loadXML = function(dest, xml) {
 		var result = XsltForms_browser.parser.parseFromString(xml, "text/xml");
 		if (result.documentElement.localName !== "parsererror" && (!result.documentElement.textContent || result.documentElement.textContent.substring(0,40) !== "This page contains the following errors:")) {
-			var r = result.documentElement.cloneNode(true);
+			var r = dest.ownerDocument.importNode(result.documentElement, true);
 			dest.parentNode.replaceChild(r, dest);
 		} else {
 			XsltForms_globals.error(document.getElementById(XsltForms_browser.getMeta(dest.ownerDocument.documentElement, "model")).xfElement, "xforms-link-exception", "Unable to parse XML");
 		}
+	};
+	XsltForms_browser.selectMeta = function(node, selection) {
+		var i, li;
+		i = 0;
+		li = node.attributes.length;
+		while (i < li) {
+			if (node.attributes[i].nodeName.indexOf("xsltforms_") === 0) {
+				selection.push(node);
+				break;
+			}
+			i++;
+		}
+		var i, li;
+		i = 0;
+		li = node.children.length;
+		while (i < li) {
+			XsltForms_browser.selectMeta(node.children[i++], selection);
+		}
+		return selection;
 	};
 	XsltForms_browser.saveXML = function(node, relevant, indent, related, cdataSectionElements) {
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
@@ -1004,8 +2028,13 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 						}
 					}
 				}
-				var ns2 = resultDocument.selectNodes("descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]", false, resultDocument.documentElement);
-				for( var j = 0, l2 = ns2.length; j < l2 ; j++) {
+				var ns2;
+				if (resultDocument.selectNodes) {
+					ns2 = resultDocument.selectNodes("descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]", false, resultDocument.documentElement);
+				} else {
+					ns2 = XsltForms_browser.selectMeta(resultDocument.documentElement, []);
+				}
+				for (var j = 0, l2 = ns2.length; j < l2 ; j++) {
 					var n2 = ns2[j];
 					var k = 0;
 					while (k < n2.attributes.length) {
@@ -2270,1120 +3299,119 @@ String.prototype.addslashes = function() {
 		
 		
 
-(function(Fleur) {
-"use strict";
+if (XsltForms_globals.domEngine === "") {
+	(function(Fleur) {
+	"use strict";
 
-Fleur.Node = function() {};
-Fleur.Node.ELEMENT_NODE = 1;
-Fleur.Node.ATTRIBUTE_NODE = 2;
-Fleur.Node.TEXT_NODE = 3;
-Fleur.Node.CDATA_NODE = 4;
-Fleur.Node.ENTITY_REFERENCE_NODE = 5;
-Fleur.Node.ENTITY_NODE = 6;
-Fleur.Node.PROCESSING_INSTRUCTION_NODE = 7;
-Fleur.Node.COMMENT_NODE = 8;
-Fleur.Node.DOCUMENT_NODE = 9;
-Fleur.Node.DOCUMENT_TYPE_NODE = 10;
-Fleur.Node.DOCUMENT_FRAGMENT_NODE = 11;
-Fleur.Node.NOTATION_NODE = 12;
-Fleur.Node.NAMESPACE_NODE = 129;
-Fleur.Node.ATOMIC_NODE = Fleur.Node.TEXT_NODE;
-Fleur.Node.SEQUENCE_NODE = 130;
-Fleur.Node.ARRAY_NODE = 131;
-Fleur.Node.MAP_NODE = 132;
-Fleur.Node.ENTRY_NODE = 133;
+	Fleur.Node = function() {};
+	Fleur.Node.ELEMENT_NODE = 1;
+	Fleur.Node.ATTRIBUTE_NODE = 2;
+	Fleur.Node.TEXT_NODE = 3;
+	Fleur.Node.CDATA_NODE = 4;
+	Fleur.Node.ENTITY_REFERENCE_NODE = 5;
+	Fleur.Node.ENTITY_NODE = 6;
+	Fleur.Node.PROCESSING_INSTRUCTION_NODE = 7;
+	Fleur.Node.COMMENT_NODE = 8;
+	Fleur.Node.DOCUMENT_NODE = 9;
+	Fleur.Node.DOCUMENT_TYPE_NODE = 10;
+	Fleur.Node.DOCUMENT_FRAGMENT_NODE = 11;
+	Fleur.Node.NOTATION_NODE = 12;
+	Fleur.Node.NAMESPACE_NODE = 129;
+	Fleur.Node.ATOMIC_NODE = Fleur.Node.TEXT_NODE;
+	Fleur.Node.SEQUENCE_NODE = 130;
+	Fleur.Node.ARRAY_NODE = 131;
+	Fleur.Node.MAP_NODE = 132;
+	Fleur.Node.ENTRY_NODE = 133;
 
-Fleur.Serializer = function() {};
-Fleur.Serializer.escapeXML = function(s) {
-	return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-};
-Fleur.Serializer.prototype._serializeXMLToString = function(node, indent, offset, cdataSectionElements) {
-	var s, i, l;
-	switch (node.nodeType) {
-		case Fleur.Node.ELEMENT_NODE:
-			s = (indent ? offset + "\x3C" : "\x3C") + node.nodeName;
-			if (indent) {
-				var names = [];
-				for (i = 0, l = node.attributes.length; i < l; i++) {
-					names.push(node.attributes[i].nodeName);
+	Fleur.Serializer = function() {};
+	Fleur.Serializer.escapeXML = function(s) {
+		return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	};
+	Fleur.Serializer.prototype._serializeXMLToString = function(node, indent, offset, cdataSectionElements) {
+		var s, i, l;
+		switch (node.nodeType) {
+			case Fleur.Node.ELEMENT_NODE:
+				s = (indent ? offset + "\x3C" : "\x3C") + node.nodeName;
+				if (indent) {
+					var names = [];
+					for (i = 0, l = node.attributes.length; i < l; i++) {
+						names.push(node.attributes[i].nodeName);
+					}
+					names.sort();
+					for (i = 0, l = names.length; i < l; i++) {
+						s += " " + names[i] + "=\"" + Fleur.Serializer.escapeXML(node.getAttribute(names[i])).replace('"', "&quot;") + "\"";
+					}
+				} else {
+					for (i = 0, l = node.attributes.length; i < l; i++) {
+						s += " " + node.attributes[i].nodeName + "=\"" + Fleur.Serializer.escapeXML(node.attributes[i].nodeValue).replace('"', "&quot;") + "\"";
+					}
 				}
-				names.sort();
-				for (i = 0, l = names.length; i < l; i++) {
-					s += " " + names[i] + "=\"" + Fleur.Serializer.escapeXML(node.getAttribute(names[i])).replace('"', "&quot;") + "\"";
+				if (node.childNodes.length === 0) {
+					return s + (indent ? "/\x3E\n" : "/\x3E");
 				}
-			} else {
-				for (i = 0, l = node.attributes.length; i < l; i++) {
-					s += " " + node.attributes[i].nodeName + "=\"" + Fleur.Serializer.escapeXML(node.attributes[i].nodeValue).replace('"', "&quot;") + "\"";
-				}
-			}
-			if (node.childNodes.length === 0) {
-				return s + (indent ? "/\x3E\n" : "/\x3E");
-			}
-			s += indent && (node.childNodes[0].nodeType !== Fleur.Node.TEXT_NODE || node.childNodes[0].data.match(/^[ \t\n\r]*$/)) ? "\x3E\n" : "\x3E";
-			if (cdataSectionElements.indexOf(" " + node.nodeName + " ") !== -1) {
-				for (i = 0, l = node.childNodes.length; i < l; i++) {
-					if (node.childNodes[i].nodeType === Fleur.Node.TEXT_NODE) {
-						s += "\x3C![CDATA[";
-						s += node.childNodes[i].data;
-						s += "]]\x3E";
-					} else {
+				s += indent && (node.childNodes[0].nodeType !== Fleur.Node.TEXT_NODE || node.childNodes[0].data.match(/^[ \t\n\r]*$/)) ? "\x3E\n" : "\x3E";
+				if (cdataSectionElements.indexOf(" " + node.nodeName + " ") !== -1) {
+					for (i = 0, l = node.childNodes.length; i < l; i++) {
+						if (node.childNodes[i].nodeType === Fleur.Node.TEXT_NODE) {
+							s += "\x3C![CDATA[";
+							s += node.childNodes[i].data;
+							s += "]]\x3E";
+						} else {
+							s += this._serializeXMLToString(node.childNodes[i], indent, offset + "  ", cdataSectionElements);
+						}
+					}
+				} else {
+					for (i = 0, l = node.childNodes.length; i < l; i++) {
 						s += this._serializeXMLToString(node.childNodes[i], indent, offset + "  ", cdataSectionElements);
 					}
 				}
-			} else {
+				return s + (indent && (node.childNodes[0].nodeType !== Fleur.Node.TEXT_NODE || node.childNodes[0].data.match(/^[ \t\n\r]*$/)) ? offset + "\x3C/" : "\x3C/") + node.nodeName + (indent ? "\x3E\n" : "\x3E");
+			case Fleur.Node.TEXT_NODE:
+				if (indent && node.data.match(/^[ \t\n\r]*$/) && node.parentNode.childNodes.length !== 1) {
+					return "";
+				}
+				return Fleur.Serializer.escapeXML(node.data);
+			case Fleur.Node.CDATA_NODE:
+				return (indent ? offset + "\x3C![CDATA[" : "\x3C![CDATA[") + node.data + (indent ? "]]\x3E\n" : "]]\x3E");
+			case Fleur.Node.PROCESSING_INSTRUCTION_NODE:
+				return (indent ? offset + "\x3C?" : "\x3C?") + node.nodeName + " " + node.nodeValue + (indent ? "?\x3E\n" : "?\x3E");
+			case Fleur.Node.COMMENT_NODE:
+				return (indent ? offset + "\x3C!--" : "\x3C!--") + node.data + (indent ? "--\x3E\n" : "--\x3E");
+			case Fleur.Node.DOCUMENT_NODE:
+				s = '\x3C?xml version="1.0" encoding="UTF-8"?\x3E\r\n';
 				for (i = 0, l = node.childNodes.length; i < l; i++) {
-					s += this._serializeXMLToString(node.childNodes[i], indent, offset + "  ", cdataSectionElements);
+					s += this._serializeXMLToString(node.childNodes[i], indent, offset, cdataSectionElements);
 				}
-			}
-			return s + (indent && (node.childNodes[0].nodeType !== Fleur.Node.TEXT_NODE || node.childNodes[0].data.match(/^[ \t\n\r]*$/)) ? offset + "\x3C/" : "\x3C/") + node.nodeName + (indent ? "\x3E\n" : "\x3E");
-		case Fleur.Node.TEXT_NODE:
-			if (indent && node.data.match(/^[ \t\n\r]*$/) && node.parentNode.childNodes.length !== 1) {
-				return "";
-			}
-			return Fleur.Serializer.escapeXML(node.data);
-		case Fleur.Node.CDATA_NODE:
-			return (indent ? offset + "\x3C![CDATA[" : "\x3C![CDATA[") + node.data + (indent ? "]]\x3E\n" : "]]\x3E");
-		case Fleur.Node.PROCESSING_INSTRUCTION_NODE:
-			return (indent ? offset + "\x3C?" : "\x3C?") + node.nodeName + " " + node.nodeValue + (indent ? "?\x3E\n" : "?\x3E");
-		case Fleur.Node.COMMENT_NODE:
-			return (indent ? offset + "\x3C!--" : "\x3C!--") + node.data + (indent ? "--\x3E\n" : "--\x3E");
-		case Fleur.Node.DOCUMENT_NODE:
-			s = '\x3C?xml version="1.0" encoding="UTF-8"?\x3E\r\n';
-			for (i = 0, l = node.childNodes.length; i < l; i++) {
-				s += this._serializeXMLToString(node.childNodes[i], indent, offset, cdataSectionElements);
-			}
-			return s;
-	}
-};
+				return s;
+		}
+	};
 
-Fleur.Serializer.prototype.serializeToString = function(node, mediatype, indent, cdataSectionElements) {
-	var media = mediatype.split(";"), config = {}, param, paramreg = /^\s*(\S*)\s*=\s*(\S*)\s*$/, i = 1, l = media.length, ser;
-	while (i < l) {
-		param = paramreg.exec(media[i]);
-		config[param[1]] = param[2];
-		i++;
-	}
-	switch (media[0].replace(/^\s+|\s+$/gm,'')) {
-		case "text/xml":
-		case "application/xml":
-			var ser = this._serializeXMLToString(node, indent, "", " " + cdataSectionElements + " ");
-			if (indent && ser.charAt(ser.length - 1) === "\n") {
-				ser = ser.substr(0, ser.length - 1);
-			}
-			return ser;
-	}
-};
-
-Fleur.XMLSerializer = function() {};
-Fleur.XMLSerializer.prototype = new Fleur.Serializer();
-Fleur.XMLSerializer.prototype.serializeToString = function(node, indent, cdataSectionElements) {
-	return Fleur.Serializer.prototype.serializeToString.call(this, node, "application/xml", indent, cdataSectionElements);
-};
-
-})(typeof exports === 'undefined'? this.Fleur = {}: exports);
-
-	
-		
-		
-		
-/*jshint noarg:false, forin:true, noempty:true, eqeqeq:true, evil:true, bitwise:true, loopfunc:true, scripturl:true, strict:true, undef:true, curly:true, browser:true, devel:true, maxerr:100, newcap:true */
-//"use strict";
-/*members */
-/*global ActiveXObject, alert, Document, XDocument, Element, DOMParser, XMLSerializer, XSLTProcessor */
-/*global tinyMCE */
-/*global XMLDocument : true */
-/*global XsltForms_browser : true, XsltForms_nodeType : true, XsltForms_schema : true */
-/*global XsltForms_calendar : true, XsltForms_numberList : true, XsltForms_xmlevents : true */
-/*global XsltForms_abstractAction : true, XsltForms_repeat : true, XsltForms_element : true */
-/*global XsltForms_control : true, XsltForms_xpathCoreFunctions : true, XsltForms_xpathFunctionExceptions : true */
-/*global XsltForms_idManager : true, XsltForms_xpath : true, XsltForms_listener : true */
-/*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
-var XsltForms_globals = {
-
-	fileVersion: "622",
-	fileVersionNumber: 622,
-
-	language: "navigator",
-	debugMode: false,
-	debugButtons: [
-		{label: "Profiler", name: "profiler"}
-		,{label: "Trace Log", name: "tracelog"}
-		/*
-		,{label: "Validator"},
-		,{label: "XPath Evaluator"}
-		*/
-	],
-	cont : 0,
-	ready : false,
-	body : null,
-	models : [],
-	changes : [],
-	newChanges : [],
-	building : false,
-	posibleBlur : false,
-	bindErrMsgs : [],		// binding-error messages gathered during refreshing
-	transformtime: "unknown",
-	htmltime: 0,
-	creatingtime: 0,
-	inittime: 0,
-	refreshtime: 0,
-	refreshcount: 0,
-	validationError: true,
-	counters: {
-		component: 0,
-		group: 0,
-		input: 0,
-		item: 0,
-		itemset: 0,
-		label: 0,
-		output: 0,
-		repeat: 0,
-		select: 0,
-		trigger: 0,
-		upload: 0,
-		xvar: 0
-	},
-	nbsubforms: 0,
-	componentLoads: [],
-	jslibraries: {},
-	htmlversion: "4",
-
-		
-
-	debugging : function() {
-		if (document.documentElement.childNodes[0].nodeType === 8 || (XsltForms_browser.isIE && document.documentElement.childNodes[0].childNodes[1] && document.documentElement.childNodes[0].childNodes[1].nodeType === 8)) {
-			var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
-			if (this.debugMode) {
-				var dbg = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "div") : document.createElement("div");
-				dbg.setAttribute("style", "border-bottom: thin solid #888888;");
-				dbg.setAttribute("id", "xsltforms_debug");
-				var img = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
-				img.setAttribute("src", XsltForms_browser.ROOT+"magnify.png");
-				img.setAttribute("style", "vertical-align:middle;border:0;");
-				dbg.appendChild(img);
-				var spn = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
-				spn.setAttribute("style", "font-size:16pt");
-				var txt = document.createTextNode(" Debug Mode");
-				spn.appendChild(txt);
-				dbg.appendChild(spn);
-				var spn2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
-				spn2.setAttribute("style", "font-size:11pt");
-				var txt2 = document.createTextNode(" ("+this.fileVersion+") \xA0\xA0\xA0");
-				spn2.appendChild(txt2);
-				dbg.appendChild(spn2);
-				var a = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
-				a.setAttribute("href", "http://www.w3.org/TR/xforms11/");
-				a.setAttribute("style", "text-decoration:none;");
-				var img2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
-				img2.setAttribute("src", XsltForms_browser.ROOT+"valid-xforms11.png");
-				img2.setAttribute("style", "vertical-align:middle;border:0;");
-				a.appendChild(img2);
-				dbg.appendChild(a);
-				var a2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
-				a2.setAttribute("href", "http://www.agencexml.com/xsltforms");
-				a2.setAttribute("style", "text-decoration:none;");
-				var img3 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
-				img3.setAttribute("src", XsltForms_browser.ROOT+"poweredbyXSLTForms.png");
-				img3.setAttribute("style", "vertical-align:middle;border:0;");
-				a2.appendChild(img3);
-				dbg.appendChild(a2);
-				var spn3 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
-				spn3.setAttribute("style", "font-size:11pt");
-				var txt3 = document.createTextNode(" Press ");
-				spn3.appendChild(txt3);
-				dbg.appendChild(spn3);
-				var a3 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
-				a3.setAttribute("onClick", "XsltForms_globals.debugMode=false;XsltForms_globals.debugging();return false;");
-				a3.setAttribute("style", "text-decoration:none;");
-				a3.setAttribute("href", "#");
-				var img4 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "img") : document.createElement("img");
-				img4.setAttribute("src", XsltForms_browser.ROOT+"F1.png");
-				img4.setAttribute("style", "vertical-align:middle;border:0;");
-				a3.appendChild(img4);
-				dbg.appendChild(a3);
-				var spn4 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
-				spn4.setAttribute("style", "font-size:11pt");
-				var txt4 = document.createTextNode(" to toggle mode ");
-				spn4.appendChild(txt4);
-				dbg.appendChild(spn4);
-				var br = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "br") : document.createElement("br");
-				dbg.appendChild(br);
-				var txt5 = document.createTextNode(" \xA0\xA0\xA0\xA0\xA0\xA0");
-				dbg.appendChild(txt5);
-				for (var i = 0, len = XsltForms_globals.debugButtons.length; i < len; i++) {
-					if (XsltForms_globals.debugButtons[i].name) {
-						var btn = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "button") : document.createElement("button");
-						btn.setAttribute("type", "button");
-						btn.setAttribute("onClick", "XsltForms_globals.opentab('" + XsltForms_globals.debugButtons[i].name + "');");
-						var txt6 = document.createTextNode(" "+XsltForms_globals.debugButtons[i].label+" ");
-						btn.appendChild(txt6);
-						dbg.appendChild(btn);
-					} else {
-						var a4 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "a") : document.createElement("a");
-						a4.setAttribute("href", "http://www.agencexml.com/xsltforms");
-						var txt7 = document.createTextNode(" Debugging extensions can be downloaded! ");
-						a4.appendChild(txt7);
-						dbg.appendChild(a4);
-						break;
-					}
+	Fleur.Serializer.prototype.serializeToString = function(node, mediatype, indent, cdataSectionElements) {
+		var media = mediatype.split(";"), config = {}, param, paramreg = /^\s*(\S*)\s*=\s*(\S*)\s*$/, i = 1, l = media.length, ser;
+		while (i < l) {
+			param = paramreg.exec(media[i]);
+			config[param[1]] = param[2];
+			i++;
+		}
+		switch (media[0].replace(/^\s+|\s+$/gm,'')) {
+			case "text/xml":
+			case "application/xml":
+				var ser = this._serializeXMLToString(node, indent, "", " " + cdataSectionElements + " ");
+				if (indent && ser.charAt(ser.length - 1) === "\n") {
+					ser = ser.substr(0, ser.length - 1);
 				}
-				var br2 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "br") : document.createElement("br");
-				dbg.appendChild(br2);
-				var ifr = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "iframe") : document.createElement("iframe");
-				ifr.setAttribute("src", "http://www.agencexml.com/direct/banner.htm");
-				ifr.setAttribute("style", "width:100%;height:90px;border:none;margin:0;");
-				ifr.setAttribute("frameborder", "0");
-				var ids_seen = {};
-				var nodes6 = document.getElementsByTagName('*');
-				for (var i6 = 0, l6 = nodes6.length; i6 < l6; i6++) {
-					var node6 = nodes6[i6];
-					if (node6.id) {
-						var id6 = node6.id;
-						ids_seen[id6] = ids_seen[id6] ? ids_seen[id6]+1 : 1;
-					}
-				}
-				var s6 = "";
-				for (var id6b in ids_seen) {
-					if (ids_seen[id6b] > 1) {
-						s6 += id6b + " ";
-					}
-				}
-				if (s6 !== "") {
-					var txt6b = document.createTextNode("WARNING: Duplicate ids: " + s6);
-					var spn6 = XsltForms_browser.isXhtml ? document.createElementNS("http://www.w3.org/1999/xhtml", "span") : document.createElement("span");
-					spn6.setAttribute("style", "color:red; font-size: 22pt");
-					spn6.appendChild(txt6b);
-					dbg.appendChild(spn6);
-				}
-				dbg.appendChild(ifr);
-				body.insertBefore(dbg, body.firstChild);
-				document.getElementById("xsltforms_console").style.display = "block";
-			} else {
-				body.removeChild(document.getElementById("xsltforms_debug"));
-				document.getElementById("xsltforms_console").style.display = "none";
-			}
+				return ser;
 		}
-	},
+	};
 
-		
+	Fleur.XMLSerializer = function() {};
+	Fleur.XMLSerializer.prototype = new Fleur.Serializer();
+	Fleur.XMLSerializer.prototype.serializeToString = function(node, indent, cdataSectionElements) {
+		return Fleur.Serializer.prototype.serializeToString.call(this, node, "application/xml", indent, cdataSectionElements);
+	};
 
-	xmlrequest : function(method, resource, ser) {
-		if (typeof method !== "string") {
-			return '<error xmlns="">Invalid method "'+method+'"</error>';
-		}
-		method = method.toLowerCase();
-		var instance, modid;
-		switch (method) {
-			case "get":
-				switch (resource) {
-					case "xsltforms-profiler":
-						return XsltForms_globals.profiling_data();
-					case "xsltforms-tracelog":
-						try  {
-							return XsltForms_browser.saveXML(XsltForms_browser.debugConsole.doc_.documentElement, true);
-						} catch (e) {
-							XsltForms_browser.debugConsole.write("ERROR: Could not open xsltforms-tracelog " + e.message);
-							return '<error xmlns="">Could not open xsltforms-tracelog "'+e.message+'"</error>';
-						}
-					default:
-						var slash = resource.indexOf("/");
-						if (slash === -1 ) {
-							instance = document.getElementById(resource);
-							if (!instance) {
-								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
-							}
-							return XsltForms_browser.saveXML(instance.xfElement.doc.documentElement, true);
-						} else {
-							var filename = resource.substr(slash+1);
-							instance = document.getElementById(resource.substr(0, slash));
-							if (!instance) {
-								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
-							}
-							var f = instance.xfElement.archive[filename];
-							if (!f) {
-								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
-							}
-							if (!f.doc) {
-								f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
-								modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
-								XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
-								XsltForms_browser.setMeta(f.doc.documentElement, "instance", idRef);
-								XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
-							}
-							return XsltForms_browser.saveXML(f.doc.documentElement, true);
-						}
-				}
-				break;
-			case "put":
-				instance = document.getElementById(resource);
-				if (!instance) {
-					return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
-				}
-				instance.xfElement.setDoc(ser, false, true);
-				modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
-				XsltForms_globals.addChange(modid);
-				XsltForms_globals.closeChanges();
-				return '<ok xmlns=""/>';
-			default:
-				return '<error xmlns="">Unknown method "'+method+'"</error>';
-		}
-	},
-
-		
-
-	profiling_data : function() {
-		var s = '<xsltforms:dump xmlns:xsltforms="http://www.agencexml.com/xsltforms">';
-		s += '<xsltforms:date>' + XsltForms_browser.i18n.format(new Date(), "yyyy-MM-ddThh:mm:ssz", true) + '</xsltforms:date>';
-		s += '<xsltforms:location>' + XsltForms_browser.escape(window.location.href) + '</xsltforms:location>';
-		s += '<xsltforms:appcodename>' + navigator.appCodeName + '</xsltforms:appcodename>';
-		s += '<xsltforms:appname>' + navigator.appName + '</xsltforms:appname>';
-		s += '<xsltforms:appversion>' + navigator.appVersion + '</xsltforms:appversion>';
-		s += '<xsltforms:platform>' + navigator.platform + '</xsltforms:platform>';
-		s += '<xsltforms:useragent>' + navigator.userAgent + '</xsltforms:useragent>';
-		s += '<xsltforms:xsltengine>' + this.xsltEngine + '</xsltforms:xsltengine>';
-		var xsltsrc = '<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxsl="urn:schemas-microsoft-com:xslt">';
-		xsltsrc += '	<xsl:output method="xml"/>';
-		xsltsrc += '	<xsl:template match="/">';
-		xsltsrc += '		<xsl:variable name="version">';
-		xsltsrc += '			<xsl:if test="system-property(\'xsl:vendor\')=\'Microsoft\'">';
-		xsltsrc += '				<xsl:value-of select="system-property(\'msxsl:version\')"/>';
-		xsltsrc += '			</xsl:if>';
-		xsltsrc += '		</xsl:variable>';
-		xsltsrc += '		<properties><xsl:value-of select="concat(\'|\',system-property(\'xsl:vendor\'),\' \',system-property(\'xsl:vendor-url\'),\' \',$version,\'|\')"/></properties>';
-		xsltsrc += '	</xsl:template>';
-		xsltsrc += '</xsl:stylesheet>';
-		var res = XsltForms_browser.transformText("<dummy/>", xsltsrc, true);
-		var spres = res.split("|");
-		s += '<xsltforms:xsltengine2>' + spres[1] + '</xsltforms:xsltengine2>';
-		s += '<xsltforms:version>' + this.fileVersion + '</xsltforms:version>';
-		s += '<xsltforms:instances>';
-		var pos = 0;
-		for (var m = 0, mlen = XsltForms_globals.models.length; m < mlen; m++) {
-			if (XsltForms_globals.models[m].element.id !== XsltForms_browser.idPf + "model-config") {
-				for (var id in XsltForms_globals.models[m].instances) {
-					if (XsltForms_globals.models[m].instances.hasOwnProperty(id)) {
-						var count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].doc);
-						s += '<xsltforms:instance id="' + id + '">' + count + '</xsltforms:instance>';
-						if (XsltForms_globals.models[m].instances[id].archive) {
-							for (var fn in XsltForms_globals.models[m].instances[id].archive) {
-								if (XsltForms_globals.models[m].instances[id].archive.hasOwnProperty(fn)) {
-									if (!XsltForms_globals.models[m].instances[id].archive[fn].doc) {
-										XsltForms_globals.models[m].instances[id].archive[fn].doc = XsltForms_browser.createXMLDocument("<dummy/>");
-										XsltForms_browser.loadXML(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(XsltForms_globals.models[m].instances[id].archive[fn].compressedFileData)));
-										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "instance", id);
-										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "model", m);
-									}
-									count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].archive[fn].doc);
-									s += '<xsltforms:instance id="' + id + '/' + fn + '">' + count + '</xsltforms:instance>';
-								}
-							}
-						}
-						pos++;
-					}
-				}
-			}
-		}
-		s += '</xsltforms:instances>';
-		s += '<xsltforms:controls>';
-		s += '<xsltforms:control type="group">' + XsltForms_globals.counters.group + '</xsltforms:control>';
-		s += '<xsltforms:control type="input">' + XsltForms_globals.counters.input + '</xsltforms:control>';
-		s += '<xsltforms:control type="item">' + XsltForms_globals.counters.item + '</xsltforms:control>';
-		s += '<xsltforms:control type="itemset">' + XsltForms_globals.counters.itemset + '</xsltforms:control>';
-		s += '<xsltforms:control type="output">' + XsltForms_globals.counters.output + '</xsltforms:control>';
-		s += '<xsltforms:control type="repeat">' + XsltForms_globals.counters.repeat + '</xsltforms:control>';
-		s += '<xsltforms:control type="select">' + XsltForms_globals.counters.select + '</xsltforms:control>';
-		s += '<xsltforms:control type="trigger">' + XsltForms_globals.counters.trigger + '</xsltforms:control>';
-		s += '</xsltforms:controls>';
-		var re = /<\w/g;
-		var hc = 0;
-		var bhtml = document.documentElement.innerHTML;
-		while (re.exec(bhtml)) {
-			hc++;
-		}
-		s += '<xsltforms:htmlelements>' + hc + '</xsltforms:htmlelements>';
-		s += '<xsltforms:transformtime>' + this.transformtime + '</xsltforms:transformtime>';
-		s += '<xsltforms:htmltime>' + this.htmltime + '</xsltforms:htmltime>';
-		s += '<xsltforms:creatingtime>' + this.creatingtime + '</xsltforms:creatingtime>';
-		s += '<xsltforms:inittime>' + this.inittime + '</xsltforms:inittime>';
-		s += '<xsltforms:refreshcount>' + this.refreshcount + '</xsltforms:refreshcount>';
-		s += '<xsltforms:refreshtime>' + this.refreshtime + '</xsltforms:refreshtime>';
-		var exprtab = [];
-		for (var expr in XsltForms_xpath.expressions) {
-			if (XsltForms_xpath.expressions.hasOwnProperty(expr) && XsltForms_xpath.expressions[expr]) {
-				exprtab[exprtab.length] = {expr: expr, evaltime: XsltForms_xpath.expressions[expr].evaltime};
-			}
-		}
-		exprtab.sort(function(a,b) { return b.evaltime - a.evaltime; });
-		var top = 0;
-		s += '<xsltforms:xpaths>';
-		if (exprtab.length > 0) {
-			for (var i = 0; i < exprtab.length && i < 20; i++) {
-				s += '<xsltforms:xpath expr="' + XsltForms_browser.escape(exprtab[i].expr).replace(/\"/g, "&quot;") + '">' + exprtab[i].evaltime + '</xsltforms:xpath>';
-				top += exprtab[i].evaltime;
-			}
-			if (exprtab.length > 20) {
-				var others = 0;
-				for (var j = 20; j < exprtab.length; j++) {
-					others += exprtab[j].evaltime;
-				}
-				s += '<xsltforms:others count="' + (exprtab.length - 20) + '">' + others + '</xsltforms:others>';
-				top += others;
-			}
-			s += '<xsltforms:total>' + top + '</xsltforms:total>';
-		}
-		s += '</xsltforms:xpaths>';
-		s += '</xsltforms:dump>';
-		return s;
-	},
-
-		
-
-	opentab : function(name) {
-		var req = XsltForms_browser.openRequest("GET", XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml", false);
-		if (req.overrideMimeType) {
-			req.overrideMimeType("application/xml");
-		}
-		try {        
-			req.send(null);
-		} catch(e) {
-			alert("File not found: " + XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml");
-		}
-		if (req.status === 200 || req.status === 0) {
-			var s = "";
-			try {
-				s = XsltForms_browser.transformText(req.responseText, XsltForms_browser.ROOT + "xsltforms.xsl", false, "xsltforms_debug", "false", "baseuri", XsltForms_browser.ROOT);
-			} catch (e) {
-				XsltForms_browser.debugConsole.write("ERROR: Could not get contents of xsltforms_debug - " + e.message);
-			}			
-			if (s.substring(0, 21) === '<?xml version="1.0"?>') {
-				s = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + s.substring(21);
-			}
-			var prow = window.open("about:blank","_blank");
-			prow.document.write(s);
-			prow.document.close();
-		} else {
-			XsltForms_browser.debugConsole.write("File not found (" + req.status + "): " + XsltForms_browser.ROOT + "xsltforms_" + name + ".xhtml");
-		}
-	},
-
-		
-
-	init: function() {
-		XsltForms_browser.setValue(document.getElementById("statusPanel"), XsltForms_browser.i18n.get("status"));
-		this.htmlversion = XsltForms_browser.i18n.get("html");
-		var b = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
-		this.body = b;
-		document.onhelp = function(){return false;};
-		window.onhelp = function(){return false;};
-		XsltForms_browser.events.attach(document, "keydown", function(evt) {
-			if (evt.keyCode === 112) {
-				XsltForms_globals.debugMode = !XsltForms_globals.debugMode;
-				XsltForms_globals.debugging();
-				if (evt.stopPropagation) {
-					evt.stopPropagation();
-					evt.preventDefault();
-				} else {
-					evt.cancelBubble = true;
-				}
-				return false;
-			}
-		}, false);
-		XsltForms_browser.events.attach(b, "click", function(evt) {
-			var target = XsltForms_browser.events.getTarget(evt);
-			var parent = target;
-			while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
-				if (XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
-					XsltForms_repeat.selectItem(parent);
-				}
-				parent = parent.parentNode;
-			}
-			parent = target;
-			while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
-				var xf = parent.xfElement;
-				if (xf) {
-					if(typeof parent.node !== "undefined" && parent.node && xf.focus && !XsltForms_browser.getBoolMeta(parent.node, "readonly")) {
-						var name = target.nodeName.toLowerCase();
-						xf.focus(name === "input" || name === "textarea", evt);
-					}
-					if(xf.click && xf.input && !xf.input.disabled) {
-						xf.click(target, evt);
-						break;
-					}
-				}
-				parent = parent.parentNode;
-			}
-		}, false);
-		XsltForms_browser.events.onunload = function() {
-			XsltForms_globals.close();
-		};
-		this.openAction("XsltForms_globals.init");
-		XsltForms_xmlevents.dispatchList(this.models, "xforms-model-construct");
-		for (var i = 0, l = this.componentLoads.length; i < l; i++) {
-			eval(this.componentLoads[i]);
-		}
-		this.refresh();
-		this.closeAction("XsltForms_globals.init");
-		this.ready = true;
-		XsltForms_browser.dialog.hide("statusPanel", false);
-	},
-
-		
-
-	close : function() {
-		if (XsltForms_globals.body) {
-			this.openAction("XsltForms_globals.close");
-			//XsltForms_xmlevents.dispatchList(XsltForms_globals.models, "xforms-model-destruct");
-			for (var i = 0, len = XsltForms_listener.destructs.length; i < len; i++) {
-				XsltForms_listener.destructs[i].callback({target: XsltForms_listener.destructs[i].observer});
-			}
-			this.closeAction("XsltForms_globals.close");
-			XsltForms_idManager.clear();
-			this.defaultModel = null;
-			this.changes = [];
-			this.models = [];
-			this.body = null;
-			this.cont = 0;
-			this.dispose(document.documentElement);
-			XsltForms_listener.destructs = [];
-			XsltForms_schema.all = {};
-			XsltForms_typeDefs.initAll();
-			XsltForms_calendar.INSTANCE = null;
-			this.ready = false;
-			this.building = false;
-			XsltForms_globals.posibleBlur = false;
-		}
-	},
-
-		
-
-	openActions : [],
-	openAction : function(action) {
-		//console.log("openAction(" + action + "): changes = " + this.changes.length + " / cont = " + this.cont);
-		this.openActions.push(action);
-		if (this.cont++ === 0) {
-			XsltForms_browser.debugConsole.clear();
-		}
-	},
-
-		
-
-	closeAction : function(action) {
-		//console.log("closeAction(" + action + "): " + this.changes.length + "/" + this.cont);
-		var lastaction = this.openActions.pop();
-		/*
-		if (lastaction !== action) {
-			alert("Action mismatch: '" + lastaction + "' was expected instead of '" + action + "'");
-		}
-		*/
-		if (this.cont === 1) {
-			this.closeChanges();
-		}
-		this.cont--;
-	},
-
-		
-
-	closeChanges : function(force) {
-		var changes = this.changes;
-		for (var i = 0, len = changes.length; i < len; i++) {
-			var change = changes[i];
-			if (change && change.instances) {//Model
-				if (change.rebuilded) {
-					XsltForms_xmlevents.dispatch(change, "xforms-rebuild");
-				} else {
-					XsltForms_xmlevents.dispatch(change, "xforms-recalculate");
-				}
-			//} else { // Repeat or tree
-			}
-		}
-		if (changes.length > 0 || force) {
-			this.refresh();
-			if (this.changes.length > 0) {
-				this.closeChanges();
-			}
-		}
-	},
-
-		
-
-	error : function(element, event, message, causeMessage) {
-		XsltForms_browser.dialog.hide("statusPanel", false);
-		XsltForms_browser.setValue(document.getElementById("statusPanel"), message);
-		XsltForms_browser.dialog.show("statusPanel", null, false);
-		if (element) {
-			XsltForms_xmlevents.dispatch(element, event);
-		}
-		if (causeMessage) {
-			message += " : " + causeMessage;
-		}
-		XsltForms_browser.debugConsole.write("Error: " + message);
-		throw event;        
-	},
-
-		
-
-	refresh : function() {
-		var d1 = new Date();
-		this.building = true;
-		this.build(this.body, (this.defaultModel.getInstanceDocument() ? this.defaultModel.getInstanceDocument().documentElement : null), true);
-		if (this.newChanges.length > 0) {
-			this.changes = this.newChanges;
-			this.newChanges = [];
-		} else {
-			this.changes.length = 0;
-		}
-		for (var i = 0, len = this.models.length; i < len; i++) {
-			var model = this.models[i];
-			if (model.newNodesChanged.length > 0 || model.newRebuilded) {
-				model.nodesChanged = model.newNodesChanged;
-				model.newNodesChanged = [];
-				model.rebuilded = model.newRebuilded;
-				model.newRebuilded = false;
-			} else {
-				model.nodesChanged.length = 0;
-				model.rebuilded = false;
-			}
-		}
-		this.building = false;
-		// Throw any gathered binding-errors.
-		//
-		if (this.bindErrMsgs.length) {
-			this.error(this.defaultModel, "xforms-binding-exception", "Binding Errors: \n" + this.bindErrMsgs.join("\n  "));
-			this.bindErrMsgs = [];
-		}
-		var d2 = new Date();
-		this.refreshtime += d2 - d1;
-		this.refreshcount++;
-	},
-
-		
-
-	build : function(element, ctx, selected, varresolver) {
-		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
-			return {ctx: ctx, hasXFElement: false};
-		}
-		var xf = element.xfElement;
-		var hasXFElement = !!xf;
-		if (element.getAttribute("mixedrepeat") === "true") {
-			//ctx = element.node || ctx;
-			selected = element.selected;
-		}
-		if (xf) {
-			if (xf instanceof Array) {
-				for (var ixf = 0, lenxf = xf.length; ixf < lenxf; ixf++) {
-					xf[ixf].build(ctx, varresolver);
-				}
-			} else {
-				xf.build(ctx, varresolver);
-				if (xf.isRepeat) {
-					xf.refresh(selected);
-				}
-			}
-		}
-		var newctx = element.node || ctx;
-		var childs = element.children || element.childNodes;
-		var sel = element.selected;
-		if (typeof sel !== "undefined") {
-			selected = sel;
-		}
-		if (!xf || (xf instanceof Array) || !xf.isRepeat || xf.nodes.length > 0) {
-			var nbsiblings = 1, isiblings = 1;
-			var nodes = [], nbnodes = 0, inodes = 0;
-			for (var i = 0; i < childs.length && this.building; i++) {
-				if (childs[i].nodeType !== XsltForms_nodeType.TEXT) {
-					var curctx;
-					if (isiblings !== 1) {
-						curctx = nodes[inodes];
-						isiblings--;
-					} else if (nbnodes !== 0) {
-						nbnodes--;
-						inodes++;
-						curctx = nodes[inodes];
-						isiblings = nbsiblings;
-					} else {
-						curctx = newctx;
-					}
-					if (!childs[i].getAttribute("cloned")) {
-						var samechild = childs[i];
-						var br = this.build(childs[i], curctx, selected, varresolver);
-						if (childs[i] !== samechild) {
-							i--;
-						} else {
-							if (childs[i].xfElement && childs[i].xfElement.nbsiblings && childs[i].xfElement.nbsiblings > 1) {
-								nbsiblings = childs[i].xfElement.nbsiblings;
-								nodes = childs[i].xfElement.nodes;
-								nbnodes = nodes.length;
-								inodes = 0;
-								isiblings = nbsiblings;
-							}
-							hasXFElement = br.hasXFElement || hasXFElement;
-						}
-					}
-				}
-			}
-			element.varScope = null;
-		}
-		if(this.building) {
-			if (xf instanceof Array) {
-				for (var ixf2 = 0, lenxf2 = xf.length; ixf2 < lenxf2; ixf2++) {
-					if (xf[ixf2] && xf[ixf2].changed) {
-						xf[ixf2].refresh(selected);
-						xf[ixf2].changed = false;
-					}
-				}
-			} else {
-				if (xf && xf.changed) {
-					xf.refresh(selected);
-					xf.changed = false;
-				}
-			}
-			if (!element.hasXFElement) {
-				element.hasXFElement = hasXFElement;
-			}
-		}
-		return {ctx: newctx, hasXFElement: hasXFElement};
-	},
-
-		
-
-	addChange : function(element) {
-		var list = this.building? this.newChanges : this.changes;
-		if (!XsltForms_browser.inArray(element, list)) {
-			list.push(element);
-		}
-	},
-
-		
-
-	dispose : function(element) {
-		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console") {
-			return;
-		}
-		var xf = element.xfElement;
-		if (xf && xf.dispose !== undefined) {
-			xf.dispose();
-		}
-		element.listeners = null;
-		element.node = null;
-		element.hasXFElement = null;
-		var childs = element.childNodes;
-		for (var i = 0; i < childs.length; i++) {
-			this.dispose(childs[i]);
-		}
-	},
-
-		
-
-	blur : function(direct) {
-		if ((direct || this.posibleBlur) && this.focus) {
-			if (this.focus.element) {
-				this.openAction("XsltForms_globals.blur");
-				XsltForms_xmlevents.dispatch(this.focus, "DOMFocusOut");
-				XsltForms_browser.setClass(this.focus.element, "xforms-focus", false);
-				try {
-					this.focus.blur();
-				} catch (e){
-				}
-				this.closeAction("XsltForms_globals.blur");
-			}
-			this.posibleBlur = false;
-			this.focus = null;
-		}
-	},
-
-		
-
-	add32 : function(x, y) {
-		var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-		return ((((x >>> 16) + (y >>> 16) + (lsw >>> 16)) & 0xFFFF)<< 16) | (lsw & 0xFFFF);
-		// return (x + y) & 0xFFFFFFFF;
-	},
-	str2msg : function(str) {
-		var i, msg = {length: str.length, arr: []};
-		for(i = 0; i < msg.length; i++){
-			msg.arr[i >> 2] |= (str.charCodeAt(i) & 0xFF) << ((3 - i % 4) << 3);
-		}
-		return msg;
-	},
-	crypto : function(msg, algo) {
-		var res, i, add32 = XsltForms_globals.add32;
-		switch (algo) {
-			case "SHA-1":
-				var bl = msg.length * 8;
-				msg.arr[bl >> 5] |= 0x80 << (24 - bl % 32);
-				msg.arr[((bl + 65 >> 9) << 4) + 15] = bl;
-				var a, b, c, d, e, T;
-				var l = msg.arr.length;
-				var W = [];
-				res = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
-				var rotl = function(x, n) {
-					return (x <<  n) | (x >>> (32 - n));
-				};
-				for(i = 0; i < l; i += 16){
-					a = res[0];
-					b = res[1];
-					c = res[2];
-					d = res[3];
-					e = res[4];
-					for(t = 0; t<20; t++){
-						T = add32(add32(add32(add32(rotl(a,5),(b & c)^(~b & d)),e),0x5a827999),W[t] = t<16 ? msg.arr[t+i] : rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-						e = d;
-						d = c;
-						c = rotl(b,30);
-						b = a;
-						a = T;
-					}
-					for(t = 20; t<40; t++){
-						T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0x6ed9eba1),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-						e = d;
-						d = c;
-						c = rotl(b,30);
-						b = a;
-						a = T;
-					}
-					for(t = 40; t<60; t++){
-						T = add32(add32(add32(add32(rotl(a,5),(b & c)^(b & d)^(c & d)),e),0x8f1bbcdc),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-						e = d;
-						d = c;
-						c = rotl(b,30);
-						b = a;
-						a = T;
-					}
-					for(t = 60; t<80; t++){
-						T = add32(add32(add32(add32(rotl(a,5),b^c^d),e),0xca62c1d6),W[t] = rotl(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16],1));
-						e = d;
-						d = c;
-						c = rotl(b,30);
-						b = a;
-						a = T;
-					}
-					res[0] = add32(a, res[0]);
-					res[1] = add32(b, res[1]);
-					res[2] = add32(c, res[2]);
-					res[3] = add32(d, res[3]);
-					res[4] = add32(e, res[4]);
-				}
-				return {length: 20, arr: res};
-			case "MD5":
-				var n = msg.length, t;
-				var cmn = function(q, a, b, x, s, t) {
-					a = add32(add32(a, q), add32(x, t));
-					return add32((a << s) | (a >>> (32 - s)), b);
-				};
-				var f1 = function(a, b, c, d, x, s, t) {
-					return cmn((b & c) | ((~b) & d), a, b, x, s, t);
-				};
-				var f2 = function(a, b, c, d, x, s, t) {
-					return cmn((b & d) | (c & (~d)), a, b, x, s, t);
-				};
-				var f3 = function(a, b, c, d, x, s, t) {
-					return cmn(b ^ c ^ d, a, b, x, s, t);
-				};
-				var f4 = function(a, b, c, d, x, s, t) {
-					return cmn(c ^ (b | (~d)), a, b, x, s, t);
-				};
-				var cycle = function (w, t) {
-					var a = w[0], b = w[1], c = w[2], d = w[3];
-					a = f1(a, b, c, d, t[0], 7, -680876936);
-					d = f1(d, a, b, c, t[1], 12, -389564586);
-					c = f1(c, d, a, b, t[2], 17,  606105819);
-					b = f1(b, c, d, a, t[3], 22, -1044525330);
-					a = f1(a, b, c, d, t[4], 7, -176418897);
-					d = f1(d, a, b, c, t[5], 12,  1200080426);
-					c = f1(c, d, a, b, t[6], 17, -1473231341);
-					b = f1(b, c, d, a, t[7], 22, -45705983);
-					a = f1(a, b, c, d, t[8], 7,  1770035416);
-					d = f1(d, a, b, c, t[9], 12, -1958414417);
-					c = f1(c, d, a, b, t[10], 17, -42063);
-					b = f1(b, c, d, a, t[11], 22, -1990404162);
-					a = f1(a, b, c, d, t[12], 7,  1804603682);
-					d = f1(d, a, b, c, t[13], 12, -40341101);
-					c = f1(c, d, a, b, t[14], 17, -1502002290);
-					b = f1(b, c, d, a, t[15], 22,  1236535329);
-					a = f2(a, b, c, d, t[1], 5, -165796510);
-					d = f2(d, a, b, c, t[6], 9, -1069501632);
-					c = f2(c, d, a, b, t[11], 14,  643717713);
-					b = f2(b, c, d, a, t[0], 20, -373897302);
-					a = f2(a, b, c, d, t[5], 5, -701558691);
-					d = f2(d, a, b, c, t[10], 9,  38016083);
-					c = f2(c, d, a, b, t[15], 14, -660478335);
-					b = f2(b, c, d, a, t[4], 20, -405537848);
-					a = f2(a, b, c, d, t[9], 5,  568446438);
-					d = f2(d, a, b, c, t[14], 9, -1019803690);
-					c = f2(c, d, a, b, t[3], 14, -187363961);
-					b = f2(b, c, d, a, t[8], 20,  1163531501);
-					a = f2(a, b, c, d, t[13], 5, -1444681467);
-					d = f2(d, a, b, c, t[2], 9, -51403784);
-					c = f2(c, d, a, b, t[7], 14,  1735328473);
-					b = f2(b, c, d, a, t[12], 20, -1926607734);
-					a = f3(a, b, c, d, t[5], 4, -378558);
-					d = f3(d, a, b, c, t[8], 11, -2022574463);
-					c = f3(c, d, a, b, t[11], 16,  1839030562);
-					b = f3(b, c, d, a, t[14], 23, -35309556);
-					a = f3(a, b, c, d, t[1], 4, -1530992060);
-					d = f3(d, a, b, c, t[4], 11,  1272893353);
-					c = f3(c, d, a, b, t[7], 16, -155497632);
-					b = f3(b, c, d, a, t[10], 23, -1094730640);
-					a = f3(a, b, c, d, t[13], 4,  681279174);
-					d = f3(d, a, b, c, t[0], 11, -358537222);
-					c = f3(c, d, a, b, t[3], 16, -722521979);
-					b = f3(b, c, d, a, t[6], 23,  76029189);
-					a = f3(a, b, c, d, t[9], 4, -640364487);
-					d = f3(d, a, b, c, t[12], 11, -421815835);
-					c = f3(c, d, a, b, t[15], 16,  530742520);
-					b = f3(b, c, d, a, t[2], 23, -995338651);
-					a = f4(a, b, c, d, t[0], 6, -198630844);
-					d = f4(d, a, b, c, t[7], 10,  1126891415);
-					c = f4(c, d, a, b, t[14], 15, -1416354905);
-					b = f4(b, c, d, a, t[5], 21, -57434055);
-					a = f4(a, b, c, d, t[12], 6,  1700485571);
-					d = f4(d, a, b, c, t[3], 10, -1894986606);
-					c = f4(c, d, a, b, t[10], 15, -1051523);
-					b = f4(b, c, d, a, t[1], 21, -2054922799);
-					a = f4(a, b, c, d, t[8], 6,  1873313359);
-					d = f4(d, a, b, c, t[15], 10, -30611744);
-					c = f4(c, d, a, b, t[6], 15, -1560198380);
-					b = f4(b, c, d, a, t[13], 21,  1309151649);
-					a = f4(a, b, c, d, t[4], 6, -145523070);
-					d = f4(d, a, b, c, t[11], 10, -1120210379);
-					c = f4(c, d, a, b, t[2], 15,  718787259);
-					b = f4(b, c, d, a, t[9], 21, -343485551);
-					w[0] = add32(a, w[0]);
-					w[1] = add32(b, w[1]);
-					w[2] = add32(c, w[2]);
-					w[3] = add32(d, w[3]);
-				};
-				res = [1732584193, -271733879, -1732584194, 271733878];
-				i = 0;
-				while (i <= n - 64) {
-					t = [];
-					do {
-						t.push(((msg.arr[i >> 2] & 0xFF000000) >>> 24) | ((msg.arr[i >> 2] & 0x00FF0000) >>> 8) | ((msg.arr[i >> 2] & 0x0000FF00) << 8) | ((msg.arr[i >> 2] & 0x000000FF) << 24));
-						i += 4;
-					} while ( i % 64 !== 0 );
-					cycle(res, t);
-				}
-				t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-				var j = 0;
-				while ( i < n ) {
-					t[j >> 2] = ((msg.arr[i >> 2] & 0xFF000000) >>> 24) | ((msg.arr[i >> 2] & 0x00FF0000) >>> 8) | ((msg.arr[i >> 2] & 0x0000FF00) << 8) | ((msg.arr[i >> 2] & 0x000000FF) << 24);
-					i++;
-					j++;
-				}
-				t[j >> 2] |= 0x80 << ((j % 4) << 3);
-				if (j > 55) {
-					cycle(res, t);
-					t = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-				}
-				t[14] = n * 8;
-				cycle(res, t);
-				var k;
-				for (k = 0, l = res.length; k < l; k++) {
-					res[k] = ((res[k] & 0xFF) << 24) | (((res[k] >> 8) & 0xFF) << 16) | (((res[k] >> 16) & 0xFF) << 8) | ((res[k] >> 24) & 0xFF);
-				}
-				return {length: 16, arr: res};
-			case "SHA-256":
-				var bl = msg.length * 8;
-				msg.arr[bl >> 5] |= 0x80 << (24 - bl % 32);
-				msg.arr[((bl + 65 >> 9) << 4) + 15] = bl;
-				var K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-					0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-					0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-					0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-					0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-					0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-					0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-					0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
-				var W = [];
-				res = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
-				var a, b, c, d, e, f, g, h, T;
-				var l = msg.arr.length;
-				for(i = 0; i < l; i += 16){
-					a = res[0];
-					b = res[1];
-					c = res[2];
-					d = res[3];
-					e = res[4];
-					f = res[5];
-					g = res[6];
-					h = res[7];
-					for(t = 0; t < 64; t++){
-						if (t < 16) {
-							W[t] = msg.arr[i + t];
-						} else {
-							var g0 = W[t - 15];
-							var g1 = W[t - 2];
-							W[t] = add32(add32(add32(((g0 << 25) | (g0 >>> 7)) ^ ((g0 << 14) | (g0 >>> 18)) ^ (g0 >>> 3), W[t - 7]), ((g1 << 15) | (g1 >>> 17)) ^ ((g1 << 13) | (g1 >>> 19)) ^ (g1 >>> 10)), W[t - 16]);
-						}
-						var a1 = add32(add32(add32(add32(h, ((e << 26) | (e >>> 6)) ^ ((e << 21) | (e >>> 11)) ^ ((e << 7) | (e >>> 25))), (e & f) ^ (~e & g)), K[t]), W[t]);
-						var a2 = add32(((a << 30) | (a >>> 2)) ^ ((a << 19) | (a >>> 13)) ^ ((a << 10) | (a >>> 22)), (a & b) ^ (a & c) ^ (b & c));
-						h = g;
-						g = f;
-						f = e;
-						e = add32(d, a1);
-						d = c;
-						c = b;
-						b = a;
-						a = add32(a1, a2);
-					}
-					res[0] = add32(a, res[0]);
-					res[1] = add32(b, res[1]);
-					res[2] = add32(c, res[2]);
-					res[3] = add32(d, res[3]);
-					res[4] = add32(e, res[4]);
-					res[5] = add32(f, res[5]);
-					res[6] = add32(g, res[6]);
-					res[7] = add32(h, res[7]);
-				}
-				return {length: 32, arr: res};
-			case "BASE64":
-				str = str.replace(/\r\n/g,"\n");
-				var l2b = str.length;
-				str2 = "";
-				for (i = 0; i < l2b; i++) {
-					var c0 = str.charCodeAt(i);
-					str2 += c0 < 128 ? str.charAt(i) : c0 > 127 && c0 < 2048 ? String.fromCharCode(c0 >> 6 | 192, c0 & 63 | 128) : String.fromCharCode(c0 >> 12 | 224, c0 >> 6 & 63 | 128, c0 & 63 | 128);
-				}
-				l2b = str2.length;
-				var res = "";
-				for (i = 0; i < l2b; i += 3) {
-					var c1b = str2.charCodeAt(i);
-					var c2b = i + 1 < l2b ? str2.charCodeAt(i + 1) : 0;
-					var c3b = i + 2 < l2b ? str2.charCodeAt(i + 2) : 0;
-					res += b64.charAt(c1b >> 2) + b64.charAt((c1b & 3) << 4 | c2b >> 4) + (i + 1 < l2b ? b64.charAt((c2b & 15) << 2 | c3b >> 6) : "=") + (i + 2 < l2b ? b64.charAt(c3b & 63) : "=");
-				}
-				return res;
-		}
-	},
-
-		
-
-	hex32 : function(v) {
-		var h = v >>> 16;
-		var l = v & 0xFFFF;
-		return (h >= 0x1000 ? "" : h >= 0x100 ? "0" : h >= 0x10 ? "00" : "000") + h.toString(16) + (l >= 0x1000 ? "" : l >= 0x100 ? "0" : l >= 0x10 ? "00" : "000") + l.toString(16);
-	},
-	encode : function(msg, enco) {
-		var str = "", l, i, c1, c2, c3, b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		if (enco === "base64") {
-			for (i = 0, l = msg.length; i < l; i += 3) {
-				c1 = (msg.arr[i >> 2] >> (24 - (i % 4) * 8)) & 0xFF;
-				c2 = i + 1 < l ? (msg.arr[(i + 1) >> 2] >> (24 - ((i + 1) % 4) * 8))& 0xFF : 0;
-				c3 = i + 2 < l ? (msg.arr[(i + 2) >> 2] >> (24 - ((i + 2) % 4) * 8))& 0xFF : 0;
-				str += b64.charAt(c1 >> 2) + b64.charAt((c1 & 3) << 4 | c2 >> 4) + (i + 1 < l ? b64.charAt((c2 & 15) << 2 | c3 >> 6) : "=") + (i + 2 < l ? b64.charAt(c3 & 63) : "=");
-			}
-			return str;
-		}
-		str = "";
-		for (i = 0, l = msg.length >> 2; i < l; i++) {
-			str += XsltForms_globals.hex32(msg.arr[i]);
-		}
-		if (msg.length % 4 !== 0) {
-			str += (msg.arr[msg.length >> 2] >>> (8 * (4 - msg.length % 4))).toString(16);
-		}
-		return str;
-	}
-};
+	})(typeof exports === 'undefined'? this.Fleur = {}: exports);
+}
 
 	
 		
@@ -3436,7 +3464,6 @@ XsltForms_subform.prototype.dispose = function() {
 	scriptelt.parentNode.removeChild(scriptelt);
 	for (var h = 0, len0 = this.subforms.length; h < len0; h++) {
 		this.subforms[0].dispose();
-		this.subforms[0] = null;
 	}
 	this.subforms = null;
 	XsltForms_globals.dispose(document.getElementById(this.eltid));

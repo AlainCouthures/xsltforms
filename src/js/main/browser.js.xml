@@ -619,7 +619,7 @@ XsltForms_browser.xsltsrcrelevany += '		</xsl:copy>';
 XsltForms_browser.xsltsrcrelevany += '	</xsl:template>';
 XsltForms_browser.xsltsrcrelevany += '</xsl:stylesheet>';
 
-if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
+if (XsltForms_domEngine === "" && (XsltForms_browser.isIE || XsltForms_browser.isIE11)) {
 	XsltForms_browser.createXMLDocument = function(xml) {
 		var d = new ActiveXObject("MSXML2.DOMDocument." + XsltForms_browser.MSXMLver);
 		d.setProperty("SelectionLanguage", "XPath");
@@ -885,7 +885,8 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 		}
 	};
 	try {
-		XsltForms_browser.parser = new DOMParser();
+		XsltForms_browser.parser = XsltForms_domEngine === "http://www.agencexml.com/Fleur" ? new Fleur.DOMParser() : new DOMParser();
+		/*
 		XsltForms_browser.xsltDoc = XsltForms_browser.parser.parseFromString(XsltForms_browser.xsltsrc, "text/xml");
 		XsltForms_browser.xsltProcessor = new XSLTProcessor();
 		XsltForms_browser.xsltProcessor.importStylesheet(XsltForms_browser.xsltDoc);
@@ -901,11 +902,12 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 		XsltForms_browser.xsltDocIndent = XsltForms_browser.parser.parseFromString(XsltForms_browser.xsltsrcindent, "text/xml");
 		XsltForms_browser.xsltProcessorIndent = new XSLTProcessor();
 		XsltForms_browser.xsltProcessorIndent.importStylesheet(XsltForms_browser.xsltDocIndent);
+		*/
 	} catch (xsltforms_e) {
 	}
-	XsltForms_browser.serializer = new XMLSerializer();
+	XsltForms_browser.serializer = XsltForms_domEngine === "http://www.agencexml.com/Fleur" ? new Fleur.XMLSerializer() : new XMLSerializer();
 	XsltForms_browser.loadNode = function(dest, src) {
-		var r = src.cloneNode(true);
+		var r = dest.ownerDocument.importNode(src, true);
 		dest.parentNode.replaceChild(r, dest);
 	};
 	XsltForms_browser.loadTextNode = function(dest, txt) {
@@ -921,11 +923,30 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 	XsltForms_browser.loadXML = function(dest, xml) {
 		var result = XsltForms_browser.parser.parseFromString(xml, "text/xml");
 		if (result.documentElement.localName !== "parsererror" && (!result.documentElement.textContent || result.documentElement.textContent.substring(0,40) !== "This page contains the following errors:")) {
-			var r = result.documentElement.cloneNode(true);
+			var r = dest.ownerDocument.importNode(result.documentElement, true);
 			dest.parentNode.replaceChild(r, dest);
 		} else {
 			XsltForms_globals.error(document.getElementById(XsltForms_browser.getMeta(dest.ownerDocument.documentElement, "model")).xfElement, "xforms-link-exception", "Unable to parse XML");
 		}
+	};
+	XsltForms_browser.selectMeta = function(node, selection) {
+		var i, li;
+		i = 0;
+		li = node.attributes.length;
+		while (i < li) {
+			if (node.attributes[i].nodeName.indexOf("xsltforms_") === 0) {
+				selection.push(node);
+				break;
+			}
+			i++;
+		}
+		var i, li;
+		i = 0;
+		li = node.children.length;
+		while (i < li) {
+			XsltForms_browser.selectMeta(node.children[i++], selection);
+		}
+		return selection;
 	};
 	XsltForms_browser.saveXML = function(node, relevant, indent, related, cdataSectionElements) {
 		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) { 
@@ -981,8 +1002,13 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 						}
 					}
 				}
-				var ns2 = resultDocument.selectNodes("descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]", false, resultDocument.documentElement);
-				for( var j = 0, l2 = ns2.length; j < l2 ; j++) {
+				var ns2;
+				if (resultDocument.selectNodes) {
+					ns2 = resultDocument.selectNodes("descendant-or-self::*[@*[starts-with(name(),'xsltforms_')]]", false, resultDocument.documentElement);
+				} else {
+					ns2 = XsltForms_browser.selectMeta(resultDocument.documentElement, []);
+				}
+				for (var j = 0, l2 = ns2.length; j < l2 ; j++) {
 					var n2 = ns2[j];
 					var k = 0;
 					while (k < n2.attributes.length) {

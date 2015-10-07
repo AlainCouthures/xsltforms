@@ -28,9 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 == Main functions and objects ==
 		</cm:wiki>
 		<cm:import-components path="constants.js.xml"/>
+		<cm:import-components path="globals.js.xml"/>
 		<cm:import-components path="browser.js.xml"/>
 		<cm:import-components path="fleur.js.xml"/>
-		<cm:import-components path="globals.js.xml"/>
 		<cm:import-components path="subform.js.xml"/>
 		<cm:import-components path="Binding.js.xml"/>
 		<cm:import-components path="MIPBinding.js.xml"/>

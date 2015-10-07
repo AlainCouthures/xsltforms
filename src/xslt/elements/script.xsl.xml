@@ -24,9 +24,9 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</cm:licence>
 	<cm:source type="application/xml">
-		<xsl:template match="xhtml:script[not(@type) or @type = 'text/javascript'] | script[not(@type) or @type = 'text/javascript']" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+		<xsl:template match="xhtml:script[not(@type) or @type = 'text/javascript' or @type = 'text/javascript-runonce'] | script[not(@type) or @type = 'text/javascript' or @type = 'text/javascript-runonce']" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
 			<script type="text/javascript">
-				<xsl:apply-templates select="@*"/>
+				<xsl:apply-templates select="@*[local-name() != 'type']"/>
 				<xsl:text disable-output-escaping="yes">/* &lt;![CDATA[ */
 </xsl:text>
 				<xsl:value-of select="." disable-output-escaping="yes"/>

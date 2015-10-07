@@ -98,12 +98,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 </xsl:text>
 						<xsl:text>var xsltforms_d0 = new Date();
 </xsl:text>
+						<xsl:text>XsltForms_domEngine = "</xsl:text>
+						<xsl:if test="$script/config/properties/domengine">
+							<xsl:value-of select="$script/config/properties/domengine/@uri"/>
+						</xsl:if>
+						<xsl:text>";
+</xsl:text>
+						<xsl:text>XsltForms_xpathEngine = "</xsl:text>
+						<xsl:if test="$script/config/properties/xpathengine">
+							<xsl:value-of select="$script/config/properties/xpathengine/@uri"/>
+						</xsl:if>
+						<xsl:text>";
+</xsl:text>
 					</script>
 					<link type="text/css" href="{$resourcesdir}xsltforms.css" rel="stylesheet"/>
 					<xsl:apply-templates select="xhtml:head/xhtml:*[local-name() != 'script' and local-name() != 'style' and local-name() != 'link' and local-name() != 'meta'] | xhtml:head/comment() | head/title | head/comment()" mode="nons"/>
 					<xsl:apply-templates select="xhtml:head/xhtml:style | xhtml:head/xhtml:link | head/style | head/link">
 						<xsl:with-param name="config" select="$script/config"/>
 					</xsl:apply-templates>
+					<xsl:if test="$script/config/properties/domengine">
+						<script type="text/javascript" id="{$script/config/properties/domengine/@name}-src" src="{$script/config/properties/domengine/@url}" data-uri="{$script/config/properties/domengine/@uri}" data-version="{$script/config/properties/domengine/@version}">
+							<xsl:text>/* */</xsl:text>
+						</script>
+					</xsl:if>
+					<xsl:if test="$script/config/properties/xpathengine and $script/config/properties/xpathengine/@url != $script/config/properties/domengine/@url">
+						<script type="text/javascript" id="{$script/config/properties/xpathengine/@name}-src" src="{$script/config/properties/xpathengine/@url}" data-uri="{$script/config/properties/domengine/@uri}" data-version="{$script/config/properties/xpathengine/@version}">
+							<xsl:text>/* */</xsl:text>
+						</script>
+					</xsl:if>
 					<xsl:variable name="jsrevision"><xsl:if test="$script/config/properties/jsrevision != ''">?<xsl:value-of select="$script/config/properties/jsrevision"/>=<cm:value name="versionNumber"/></xsl:if></xsl:variable>
 					<script type="text/javascript" id="xsltforms-src" src="{$resourcesdir}xsltforms.js{$jsrevision}" data-uri="http://www.agencexml.com/xsltforms">
 						<xsl:attribute name="data-version"><cm:value name="versionNumber"/></xsl:attribute>
