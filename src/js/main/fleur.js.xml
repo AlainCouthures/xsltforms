@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 === "Fleur" class ===
 Fleur class for DOM</cm:wiki>
 <![CDATA[
-if (XsltForms_globals.domEngine === "") {
+if (XsltForms_domEngine === "") {
 	(function(Fleur) {
 	"use strict";
 

@@ -1814,10 +1814,35 @@ var XsltForms_xpathCoreFunctions = {
 				tokens.push({localName:"#text",text:res[i],documentElement:"dummy"});
 			}
 			return tokens;
+		} ),
+]]>
+		<cm:wiki>
+* '''invalid-id()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions invalid-id" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function() {
+			return XsltForms_globals.invalid_id_(XsltForms_globals.body);
 		} )
 };
 
-XsltForms_globals.validate_ = function (node) {
+XsltForms_globals.invalid_id_ = function(element) {
+	if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
+		return "";
+	}
+	var xf = element.xfElement;
+	if (xf && !(xf instanceof Array) && !xf.isRepeat) {
+		return xf.notvalid && !xf.isOutput ? element.id : "";
+	}
+	var childs = element.children || element.childNodes;
+	for (var i = 0, l = childs.length; i < l; i++) {
+		var id = XsltForms_globals.invalid_id_(childs[i]);
+		if (id !== "") {
+			return id;
+		}
+	}
+	return "";
+};
+XsltForms_globals.validate_ = function(node) {
 	if (XsltForms_browser.getBoolMeta(node, "notvalid") || XsltForms_browser.getBoolMeta(node, "unsafe")) {
 		return false;
 	}
