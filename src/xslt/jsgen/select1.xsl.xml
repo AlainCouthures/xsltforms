@@ -46,7 +46,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:value-of select="$workid"/>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:text>",false,</xsl:text>
+				<xsl:text>",</xsl:text>
+				<xsl:choose><xsl:when test="@min"><xsl:value-of select="@min"/></xsl:when><xsl:otherwise><xsl:text>1</xsl:text></xsl:otherwise></xsl:choose>
+				<xsl:text>,1,</xsl:text>
 				<xsl:choose><xsl:when test="@appearance='full'"><xsl:text>true</xsl:text></xsl:when><xsl:otherwise><xsl:text>false</xsl:text></xsl:otherwise></xsl:choose>
 				<xsl:text>,</xsl:text>
 				<xsl:call-template name="toScriptBinding"><xsl:with-param name="p" select="@ref"/></xsl:call-template>

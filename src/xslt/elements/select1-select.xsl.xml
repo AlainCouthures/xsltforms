@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:when test="@appearance='compact'">
 						<select size="4">
 							<xsl:call-template name="comun"/>
-							<xsl:if test="local-name() = 'select'">
+							<xsl:if test="local-name() = 'select' and (not(@max) or @max &gt; 1)">
 								<xsl:attribute name="multiple">true</xsl:attribute>
 							</xsl:if>
 							<xsl:apply-templates select="node()" mode="item">
@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:call-template name="comun"/>
 							<xsl:variable name="type">
 								<xsl:choose>
-									<xsl:when test="local-name() = 'select'">checkbox</xsl:when>
+									<xsl:when test="local-name() = 'select' and (not(@max) or @max &gt; 1)">checkbox</xsl:when>
 									<xsl:otherwise>radio</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
@@ -59,7 +59,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:otherwise>
 						<select>
 							<xsl:call-template name="comun"/>
-							<xsl:if test="local-name() = 'select'">
+							<xsl:if test="local-name() = 'select' and (not(@max) or @max &gt; 1)">
 								<xsl:attribute name="multiple">true</xsl:attribute>
 								<xsl:attribute name="size">
 									<xsl:value-of select="count(descendant::xforms:item)"/>

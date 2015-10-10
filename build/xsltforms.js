@@ -1,4 +1,4 @@
-/* Rev. 624
+/* Rev. 625
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -79,8 +79,8 @@ var XsltForms_nodeType = {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "624",
-	fileVersionNumber: 624,
+	fileVersion: "625",
+	fileVersionNumber: 625,
 
 	language: "navigator",
 	debugMode: false,
@@ -12230,12 +12230,13 @@ XsltForms_repeat.selectItem = function(element) {
 		
 		
 		
-function XsltForms_select(subform, id, multiple, full, binding, incremental, clone) {
+function XsltForms_select(subform, id, min, max, full, binding, incremental, clone) {
 	XsltForms_globals.counters.select++;
 	this.init(subform, id);
-	this.controlName = multiple? "select": "select1";
+	this.controlName = max === 1? "select1": "select";
 	this.binding = binding;
-	this.multiple = multiple;
+	this.min = min;
+	this.max = max;
 	this.full = full;
 	this.incremental = incremental;
 	this.isClone = clone;
@@ -12259,7 +12260,7 @@ XsltForms_select.prototype = new XsltForms_control();
 		
 
 XsltForms_select.prototype.clone = function(id) { 
-	return new XsltForms_select(this.subform, id, this.multiple, this.full, this.binding, this.incremental, true);
+	return new XsltForms_select(this.subform, id, this.min, this.max, this.full, this.binding, this.incremental, true);
 };
 
 
@@ -12302,11 +12303,11 @@ XsltForms_select.prototype.setValue = function(value) {
 			this.select.selectedIndex = 0;
 		}
 	} else {
-		if (!this.full && this.select.firstChild && this.select.firstChild.value === "\xA0") {
+		if (!this.full && this.select.firstChild && this.select.firstChild.value === "\xA0" && !(this.min === 0 && this.max === 1)) {
 			//this.select.removeChild(this.select.firstChild);
 			this.select.remove(0);
 		}
-		var vals = value? value instanceof Array ? value : (this.multiple? value.split(XsltForms_globals.valuesSeparator) : [value]) : [""];
+		var vals = value? value instanceof Array ? value : (this.max !== 1? value.split(XsltForms_globals.valuesSeparator) : [value]) : [""];
 		var list = this.full? (XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input")) : this.select.options;
 		var well = true;
 		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(this.element.node) || "xsd_:string");
@@ -12324,16 +12325,16 @@ XsltForms_select.prototype.setValue = function(value) {
 			}
 			well = found;
 		}
-		if (well || (this.multiple && !value)) {
+		if (well || (this.max !== 1 && !value)) {
 			if (this.outRange) {
 				this.outRange = false;
 				XsltForms_xmlevents.dispatch(this, "xforms-in-range");
 			}
-		} else if ((!this.multiple || value) && !this.outRange) {
+		} else if ((this.max === 1 || value) && !this.outRange) {
 			this.outRange = true;
 			XsltForms_xmlevents.dispatch(this, "xforms-out-of-range");
 		}
-		vals = this.multiple? vals : [vals[0]];
+		vals = this.max !== 1? vals : [vals[0]];
 		var item;
 		if (this.full) {
 			for (var n = 0, len2 = list.length; n < len2; n++) {
@@ -12384,7 +12385,7 @@ XsltForms_select.prototype.itemClick = function(value) {
 	var inputs = XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input");
 	var input;
 	XsltForms_globals.openAction("XsltForms_select.prototype.itemClick");
-	if (this.multiple) {
+	if (this.max !== 1) {
 		var newValue = null;
 		for (var i = 0, len = inputs.length; i < len; i++) {
 			input = inputs[i];
@@ -12406,7 +12407,7 @@ XsltForms_select.prototype.itemClick = function(value) {
 			}
 		}
 		var inputSelected = null;
-		if (old === value) {
+		if (old === value && this.min !== 0) {
 			XsltForms_globals.closeAction("XsltForms_select.prototype.itemClick");
 			return;
 		}
@@ -12418,12 +12419,18 @@ XsltForms_select.prototype.itemClick = function(value) {
 			}
 			input.checked = input_controlvalue === value;
 			if (input_controlvalue === old) {
+				if (input.checked && this.min === 0) {
+					input.checked = false;
+					value = "";
+				}
 				XsltForms_xmlevents.dispatch(input.parentNode, "xforms-deselect");
 			} else if (input_controlvalue === value) {
 				inputSelected = input;
 			}
 		}
-		XsltForms_xmlevents.dispatch(inputSelected.parentNode, "xforms-select");
+		if (inputSelected) {
+			XsltForms_xmlevents.dispatch(inputSelected.parentNode, "xforms-select");
+		}
 	}
 	if (this.incremental) {
 		this.valueChanged(value || "");
@@ -12469,14 +12476,14 @@ XsltForms_select.normalChange = function(evt) {
 		if (opt.selected) {
 			if (opt.copy) {
 				copy.push(opt.copy);
-			} else {
+			} else if (opt.value !== "\xA0") {
 				value = value? value + XsltForms_globals.valuesSeparator + opt.value : opt.value;
 			}
 		}
 	}
 	for (var k = 0, len2 = opts.length; k < len2; k++) {
 		opt = opts[k];
-		if (opt.selected) {
+		if (opt.selected && opt.value !== "\xA0") {
 			if (!XsltForms_browser.inArray(opt, news)) {
 				news.push(opt);
 				XsltForms_xmlevents.dispatch(opt, "xforms-select");
