@@ -49,7 +49,7 @@ var XsltForms_idManager = {
 				var element = document.getElementById(ids[i]);
 				if (element) {
 					var parent = element.parentNode;
-					while (parent.nodeType === XsltForms_nodeType.ELEMENT) {
+					while (parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 						if (XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
 							if (XsltForms_browser.hasClass(parent, "xforms-repeat-item-selected")) {
 								return element;

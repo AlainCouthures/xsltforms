@@ -68,8 +68,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							<xsl:when test="starts-with($s2,'//')">2.,new XsltForms_stepExpr('descendant-or-self',new XsltForms_nodeTestAny()</xsl:when>
 							<xsl:when test="starts-with($s2,'../')">3.,new XsltForms_stepExpr('parent',new XsltForms_nodeTestAny()</xsl:when>
 							<xsl:when test="starts-with($s2,'..')">2.,new XsltForms_stepExpr('parent',new XsltForms_nodeTestAny()</xsl:when>
-							<xsl:when test="starts-with($s2,'text()')">6.,new XsltForms_stepExpr('child',new XsltForms_nodeTestType(3)</xsl:when>
-							<xsl:when test="$c = '*' and substring($s2,2,1) != ':'"><xsl:value-of select="$axislength + 1"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestType(XsltForms_nodeType.ELEMENT)</xsl:when>
+							<xsl:when test="$c = '*' and substring($s2,2,1) != ':'"><xsl:value-of select="$axislength + 1"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestType(1)</xsl:when>
+							<xsl:when test="starts-with($s2,'array()')"><xsl:value-of select="$axislength + 7"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestType(131)</xsl:when>
+							<xsl:when test="starts-with($s2,'map()')"><xsl:value-of select="$axislength + 5"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestType(132)</xsl:when>
+							<xsl:when test="starts-with($s2,'entry()')">7.,new XsltForms_stepExpr('entry',new XsltForms_nodeTestType(133)</xsl:when>
 							<xsl:when test="$c = '/'">1.</xsl:when>
 							<xsl:when test="starts-with($s2,'@*')">2.,new XsltForms_stepExpr('attribute',new XsltForms_nodeTestAny()</xsl:when>
 							<xsl:when test="$c = '@'">
@@ -85,18 +87,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:when>
+							<xsl:when test="starts-with($s2,'?*')">2.,new XsltForms_stepExpr('entry',new XsltForms_nodeTestAny()</xsl:when>
+							<xsl:when test="$c = '?'">
+								<xsl:variable name="t"><xsl:call-template name="getName"><xsl:with-param name="s" select="substring($s2,2)"/></xsl:call-template></xsl:variable>
+								<xsl:choose>
+									<xsl:when test="$t != ''">
+										<xsl:variable name="pt"><xsl:if test="not(contains($t,':'))">:</xsl:if><xsl:value-of select="$t"/></xsl:variable>
+										<xsl:value-of select="string-length($t)+1"/>.,new XsltForms_stepExpr('entry',new XsltForms_nodeTestName(<xsl:choose><xsl:when test="starts-with($pt,':')">null</xsl:when><xsl:otherwise>'<xsl:value-of select="substring-before($pt,':')"/>'</xsl:otherwise></xsl:choose>,'<xsl:value-of select="substring-after(translate($pt,'`',''),':')"/><xsl:text>')</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:variable name="msg">"~~~~Name expected at '<xsl:value-of select="substring($s,2)"/>'~#~#"</xsl:variable>
+										<xsl:value-of select="string-length($msg)"/>.<xsl:value-of select="$msg"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:when>
 							<xsl:when test="$c = '.'">1.,new XsltForms_stepExpr('self',new XsltForms_nodeTestAny()</xsl:when>
 							<xsl:when test="starts-with($s2,'node()')"><xsl:value-of select="$axislength + 6"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestAny()</xsl:when>
-							<xsl:when test="contains('_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',$c)">
+							<xsl:when test="contains('_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`',$c)">
 								<xsl:variable name="t"><xsl:call-template name="getName"><xsl:with-param name="s" select="$s2"/></xsl:call-template></xsl:variable>
 								<xsl:variable name="pt"><xsl:if test="not(contains($t,':'))">:</xsl:if><xsl:value-of select="$t"/></xsl:variable>
-								<xsl:value-of select="$axislength + string-length($t)"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestName('<xsl:value-of select="substring-before($pt,':')"/>','<xsl:value-of select="substring-after($pt,':')"/><xsl:text>')</xsl:text>
+								<xsl:value-of select="$axislength + string-length($t)"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestName('<xsl:value-of select="substring-before($pt,':')"/>','<xsl:value-of select="substring-after(translate($pt,'`',''),':')"/><xsl:text>')</xsl:text>
 							</xsl:when>
-							<xsl:when test="starts-with($s2,'*:') and contains('_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',substring($s2,3,1))">
+							<xsl:when test="starts-with($s2,'*:') and contains('_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`',substring($s2,3,1))">
 								<xsl:variable name="t"><xsl:call-template name="getName"><xsl:with-param name="s" select="substring($s2,3)"/></xsl:call-template></xsl:variable>
 								<xsl:choose>
 									<xsl:when test="not(contains($t,':'))">
-										<xsl:value-of select="$axislength + 2 + string-length($t)"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestName('*','<xsl:value-of select="$t"/><xsl:text>')</xsl:text>
+										<xsl:value-of select="$axislength + 2 + string-length($t)"/>.,new XsltForms_stepExpr('<xsl:value-of select="$axis2"/>',new XsltForms_nodeTestName('*','<xsl:value-of select="translate($t,'`','')"/><xsl:text>')</xsl:text>
 									</xsl:when>
 									<xsl:otherwise>
 										<xsl:variable name="msg">"~~~~Two prefixes at '<xsl:value-of select="$s"/>'~#~#"</xsl:variable>

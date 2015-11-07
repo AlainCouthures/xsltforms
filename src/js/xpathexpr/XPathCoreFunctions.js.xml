@@ -422,7 +422,7 @@ var XsltForms_xpathCoreFunctions = {
 			var result = [];
 			if (ctx.current.childNodes) {
 				for (var i = 0, len = ctx.current.childNodes.length; i < len; i++) {
-					if (ctx.current.childNodes[i].nodeType === XsltForms_nodeType.COMMENT) {
+					if (ctx.current.childNodes[i].nodeType === Fleur.Node.COMMENT_NODE) {
 						result.push(ctx.current.childNodes[i]);
 					}
 				}
@@ -441,9 +441,64 @@ var XsltForms_xpathCoreFunctions = {
 			var result = [];
 			if (ctx.current.childNodes) {
 				for (var i = 0, len = ctx.current.childNodes.length; i < len; i++) {
-					if (ctx.current.childNodes[i].nodeType === XsltForms_nodeType.TEXT) {
+					if (ctx.current.childNodes[i].nodeType === Fleur.Node.TEXT_NODE) {
 						result.push(ctx.current.childNodes[i]);
 					}
+				}
+			}
+			return result;
+		} ),
+]]>
+		<cm:wiki>
+* '''array()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions array" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(ctx) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.textInvalidArgumentsNumber;
+			}
+			var result = [];
+			if (ctx.current.childNodes) {
+				for (var i = 0, len = ctx.current.childNodes.length; i < len; i++) {
+					if (ctx.current.childNodes[i].nodeType === Fleur.Node.ARRAY_NODE) {
+						result.push(ctx.current.childNodes[i]);
+					}
+				}
+			}
+			return result;
+		} ),
+]]>
+		<cm:wiki>
+* '''map()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions map" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(ctx) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.textInvalidArgumentsNumber;
+			}
+			var result = [];
+			if (ctx.current.childNodes) {
+				for (var i = 0, len = ctx.current.childNodes.length; i < len; i++) {
+					if (ctx.current.childNodes[i].nodeType === Fleur.Node.MAP_NODE) {
+						result.push(ctx.current.childNodes[i]);
+					}
+				}
+			}
+			return result;
+		} ),
+]]>
+		<cm:wiki>
+* '''entry()'''</cm:wiki>
+<![CDATA[
+	"http://www.w3.org/2005/xpath-functions entry" : new XsltForms_xpathFunction(true, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(ctx) {
+			if (arguments.length !== 1) {
+				throw XsltForms_xpathFunctionExceptions.textInvalidArgumentsNumber;
+			}
+			var result = [];
+			if (ctx.current.entries) {
+				for (var i = 0, len = ctx.current.entries.length; i < len; i++) {
+					result.push(ctx.current.entries[i]);
 				}
 			}
 			return result;
@@ -1066,7 +1121,7 @@ var XsltForms_xpathCoreFunctions = {
 			ctx.addDepElement(control.xfElement);
 			if (node) {
 				ctx.addDepNode(node);
-				ctx.addDepElement(document.getElementById(XsltForms_browser.getMeta(node.documentElement ? node.documentElement : node.ownerDocument.documentElement, "model")).xfElement);
+				ctx.addDepElement(document.getElementById(XsltForms_browser.getDocMeta(node.nodeType === Fleur.Node.DOCUMENT_NODE ? node : node.ownerDocument, "model")).xfElement);
 			}
 			return node? [ node ] : [];
 		} ),
@@ -1171,10 +1226,10 @@ var XsltForms_xpathCoreFunctions = {
 					}
 					if (!f.doc) {
 						f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
-						var modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
-						XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
-						XsltForms_browser.setMeta(f.doc.documentElement, "instance", idRef);
-						XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
+						var modid = XsltForms_browser.getDocMeta(instance.xfElement.doc, "model");
+						XsltForms_browser.loadDoc(f.doc, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
+						XsltForms_browser.setDocMeta(f.doc, "instance", idRef);
+						XsltForms_browser.setDocMeta(f.doc, "model", modid);
 					}
 					res = f.doc.documentElement;
 				}
@@ -1353,7 +1408,7 @@ var XsltForms_xpathCoreFunctions = {
 				throw XsltForms_xpathFunctionExceptions.currentInvalidArgumentsNumber;
 			}
 			ctx.addDepNode(ctx.node);
-			ctx.addDepElement(document.getElementById(XsltForms_browser.getMeta(ctx.node.documentElement ? ctx.node.documentElement : ctx.node.ownerDocument.documentElement, "model")).xfElement);
+			ctx.addDepElement(document.getElementById(XsltForms_browser.getDocMeta(ctx.node.nodeType === Fleur.Node.DOCUMENT_NODE ? ctx.node : ctx.node.ownerDocument, "model")).xfElement);
 			return [ctx.current];
 		} ),
 ]]>
@@ -1525,7 +1580,7 @@ var XsltForms_xpathCoreFunctions = {
 				return "";
 			}
 			var args = [];
-			args.push(XsltForms_browser.saveXML(nodeSet[0]));
+			args.push(XsltForms_browser.saveNode(nodeSet[0], "application/xml"));
 			args.push(XsltForms_globals.stringValue(xslhref));
 			args.push(XsltForms_globals.booleanValue(inline));
 			for (var i = 3, len = arguments.length; i < len; i++) {
@@ -1538,14 +1593,14 @@ var XsltForms_xpathCoreFunctions = {
 * '''serialize(node?)'''</cm:wiki>
 <![CDATA[
 	"http://www.w3.org/2002/xforms serialize" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NODE, false,
-		function(nodeSet, indent) {
+		function(nodeSet, mediatype, indent) {
 			if (arguments.length >= 1 && typeof nodeSet !== "object") {
 				throw XsltForms_xpathFunctionExceptions.serializeInvalidArgumentType;
 			}
 			if (arguments.length === 0) {
 				throw XsltForms_xpathFunctionExceptions.serializeNoContext;
 			}
-			return nodeSet.length === 0 ? "" : XsltForms_browser.saveXML(nodeSet[0], null, indent === "yes" ? indent : null);
+			return nodeSet.length === 0 ? "" : XsltForms_browser.saveNode(nodeSet[0], mediatype ? XsltForms_globals.stringValue(mediatype) : "application/exml+xml", null, indent === "yes" ? indent : null);
 		} ),
 ]]>
 		<cm:wiki>
@@ -1743,7 +1798,7 @@ var XsltForms_xpathCoreFunctions = {
 			if (arguments.length !== 2) {
 				throw XsltForms_xpathFunctionExceptions.itextInvalidArgumentsNumber;
 			}
-			var itext = document.getElementById(XsltForms_browser.getMeta(ctx.node.ownerDocument.documentElement, "model")).xfElement.itext;
+			var itext = document.getElementById(XsltForms_browser.getDocMeta(ctx.node.ownerDocument, "model")).xfElement.itext;
 			var translation = itext[XsltForms_globals.language] || itext[itext.defaultlang];
 			return translation[id];
 		} ),
@@ -1796,7 +1851,7 @@ var XsltForms_xpathCoreFunctions = {
 		function(from, to, step) {
 			var res = [];
 			for (var i = from; i <= to; i += step) {
-				res.push({localName:"repeatitem",text:i+"",documentElement:"dummy"});
+				res.push({nodeType:Fleur.Node.DOCUMENT_NODE,localName:"repeatitem",text:i+"",documentElement:"dummy",getUserData:function(){return "";}});
 			}
 			return res;
 		} ),
@@ -1826,11 +1881,11 @@ var XsltForms_xpathCoreFunctions = {
 };
 
 XsltForms_globals.invalid_id_ = function(element) {
-	if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
+	if (element.nodeType !== Fleur.Node.ELEMENT_NODE || element.id === "xsltforms_console" || element.hasXFElement === false) {
 		return "";
 	}
 	var xf = element.xfElement;
-	if (xf && !(xf instanceof Array) && !xf.isRepeat) {
+	if (xf && xf.controlName !== "group" && !(xf instanceof Array) && !xf.isRepeat) {
 		return xf.notvalid && !xf.isOutput ? element.id : "";
 	}
 	var childs = element.children || element.childNodes;

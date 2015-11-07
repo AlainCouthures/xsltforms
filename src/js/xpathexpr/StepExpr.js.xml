@@ -48,8 +48,11 @@ XsltForms_stepExpr.prototype.evaluate = function(ctx) {
 	switch(this.axis) {
 		case XsltForms_xpathAxis.ANCESTOR_OR_SELF :
 			XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
-			if (input.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+			if (input.nodeType === Fleur.Node.ATTRIBUTE_NODE) {
 				input = input.ownerElement ? input.ownerElement : input.selectSingleNode("..");
+				XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
+			} else if (input.nodeType === Fleur.Node.ENTRY_NODE) {
+				input = input.ownerMap;
 				XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
 			}
 			for (var pn = input.parentNode; pn.parentNode; pn = pn.parentNode) {
@@ -57,8 +60,11 @@ XsltForms_stepExpr.prototype.evaluate = function(ctx) {
 			}
 			break;
 		case XsltForms_xpathAxis.ANCESTOR :
-			if (input.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+			if (input.nodeType === Fleur.Node.ATTRIBUTE_NODE) {
 				input = input.ownerElement ? input.ownerElement : input.selectSingleNode("..");
+				XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
+			} else if (input.nodeType === Fleur.Node.ENTRY_NODE) {
+				input = input.ownerMap;
 				XsltForms_stepExpr.push(ctx, list, input, this.nodetest);
 			}
 			for (var pn2 = input.parentNode; pn2.parentNode; pn2 = pn2.parentNode) {
@@ -78,9 +84,12 @@ XsltForms_stepExpr.prototype.evaluate = function(ctx) {
 		case XsltForms_xpathAxis.DESCENDANT :
 			XsltForms_stepExpr.pushDescendants(ctx, list, input, this.nodetest);
 			break;
+		case XsltForms_xpathAxis.ENTRY :
+			XsltForms_stepExpr.pushList(ctx, list, input.entries, this.nodetest);
+			break;
 		case XsltForms_xpathAxis.FOLLOWING :
-			var n = input.nodeType === XsltForms_nodeType.ATTRIBUTE ? input.ownerElement ? input.ownerElement : input.selectSingleNode("..") : input;
-			while (n.nodeType !== XsltForms_nodeType.DOCUMENT) {
+			var n = input.nodeType === Fleur.Node.ATTRIBUTE_NODE ? (input.ownerElement ? input.ownerElement : input.selectSingleNode("..")) : (input.nodeType === Fleur.Node.ENTRY_NODE ? input.ownerMap : input);
+			while (n.nodeType !== Fleur.Node.DOCUMENT_NODE) {
 				for (var nn = n.nextSibling; nn; nn = nn.nextSibling) {
 					XsltForms_stepExpr.push(ctx, list, nn, this.nodetest);
 					XsltForms_stepExpr.pushDescendants(ctx, list, nn, this.nodetest);
@@ -100,14 +109,16 @@ XsltForms_stepExpr.prototype.evaluate = function(ctx) {
 			if (input.parentNode) {
 				XsltForms_stepExpr.push(ctx, list, input.parentNode, this.nodetest);
 			} else {
-				if (input.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+				if (input.nodeType === Fleur.Node.ATTRIBUTE_NODE) {
 					XsltForms_stepExpr.push(ctx, list, input.ownerElement ? input.ownerElement : input.selectSingleNode(".."), this.nodetest);
+				} else if (input.nodeType === Fleur.Node.ENTRY_NODE) {
+					XsltForms_stepExpr.push(ctx, list, input.ownerMap, this.nodetest);
 				}
 			}
 			break;
 		case XsltForms_xpathAxis.PRECEDING :
-			var p = input.nodeType === XsltForms_nodeType.ATTRIBUTE ? input.ownerElement ? input.ownerElement : input.selectSingleNode("..") : input;
-			while (p.nodeType !== XsltForms_nodeType.DOCUMENT) {
+			var p = input.nodeType === Fleur.Node.ATTRIBUTE_NODE ? (input.ownerElement ? input.ownerElement : input.selectSingleNode("..")) : (input.nodeType === Fleur.Node.ENTRY_NODE ? input.ownerMap : input);
+			while (p.nodeType !== Fleur.Node.DOCUMENT_NODE) {
 				for (var ps = p.previousSibling; ps; ps = ps.previousSibling) {
 					XsltForms_stepExpr.pushDescendantsRev(ctx, list, ps, this.nodetest);
 					XsltForms_stepExpr.push(ctx, list, ps, this.nodetest);

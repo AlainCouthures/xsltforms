@@ -73,7 +73,7 @@ XsltForms_control.prototype.focus = function(focusEvent, evcontext) {
 		XsltForms_browser.setClass(this.element, "xforms-focus", true);
 		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
 		var parent = this.element.parentNode;
-		while (parent.nodeType === XsltForms_nodeType.ELEMENT) {
+		while (parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 			if (typeof parent.node !== "undefined" && XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
 				XsltForms_repeat.selectItem(parent);
 			}
@@ -216,7 +216,7 @@ XsltForms_control.prototype.changeProp = function(node, prop, onTrue, onFalse, c
 <![CDATA[
 XsltForms_control.prototype.valueChanged = function(value, force) {
 	var node = this.element.node;
-	var model = document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement;
+	var model = document.getElementById(XsltForms_browser.getDocMeta(node.ownerDocument, "model")).xfElement;
 	var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
 	if (value && !(value instanceof Array) && value.length > 0 && schtyp.parse) {
 		try { value = schtyp.parse(value); } catch(e) { }

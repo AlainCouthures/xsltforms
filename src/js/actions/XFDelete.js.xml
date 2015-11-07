@@ -63,7 +63,7 @@ XsltForms_delete.prototype.run = function(element, ctx) {
 	var model;
 	var instance;
 	if (nodes.length > 0) {
-		model = document.getElementById(XsltForms_browser.getMeta(nodes[0].documentElement ? nodes[0].documentElement : nodes[0].ownerDocument.documentElement, "model")).xfElement;
+		model = document.getElementById(XsltForms_browser.getDocMeta(nodes[0].nodeType === Fleur.Node.DOCUMENT_NODE ? nodes[0] : nodes[0].ownerDocument, "model")).xfElement;
 		instance = model.findInstance(nodes[0]);
 	}
 	var deletedNodes = [];
@@ -74,7 +74,7 @@ XsltForms_delete.prototype.run = function(element, ctx) {
 		if (repeat) {
 			document.getElementById(repeat).xfElement.deleteNode(node);
 		}
-		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+		if (node.nodeType === Fleur.Node.ATTRIBUTE_NODE) {
 			var oldOwnerElement = node.ownerElement? node.ownerElement: node.selectSingleNode("..");
 			//XsltForms_browser.clearMeta(node);
 			if (oldOwnerElement.removeAttributeNS) {

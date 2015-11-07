@@ -35,6 +35,7 @@ var XsltForms_xpathAxis = {
 	CHILD: 'child',
 	DESCENDANT_OR_SELF: 'descendant-or-self',
 	DESCENDANT: 'descendant',
+	ENTRY: 'entry',
 	FOLLOWING_SIBLING: 'following-sibling',
 	FOLLOWING: 'following',
 	NAMESPACE: 'namespace',
@@ -42,26 +43,6 @@ var XsltForms_xpathAxis = {
 	PRECEDING_SIBLING: 'preceding-sibling',
 	PRECEDING: 'preceding',
 	SELF: 'self'
-};
-
-]]>
-		<cm:wiki>
-=== XsltForms_nodeType Class ===
-XML Constants Class for node types as an associative array</cm:wiki>
-<![CDATA[
-var XsltForms_nodeType = {
-	ELEMENT : 1,
-	ATTRIBUTE : 2,
-	TEXT : 3,
-	CDATA_SECTION : 4,
-	ENTITY_REFERENCE : 5,
-	ENTITY : 6,
-	PROCESSING_INSTRUCTION : 7,
-	COMMENT : 8,
-	DOCUMENT : 9,
-	DOCUMENT_TYPE : 10,
-	DOCUMENT_FRAGMENT : 11,
-	NOTATION : 12
 };
 ]]>
 	</cm:source>

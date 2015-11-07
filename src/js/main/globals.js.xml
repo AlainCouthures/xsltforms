@@ -34,7 +34,7 @@ Global class for XSLTForms Management</cm:wiki>
 /*global ActiveXObject, alert, Document, XDocument, Element, DOMParser, XMLSerializer, XSLTProcessor */
 /*global tinyMCE */
 /*global XMLDocument : true */
-/*global XsltForms_browser : true, XsltForms_nodeType : true, XsltForms_schema : true */
+/*global XsltForms_browser : true, Fleur.Node : true, XsltForms_schema : true */
 /*global XsltForms_calendar : true, XsltForms_numberList : true, XsltForms_xmlevents : true */
 /*global XsltForms_abstractAction : true, XsltForms_repeat : true, XsltForms_element : true */
 /*global XsltForms_control : true, XsltForms_xpathCoreFunctions : true, XsltForms_xpathFunctionExceptions : true */
@@ -224,7 +224,7 @@ var XsltForms_globals = {
 						return XsltForms_globals.profiling_data();
 					case "xsltforms-tracelog":
 						try  {
-							return XsltForms_browser.saveXML(XsltForms_browser.debugConsole.doc_.documentElement, true);
+							return XsltForms_browser.saveDoc(XsltForms_browser.debugConsole.doc_, "application/xml", true);
 						} catch (e) {
 							XsltForms_browser.debugConsole.write("ERROR: Could not open xsltforms-tracelog " + e.message);
 							return '<error xmlns="">Could not open xsltforms-tracelog "'+e.message+'"</error>';
@@ -236,7 +236,7 @@ var XsltForms_globals = {
 							if (!instance) {
 								return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
 							}
-							return XsltForms_browser.saveXML(instance.xfElement.doc.documentElement, true);
+							return XsltForms_browser.saveDoc(instance.xfElement.doc, "application/xml", true);
 						} else {
 							var filename = resource.substr(slash+1);
 							instance = document.getElementById(resource.substr(0, slash));
@@ -249,12 +249,12 @@ var XsltForms_globals = {
 							}
 							if (!f.doc) {
 								f.doc = XsltForms_browser.createXMLDocument("<dummy/>");
-								modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
-								XsltForms_browser.loadXML(f.doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
-								XsltForms_browser.setMeta(f.doc.documentElement, "instance", idRef);
-								XsltForms_browser.setMeta(f.doc.documentElement, "model", modid);
+								modid = XsltForms_browser.getDocMeta(instance.xfElement.doc, "model");
+								XsltForms_browser.loadDoc(f.doc, XsltForms_browser.utf8decode(zip_inflate(f.compressedFileData)));
+								XsltForms_browser.setDocMeta(f.doc, "instance", idRef);
+								XsltForms_browser.setDocMeta(f.doc, "model", modid);
 							}
-							return XsltForms_browser.saveXML(f.doc.documentElement, true);
+							return XsltForms_browser.saveDoc(f.doc, "application/xml", true);
 						}
 				}
 				break;
@@ -264,7 +264,7 @@ var XsltForms_globals = {
 					return '<error xmlns="">Unknown resource "'+resource+'" for method "'+method+'"</error>';
 				}
 				instance.xfElement.setDoc(ser, false, true);
-				modid = XsltForms_browser.getMeta(instance.xfElement.doc.documentElement, "model");
+				modid = XsltForms_browser.getDocMeta(instance.xfElement.doc, "model");
 				XsltForms_globals.addChange(modid);
 				XsltForms_globals.closeChanges();
 				return '<ok xmlns=""/>';
@@ -314,9 +314,9 @@ var XsltForms_globals = {
 								if (XsltForms_globals.models[m].instances[id].archive.hasOwnProperty(fn)) {
 									if (!XsltForms_globals.models[m].instances[id].archive[fn].doc) {
 										XsltForms_globals.models[m].instances[id].archive[fn].doc = XsltForms_browser.createXMLDocument("<dummy/>");
-										XsltForms_browser.loadXML(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, XsltForms_browser.utf8decode(zip_inflate(XsltForms_globals.models[m].instances[id].archive[fn].compressedFileData)));
-										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "instance", id);
-										XsltForms_browser.setMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc.documentElement, "model", m);
+										XsltForms_browser.loadDoc(XsltForms_globals.models[m].instances[id].archive[fn].doc, XsltForms_browser.utf8decode(zip_inflate(XsltForms_globals.models[m].instances[id].archive[fn].compressedFileData)));
+										XsltForms_browser.setDocMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc, "instance", id);
+										XsltForms_browser.setDocMeta(XsltForms_globals.models[m].instances[id].archive[fn].doc, "model", m);
 									}
 									count = XsltForms_browser.selectNodesLength("descendant::node() | descendant::*/@*[not(starts-with(local-name(),'xsltforms_'))]", XsltForms_globals.models[m].instances[id].archive[fn].doc);
 									s += '<xsltforms:instance id="' + id + '/' + fn + '">' + count + '</xsltforms:instance>';
@@ -438,14 +438,14 @@ var XsltForms_globals = {
 		XsltForms_browser.events.attach(b, "click", function(evt) {
 			var target = XsltForms_browser.events.getTarget(evt);
 			var parent = target;
-			while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 				if (XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
 					XsltForms_repeat.selectItem(parent);
 				}
 				parent = parent.parentNode;
 			}
 			parent = target;
-			while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+			while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 				var xf = parent.xfElement;
 				if (xf) {
 					if(typeof parent.node !== "undefined" && parent.node && xf.focus && !XsltForms_browser.getBoolMeta(parent.node, "readonly")) {
@@ -613,7 +613,7 @@ var XsltForms_globals = {
 * '''build''' method : XForms build management</cm:wiki>
 <![CDATA[
 	build : function(element, ctx, selected, varresolver) {
-		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console" || element.hasXFElement === false) {
+		if (element.nodeType !== Fleur.Node.ELEMENT_NODE || element.id === "xsltforms_console" || element.hasXFElement === false) {
 			return {ctx: ctx, hasXFElement: false};
 		}
 		var xf = element.xfElement;
@@ -644,7 +644,7 @@ var XsltForms_globals = {
 			var nbsiblings = 1, isiblings = 1;
 			var nodes = [], nbnodes = 0, inodes = 0;
 			for (var i = 0; i < childs.length && this.building; i++) {
-				if (childs[i].nodeType !== XsltForms_nodeType.TEXT) {
+				if (childs[i].nodeType !== Fleur.Node.TEXT_NODE) {
 					var curctx;
 					if (isiblings !== 1) {
 						curctx = nodes[inodes];
@@ -712,7 +712,7 @@ var XsltForms_globals = {
 * '''dispose''' method : disposes of an element</cm:wiki>
 <![CDATA[
 	dispose : function(element) {
-		if (element.nodeType !== XsltForms_nodeType.ELEMENT || element.id === "xsltforms_console") {
+		if (element.nodeType !== Fleur.Node.ELEMENT_NODE || element.id === "xsltforms_console") {
 			return;
 		}
 		var xf = element.xfElement;

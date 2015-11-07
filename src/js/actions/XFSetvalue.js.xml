@@ -55,7 +55,7 @@ XsltForms_setvalue.prototype.run = function(element, ctx) {
 		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
 		try {
 			XsltForms_browser.setValue(node, value || "");
-			document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement.addChange(node);
+			document.getElementById(XsltForms_browser.getDocMeta(node.ownerDocument, "model")).xfElement.addChange(node);
 			XsltForms_browser.debugConsole.write("Setvalue " + XsltForms_browser.name2string(node) + " = " + value);
 		} catch (e) {
 			XsltForms_browser.debugConsole.write("ERROR: cannot setvalue on " + XsltForms_browser.name2string(node) + " = " + value + "(context " + XsltForms_browser.name2string(ctx) + ")");

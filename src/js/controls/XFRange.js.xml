@@ -52,7 +52,7 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 	XsltForms_browser.events.attach(this.rail, "focus", function(evt) {
 		var target = XsltForms_browser.events.getTarget(evt);
 		var parent = target;
-		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+		while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 			var xf = parent.xfElement;
 			if (xf) {
 				alert("rail_focus "+xf.element.id);
@@ -64,7 +64,7 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 	XsltForms_browser.events.attach(this.rail, "mousedown", function(evt) {
 		var target = XsltForms_browser.events.getTarget(evt);
 		var parent = target;
-		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+		while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 			var xf = parent.xfElement;
 			if (xf) {
 				var newPos = XsltForms_browser.getEventPos(evt).x + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
@@ -96,7 +96,7 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 	XsltForms_browser.events.attach(this.cursor, "mousedown", function(evt) {
 		var target = XsltForms_browser.events.getTarget(evt);
 		var parent = target;
-		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+		while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 			var xf = parent.xfElement;
 			if (xf) {
 				xf.offset = XsltForms_browser.getEventPos(evt).x + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);
@@ -108,7 +108,7 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 				document.onmousemove = function(evt) {
 					var target = XsltForms_browser.isIE ? document.activeElement : XsltForms_browser.events.getTarget(evt);
 					var parent = target;
-					while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+					while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 						var xf = parent.xfElement;
 						if (xf) {
 							var newPos = XsltForms_browser.getEventPos(evt).x - xf.offset + (window.pageLeft !== undefined ? window.pageLeft : (document.documentElement && document.documentElement.scrollLeft !== undefined) ? document.documentElement.scrollLeft : document.body.scrollLeft);

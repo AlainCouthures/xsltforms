@@ -191,7 +191,7 @@ XsltForms_input.prototype.initInput = function(type) {
 				cell.removeChild(cell.firstChild);
 			}
 		} else {
-			while (cell.firstChild.nodeType === XsltForms_nodeType.TEXT) {
+			while (cell.firstChild.nodeType === Fleur.Node.TEXT_NODE) {
 				cell.removeChild(cell.firstChild);
 			}
 			for (var i = cell.childNodes.length - 1; i >= 1; i--) {

@@ -59,7 +59,7 @@ XsltForms_itemset.prototype.build_ = function(ctx) {
 	for (var cont = 1; true;) {
 		next = next.nextSibling;
 		if (next) {
-			if (next.nodeType === XsltForms_nodeType.ELEMENT) {
+			if (next.nodeType === Fleur.Node.ELEMENT_NODE) {
 				if (next.getAttribute("cloned")) {
 					if (cont >= length) {
 						next.listeners = null;
@@ -168,7 +168,7 @@ XsltForms_itemset.prototype.refresh_ = function(element, cont) {
 	if (this.copyBinding && nodeCopy) {
 		this.depsNodesRefresh.push(nodeCopy);
 		try {
-			element.value = element.copy = XsltForms_browser.saveXML(nodeCopy);
+			element.value = element.copy = XsltForms_browser.saveNode(nodeCopy, "application/xml");
 		} catch(e3) {
 		}
 	}

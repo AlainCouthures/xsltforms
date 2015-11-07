@@ -26,9 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<cm:source type="application/xml">
 	 	<xsl:template name="getName" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:param name="s"/>
-			<xsl:variable name="o" select="translate(substring($s,1,100),'_.-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:','')"/>
+			<xsl:variable name="o">
+				<xsl:if test="not(starts-with($s,'`'))">
+					<xsl:value-of select="translate(substring($s,1,100),'_.-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:','')"/>
+				</xsl:if>
+			</xsl:variable>
 			<xsl:variable name="r">
 				<xsl:choose>
+					<xsl:when test="starts-with($s,'`')"><xsl:value-of select="concat('`',substring-before(substring($s,2,100),'`'),'`')"/></xsl:when>
 					<xsl:when test="$o = ''"><xsl:value-of select="substring($s,1,100)"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="substring-before($s, substring($o,1,1))"/></xsl:otherwise>
 				</xsl:choose>

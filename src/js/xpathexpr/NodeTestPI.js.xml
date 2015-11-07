@@ -38,7 +38,7 @@ function XsltForms_nodeTestPI(target) {
 * '''evaluate''' method : evaluates as a boolean value if a given node is a processing instruction with the same name as this expression object</cm:wiki>
 <![CDATA[
 XsltForms_nodeTestPI.prototype.evaluate = function(node) {
-	return node.nodeType === XsltForms_nodeType.PROCESSING_INSTRUCTION &&
+	return node.nodeType === Fleur.Node.PROCESSING_INSTRUCTION_NODE &&
 		(!this.target || node.nodeName === this.target);
 };
 ]]>

@@ -127,7 +127,7 @@ XsltForms_mipbinding.nodedispose = function(node) {
 		}
 	}
 	for (var n = node.firstChild; n; n = n.nextSibling) {
-		if (n.nodeType === XsltForms_nodeType.ELEMENT) {
+		if (n.nodeType === Fleur.Node.ELEMENT_NODE) {
 			XsltForms_mipbinding.nodedispose(n);
 		}
 	}

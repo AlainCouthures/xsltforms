@@ -201,7 +201,7 @@ XsltForms_load.prototype.issueLoadException_ = function(evcontext, req, ex) {
 XsltForms_load.subform = function(resource, targetid, ref) {
 	if (ref) {
 		var parent = ref;
-		while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+		while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 			if (XsltForms_browser.hasClass(parent, "xforms-repeat-item")) {
 				XsltForms_repeat.selectItem(parent);
 			}
@@ -211,7 +211,7 @@ XsltForms_load.subform = function(resource, targetid, ref) {
 	var targetelt = XsltForms_idManager.find(targetid);
 	var subform = null;
 	parent = targetelt;
-	while (parent && parent.nodeType === XsltForms_nodeType.ELEMENT) {
+	while (parent && parent.nodeType === Fleur.Node.ELEMENT_NODE) {
 		if (parent.xfSubform) {
 			subform = parent.xfSubform;
 			break;

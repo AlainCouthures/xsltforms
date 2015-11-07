@@ -64,6 +64,9 @@ function XsltForms_model(subform, id, schemas, functions, version) {
 		elt.reset = function() {
 			return this.xfElement.reset();
 		};
+		elt.handleEvent = function(name, evcontext) {
+			XsltForms_xmlevents.dispatch(elt, name, null, null, null, null, evcontext);
+		};
 	}
 	if (schemas) {
 		schemas = schemas.split(" ");
@@ -190,7 +193,7 @@ XsltForms_model.prototype.getInstanceDocument = function(id) {
 * '''findInstance''' method : finds the corresponding instance of a node in this model</cm:wiki>
 <![CDATA[
 XsltForms_model.prototype.findInstance = function(node) {
-	var doc = node.nodeType === XsltForms_nodeType.DOCUMENT ? node : node.ownerDocument;
+	var doc = node.nodeType === Fleur.Node.DOCUMENT_NODE ? node : node.ownerDocument;
 	for (var id in this.instances) {
 		if (this.instances.hasOwnProperty(id)) {
 			var inst = this.instances[id];
@@ -295,13 +298,13 @@ XsltForms_model.prototype.addChange = function(node) {
 	if (!XsltForms_browser.inArray(node, list)) {
 		XsltForms_globals.addChange(this);
 	}
-	if (node.nodeType === XsltForms_nodeType.ATTRIBUTE && !XsltForms_browser.inArray(node, list)) {
+	if (node.nodeType === Fleur.Node.ATTRIBUTE_NODE && !XsltForms_browser.inArray(node, list)) {
 		list.push(node);
 		node = node.ownerElement ? node.ownerElement : node.selectSingleNode("..");
 	}
-	while (node.nodeType === XsltForms_nodeType.ELEMENT && !XsltForms_browser.inArray(node, list)) {
+	while (node && node.nodeType !== Fleur.Node.DOCUMENT_NODE && !XsltForms_browser.inArray(node, list)) {
 		list.push(node);
-		node = node.parentNode;
+		node = node.nodeType === Fleur.Node.ENTRY_NODE ? node.ownerMap : node.parentNode;
 	}
 };
 

@@ -280,7 +280,7 @@ XsltForms_upload.prototype.directclick = function() {
 			if (filenameref) {
 				XsltForms_globals.openAction("XsltForms_upload.prototype.directclick");
 				XsltForms_browser.setValue(filenameref, filename || "");
-				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
+				var model = document.getElementById(XsltForms_browser.getDocMeta(filenameref.ownerDocument, "model")).xfElement;
 				model.addChange(filenameref);
 				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 				XsltForms_globals.refresh();
@@ -388,7 +388,7 @@ XsltForms_upload.prototype.change = function() {
 			if (filenameref) {
 				XsltForms_globals.openAction("XsltForms_upload.prototype.change");
 				XsltForms_browser.setValue(filenameref, filename || "");
-				var model = document.getElementById(XsltForms_browser.getMeta(filenameref.ownerDocument.documentElement, "model")).xfElement;
+				var model = document.getElementById(XsltForms_browser.getDocMeta(filenameref.ownerDocument, "model")).xfElement;
 				model.addChange(filenameref);
 				XsltForms_xmlevents.dispatch(model, "xforms-recalculate");
 				XsltForms_globals.refresh();

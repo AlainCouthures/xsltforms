@@ -77,8 +77,8 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 		if (nodes.length === 0) {
 			parent = ctx;
 		} else {
-			parent = nodes[0].nodeType === XsltForms_nodeType.DOCUMENT? nodes[0] : nodes[0].nodeType === XsltForms_nodeType.ATTRIBUTE? nodes[0].ownerDocument ? nodes[0].ownerDocument : nodes[0].selectSingleNode("..") : nodes[0].parentNode;
-			if (parent.nodeType !== XsltForms_nodeType.DOCUMENT && node.nodeType !== XsltForms_nodeType.ATTRIBUTE) {
+			parent = nodes[0].nodeType === Fleur.Node.DOCUMENT_NODE? nodes[0] : nodes[0].nodeType === Fleur.Node.ATTRIBUTE_NODE? nodes[0].ownerDocument ? nodes[0].ownerDocument : nodes[0].selectSingleNode("..") : nodes[0].parentNode;
+			if (parent.nodeType !== Fleur.Node.DOCUMENT_NODE && node.nodeType !== Fleur.Node.ATTRIBUTE_NODE) {
 				res = this.at ? Math.round(XsltForms_globals.numberValue(this.at.xpath_evaluate(new XsltForms_exprContext(this.subform, ctx, 1, nodes, null, null, null, varresolver)))) + i - 1: nodes.length - 1;
 				index = isNaN(res)? nodes.length : res + pos;
 			}
@@ -86,18 +86,18 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 		XsltForms_browser.debugConsole.write("insert " + node.nodeName + " in " + parent.nodeName + " at " + index + " - " + ctx.nodeName);
 		var clone = node.cloneNode(true);
 		XsltForms_browser.clearMeta(clone);
-		if (node.nodeType === XsltForms_nodeType.ATTRIBUTE) {
+		if (node.nodeType === Fleur.Node.ATTRIBUTE_NODE) {
 			XsltForms_browser.setAttributeNS(parent, node.namespaceURI, node.nodeName, node.nodeValue);
 		} else {
-			if (parent.nodeType === XsltForms_nodeType.DOCUMENT) {
+			if (parent.nodeType === Fleur.Node.DOCUMENT_NODE) {
 				var first = parent.documentElement;
-				var prevmodel = XsltForms_browser.getMeta(first, "model");
-				var previnst = XsltForms_browser.getMeta(first, "instance");
+				var prevmodel = XsltForms_browser.getDocMeta(parent, "model");
+				var previnst = XsltForms_browser.getDocMeta(parent, "instance");
 				parent.removeChild(first);
 				first = null;
-				XsltForms_browser.setMeta(clone, "instance", previnst);
-				XsltForms_browser.setMeta(clone, "model", prevmodel);
 				parent.appendChild(clone);
+				XsltForms_browser.setDocMeta(parent, "instance", previnst);
+				XsltForms_browser.setDocMeta(parent, "model", prevmodel);
 			} else {
 				var nodeAfter;
 				if (index >= nodes.length && nodes.length !== 0) {
@@ -120,7 +120,7 @@ XsltForms_insert.prototype.run = function(element, ctx) {
 			}
 		}
 	}
-	var model = document.getElementById(XsltForms_browser.getMeta(parent.documentElement ? parent.documentElement : parent.ownerDocument.documentElement, "model")).xfElement;
+	var model = document.getElementById(XsltForms_browser.getDocMeta(parent.nodeType === Fleur.Node.DOCUMENT_NODE ? parent : parent.ownerDocument, "model")).xfElement;
 	XsltForms_globals.addChange(model);
 	model.setRebuilded(true);
 	var evcontext = {"inserted-nodes": [clone], "origin-nodes": originNodes, "insert-location-node": index, position: this.position};

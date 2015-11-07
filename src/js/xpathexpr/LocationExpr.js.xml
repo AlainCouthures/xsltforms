@@ -43,7 +43,7 @@ function XsltForms_locationExpr(absolute) {
 <![CDATA[
 XsltForms_locationExpr.prototype.evaluate = function(ctx) {
 	var start = (this.absolute && ctx.root )|| !ctx.node ? ctx.root : ctx.node;
-	var m = XsltForms_browser.getMeta((start.documentElement ? start.documentElement : start.ownerDocument.documentElement), "model");
+	var m = XsltForms_browser.getDocMeta((start.nodeType === Fleur.Node.DOCUMENT_NODE ? start : start.ownerDocument), "model");
 	if (m) {
 		ctx.addDepElement(document.getElementById(m).xfElement);
 	}

@@ -67,6 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:call-template name="style">
 							<xsl:with-param name="class">xforms-control xforms-<xsl:value-of select="local-name()"/><xsl:choose><xsl:when test="local-name()='trigger' or local-name()='submit' or string(xforms:label)=''"> xforms-appearance-minimal</xsl:when><xsl:when test="@appearance"> xforms-appearance-<xsl:value-of select="@appearance"/></xsl:when><xsl:otherwise> xforms-appearance</xsl:otherwise></xsl:choose></xsl:with-param>
 						</xsl:call-template>
+						<xsl:copy-of select="@style"/>
 						<xsl:if test="xforms:hint and xforms:hint/@appearance = 'minimal'">
 							<xsl:attribute name="title">
 								<xsl:apply-templates select="xforms:hint/node()"/>

@@ -99,8 +99,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						<xsl:text>var xsltforms_d0 = new Date();
 </xsl:text>
 						<xsl:text>XsltForms_domEngine = "</xsl:text>
-						<xsl:if test="$script/config/properties/domengine">
-							<xsl:value-of select="$script/config/properties/domengine/@uri"/>
+						<xsl:if test="$domengine != ''">
+							<xsl:value-of select="substring-before(substring-after($domengine, 'uri='), ';')"/>
 						</xsl:if>
 						<xsl:text>";
 </xsl:text>
@@ -116,8 +116,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<xsl:apply-templates select="xhtml:head/xhtml:style | xhtml:head/xhtml:link | head/style | head/link">
 						<xsl:with-param name="config" select="$script/config"/>
 					</xsl:apply-templates>
-					<xsl:if test="$script/config/properties/domengine">
-						<script type="text/javascript" id="{$script/config/properties/domengine/@name}-src" src="{$script/config/properties/domengine/@url}" data-uri="{$script/config/properties/domengine/@uri}" data-version="{$script/config/properties/domengine/@version}">
+					<xsl:if test="$domengine != ''">
+						<script type="text/javascript" id="{substring-before(substring-after($domengine, 'name='), ';')}-src" src="{substring-before(substring-after($domengine, 'url='), ';')}" data-uri="{substring-before(substring-after($domengine, 'uri='), ';')}" data-version="{substring-before(substring-after($domengine, 'version='), ';')}">
 							<xsl:text>/* */</xsl:text>
 						</script>
 					</xsl:if>

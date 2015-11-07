@@ -67,7 +67,7 @@ XsltForms_repeat.prototype.setIndex = function(index) {
 			this.index = index;
 			this.element.node = node;
 			XsltForms_globals.addChange(this);
-			XsltForms_globals.addChange(document.getElementById(XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model")).xfElement);
+			XsltForms_globals.addChange(document.getElementById(XsltForms_browser.getDocMeta(node.ownerDocument, "model")).xfElement);
 			XsltForms_globals.closeAction("XsltForms_repeat.prototype.setIndex");
 		}
 	}
@@ -131,7 +131,7 @@ XsltForms_repeat.prototype.build_ = function(ctx) {
 	n = nodes.length;
 	if (this.nbsiblings === 0) {
 		r = this.root;
-		while (r.firstChild.nodeType === XsltForms_nodeType.TEXT) {
+		while (r.firstChild.nodeType === Fleur.Node.TEXT_NODE) {
 			r.removeChild(r.firstChild);
 		}
 		r0 = r.children ? r.children[0] : r.childNodes[0];

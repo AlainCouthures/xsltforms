@@ -51,8 +51,8 @@ XsltForms_setnode.prototype.run = function(element, ctx) {
 			ctx = this.context.xpath_evaluate(ctx)[0];
 		}
 		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx) : this.value.xpath_evaluate(node, ctx)) : this.literal;
-		var modelid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "model");
-		var instanceid = XsltForms_browser.getMeta(node.ownerDocument.documentElement, "instance");
+		var modelid = XsltForms_browser.getDocMeta(node.ownerDocument, "model");
+		var instanceid = XsltForms_browser.getDocMeta(node.ownerDocument, "instance");
 		XsltForms_globals.openAction("XsltForms_setnode.prototype.run");
 		if (this.inout) {
 			while (node.firstChild) {
@@ -60,11 +60,11 @@ XsltForms_setnode.prototype.run = function(element, ctx) {
 			}
 			var tempnode = node.ownerDocument.createTextNode("temp");
 			node.appendChild(tempnode);
-			XsltForms_browser.loadXML(tempnode, value || "");
+			XsltForms_browser.loadNode(tempnode, value || "", "application/xml");
 		} else {
-			XsltForms_browser.loadXML(node, value || "");
-			XsltForms_browser.setMeta(node.ownerDocument.documentElement, "model", modelid);
-			XsltForms_browser.setMeta(node.ownerDocument.documentElement, "instance", instanceid);
+			XsltForms_browser.loadNode(node, value || "", "application/xml");
+			XsltForms_browser.setDocMeta(node.ownerDocument, "model", modelid);
+			XsltForms_browser.setDocMeta(node.ownerDocument, "instance", instanceid);
 		}
 		var model = document.getElementById(modelid).xfElement;
 		XsltForms_globals.addChange(model);

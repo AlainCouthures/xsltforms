@@ -31,9 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<xsl:param name="ops"/>
 			<xsl:variable name="c" select="substring(normalize-space($xp),1,1)"/>
 			<xsl:variable name="d" select="substring-after($xp,$c)"/>
+			<xsl:variable name="fname" select="normalize-space(concat($c,substring-before($d,'(')))"/>
 			<xsl:variable name="r">
 				<xsl:choose>
-					<xsl:when test="contains('./@*',$c)">
+					<xsl:when test="contains('./@?*`',$c) or contains('(node(array(map(entry(', concat('(',$fname,'('))">
 						<xsl:variable name="t"><xsl:call-template name="getLocationPath"><xsl:with-param name="s" select="concat($c,$d)"/></xsl:call-template></xsl:variable>
 						<xsl:value-of select="substring-before($t,'.')"/>
 						<xsl:text>.new XsltForms_locationExpr(</xsl:text>

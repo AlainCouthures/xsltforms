@@ -93,7 +93,7 @@ XsltForms_exprContext.prototype.initDeps = function(depsNodes, depsElements) {
 <![CDATA[
 XsltForms_exprContext.prototype.addDepNode = function(node) {
 	var deps = this.depsNodes;
-	if (deps && node.nodeType && node.nodeType !== XsltForms_nodeType.DOCUMENT && (!this.depsId || !XsltForms_browser.inValueMeta(node, "depfor", this.depsId))) { // !inArray(node, deps)) {
+	if (deps && node.nodeType && node.nodeType !== Fleur.Node.DOCUMENT_NODE && (!this.depsId || !XsltForms_browser.inValueMeta(node, "depfor", this.depsId))) { // !inArray(node, deps)) {
 		if (this.depsId) {
 			XsltForms_browser.addValueMeta(node, "depfor", this.depsId);
 		}
