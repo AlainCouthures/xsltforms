@@ -5,7 +5,10 @@
 		</options>
 		<properties> <!--  accessible at run time -->
 			<html>4</html>
+			<jsrevision>rev</jsrevision>
 			<language>fr</language>
+			<domengine name="Fleur" url="/fleur/fleur.js" uri="http://www.agencexml.com/Fleur" version="1.0"/>
+			<xpathengine name="Fleur" url="/fleur/fleur.js" uri="http://www.agencexml.com/Fleur" version="1.0"/>
 			<calendar.label>...</calendar.label>
 			<calendar.day0>Lun</calendar.day0>
 			<calendar.day1>Mar</calendar.day1>
@@ -30,6 +33,14 @@
 			<format.date>dd/MM/yyyy</format.date>
 			<format.datetime>dd/MM/yyyy hh:mm:ss</format.datetime>
 			<format.decimal>,</format.decimal>
+			<format-number.decimal-separator-sign>,</format-number.decimal-separator-sign>
+			<format-number.exponent-separator-sign>.10^</format-number.exponent-separator-sign>
+			<format-number.grouping-separator-sign> </format-number.grouping-separator-sign>
+			<format-number.infinity>Infini</format-number.infinity>
+			<format-number.minus-sign>-</format-number.minus-sign>
+			<format-number.NaN>Non numérique</format-number.NaN>
+			<format-number.percent-sign>%</format-number.percent-sign>
+			<format-number.per-mille-sign>&#x2030;</format-number.per-mille-sign>
 			<status>Traitement en cours</status>
 		</properties>
 		<extensions/> <!-- HTML elements to be added just after xsltforms.js and xsltforms.css loading -->

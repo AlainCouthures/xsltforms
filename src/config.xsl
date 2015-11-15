@@ -34,6 +34,14 @@
 			<format.date>MM/dd/yyyy</format.date>
 			<format.datetime>MM/dd/yyyy hh:mm:ss</format.datetime>
 			<format.decimal>.</format.decimal>
+			<format-number.decimal-separator-sign>.</format-number.decimal-separator-sign>
+			<format-number.exponent-separator-sign>e</format-number.exponent-separator-sign>
+			<format-number.grouping-separator-sign>,</format-number.grouping-separator-sign>
+			<format-number.infinity>Infinity</format-number.infinity>
+			<format-number.minus-sign>-</format-number.minus-sign>
+			<format-number.NaN>NaN</format-number.NaN>
+			<format-number.percent-sign>%</format-number.percent-sign>
+			<format-number.per-mille-sign>&#x2030;</format-number.per-mille-sign>
 			<status>... Loading ...</status>
 		</properties>
 		<extensions/> <!-- HTML elements to be added just after xsltforms.js and xsltforms.css loading -->

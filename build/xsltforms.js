@@ -1,4 +1,4 @@
-/* Rev. 626
+/* Rev. 627
 
 Copyright (C) 2008-2015 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -180,8 +180,8 @@ var XsltForms_xpathAxis = {
 /*global XsltForms_typeDefs : true, XsltForms_exprContext : true */
 var XsltForms_globals = {
 
-	fileVersion: "626",
-	fileVersionNumber: 626,
+	fileVersion: "627",
+	fileVersionNumber: 627,
 
 	language: "navigator",
 	debugMode: false,
@@ -1772,11 +1772,11 @@ if (XsltForms_domEngine === "" && (XsltForms_browser.isIE || XsltForms_browser.i
 			return null;
 		}
 	};
-	XsltForms_browser.selectSingleNodeText = function(xpath, node) {
+	XsltForms_browser.selectSingleNodeText = function(xpath, node, defvalue) {
 		try {
 			return node.selectSingleNode(xpath).text;
 		} catch (e) {
-			return "";
+			return defvalue || "";
 		}
 	};
 	XsltForms_browser.selectNodesLength = function(xpath, node) {
@@ -1933,7 +1933,7 @@ if (XsltForms_domEngine === "" && (XsltForms_browser.isIE || XsltForms_browser.i
 			return null;
 		}
 	};
-	XsltForms_browser.selectSingleNodeText = function(xpath, node) {
+	XsltForms_browser.selectSingleNodeText = function(xpath, node, defvalue) {
 		try {
 			if (node.evaluate) {
 				return node.evaluate(xpath, node, node.createNSResolver(node.documentElement), XPathResult.ANY_TYPE, null).iterateNext().textContent;
@@ -1948,7 +1948,7 @@ if (XsltForms_domEngine === "" && (XsltForms_browser.isIE || XsltForms_browser.i
 					}
 				}
 			}
-			return "";
+			return defvalue || "";
 		}
 	};
 	XsltForms_browser.selectNodesLength = function(xpath, node) {
@@ -3031,7 +3031,7 @@ XsltForms_browser.i18n = {
 
 		
 
-	get : function(key) {
+	get : function(key, defvalue) {
 		if (!XsltForms_browser.config || XsltForms_browser.config.nodeName === "dummy") {
 			return "Initializing";
 		}
@@ -3053,7 +3053,7 @@ XsltForms_browser.i18n = {
 				XsltForms_globals.language = "default";
 			}
 		}
-		return XsltForms_browser.selectSingleNodeText(key, XsltForms_browser.config);
+		return XsltForms_browser.selectSingleNodeText(key, XsltForms_browser.config, defvalue);
     },
 
 		
@@ -5590,6 +5590,10 @@ var XsltForms_xpathFunctionExceptions = {
 		name : "lower-case() : Invalid number of arguments",
 		message : "lower-case() function must have one argument exactly"
 	},
+	formatNumberInvalidArgumentsNumber : {
+		name : "format-number() : Invalid number of arguments",
+		message : "format-number() function must have two arguments exactly"
+	},
 	distinctValuesInvalidArgumentsNumber : {
 		name : "distinct-values() : Invalid number of arguments",
 		message : "distinct-values() function must have one argument exactly"
@@ -6734,6 +6738,223 @@ var XsltForms_xpathCoreFunctions = {
 				}
 			}
 			return nodeSet2;
+		} ),
+
+		
+
+	"http://www.w3.org/2005/xpath-functions format-number" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NODESET, false,
+		function(value, picture) {
+			var i, j, c, l, l2, pictures, dss, ess, gss, ms, ps, pms, zds, ods, msbefore, psafter, pmsafter, signs, iipgp, ipgp, mips, prefix, fstart, fpgp, minfps, maxfps, mes, suffix, dsspos, evalue, esign, s0, s;
+			if (arguments.length !== 2) {
+				throw XsltForms_xpathFunctionExceptions.formatNumberInvalidArgumentsNumber;
+			}
+			value = XsltForms_globals.numberValue(value);
+			if( isNaN(value) ) {
+				return XsltForms_browser.i18n.get("format-number.NaN", "NaN");
+			}
+			pictures = picture.split(XsltForms_browser.i18n.get("format-number.pattern-separator-sign", ";"));
+			picture = value < 0 && pictures[1] ? pictures[1] : pictures[0];
+			signs = ".,-%\u2030#0123456789";
+			esigns = ".,e-%\u2030#0123456789";
+			i = 0;
+			l = picture.length;
+			while (i < l && signs.indexOf(picture.charAt(i)) === -1) {
+				i++;
+			}
+			prefix = picture.substring(0, i);
+			dss = ess = gss = ms = ps = pms = ods = false;
+			mips = 0;
+			minfps = 0;
+			maxfps = 0;
+			mes = 0;
+			iipgp = [];
+			ipgp = [];
+			fpgp = [];
+			while (i < l && esigns.indexOf(picture.charAt(i)) !== -1) {
+				switch (picture.charAt(i)) {
+					case ".":
+						dss = true;
+						fstart = i + 1;
+						j = 0;
+						l2 = iipgp.length;
+						while (j < l2) {
+							ipgp[l2 - j - 1] = i - iipgp[j] - 1;
+							j++;
+						}
+						break;
+					case ",":
+						if (dss) {
+							fpgp.push(i - fstart);
+						} else {
+							iipgp.push(i);
+						}
+						break;
+					case "e":
+						ess = true;
+						if (!dss) {
+							j = 0;
+							l2 = iipgp.length;
+							while (j < l2) {
+								ipgp[l2 - j - 1] = i - iipgp[j] - 1;
+								j++;
+							}
+						}
+						break;
+					case "-":
+						ms = true;
+						msbefore = mips === 0;
+						break;
+					case "%":
+						ps = true;
+						psafter = mips !== 0;
+						value *= 100;
+						if (!dss) {
+							j = 0;
+							l2 = iipgp.length;
+							while (j < l2) {
+								ipgp[l2 - j - 1] = i - iipgp[j] - 1;
+								j++;
+							}
+						}
+						break;
+					case "\u2030":
+						pms = true;
+						pmsafter = mips !== 0;
+						value *= 1000;
+						if (!dss) {
+							j = 0;
+							l2 = iipgp.length;
+							while (j < l2) {
+								ipgp[l2 - j - 1] = i - iipgp[j] - 1;
+								j++;
+							}
+						}
+						break;
+					case "0":
+					case "1":
+					case "2":
+					case "3":
+					case "4":
+					case "5":
+					case "6":
+					case "7":
+					case "8":
+					case "9":
+						if (ess) {
+							mes++;
+						} else if (dss) {
+							minfps++;
+							maxfps++;
+						} else {
+							mips++;
+						}
+						break;
+					case "#":
+						if (dss) {
+							maxfps++;
+						}
+						break;
+				}
+				i++;
+			}
+			if (!dss) {
+				if (iipgp.length !== ipgp.length) {
+					j = 0;
+					l2 = iipgp.length;
+					while (j < l2) {
+						ipgp[l2 - j - 1] = i - iipgp[j] - 1;
+						j++;
+					}
+				}
+				if (mips === 0) {
+					mips = 1;
+				}
+			}
+			if (ipgp.length > 1) {
+				j = 1;
+				l2 = ipgp.length;
+				while (j < l2 && ipgp[j] % ipgp[0] === 0) {
+					j++;
+				}
+				if (j === l2) {
+					ipgp = [ipgp[0]];
+				}
+			}
+			if (ipgp.length === 1) {
+				j = 1;
+				while (j < 30) {
+					ipgp[j] = ipgp[j - 1] + ipgp[0];
+					j++;
+				}
+			}
+			suffix = picture.substring(i);
+			if (value === Number.POSITIVE_INFINITY) {
+				return prefix + XsltForms_browser.i18n.get("format-number.infinity", "Infinity") + suffix;
+			} else if (value === Number.NEGATIVE_INFINITY) {
+				return XsltForms_browser.i18n.get("format-number.minus-sign", "-") + prefix + XsltForms_browser.i18n.get("format-number.infinity", "Infinity") + suffix;
+			}
+			if (value < 0 && pictures.length === 1) {
+				prefix = XsltForms_browser.i18n.get("format-number.minus-sign", "-") + prefix;
+			}
+			if (ess) {
+				evalue = Math.floor(Math.log(value) / Math.LN10) + 1 - mips;
+				value /= Math.pow(10, evalue);
+				esign = evalue < 0 ? XsltForms_browser.i18n.get("format-number.minus-sign", "-") : "";
+				evalue = "" + Math.abs(evalue);
+				evalue = esign + ("000000000000000000000000000000").substr(0, Math.max(0, mes - evalue.length)) + evalue;
+			}
+			s0 = Math.abs(value).toFixed(maxfps);
+			if (maxfps === 0 && dss) {
+				s0 += ".";
+			}
+			dsspos = s0.indexOf(".") === -1 ? s0.length : s0.indexOf(".");
+			if (dsspos < mips) {
+				s0 = ("000000000000000000000000000000").substr(0, mips - dsspos) + s0;
+				dsspos = mips;
+			}
+			j = dsspos - 1;
+			s = "";
+			i = 0;
+			l2 = s0.length;
+			while (j >= 0) {
+				s = s0.charAt(j) + s;
+				if (j !== 0 && ipgp[i] === dsspos - j) {
+					s = XsltForms_browser.i18n.get("format-number.grouping-separator-sign", ",") + s;
+					i++;
+				}
+				j--;
+			}
+			if (dss) {
+				s += XsltForms_browser.i18n.get("format-number.decimal-separator-sign", ".");
+				j = dsspos + 1;
+				i = 0;
+				while (j < l2) {
+					s += s0.charAt(j);
+					if (j !== l2 - 1 && fpgp[i] === j - dsspos) {
+						s += XsltForms_browser.i18n.get("format-number.grouping-separator-sign", ",");
+						i++;
+					}
+					j++;
+				}
+			}
+			if (ps) {
+				if (psafter) {
+					s += XsltForms_browser.i18n.get("format-number.percent-sign", "%");
+				} else {
+					s = XsltForms_browser.i18n.get("format-number.percent-sign", "%") + s;
+				}
+			}
+			if (pms) {
+				if (pmsafter) {
+					s += XsltForms_browser.i18n.get("format-number.per-mille-sign", "%");
+				} else {
+					s = XsltForms_browser.i18n.get("format-number.per-mille-sign", "%") + s;
+				}
+			}
+			if (ess) {
+				s += XsltForms_browser.i18n.get("format-number.exponent-separator-sign", "e") + evalue;
+			}
+			return prefix + s + suffix;
 		} ),
 
 		
