@@ -20,7 +20,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-//"use strict";
+"use strict";
 if (XsltForms_domEngine === "") {
 	(function(Fleur) {
 	Fleur.Node = function() {};
@@ -3514,6 +3514,10 @@ function XsltForms_listener(subform, observer, evtTarget, evtname, phase, handle
 			evt = evt || window.event;
 			evt.target = evt.srcElement;
 			evt.currentTarget = observer;
+			XsltForms_browser.debugConsole.write("observer:"+observer.id);
+			XsltForms_browser.debugConsole.write("name:"+evtname);
+			XsltForms_browser.debugConsole.write("target:"+evt.target.id);
+			XsltForms_browser.debugConsole.write("trueName:"+evt.trueName);
 			if (evt.trueName && evt.trueName !== evtname) {
 				return;
 			}
@@ -3548,6 +3552,7 @@ function XsltForms_listener(subform, observer, evtTarget, evtname, phase, handle
 		if (evtTarget && evt.target !== evtTarget) {
 			effectiveTarget = false;
 		}
+		XsltForms_browser.debugConsole.write("effectiveTarget:"+effectiveTarget);
 		if (effectiveTarget && !(typeof UIEvent !== 'undefined' && evt instanceof UIEvent)) {
 			XsltForms_browser.debugConsole.write("Captured event " + evtname + " on <" + evt.target.nodeName +
 				(evt.target.className? " class=\"" + (typeof evt.target.className === "string" ? evt.target.className : evt.target.className.baseVal) + "\"" : "") +
@@ -3670,7 +3675,7 @@ XsltForms_xmlevents.dispatch = function(target, evtname, type, bubbles, cancelab
 			evt.trueName = evtname;
 			evt.phase = "capture";
 			evt.target = target;
-			target.fireEvent("onerrorupdate" , event);
+			target.fireEvent("onerrorupdate" , evt);
 			if (!bubbles) {
 				canceler = new XsltForms_listener(null, target, null, evtname, "default", function(evt) { evt.cancelBubble = true; });
 			}
@@ -4198,13 +4203,13 @@ XsltForms_stepExpr.pushList = function(ctx, list, l, test, csensitive) {
 XsltForms_stepExpr.pushDescendants = function(ctx, list, node, test) {
 	for (var n = node.firstChild; n; n = n.nextSibling) {
 		XsltForms_stepExpr.push(ctx, list, n, test);
-		arguments.callee(ctx, list, n, test);
+		XsltForms_stepExpr.pushDescendants(ctx, list, n, test);
 	}
 };
 XsltForms_stepExpr.pushDescendantsRev = function(ctx, list, node, test) {
 	for (var n = node.lastChild; n; n = n.previousSibling) {
 		XsltForms_stepExpr.push(ctx, list, n, test);
-		arguments.callee(ctx, list, n, test);
+		XsltForms_stepExpr.pushDescendantsRev(ctx, list, n, test);
 	}
 };
 function XsltForms_unionExpr(expr1, expr2) {
