@@ -5,7 +5,7 @@
 		</options>
 		<properties> <!--  accessible at run time -->
 			<html>4</html>
-			<language>en</language>
+			<language>en_us</language>
 			<calendar.label>...</calendar.label>
 			<calendar.day0>Mon</calendar.day0>
 			<calendar.day1>Tue</calendar.day1>
