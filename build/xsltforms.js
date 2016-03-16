@@ -1,6 +1,6 @@
 /*
-XSLTForms rev.631 (631)
-AVTs on ids
+XSLTForms rev.632 (632)
+xf:wrap Demo
 
 Copyright (C) 2016 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -144,9 +144,10 @@ var XsltForms_xpathAxis = {
 	PRECEDING: 'preceding',
 	SELF: 'self'
 };
+var XsltForms_context;
 var XsltForms_globals = {
-	fileVersion: "rev.631",
-	fileVersionNumber: 631,
+	fileVersion: "rev.632",
+	fileVersionNumber: 632,
 	language: "navigator",
 	debugMode: false,
 	debugButtons: [
@@ -3570,7 +3571,7 @@ function XsltForms_listener(subform, observer, evtTarget, evtname, phase, handle
 			effectiveTarget = false;
 		}
 		XsltForms_browser.debugConsole.write("effectiveTarget:"+effectiveTarget);
-		if (effectiveTarget && !(typeof UIEvent !== 'undefined' && evt instanceof UIEvent)) {
+		if (effectiveTarget) { // && !(typeof UIEvent !== 'undefined' && evt instanceof UIEvent)) {
 			XsltForms_browser.debugConsole.write("Captured event " + evtname + " on <" + evt.target.nodeName +
 				(evt.target.className? " class=\"" + (typeof evt.target.className === "string" ? evt.target.className : evt.target.className.baseVal) + "\"" : "") +
 				(evt.target.id? " id=\"" + evt.target.id + "\"" : "") + "/>");
@@ -8977,6 +8978,54 @@ XsltForms_unload.subform = function(targetid, ref) {
 	var a = new XsltForms_unload(subform, targetid);
 	a.run();
 };
+function XsltForms_wrap(subform, control, prevalue, postvalue, context, ifexpr, whileexpr, iterateexpr) {
+	this.subform = subform;
+	this.control = control;
+	this.prevalue = prevalue;
+	this.postvalue = postvalue;
+	this.context = XsltForms_xpath.get(context);
+	this.init(ifexpr, whileexpr, iterateexpr);
+}
+XsltForms_wrap.prototype = new XsltForms_abstractAction();
+XsltForms_wrap.prototype.run = function(element, ctx) {
+	var varresolver = this.parentAction ? this.parentAction.varResolver : element.xfElement.varResolver;
+	if (this.context) {
+		ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx, null, varresolver)[0];
+	}
+	var controlid = this.control;
+	if (controlid && controlid.bind_evaluate) {
+		controlid = XsltForms_globals.stringValue(controlid.bind_evaluate(this.subform, ctx, varresolver));
+	}
+	var control = XsltForms_idManager.find(controlid).xfElement;
+	var input = control.input;
+	var prevalue = this.prevalue;
+	if (prevalue && prevalue.bind_evaluate) {
+		prevalue = XsltForms_globals.stringValue(prevalue.bind_evaluate(this.subform, ctx, varresolver));
+	}
+	var postvalue = this.postvalue;
+	if (postvalue && postvalue.bind_evaluate) {
+		postvalue = XsltForms_globals.stringValue(postvalue.bind_evaluate(this.subform, ctx, varresolver));
+	}
+	if (prevalue + postvalue !== "") {
+		var start = input.selectionStart;
+		var end = input.selectionEnd;
+		var wrapvalue = input.value.substring(0, start) + prevalue + input.value.substring(start, end) + postvalue + input.value.substring(end);
+		XsltForms_globals.openAction("XsltForms_wrap.prototype.run");
+		try {
+			XsltForms_browser.setValue(control.boundnodes[0], wrapvalue || "");
+			input.value = wrapvalue || "";
+			if (!XsltForms_browser.isChrome) {
+				input.focus();
+			}
+			input.setSelectionRange(start, end + prevalue.length + postvalue.length);
+			document.getElementById(XsltForms_browser.getDocMeta(control.boundnodes[0].ownerDocument, "model")).xfElement.addChange(control.boundnodes[0]);
+			XsltForms_browser.debugConsole.write("Wrap " + controlid + " = " + wrapvalue);
+		} catch (e) {
+			XsltForms_browser.debugConsole.write("ERROR: cannot wrap on " + controlid + " = " + wrapvalue + "(context " + XsltForms_browser.name2string(ctx) + ")");
+		}
+		XsltForms_globals.closeAction("XsltForms_wrap.prototype.run");
+	}
+};
 function XsltForms_tree(subform, id, binding) {
 	this.init(subform, id);
 	this.binding = binding;
@@ -9848,8 +9897,14 @@ XsltForms_input.prototype.setValue = function(value) {
 		if (this.input.value !== XsltForms_browser.getValue(node).substr(0, 15)) {
 			this.input.value = XsltForms_browser.getValue(node).substr(0, 15);
 		}
-	} else if (this.input.value !== value) { // && this !== XsltForms_globals.focus) {
-		this.input.value = value || "";
+	} else {
+		var inputvalue = this.input.value;
+		if (inputvalue && inputvalue.length > 0 && type.parse) {
+			try { inputvalue = type.parse(inputvalue); } catch(e) { }
+		}
+		if (inputvalue !== value) { // && this !== XsltForms_globals.focus) {
+			this.input.value = value || "";
+		}
 	}
 };
 XsltForms_input.prototype.changeReadonly = function() {
@@ -12572,6 +12627,16 @@ XsltForms_typeDefs.XForms = {
 	"HTMLFragment" : {
 		"nsuri" : "http://www.w3.org/2002/xforms",
 		"base" : "xsd_:string"
+	},
+	"trimmed" : {
+		"nsuri" : "http://www.w3.org/2002/xforms",
+		"base" : "xsd_:string",
+		"format" : function(value) {
+			return value.replace(/^\s+|\s+$/gm, "");
+		},
+		"parse" : function(value) {
+			return value.replace(/^\s+|\s+$/gm, "");
+		}
 	}
 };
 XsltForms_typeDefs.XSLTForms = {
@@ -12725,7 +12790,7 @@ if (typeof xsltforms_d0 === "undefined") {
 			document.getElementsByTagName("body")[0].appendChild(conselt);
 			XsltForms_browser.dialog.show('statusPanel');
 			if (!(document.documentElement.childNodes[0].nodeType === 8 || (XsltForms_browser.isIE && document.documentElement.childNodes[0].childNodes[1] && document.documentElement.childNodes[0].childNodes[1].nodeType === 8))) {
-				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.631 (631) - Copyright (C) 2016 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
+				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.632 (632) - Copyright (C) 2016 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
 				document.documentElement.insertBefore(comment, document.documentElement.firstChild);
 			}
 			var initelts2 = document.getElementsByTagName("script");
