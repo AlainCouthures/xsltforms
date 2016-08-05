@@ -6965,6 +6965,8 @@ XsltForms_browser.json2xml = function(eltname, json, root, inarray) {
 	if (json instanceof Array) {
 		if (inarray) {
 			ret += "<exml:anonymous exsi:maxOccurs=\"unbounded\">";
+		} else {
+		    ret += "<"+eltname+fullname+" exsi:maxOccurs=\"unbounded\">";
 		}
 		if (json.length === 0) {
 			ret += "<" + (eltname === "" ? "exml:anonymous" : eltname) + fullname + " exsi:maxOccurs=\"unbounded\" xsi:nil=\"true\"/>";
@@ -6975,6 +6977,8 @@ XsltForms_browser.json2xml = function(eltname, json, root, inarray) {
 		}
 		if (inarray) {
 			ret += "</exml:anonymous>";
+		} else {
+		    ret += "</"+eltname+">";
 		}
 	} else {
 		var xsdtype = "";
