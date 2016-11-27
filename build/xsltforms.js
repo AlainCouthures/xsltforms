@@ -6957,7 +6957,7 @@ XsltForms_instance.prototype.setProperty_ = function (node, property, value) {
 XsltForms_browser.json2xmlreg = new RegExp("^[A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF][A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF\-\.0-9\xB7]*$");
 XsltForms_browser.json2xml = function(eltname, json, root, inarray) {
 	var fullname = "";
-	if (eltname === "________" || eltname !== "" && !XsltForms_browser.json2xmlreg.test(eltname)) {
+	if (eltname === "________" || !(json instanceof Array) && eltname !== "" && !XsltForms_browser.json2xmlreg.test(eltname)) {
 		fullname = " exml:fullname=\"" + XsltForms_browser.escape(eltname) + "\"";
 		eltname = "________";
 	}
