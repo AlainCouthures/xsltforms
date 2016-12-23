@@ -1,6 +1,6 @@
 /*
-XSLTForms rev.637 (637)
-Text node binding
+XSLTForms rev.638 (638)
+itemset/copy and @appearance='full'
 
 Copyright (C) 2016 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -146,8 +146,8 @@ var XsltForms_xpathAxis = {
 };
 var XsltForms_context;
 var XsltForms_globals = {
-	fileVersion: "rev.637",
-	fileVersionNumber: 637,
+	fileVersion: "rev.638",
+	fileVersionNumber: 638,
 	language: "navigator",
 	debugMode: false,
 	debugButtons: [
@@ -1403,11 +1403,15 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 			try {
 				xsltProcessor.importStylesheet(xsltDoc);
 				var resultDocument = xsltProcessor.transformToDocument(xmlDoc);
+				if (!resultDocument) {
+					alert("transformToDocument: null return value");
+					return "";
+				}
 				var s = "";
 				if ((XsltForms_browser.isMozilla && resultDocument.documentElement.nodeName === "transformiix:result") ||
 				     (XsltForms_browser.isOpera && resultDocument.documentElement.nodeName === "result")) {
 					s = resultDocument.documentElement.textContent;
-				} else if (XsltForms_browser.isChrome && resultDocument.documentElement.nodeName === "html" && resultDocument.documentElement.children[1].children[0].nodeName === "pre") {
+				} else if ((XsltForms_browser.isChrome || XsltForms_browser.isEdge) && resultDocument.documentElement.nodeName === "html" && resultDocument.documentElement.children[1].children[0].nodeName === "pre") {
 					s = resultDocument.documentElement.children[1].children[0].textContent;
 				} else {
 					s = serializer.serializeToString(resultDocument);
@@ -3158,7 +3162,7 @@ XsltForms_browser.setValue = function(node, value) {
 	XsltForms_browser.assert(node);
 	if (node.nodeType === Fleur.Node.ATTRIBUTE_NODE || node.nodeType === Fleur.Node.TEXT_NODE) {
 		node.nodeValue = value;
-	} else if (XsltForms_browser.isIE && node.innerHTML) {
+	} else if (XsltForms_browser.isIE && node.innerHTML && !(value instanceof Array)) {
 		node.innerHTML = XsltForms_browser.escape(value);
 	} else {
 		while (node.firstChild) {
@@ -3575,7 +3579,7 @@ function XsltForms_listener(subform, observer, evtTarget, evtname, phase, handle
 		if (evt.target && evt.target.nodeType === 3) {
 			evt.target = evt.target.parentNode;
 		}
-		if (evt.currentTarget && evt.type === "DOMActivate" && (evt.target.nodeName.toUpperCase() === "BUTTON" || evt.target.nodeName.toUpperCase() === "A" || (XsltForms_browser.isChrome && evt.eventPhase === 3 && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
+		if (evt.currentTarget && evt.type === "DOMActivate" && (evt.target.nodeName.toUpperCase() === "BUTTON" || evt.target.nodeName.toUpperCase() === "A" || (XsltForms_browser.isChrome && (evt.eventPhase === 3 || evt instanceof UIEvent)  && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
 		if (evt.eventPhase === 3 && evt.target.xfElement && evt.target === evt.currentTarget && !XsltForms_browser.isFF2) {
@@ -6012,7 +6016,7 @@ var XsltForms_xpathCoreFunctions = {
 			if (arguments.length === 0) {
 				throw XsltForms_xpathFunctionExceptions.serializeNoContext;
 			}
-			return nodeSet.length === 0 ? "" : XsltForms_browser.saveNode(nodeSet[0], mediatype ? XsltForms_globals.stringValue(mediatype) : "application/exml+xml", null, indent === "yes" ? indent : null);
+			return nodeSet.length === 0 ? "" : XsltForms_browser.saveNode(nodeSet[0], mediatype ? XsltForms_globals.stringValue(mediatype) : "application/xml", null, indent === "yes" ? indent : null);
 		} ),
 	"http://www.w3.org/2002/xforms event" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(attribute) {
@@ -6957,7 +6961,7 @@ XsltForms_instance.prototype.setProperty_ = function (node, property, value) {
 XsltForms_browser.json2xmlreg = new RegExp("^[A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF][A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\xFF\-\.0-9\xB7]*$");
 XsltForms_browser.json2xml = function(eltname, json, root, inarray) {
 	var fullname = "";
-	if (eltname === "________" || eltname !== "" && !XsltForms_browser.json2xmlreg.test(eltname)) {
+	if (eltname === "________" || !(json instanceof Array) && eltname !== "" && !XsltForms_browser.json2xmlreg.test(eltname)) {
 		fullname = " exml:fullname=\"" + XsltForms_browser.escape(eltname) + "\"";
 		eltname = "________";
 	}
@@ -10018,7 +10022,7 @@ XsltForms_input.prototype.changeReadonly = function() {
 };
 XsltForms_input.prototype.initEvents = function(input, canActivate) {
 	var changeEventName = "keyup";
-	if (XsltForms_browser.isEdge || (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari))) {
+	if (XsltForms_browser.isEdge || XsltForms_browser.isIE11 || (XsltForms_globals.htmlversion === "5" && (XsltForms_browser.isChrome || XsltForms_browser.isOpera || XsltForms_browser.isSafari))) {
 		changeEventName = "input";
 	}
 	if (this.inputmode) {
@@ -10173,7 +10177,7 @@ XsltForms_input.InputMode = {
 		}
 	}
 };
-function XsltForms_item(subform, id, bindingL, bindingV) {
+function XsltForms_item(subform, id, bindingL, bindingV, copyBinding) {
 	XsltForms_globals.counters.item++;
 	this.init(subform, id);
 	this.controlName = "item";
@@ -10181,6 +10185,7 @@ function XsltForms_item(subform, id, bindingL, bindingV) {
 		this.hasBinding = true;
 		this.bindingL = bindingL;
 		this.bindingV = bindingV;
+		this.copyBinding = copyBinding;
 	} else {
 		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
 	}
@@ -10195,7 +10200,7 @@ function XsltForms_item(subform, id, bindingL, bindingV) {
 }
 XsltForms_item.prototype = new XsltForms_element();
 XsltForms_item.prototype.clone = function(id) { 
-	return new XsltForms_item(this.subform, id, this.bindingL, this.bindingV);
+	return new XsltForms_item(this.subform, id, this.bindingL, this.bindingV, this.copyBinding);
 };
 XsltForms_item.prototype.dispose = function() {
 	this.input = null;
@@ -10233,6 +10238,14 @@ XsltForms_item.prototype.build_ = function(ctx) {
 			element.valueV = result;
 		}
 	}
+	var nodeCopy = this.copyBinding ? this.evaluateBinding(this.copyBinding, ctx)[0] : null;
+	if (this.copyBinding && nodeCopy) {
+		this.depsNodesRefresh.push(nodeCopy);
+		try {
+			element.copy = XsltForms_browser.saveNode(nodeCopy, "application/xml");
+		} catch(e3) {
+		}
+	}
 };
 XsltForms_item.prototype.refresh = function() {
 	var element = this.element;
@@ -10264,6 +10277,8 @@ XsltForms_item.prototype.refresh = function() {
 			this.input.value = XsltForms_browser.getValue(element.nodeV);
 		} else if (element.valueV) {
 			this.input.value = element.valueV;
+		} else if (element.copy) {
+			this.input.value = this.input.copy = element.copy;
 		}
 	}
 };
@@ -11154,18 +11169,24 @@ XsltForms_select.prototype.itemClick = function(value) {
 	var inputs = XsltForms_browser.isXhtml ? this.element.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "input") : this.element.getElementsByTagName("input");
 	var input;
 	XsltForms_globals.openAction("XsltForms_select.prototype.itemClick");
+	var newValue = "";
 	if (this.max !== 1) {
-		var newValue = null;
 		for (var i = 0, len = inputs.length; i < len; i++) {
 			input = inputs[i];
+			if (input.copy && newValue === "") {
+				newValue = [];
+			}
 			if (input.value === value) {
 				XsltForms_xmlevents.dispatch(input.parentNode, input.checked? "xforms-select" : "xforms-deselect");
 			}
 			if (input.checked) {
-				newValue = (newValue ? newValue + XsltForms_globals.valuesSeparator : "") + input.value;
+				if (input.copy) {
+					newValue.push(input.value);
+				} else {
+					newValue = (newValue !== "" ? newValue + XsltForms_globals.valuesSeparator : "") + input.value;
+				}
 			}
 		}
-		value = newValue;
 	} else {
 		var old = this.value;
 		var schtyp = XsltForms_schema.getType(XsltForms_browser.getType(this.element.node) || "xsd_:string");
@@ -11190,19 +11211,21 @@ XsltForms_select.prototype.itemClick = function(value) {
 			if (input_controlvalue === old) {
 				if (input.checked && this.min === 0) {
 					input.checked = false;
-					value = "";
+					newValue = input.copy ? [] : "";
 				}
 				XsltForms_xmlevents.dispatch(input.parentNode, "xforms-deselect");
 			} else if (input_controlvalue === value) {
 				inputSelected = input;
+				newValue = input.copy ? [value] : value;
 			}
 		}
 		if (inputSelected) {
 			XsltForms_xmlevents.dispatch(inputSelected.parentNode, "xforms-select");
 		}
 	}
+	value = newValue;
 	if (this.incremental) {
-		this.valueChanged(value || "");
+		this.valueChanged(this.value = value || "");
 	} else {
 		this.value = value || "";
 	}
@@ -12886,7 +12909,7 @@ if (typeof xsltforms_d0 === "undefined") {
 			document.getElementsByTagName("body")[0].appendChild(conselt);
 			XsltForms_browser.dialog.show('statusPanel');
 			if (!(document.documentElement.childNodes[0].nodeType === 8 || (XsltForms_browser.isIE && document.documentElement.childNodes[0].childNodes[1] && document.documentElement.childNodes[0].childNodes[1].nodeType === 8))) {
-				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.637 (637) - Copyright (C) 2016 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
+				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.638 (638) - Copyright (C) 2016 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
 				document.documentElement.insertBefore(comment, document.documentElement.firstChild);
 			}
 			var initelts2 = document.getElementsByTagName("script");
