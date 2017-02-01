@@ -947,7 +947,7 @@ if (XsltForms_domEngine === "" && (XsltForms_browser.isIE || XsltForms_browser.i
 						}
 					}
 					if (related) {
-						var ns3 = resultDocument.selectNodes("descendant::*[(substring-after(@xsltforms_type,':') = 'anyURI' or substring-after(@*[local-name() = 'type' and namespace-uri='http://www.w3.org/2001/XMLSchema-instance'],':') = 'anyURI') and . != '']", false, resultDocument.documentElement);
+						var ns3 = resultDocument.selectNodes("descendant::*[(substring-after(@xsltforms_type,':') = 'anyURI' or substring-after(@*[local-name() = 'type' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance'],':') = 'anyURI') and . != '']", false, resultDocument.documentElement);
 						for( var i3 = 0, l3 = ns3.length; i3 < l3 ; i3++) {
 							var n3 = ns3[i3];
 							try {
