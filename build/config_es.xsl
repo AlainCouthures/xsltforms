@@ -26,6 +26,7 @@
 			<calendar.month9>Octubre</calendar.month9>
 			<calendar.month10>Noviembre</calendar.month10>
 			<calendar.month11>Diciembre</calendar.month11>
+			<calendar.close>Cerrar</calendar.close>
 			<format.date>dd/MM/yyyy</format.date>
 			<format.datetime>dd/MM/yyyy hh:mm:ss</format.datetime>
 			<format.decimal>,</format.decimal>

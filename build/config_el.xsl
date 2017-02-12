@@ -26,6 +26,7 @@
 			<calendar.month9>Οκτώβριος</calendar.month9>
 			<calendar.month10>Νοέμβριος</calendar.month10>
 			<calendar.month11>Δεκέμβριος</calendar.month11>
+			<calendar.close>Κοντά</calendar.close>
 			<format.date>dd/MM/yyyy</format.date>
 			<format.datetime>dd/MM/yyyy hh:mm:ss</format.datetime>
 			<format.decimal>.</format.decimal>

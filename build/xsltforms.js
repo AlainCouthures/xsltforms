@@ -1,6 +1,6 @@
 /*
-XSLTForms rev.639 (639)
-itemset/copy initialization
+XSLTForms rev.640 (640)
+TinyMCE 4.5.3 Integration
 
 Copyright (C) 2017 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
@@ -146,8 +146,8 @@ var XsltForms_xpathAxis = {
 };
 var XsltForms_context;
 var XsltForms_globals = {
-	fileVersion: "rev.639",
-	fileVersionNumber: 639,
+	fileVersion: "rev.640",
+	fileVersionNumber: 640,
 	language: "navigator",
 	debugMode: false,
 	debugButtons: [
@@ -1945,7 +1945,7 @@ if (XsltForms_domEngine === "" && (XsltForms_browser.isIE || XsltForms_browser.i
 						}
 					}
 					if (related) {
-						var ns3 = resultDocument.selectNodes("descendant::*[(substring-after(@xsltforms_type,':') = 'anyURI' or substring-after(@*[local-name() = 'type' and namespace-uri='http://www.w3.org/2001/XMLSchema-instance'],':') = 'anyURI') and . != '']", false, resultDocument.documentElement);
+						var ns3 = resultDocument.selectNodes("descendant::*[(substring-after(@xsltforms_type,':') = 'anyURI' or substring-after(@*[local-name() = 'type' and namespace-uri()='http://www.w3.org/2001/XMLSchema-instance'],':') = 'anyURI') and . != '']", false, resultDocument.documentElement);
 						for( var i3 = 0, l3 = ns3.length; i3 < l3 ; i3++) {
 							var n3 = ns3[i3];
 							try {
@@ -9838,8 +9838,10 @@ XsltForms_input.prototype.initInput = function(type) {
 					if (!XsltForms_globals.tinyMCEinit || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) !== "3.") {
 						eval("initinfo = " + (type.appinfo ? type.appinfo.replace(/(\r\n|\n|\r)/gm, " ") : "{}"));
 						initinfo.mode = "none";
+						initinfo.Xsltforms_usersetup = initinfo.setup || function() {};
 						if (!XsltForms_globals.jslibraries["http://www.tinymce.com"] || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3.") {
 							initinfo.setup = function(ed) {
+								initinfo.Xsltforms_usersetup(ed);
 								ed.onKeyUp.add(function(ed) {
 									XsltForms_control.getXFElement(document.getElementById(ed.id)).valueChanged(ed.getContent() || "");
 								});
@@ -9855,6 +9857,7 @@ XsltForms_input.prototype.initInput = function(type) {
 							};
 						} else {
 							initinfo.setup = function(ed) {
+								initinfo.Xsltforms_usersetup(ed);
 								ed.on("KeyUp", function() {
 									XsltForms_control.getXFElement(document.getElementById(this.id)).valueChanged(this.getContent() || "");
 								});
@@ -9874,7 +9877,7 @@ XsltForms_input.prototype.initInput = function(type) {
 						tinyMCE.init(initinfo);
 						XsltForms_globals.tinyMCEinit = true;
 					}
-					tinyMCE.execCommand("mceAddControl", true, input.id);
+					tinyMCE.execCommand("mceAddEditor", true, input.id);
 					break;
 				case "ckeditor":
 					input.id = this.element.id + "_textarea";
@@ -9977,17 +9980,21 @@ XsltForms_input.prototype.setValue = function(value) {
 	}
 	if (type["class"] === "boolean") {
 		this.input.checked = value === "true";
-	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id) && (!XsltForms_globals.jslibraries["http://www.tinymce.com"] || XsltForms_globals.jslibraries["http://www.tinymce.com"].substr(0, 2) === "3." ? tinymce.get(this.input.id).getContent() : tinymce.get(this.input.id).contentDocument.body.innerHTML) !== value) {
-		this.input.value = value || "";
-		if (tinymce.get(this.input.id)) {
-			var prevalue = tinymce.get(this.input.id).getContent();
+	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id)) {
+		try {
+			var editor = tinymce.get(this.input.id);
+			var prevalue = editor.contentDocument ? editor.contentDocument.body.innerHTML : editor.getContent();
 			if (prevalue !== value) {
-				tinymce.get(this.input.id).setContent(value);
-				this.input.value = tinymce.get(this.input.id).getContent() || "";
+				this.input.value = value || "";
+				editor.setContent(value);
+				var newvalue = editor.contentDocument ? editor.contentDocument.body.innerHTML : editor.getContent();
+				this.input.value = newvalue || "";
+				XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+newvalue);
+				XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
 			}
-			XsltForms_browser.debugConsole.write(this.input.id+": getContent() ="+tinymce.get(this.input.id).getContent());
+		} catch (e) {
+			this.input.value = value;
 		}
-		XsltForms_browser.debugConsole.write(this.input.id+".value ="+this.input.value);
 	} else if (this.type.rte && this.type.rte.toLowerCase() === "ckeditor" && this.rte) {
 		var data = this.rte.getData();
 		if (data.substr(data.length - 1) === "\n") {
@@ -11734,7 +11741,7 @@ function XsltForms_calendar() {
 	} );
 	var closeElt = XsltForms_browser.createElement("button", title, "X");
 	closeElt.setAttribute("type", "button");
-	closeElt.setAttribute("title", "Close");
+	closeElt.setAttribute("title", XsltForms_browser.i18n.get("calendar.close", "Close"));
 	XsltForms_browser.events.attach(closeElt, "click", function() {
 		XsltForms_calendar.close();
 	} );
@@ -12918,7 +12925,7 @@ if (typeof xsltforms_d0 === "undefined") {
 			document.getElementsByTagName("body")[0].appendChild(conselt);
 			XsltForms_browser.dialog.show('statusPanel');
 			if (!(document.documentElement.childNodes[0].nodeType === 8 || (XsltForms_browser.isIE && document.documentElement.childNodes[0].childNodes[1] && document.documentElement.childNodes[0].childNodes[1].nodeType === 8))) {
-				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.639 (639) - Copyright (C) 2017 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
+				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.640 (640) - Copyright (C) 2017 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
 				document.documentElement.insertBefore(comment, document.documentElement.firstChild);
 			}
 			var initelts2 = document.getElementsByTagName("script");

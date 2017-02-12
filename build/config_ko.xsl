@@ -26,6 +26,7 @@
 			<calendar.month9>10월</calendar.month9>
 			<calendar.month10>11월</calendar.month10>
 			<calendar.month11>12월</calendar.month11>
+			<calendar.close>닫기</calendar.close>
 			<format.date>yyyy-MM-dd</format.date>
 			<format.datetime>yyyy-MM-dd hh:mm:ss</format.datetime>
 			<format.decimal>.</format.decimal>

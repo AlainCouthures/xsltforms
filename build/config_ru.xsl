@@ -26,6 +26,7 @@
 			<calendar.month9>Октябрь</calendar.month9>
 			<calendar.month10>Ноябрь</calendar.month10>
 			<calendar.month11>Декабрь</calendar.month11>
+			<calendar.close>Закрыть</calendar.close>
 			<format.date>dd.MM.yyyy</format.date>
 			<format.datetime>dd.MM.yyyy hh:mm:ss</format.datetime>
 			<format.decimal>,</format.decimal>

@@ -26,6 +26,7 @@
 			<calendar.month9>Październik</calendar.month9>
 			<calendar.month10>Listopad</calendar.month10>
 			<calendar.month11>Grudzień</calendar.month11>
+			<calendar.close>Blisko</calendar.close>
 			<format.date>yyyy-MM-dd</format.date>
 			<format.datetime>yyyy-MM-dd hh:mm:ss</format.datetime>
 			<format.decimal>.</format.decimal>

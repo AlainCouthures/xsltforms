@@ -26,6 +26,7 @@
 			<calendar.month9>oktober</calendar.month9>
 			<calendar.month10>november</calendar.month10>
 			<calendar.month11>december</calendar.month11>
+			<calendar.close>dichtbij</calendar.close>
 			<format.date>dd-MM-yyyy</format.date>
 			<format.datetime>dd-MM-yyyy hh:mm:ss</format.datetime>
 			<format.decimal>,</format.decimal>

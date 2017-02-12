@@ -26,6 +26,7 @@
 			<calendar.month9>Oktober</calendar.month9>
 			<calendar.month10>November</calendar.month10>
 			<calendar.month11>Desember</calendar.month11>
+			<calendar.close>Lukk</calendar.close>
 			<format.date>dd.MM.yyyy</format.date>
 			<format.datetime>dd.MM.yyyy kl. hh.mm.ss</format.datetime>
 			<format.decimal>,</format.decimal>

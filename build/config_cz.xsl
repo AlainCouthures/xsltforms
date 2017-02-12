@@ -26,6 +26,7 @@
 			<calendar.month9>říjen</calendar.month9>
 			<calendar.month10>listopad</calendar.month10>
 			<calendar.month11>prosinec</calendar.month11>
+			<calendar.close>zavřít</calendar.close>
 			<format.date>dd.MM. yyyy</format.date>
 			<format.datetime>dd.MM. yyyy, hh.mm:ss</format.datetime>
 			<format.decimal>,</format.decimal>

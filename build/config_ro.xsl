@@ -26,6 +26,7 @@
 			<calendar.month9>Octombrie</calendar.month9>
 			<calendar.month10>Noiembrie</calendar.month10>
 			<calendar.month11>Decembrie</calendar.month11>
+			<calendar.close>Închide</calendar.close>
 			<format.date>dd/MM/yyyy</format.date>
 			<format.datetime>dd/MM/yyyy hh:mm:ss</format.datetime>
 			<format.decimal>,</format.decimal>

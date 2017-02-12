@@ -26,6 +26,7 @@
 			<calendar.month9>十月</calendar.month9>
 			<calendar.month10>十一月</calendar.month10>
 			<calendar.month11>十二月</calendar.month11>
+			<calendar.close>关</calendar.close>
 			<format.date>yyyy-MM-dd</format.date>
 			<format.datetime>yyyy-MM-dd hh:mm:ss</format.datetime>
 			<format.decimal>.</format.decimal>
