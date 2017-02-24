@@ -5,7 +5,6 @@
 		<properties> <!--  accessible at run time -->
 			<html>4</html>
 			<language>fr</language>
-			<domengine name="Fleur" url="js/fleur.js" uri="http://www.agencexml.com/Fleur" version="1.0"/>
 			<calendar.label>...</calendar.label>
 			<calendar.day0>Lun</calendar.day0>
 			<calendar.day1>Mar</calendar.day1>
