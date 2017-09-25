@@ -1,6 +1,6 @@
 /*
-XSLTForms rev.645 (645)
-Relevance pruning for attributes
+XSLTForms rev.646 (646)
+regexp:match + setvalue for nodeset
 
 Copyright (C) 2017 agenceXML - Alain Couthures
 Contact at : xsltforms@agencexml.com
@@ -146,8 +146,8 @@ var XsltForms_xpathAxis = {
 };
 var XsltForms_context;
 var XsltForms_globals = {
-	fileVersion: "rev.645",
-	fileVersionNumber: 645,
+	fileVersion: "rev.646",
+	fileVersionNumber: 646,
 	language: "navigator",
 	debugMode: false,
 	debugButtons: [
@@ -4923,6 +4923,10 @@ var XsltForms_xpathFunctionExceptions = {
 	encodeForUriInvalidArgumentsNumber : {
 		name : "encode-for-uri() : Invalid number of arguments",
 		message : "encode-for-uri() function must have one argument exactly"
+	},
+	matchInvalidArgumentsNumber : {
+		name : "match() : Invalid number of arguments",
+		message : "match() function must have two or three arguments"
 	}
 };
 var XsltForms_xpathCoreFunctions = {
@@ -6167,6 +6171,34 @@ var XsltForms_xpathCoreFunctions = {
 				throw XsltForms_xpathFunctionExceptions.math1InvalidArgumentsNumber;
 			}
 			return Math.tan(XsltForms_globals.numberValue(number));
+		} ),
+	"http://exslt.org/regular-expressions match" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function(str, pattern, flags) {
+			if (arguments.length !== 2 && arguments.length !== 3) {
+				throw XsltForms_xpathFunctionExceptions.matchInvalidArgumentsNumber;
+			}
+			str = XsltForms_globals.stringValue(str);
+			pattern = XsltForms_globals.stringValue(pattern);
+			if (flags) {
+				flags = XsltForms_globals.stringValue(flags);
+			} else {
+				flags = "";
+			}
+			var re = new RegExp(pattern, flags);
+			var mres = str.match(re);
+			if (!mres) {
+				return [];
+			}
+			var melts = "";
+			for (var i = 0, l = mres.length; i < l; i++) {
+				melts += "<match>" + mres[i] + "</match>";
+			}
+			var mdoc = XsltForms_browser.createXMLDocument("<matches>" + melts + "</matches>");
+			var marr = [];
+			for(i = 0, l = mdoc.documentElement.children.length; i <l; i++) {
+				marr.push(mdoc.documentElement.children[i]);
+			}
+			return marr;
 		} ),
 	"http://www.w3.org/2005/xpath-functions alert" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(arg) {
@@ -8967,21 +8999,24 @@ function XsltForms_setvalue(subform, binding, value, literal, context, ifexpr, w
 XsltForms_setvalue.prototype = new XsltForms_abstractAction();
 XsltForms_setvalue.prototype.run = function(element, ctx) {
 	var varresolver = this.parentAction ? this.parentAction.varResolver : element.xfElement.varResolver;
-	var node = this.binding.bind_evaluate(element.xfElement.subform, ctx, varresolver)[0];
-	if (node) {
-		if (this.context) {
-			ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx, null, varresolver)[0];
+	var nodeset = this.binding.bind_evaluate(element.xfElement.subform, ctx, varresolver);
+	if (nodeset.length !== 0 && this.context) {
+		ctx = this.context.xpath_evaluate(element.xfElement.subform, ctx, null, varresolver)[0];
+	}
+	for (var i = 0, l = nodeset.length; i < l; i++) {
+		var node = nodeset[i];
+		if (node) {
+			var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform, varresolver) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform, varresolver)) : this.literal;
+			XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
+			try {
+				XsltForms_browser.setValue(node, value || "");
+				document.getElementById(XsltForms_browser.getDocMeta(node.ownerDocument, "model")).xfElement.addChange(node);
+				XsltForms_browser.debugConsole.write("Setvalue " + XsltForms_browser.name2string(node) + " = " + value);
+			} catch (e) {
+				XsltForms_browser.debugConsole.write("ERROR: cannot setvalue on " + XsltForms_browser.name2string(node) + " = " + value + "(context " + XsltForms_browser.name2string(ctx) + ")");
+			}
+			XsltForms_globals.closeAction("XsltForms_setvalue.prototype.run");
 		}
-		var value = this.value? XsltForms_globals.stringValue(this.context ? this.value.xpath_evaluate(ctx, ctx, element.xfElement.subform, varresolver) : this.value.xpath_evaluate(node, ctx, element.xfElement.subform, varresolver)) : this.literal;
-		XsltForms_globals.openAction("XsltForms_setvalue.prototype.run");
-		try {
-			XsltForms_browser.setValue(node, value || "");
-			document.getElementById(XsltForms_browser.getDocMeta(node.ownerDocument, "model")).xfElement.addChange(node);
-			XsltForms_browser.debugConsole.write("Setvalue " + XsltForms_browser.name2string(node) + " = " + value);
-		} catch (e) {
-			XsltForms_browser.debugConsole.write("ERROR: cannot setvalue on " + XsltForms_browser.name2string(node) + " = " + value + "(context " + XsltForms_browser.name2string(ctx) + ")");
-		}
-		XsltForms_globals.closeAction("XsltForms_setvalue.prototype.run");
 	}
 };
 function XsltForms_split(subform, binding, separator, leftTrim, rightTrim, context, ifexpr, whileexpr, iterateexpr) {
@@ -12991,7 +13026,7 @@ if (typeof xsltforms_d0 === "undefined") {
 			document.getElementsByTagName("body")[0].appendChild(conselt);
 			XsltForms_browser.dialog.show('statusPanel');
 			if (!(document.documentElement.childNodes[0].nodeType === 8 || (XsltForms_browser.isIE && document.documentElement.childNodes[0].childNodes[1] && document.documentElement.childNodes[0].childNodes[1].nodeType === 8))) {
-				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.645 (645) - Copyright (C) 2017 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
+				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms rev.646 (646) - Copyright (C) 2017 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
 				document.documentElement.insertBefore(comment, document.documentElement.firstChild);
 			}
 			var initelts2 = document.getElementsByTagName("script");
