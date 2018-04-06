@@ -85,7 +85,7 @@
       <xsl:template match="/">
         <data>
           <xsl:apply-templates select="data/item">
-            <xsl:sort type="string" select="fname"/>
+            <xsl:sort data-type="text" select="fname"/>
           </xsl:apply-templates>
         </data>
       </xsl:template>
@@ -102,7 +102,7 @@
       <xsl:template match="/">
         <data>
           <xsl:apply-templates select="data/item">
-            <xsl:sort type="string" select="lname"/>
+            <xsl:sort data-type="text" select="lname"/>
           </xsl:apply-templates>
         </data>
       </xsl:template>
@@ -119,7 +119,7 @@
       <xsl:template match="/">
         <data>
           <xsl:apply-templates select="data/item">
-            <xsl:sort type="string" select="date"/>
+            <xsl:sort data-type="text" select="date"/>
           </xsl:apply-templates>
         </data>
       </xsl:template>
