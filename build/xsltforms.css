@@ -1,8 +1,8 @@
 /*
-XSLTForms 1.0 (647)
-XForms 1.1+ with XPath 1.0 Engine
+XSLTForms 1.2 (651)
+XForms 1.1+ with XPath 1.0+ Engine
 
-Copyright (C) 2017 agenceXML - Alain COUTHURES
+Copyright (C) 2018 agenceXML - Alain COUTHURES
 Contact at : xsltforms@agencexml.com
 
 This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 .aid-button {
 	padding				: 0;
 }
-.calendar, .calendarList {
+.xsltforms-calendar, .xsltforms-calendarList {
 	border-top			: 1px solid black;
 	border-right		: 2px solid black;
 	border-bottom		: 2px solid black;
@@ -37,38 +37,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	position			: absolute;
 	z-index				: 9;
 }
-.calendar .button {
+.xsltforms-calendar button {
 	text-align			: center;
 	padding				: 1px;
 	border				: 1px solid;
 	border-color		: #fff #000 #000 #fff;
 }
-.calendar thead .hover {
+.xsltforms-calendar thead .xsltforms-listHover {
 	border				: 2px solid;
 	border-color		: #fff #000 #000 #fff;
 	padding				: 0;
 	background-color	: #d8e0e4;
 }
-.calendar .title, .calendar .title input, .calendar .title select, .calendar tfoot {
+.xsltforms-calendar .xsltforms-calendar-title, .xsltforms-calendar .xsltforms-calendar-title input, .xsltforms-calendar .xsltforms-calendar-title select, .xsltforms-calendar tfoot {
 	font-weight			: bold;
 	padding				: 1px;
 	border				: 1px solid #000;
 	color				: #000;
 	text-align			: center;
 	background-color	: #f8f8f8;
-	background-image	: url(../img/titleBackground.png);
+	background-image	: url(titleBackground.png);
 }
-.calendar .title input {
+.xsltforms-calendar .xsltforms-calendar-title input {
 	width				: 3em;
 	-moz-box-sizing		: border-box;
 	-webkit-box-sizing	: border-box;
 	box-sizing			: border-box;
 	background			: #f8f8f8;
 }
-.date tfoot {
+.xsltforms-calendar-date tfoot {
 	display				: none;
 }
-.calendar tfoot input {
+.xsltforms-calendar tfoot input {
 	width				: 2em;
 	-moz-box-sizing		: border-box;
 	-webkit-box-sizing	: border-box;
@@ -76,15 +76,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	text-align			: center;
 	background			: #f0f0f0;
 }
-.calendar .names {
-	background-image	: url(../img/thBackground.png);
+.xsltforms-calendar .xsltforms-calendar-names {
+	background-image	: url(thBackground.png);
 }
-.calendar .name {
+.xsltforms-calendar .xsltforms-calendar-name {
 	border-bottom		: 1px solid #000;
 	padding				: 2px;
 	text-align			: center;
 }
-.calendar .day {
+.xsltforms-calendar .xsltforms-calendar-day {
 	width				: 2em;
 	-moz-box-sizing		: border-box;
 	-webkit-box-sizing	: border-box;
@@ -92,27 +92,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	text-align			: right;
 	padding				: 2px 4px 2px 2px;
 }
-.calendar tbody .hover {
+.xsltforms-calendar tbody .xsltforms-listHover {
 	padding				: 1px 3px 1px 1px;
 	border				: 1px solid;
 	border-color		: #fff #000 #000 #fff;
 	background-color	: #dddddd;
 }
-.calendar .today {
+.xsltforms-calendar .xsltforms-calendar-today {
 	font-weight			: bold;
 	color				: #00f;
 }
-.calendar .selected {
+.xsltforms-calendar .xsltforms-calendar-selected {
 	font-weight			: bold;
 	padding				: 2px 2px 0 2px;
 	border				: 1px solid;
 	border-color		: #000 #fff #fff #000;
 	background			: #cccccc;
 }
-.calendar .weekend {
+.xsltforms-calendar .xsltforms-calendar-weekend {
 	color				: #f00;
 }
-.calendarList {
+.xsltforms-calendarList {
 	padding				: 0;
 	margin				: 0;
 	width				: 55px;
@@ -120,12 +120,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	-webkit-box-sizing	: border-box;
 	box-sizing			: border-box;
 }
-.calendarList li {
+.xsltforms-calendarList li {
 	list-style-type		: none;
 	text-align			: center;
 	padding				: 1px;
 }
-.calendarList li.hover {
+.xsltforms-calendarList li.xsltforms-listHover {
 	border				: 1px solid;
 	border-color		: #fff #000 #000 #fff;
 	padding				: 0;
@@ -135,6 +135,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 .xforms-choices {
 	font-weight: bold;
 	font-style: italic;
+}
+.xforms-group-label-collapsed::before {
+	content		: '\23F5\00A0';
+}
+.xforms-group-label-collapsed:hover {
+	cursor		: pointer;
+}
+.xforms-group-label-expanded::before {
+	content		: '\23F7\00A0';
+}
+.xforms-group-label-expanded:hover {
+	cursor		: pointer;
 }
 #xsltforms_console {
 	font-size			: 0.8em;
@@ -207,8 +219,15 @@ span.xforms-alert {
 .xforms-invalid span.xforms-alert {
 	display				: inline;
 }
-span.xforms-alert-value {
+span.xforms-alert:hover span.xforms-alert-value {
 	background-color	: #ffeeee;
+	display				: inline;
+}
+span.xforms-hint:hover span.xforms-hint-value {
+	display				: inline;
+}
+span.xforms-help:hover span.xforms-help-value {
+	display				: inline;
 }
 span.xforms-alert-icon, span.xforms-help-icon, span.xforms-hint-icon {
 	cursor				: help;
@@ -220,15 +239,15 @@ span.xforms-alert-icon, span.xforms-help-icon, span.xforms-hint-icon {
 	box-sizing			: border-box;
 }
 span.xforms-alert-icon {
-	background-image	: url(../img/icon_error.gif); 
+	background-image	: url(icon_error.gif); 
 	background-repeat : no-repeat;
 }
 span.xforms-help-icon {
-	background-image	: url(../img/icon_help.gif); 
+	background-image	: url(icon_help.gif); 
 	background-repeat : no-repeat;
 }
 span.xforms-hint-icon {
-	background-image	: url(../img/icon_hint.gif); 
+	background-image	: url(icon_hint.gif); 
 	background-repeat : no-repeat;
 }
 span.focus {

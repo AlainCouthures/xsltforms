@@ -1,8 +1,8 @@
 /*
-XSLTForms 1.0 (647)
-XForms 1.1+ with XPath 1.0 Engine
+XSLTForms 1.2 (651)
+XForms 1.1+ with XPath 1.0+ Engine
 
-Copyright (C) 2017 agenceXML - Alain Couthures
+Copyright (C) 2018 agenceXML - Alain Couthures
 Contact at : xsltforms@agencexml.com
 
 This library is free software; you can redistribute it and/or
@@ -146,8 +146,8 @@ var XsltForms_xpathAxis = {
 };
 var XsltForms_context;
 var XsltForms_globals = {
-	fileVersion: "1.0",
-	fileVersionNumber: 647,
+	fileVersion: "1.2",
+	fileVersionNumber: 651,
 	language: "navigator",
 	debugMode: false,
 	debugButtons: [
@@ -1114,9 +1114,9 @@ var XsltForms_browser = {
 			}
 		} else if (element.className) {
 			if (typeof element.className === "string") {
-				element.className = element.className.replace(className, "");
+				element.className = element.className.replace(className, "").replace(/ +/g, " ");
 			} else {
-				element.className.baseVal = element.className.baseVal.replace(className, "");
+				element.className.baseVal = element.className.baseVal.replace(className, "").replace(/ +/g, " ");
 			}
 		}
 	},
@@ -1127,10 +1127,10 @@ var XsltForms_browser = {
 	},
 	initHover : function(element) {
 		XsltForms_browser.events.attach(element, "mouseover", function(evt) {
-			XsltForms_browser.setClass(XsltForms_browser.events.getTarget(evt), "hover", true);
+			XsltForms_browser.setClass(XsltForms_browser.events.getTarget(evt), "xsltforms-listHover", true);
 		} );
 		XsltForms_browser.events.attach(element, "mouseout", function(evt) {
-			XsltForms_browser.setClass(XsltForms_browser.events.getTarget(evt), "hover", false);
+			XsltForms_browser.setClass(XsltForms_browser.events.getTarget(evt), "xsltforms-listHover", false);
 		} );
 	},
 	getEventPos : function(ev) {
@@ -1396,6 +1396,7 @@ if (XsltForms_browser.isIE || XsltForms_browser.isIE11) {
 				xsltProcessor.setParameter(null, "xsltforms_caller", "true");
 			}
 			try {
+				xsltProcessor.setParameter(null, "xsltforms_home", XsltForms_globals.xsltHome);
 				xsltProcessor.setParameter(null, "xsltforms_config", document.getElementById(XsltForms_browser.idPf + "instance-config").xfElement.srcDoc);
 				xsltProcessor.setParameter(null, "xsltforms_lang", XsltForms_globals.language);
 				xsltProcessor.setParameter(null, "xsltforms_domengine", XsltForms_fullDomEngine);
@@ -2425,6 +2426,191 @@ XsltForms_browser.inValueMeta = function(node, meta, value) {
 		return pos !== -1;
 	}
 };
+XsltForms_browser.md2string = function(s) {
+	var lines = s.split("\n");
+	var items = [], lseps = [];
+	var blocks = [];
+	var ser = "";
+	for (var i = 0, l = lines.length; i < l; i++) {
+		if (lines[i].trim() !== "") {
+			items.push(lines[i]);
+			lseps.push(0);
+		} else if (lseps.length !== 0) {
+			lseps[lseps.length - 1]++;
+		}
+	}
+	var dashtrim = function(s) {
+		var t = s.trim();
+		for (var i0 = t.length - 1; i0 >= 0; i0--) {
+			if (t.charAt(i0) !== "#") {
+				return t.substr(0, i0 + 1).trim();
+			}
+		}
+		return "";
+	};
+	var oi, oi2;
+	var outol = true;
+	var pol = false;
+	var orderitem = function(s) {
+		oi = 0;
+		var c = s.charCodeAt(oi);
+		if (outol || c !== 42 || c !== 43 || c !== 45) {
+			while (c >= 48 && c <= 57) {
+				oi++;
+				c = s.charCodeAt(oi);
+			}
+			return c === 46 && oi !== 0 && s.charCodeAt(oi + 1) === 32 ? oi + 2 : -1;
+		}
+		return s.charCodeAt(1) === 32 ? 2 : -1;
+	};
+	var ui, ui2;
+	var outul = true;
+	var pul = false;
+	var unorderitem = function(s) {
+		ui = 0;
+		var c = s.charCodeAt(ui);
+		if (c === 42 || c === 43 || c === 45) {
+			return s.charCodeAt(1) === 32 ? 2 : -1;
+		}
+		while (c >= 48 && c <= 57) {
+			ui++;
+			c = s.charCodeAt(ui);
+		}
+		return !outul && c === 46 && ui !== 0 && s.charCodeAt(ui + 1) === 32 ? ui + 2 : -1;
+	};
+	var inlinemd = function(s) {
+		var r = "";
+		var outem = true;
+		var outstrong = true;
+		var outdel = true;
+		for (var il = 0, ll = s.length; il < ll; il++) {
+			var c = s.charAt(il);
+			if (c === "*" || c === "_") {
+				if (s.charAt(il + 1) === c) {
+					if ((outstrong && s.substr(il + 2).indexOf(c + c) !== -1) || !outstrong) {
+						r += "<" + (outstrong ? "" : "/") + "strong>";
+						outstrong = !outstrong;
+						il++;
+					} else {
+						r += c + c;
+					}
+				} else {
+					if ((outem && s.substr(il + 1).replace(c + c, "").indexOf(c) !== -1) || !outem) {
+						r += "<" + (outem ? "" : "/") + "em>";
+						outem = !outem;
+					} else {
+						r += c;
+					}
+				}
+			} else if (c === "~" && s.charAt(il + 1) === "~") {
+				if ((outdel && s.substr(il + 2).indexOf("~~") !== -1) || !outdel) {
+					r += "<" + (outdel ? "" : "/") + "del>";
+					outdel = !outdel;
+					il++;
+				} else {
+					r += "~~";
+				}
+			} else if (c === "[") {
+				var anchor = "";
+				var link = "";
+				c = s.charAt(++il);
+				while (il < ll) {
+					if (c === "]") {
+						break;
+					}
+					anchor += c;
+					c = s.charAt(++il);
+				}
+				c = s.charAt(++il);
+				if (c === "(") {
+					c = s.charAt(++il);
+					while (il < ll) {
+						if (c === ")") {
+							break;
+						}
+						link += c;
+						c = s.charAt(++il);
+					}
+					r += "<a href='" + link + "'>" + anchor + "</a>";
+				}
+			} else {
+				r += c;
+			}
+		}
+		return r;
+	};
+	var lastli = 0;
+	for (i = 0, l = items.length; i < l; i++) {
+		if (items[i].startsWith("# ")) {
+			blocks.push(["h1", inlinemd(dashtrim(items[i].substr(2)))]);
+		} else if (items[i].startsWith("## ")) {
+			blocks.push(["h2", inlinemd(dashtrim(items[i].substr(3)))]);
+		} else if (items[i].startsWith("### ")) {
+			blocks.push(["h3", inlinemd(dashtrim(items[i].substr(4)))]);
+		} else if (items[i].startsWith("#### ")) {
+			blocks.push(["h4", inlinemd(dashtrim(items[i].substr(5)))]);
+		} else if (items[i].startsWith("##### ")) {
+			blocks.push(["h5", inlinemd(dashtrim(items[i].substr(6)))]);
+		} else if (items[i].startsWith("###### ")) {
+			blocks.push(["h6", inlinemd(dashtrim(items[i].substr(7)))]);
+		} else if (items[i].startsWith("---") && items[i].trim() === "-".repeat(items[i].trim().length)) {
+			if (blocks.length === 0 || blocks[blocks.length - 1][0] !== "p" || lseps[i - 1] !== 0) {
+				blocks.push(["hr"]);
+			} else  {
+				blocks[blocks.length - 1][0] = "h2";
+			}
+		} else if (items[i].startsWith("===") && items[i].trim() === "=".repeat(items[i].trim().length) && blocks.length !== 0 && blocks[blocks.length - 1][0] === "p" && lseps[i - 1] === 0) {
+			blocks[blocks.length - 1][0] = "h1";
+		} else if (orderitem(items[i]) !== -1 && outul) {
+			if (outol) {
+				pol = false;
+			}
+			oi2 = oi;
+			blocks.push(["", (outol ? "<ol><li>" : "<li>") + ((lseps[i] !== 0 && i !== l - 1 && orderitem(items[i + 1]) !== -1) || pol ? "<p>" : "") + inlinemd(items[i].substr(oi2 + 1).trim()) + ((lseps[i] !== 0 && i !== l - 1 && orderitem(items[i + 1]) !== -1) || pol ? "</p>" : "") + "</li></ol>"]);
+			if (!outol) {
+				blocks[lastli][1] = blocks[lastli][1].substr(0, blocks[lastli][1].length - 5);
+			}
+			lastli = blocks.length - 1;
+			outol = false;
+			pol = lseps[i] !== 0;
+		} else if (unorderitem(items[i]) !== -1) {
+			if (outul) {
+				pul = false;
+			}
+			ui2 = ui;
+			blocks.push(["", (outul ? "<ul><li>" : "<li>") + ((lseps[i] !== 0 && i !== l - 1 && unorderitem(items[i + 1]) !== -1) || pul ? "<p>" : "") + inlinemd(items[i].substr(ui2 + 1).trim()) + ((lseps[i] !== 0 && i !== l - 1 && unorderitem(items[i + 1]) !== -1) || pul ? "</p>" : "") + "</li></ul>"]);
+			if (!outul) {
+				blocks[lastli][1] = blocks[lastli][1].substr(0, blocks[lastli][1].length - 5);
+			}
+			lastli = blocks.length - 1;
+			outul = false;
+			pul = lseps[i] !== 0;
+		} else if (blocks.length === 0 || blocks[blocks.length - 1][0] !== "p" || lseps[i - 1] !== 0) {
+			blocks.push([lines.length === 1 ? "" : "p", [inlinemd(items[i])]]);
+		} else {
+			blocks[blocks.length - 1][1].push(inlinemd(items[i]));
+		}
+	}
+	for (i = 0, l = blocks.length; i < l; i++) {
+		if (blocks[i][0] !== "") {
+			ser += "<" + blocks[i][0] + ">";
+		}
+		if (blocks[i][0] === "p") {
+			for (var j = 0, l2 = blocks[i][1].length; j < l2; j++) {
+				if (j !== 0) {
+					ser += "<br/>";
+				}
+				ser += blocks[i][1][j];
+			}
+		} else if (blocks[i].length === 2) {
+			ser += blocks[i][1];
+		}
+		if (blocks[i][0] !== "") {
+			ser += "</" + blocks[i][0] + ">";
+		}
+	}
+	return ser;
+};
 XsltForms_browser.name2string = function(node) {
 	var s = "";
 	if (!node.nodeType) {
@@ -3043,7 +3229,7 @@ XsltForms_numberList.prototype.refresh = function()  {
 	}
 	var topn = cur + 4;
 	for (var i = 1; i < 8; i++) {
-		XsltForms_browser.setClass(childs[i], "hover", false);
+		XsltForms_browser.setClass(childs[i], "xsltforms-listHover", false);
 		var str = String(topn - i);
 		while (str.length < this.minlength) {
 			str = '0' + str;
@@ -3227,20 +3413,22 @@ XsltForms_browser.run = function(action, element, evt, synch, propagate) {
 		XsltForms_browser.dialog.show("statusPanel", null, false);
 		setTimeout(function() { 
 			XsltForms_globals.openAction("XsltForms_browser.run#1");
-			action.execute(XsltForms_idManager.find(element), null, evt);
+			action.execute(document.getElementById(element), null, evt);
 			XsltForms_browser.dialog.hide("statusPanel", false);
 			if (!propagate) {
 				evt.stopPropagation();
 			}
 			XsltForms_globals.closeAction("XsltForms_browser.run#1");
+			XsltForms_xmlevents.EventContexts.pop();
 		}, 1 );
 	} else {
 		XsltForms_globals.openAction("XsltForms_browser.run#2");
-		action.execute(XsltForms_idManager.find(element), null, evt);
+		action.execute(document.getElementById(element), null, evt);
 		if (!propagate) {
 			evt.stopPropagation();
 		}
 		XsltForms_globals.closeAction("XsltForms_browser.run#2");
+		XsltForms_xmlevents.EventContexts.pop();
 	}
 };
 XsltForms_browser.getId = function(element) {
@@ -3250,7 +3438,7 @@ XsltForms_browser.getId = function(element) {
 	return element.parentNode.parentNode.parentNode.parentNode.id;
 };
 XsltForms_browser.show = function(el, type, value) {
-	el.parentNode.lastChild.style.display = value? 'inline' : 'none';
+	XsltForms_browser.setClass(el.parentNode.lastChild, "xforms-hidden", !value);
 };
 XsltForms_browser.copyArray = function(source, dest) {
 	if( dest ) {
@@ -3578,6 +3766,9 @@ function XsltForms_listener(subform, observer, evtTarget, evtname, phase, handle
 	}
 	observer.listeners.push(this);
 	this.callback = function(evt) {
+		if (!document.getElementById(evt.target.id) || !document.getElementById(this.id)) {
+			return;
+		}
 		if (!document.addEventListener) {
 			evt = evt || window.event;
 			evt.target = evt.srcElement;
@@ -3611,7 +3802,7 @@ function XsltForms_listener(subform, observer, evtTarget, evtname, phase, handle
 		if (evt.target && evt.target.nodeType === 3) {
 			evt.target = evt.target.parentNode;
 		}
-		if (evt.currentTarget && evt.type === "DOMActivate" && (evt.target.nodeName.toUpperCase() === "BUTTON" || evt.target.nodeName.toUpperCase() === "A" || (XsltForms_browser.isChrome && (evt.eventPhase === 3 || evt instanceof UIEvent)  && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
+		if (evt.currentTarget && (evt.target.nodeName.toUpperCase() === "BUTTON" || evt.target.nodeName.toUpperCase() === "A" || evt.target.nodeName.toUpperCase() === "INPUT" || (XsltForms_browser.isChrome && (evt.eventPhase === 3 || evt instanceof UIEvent)  && this.xfElement  && this.xfElement.controlName === "trigger"))  && !XsltForms_browser.isFF2) {
 			effectiveTarget = false;
 		}
 		if (evt.eventPhase === 3 && evt.target.xfElement && evt.target === evt.currentTarget && !XsltForms_browser.isFF2) {
@@ -4931,6 +5122,10 @@ var XsltForms_xpathFunctionExceptions = {
 	matchInvalidArgumentsNumber : {
 		name : "match() : Invalid number of arguments",
 		message : "match() function must have two or three arguments"
+	},
+	uuidInvalidArgumentsNumber : {
+		name : "uuid() : Invalid number of arguments",
+		message : "uuid() function must have no argument"
 	}
 };
 var XsltForms_xpathCoreFunctions = {
@@ -6201,21 +6396,25 @@ var XsltForms_xpathCoreFunctions = {
 			} else {
 				flags = "";
 			}
-			var re = new RegExp(pattern, flags);
-			var mres = str.match(re);
-			if (!mres) {
+			try {
+				var re = new RegExp(pattern, flags);
+				var mres = str.match(re);
+				if (!mres) {
+					return [];
+				}
+				var melts = "";
+				for (var i = 0, l = mres.length; i < l; i++) {
+					melts += "<match>" + mres[i] + "</match>";
+				}
+				var mdoc = XsltForms_browser.createXMLDocument("<matches>" + melts + "</matches>");
+				var marr = [];
+				for(i = 0, l = mdoc.documentElement.children.length; i <l; i++) {
+					marr.push(mdoc.documentElement.children[i]);
+				}
+				return marr;
+			} catch (e) {
 				return [];
 			}
-			var melts = "";
-			for (var i = 0, l = mres.length; i < l; i++) {
-				melts += "<match>" + mres[i] + "</match>";
-			}
-			var mdoc = XsltForms_browser.createXMLDocument("<matches>" + melts + "</matches>");
-			var marr = [];
-			for(i = 0, l = mdoc.documentElement.children.length; i <l; i++) {
-				marr.push(mdoc.documentElement.children[i]);
-			}
-			return marr;
 		} ),
 	"http://www.w3.org/2005/xpath-functions alert" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function(arg) {
@@ -6313,10 +6512,20 @@ var XsltForms_xpathCoreFunctions = {
 			}
 			return tokens;
 		}),
+	"http://www.w3.org/2005/xpath-functions uuid" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
+		function() {
+			if (arguments.length !== 0) {
+				throw XsltForms_xpathFunctionExceptions.uuidInvalidArgumentsNumber;
+			}
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+				return v.toString(16);
+			});
+		}),
 	"http://www.w3.org/2005/xpath-functions invalid-id" : new XsltForms_xpathFunction(false, XsltForms_xpathFunction.DEFAULT_NONE, false,
 		function() {
 			return XsltForms_globals.invalid_id_(XsltForms_globals.body);
-		} )
+		})
 };
 XsltForms_globals.invalid_id_ = function(element) {
 	if (element.nodeType !== Fleur.Node.ELEMENT_NODE || element.id === "xsltforms_console" || element.hasXFElement === false) {
@@ -6502,9 +6711,8 @@ XsltForms_model.create = function(subform, id, schemas, functions, version) {
 		subform.models.push(elt.xfElement);
 		XsltForms_globals.addChange(elt.xfElement);
 		return elt.xfElement;
-	} else {
-		return new XsltForms_model(subform, id, schemas, functions, version);
 	}
+	return new XsltForms_model(subform, id, schemas, functions, version);
 };
 XsltForms_model.prototype.addInstance = function(instance) {
 	this.instances[instance.element.id] = instance;
@@ -6602,6 +6810,7 @@ XsltForms_model.prototype.revalidate = function() {
 	}
 };
 XsltForms_model.prototype.refresh = function() {
+	XsltForms_globals.refresh();
 };
 XsltForms_model.prototype.addChange = function(node) {
 	var list = XsltForms_globals.building? this.newNodesChanged : this.nodesChanged;
@@ -6649,7 +6858,11 @@ function XsltForms_instance(subform, id, model, readonly, mediatype, src, srcDoc
 			}
 		}
 		this.src = XsltForms_browser.unescape(src);
-		switch(this.mediatype) {
+		var newmediatype = this.mediatype;
+		if (newmediatype.substr(newmediatype.length - 4) === "/xml" || newmediatype.substr(newmediatype.length - 4) === "/xsl" || newmediatype.substr(newmediatype.length - 4) === "+xml") {
+			newmediatype = "application/xml";
+		}
+		switch(newmediatype) {
 			case "application/xml":
 				this.srcDoc = XsltForms_browser.unescape(srcDoc);
 				if (this.srcDoc.substring(0, 1) === "&") {
@@ -6709,9 +6922,8 @@ XsltForms_instance.create = function(subform, id, model, readonly, mediatype, sr
 		instelt.xfElement.nbsubforms++;
 		subform.instances.push(instelt.xfElement);
 		return instelt.xfElement;
-	} else {
-		return new XsltForms_instance(subform, id, model, readonly, mediatype, src, srcDoc);
 	}
+	return new XsltForms_instance(subform, id, model, readonly, mediatype, src, srcDoc);
 };
 XsltForms_instance.prototype.dispose = function(subform) {
 	if (subform && this.nbsubforms !== 1) {
@@ -6867,7 +7079,11 @@ if (XsltForms_domEngine === "") {
 					break;
 			}
 		}
-		switch(this.mediatype) {
+		var newmediatype = this.mediatype;
+		if (newmediatype.substr(newmediatype.length - 4) === "/xml" || newmediatype.substr(newmediatype.length - 4) === "/xsl" || newmediatype.substr(newmediatype.length - 4) === "+xml") {
+			newmediatype = "application/xml";
+		}
+		switch(newmediatype) {
 			case "text/json":
 			case "application/json":
 				var json;
@@ -6926,7 +7142,6 @@ if (XsltForms_domEngine === "") {
 				delete arch.srcDoc;
 				this.archive = arch;
 				break;
-			case "text/xml":
 			case "application/xml":
 				break;
 			default:
@@ -7814,7 +8029,7 @@ XsltForms_submission.prototype.submit = function() {
 		method = this.method;
 	}
 	var evcontext = {"method": method, "resource-uri": action};
-	if (action.subst && action.subst(0, 8) === "local://" && (typeof(localStorage) === 'undefined')) {
+	if (action.substr && action.substr(0, 8) === "local://" && (typeof(localStorage) === 'undefined')) {
 		evcontext["error-type"] = "validation-error";
 		this.issueSubmitException_(evcontext, null, {message: "local:// submission not supported"});
 		XsltForms_globals.closeAction("XsltForms_submission.prototype.submit");
@@ -8541,7 +8756,7 @@ XsltForms_dispatch.prototype.run = function(element, ctx, evt) {
 				break;
 		}
 	} else {
-		target = typeof target === "string"? document.getElementById(target) : target;
+		target = typeof target === "string"? XsltForms_idManager.find(target) : target;
 		if (!target && evname.indexOf("xforms-") === 0) {
 			evname = "xforms-binding-exception";
 			target = element;
@@ -9433,7 +9648,7 @@ XsltForms_element.prototype.evaluateBinding = function(binding, ctx, varresolver
 			}
 		}
 		this.boundnodes = binding.bind_evaluate(this.subform, ctx, varresolver, this.depsNodesBuild, this.depsIdB, this.depsElements);
-		if (this.boundnodes || this.boundnodes === "") {
+		if (this.boundnodes || this.boundnodes === "" || this.boundnodes === 0) {
 			return this.boundnodes;
 		}
 		errmsg = "non-existent bind-ID("+ binding.bind + ") on element(" + this.element.id + ")!";
@@ -9846,6 +10061,19 @@ XsltForms_group.prototype.refresh = function() {
 		XsltForms_browser.setClass(tab, "xforms-disabled", disabled);
 	}
 };
+XsltForms_group.prototype.collapse = function() {
+	var label = this.element.children[0];
+	var content = this.element.children[1];
+	if (XsltForms_browser.hasClass(label, "xforms-group-label-collapsed")) {
+		XsltForms_browser.setClass(label, "xforms-group-label-collapsed", false);
+		XsltForms_browser.setClass(label, "xforms-group-label-expanded", true);
+		XsltForms_browser.setClass(content, "xforms-disabled", false);
+	} else {
+		XsltForms_browser.setClass(label, "xforms-group-label-collapsed", true);
+		XsltForms_browser.setClass(label, "xforms-group-label-expanded", false);
+		XsltForms_browser.setClass(content, "xforms-disabled", true);
+	}
+};
 function XsltForms_input(subform, id, valoff, itype, binding, inputmode, incremental, delay, mediatype, aidButton, clone) {
 	XsltForms_globals.counters.input++;
 	this.init(subform, id);
@@ -10070,7 +10298,7 @@ XsltForms_input.prototype.setValue = function(value) {
 	} else if (this.type.rte && this.type.rte.toLowerCase() === "tinymce" && tinymce.get(this.input.id)) {
 		try {
 			var editor = tinymce.get(this.input.id);
-			var prevalue = editor.contentDocument ? editor.contentDocument.body.innerHTML : editor.getContent();
+			var prevalue = editor.getContent ? editor.getContent() : editor.contentDocument.body.innerHTML;
 			if (prevalue !== value) {
 				this.input.value = value || "";
 				editor.setContent(value);
@@ -10144,8 +10372,6 @@ XsltForms_input.prototype.initEvents = function(input, canActivate) {
 		XsltForms_browser.events.attach(input, "keypress", XsltForms_input.keyPressActivate);
 		if (this.incremental) {
 			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpIncrementalActivate);
-		} else {
-			XsltForms_browser.events.attach(input, changeEventName, XsltForms_input.keyUpActivate);
 		}
 	} else {
 		if (this.incremental) {
@@ -10207,8 +10433,13 @@ XsltForms_input.keyDownActivate = function(a) {
 	this.keyDownCode = a.keyCode;
 };
 XsltForms_input.keyPressActivate = function(a) {
+	var xf = XsltForms_control.getXFElement(this);
 	this.keyPressCode = a.keyCode;
 	if (a.keyCode === 13) {
+		XsltForms_globals.openAction("XsltForms_input.keyUpActivate");
+		xf.valueChanged((this.type === "time" && this.value && this.value.length === 5 ? this.value + ":00" : this.value) || "");
+		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
+		XsltForms_globals.closeAction("XsltForms_input.keyUpActivate");
 		if (a.stopPropagation) {
 			a.stopPropagation();
 			a.preventDefault();
@@ -10218,23 +10449,10 @@ XsltForms_input.keyPressActivate = function(a) {
 	}
 };
 XsltForms_input.keyUpActivate = function(a) {
-	var xf = XsltForms_control.getXFElement(this);
-	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
-		XsltForms_globals.openAction("XsltForms_input.keyUpActivate");
-		xf.valueChanged((this.type === "time" && this.value && this.value.length === 5 ? this.value + ":00" : this.value) || "");
-		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
-		XsltForms_globals.closeAction("XsltForms_input.keyUpActivate");
-	}
 	this.keyDownCode = this.keyPressCode = null;
 };
 XsltForms_input.keyUpIncrementalActivate = function(a) {
 	var xf = XsltForms_control.getXFElement(this);
-	if (a.keyCode === 13 && (this.keyDownCode === 13 || this.keyPressCode === 13)) {
-		XsltForms_globals.openAction("XsltForms_input.keyUpIncrementalActivate#1");
-		xf.valueChanged((this.type === "time" && this.value && this.value.length === 5 ? this.value + ":00" : this.value) || "");
-		XsltForms_xmlevents.dispatch(xf, "DOMActivate");
-		XsltForms_globals.closeAction("XsltForms_input.keyUpIncrementalActivate#1");
-	} else {
 		if (xf.delay && xf.delay > 0) {
 			if (xf.timer) {
 				window.clearTimeout(xf.timer);
@@ -10251,7 +10469,6 @@ XsltForms_input.keyUpIncrementalActivate = function(a) {
 			xf.valueChanged((this.type === "time" && this.value && this.value.length === 5 ? this.value + ":00" : this.value) || "");
 			XsltForms_globals.closeAction("XsltForms_input.keyUpIncrementalActivate#3");
 		}
-	}
 	this.keyDownCode = this.keyPressCode = null;
 };
 XsltForms_input.inputActivate = function(a) {
@@ -10576,13 +10793,17 @@ function XsltForms_output(subform, id, valoff, binding, mediatype) {
 	if (valuechildren.length !== 0) {
 		this.valueElement = valuechildren[0];
 	}
-	this.hasBinding = true;
 	this.binding = binding;
+	this.hasBinding = typeof binding !== "string";
 	this.mediatype = mediatype;
-	this.complex = mediatype === "application/xhtml+xml";
+	this.complex = mediatype === "application/xhtml+xml" || mediatype === "text/html" || mediatype === "text/markdown";
 	this.isOutput = true;
-	if (this.binding && this.binding.type) {
-		XsltForms_browser.setClass(this.element, "xforms-disabled", false);
+	if (this.binding) {
+		if (this.binding.type) {
+			XsltForms_browser.setClass(this.element, "xforms-disabled", false);
+		} else if (typeof binding === "string") {
+			this.setValue(binding);
+		}
 	}
 }
 XsltForms_output.prototype = new XsltForms_control();
@@ -10614,12 +10835,19 @@ XsltForms_output.prototype.setValue = function(value) {
 			element = spanelt;
 		}
 		if (element.nodeName.toLowerCase() === "span" || element.nodeName.toLowerCase() === "tspan" || element.nodeName.toLowerCase() === "label") {
-			if (mediatype === "application/xhtml+xml") {
+			if (mediatype === "application/xhtml+xml" || mediatype === "text/html") {
 				while (element.firstChild) {
 					element.removeChild(element.firstChild);
 				}
 				if (value) {
 					element.innerHTML = value;
+				}
+			} else if (mediatype === "text/markdown") {
+				while (element.firstChild) {
+					element.removeChild(element.firstChild);
+				}
+				if (value) {
+					element.innerHTML = XsltForms_browser.md2string(value);
 				}
 			} else if (mediatype === "image/svg+xml") {
 				while (element.firstChild) {
@@ -10741,9 +10969,9 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 				}
 				var node = xf.element.node;
 				var value = Math.round(newPos / xf.rail.clientWidth * (xf.end - xf.start) / xf.step) * xf.step + xf.start;
-				var f = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format;
-				if (f) {
-					value = f(value);
+				var dt = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
+				if (dt.format) {
+					value = dt.format(value);
 				}
 				xf.setValue(value);
 				if (xf.incremental) {
@@ -10786,9 +11014,9 @@ function XsltForms_range(subform, id, valoff, binding, incremental, start, end, 
 							var node = xf.element.node;
 							var value = Math.round(newPos / xf.rail.clientWidth * (xf.end - xf.start) / xf.step) * xf.step + xf.start;
 							value = Math.min(Math.max(value, xf.start), xf.end);
-							var f = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string").format;
-							if (f) {
-								value = f(value);
+							var dt = XsltForms_schema.getType(XsltForms_browser.getType(node) || "xsd_:string");
+							if (dt.format) {
+								value = dt.format(value);
 							}
 							xf.setValue(value);
 							if (xf.incremental) {
@@ -11837,10 +12065,10 @@ XsltForms_var.prototype.dispose = function() {
 };
 function XsltForms_calendar() {
 	var body = XsltForms_browser.isXhtml ? document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0] : document.getElementsByTagName("body")[0];
-	this.element = XsltForms_browser.createElement("table", body, null, "calendar");
+	this.element = XsltForms_browser.createElement("table", body, null, "xsltforms-calendar");
 	var tHead = XsltForms_browser.createElement("thead", this.element);
 	var trTitle = XsltForms_browser.createElement("tr", tHead);
-	var title = XsltForms_browser.createElement("td", trTitle, null, "title");
+	var title = XsltForms_browser.createElement("td", trTitle, null, "xsltforms-calendar-title");
 	title.colSpan = 7;
 	this.selectMonth = XsltForms_browser.createElement("select", title);
 	XsltForms_browser.events.attach(this.selectMonth, "change", function() {
@@ -11865,11 +12093,11 @@ function XsltForms_calendar() {
 	XsltForms_browser.events.attach(closeElt, "click", function() {
 		XsltForms_calendar.close();
 	} );
-	var trDays = XsltForms_browser.createElement("tr", tHead, null, "names");
+	var trDays = XsltForms_browser.createElement("tr", tHead, null, "xsltforms-calendar-names");
 	var ini = parseInt(XsltForms_browser.i18n.get("calendar.initDay"), 10);
 	for (var j = 0; j < 7; j++) {
 		var ind = (j + ini) % 7;
-		this.createElement(trDays, "name", XsltForms_browser.i18n.get("calendar.day" + ind));
+		this.createElement(trDays, "xsltforms-calendar-name", XsltForms_browser.i18n.get("calendar.day" + ind));
 	}
 	this.tBody = XsltForms_browser.createElement("tbody", this.element);
 	var handler = function(evt) {
@@ -11894,7 +12122,7 @@ function XsltForms_calendar() {
 	for (var dtr = 0; dtr < 6; dtr++) {
 		var trLine = XsltForms_browser.createElement("tr", this.tBody);
 		for (var day = 0; day < 7; day++) {
-			this.createElement(trLine, "day", " ", 1, handler);
+			this.createElement(trLine, "xsltforms-calendar-day", " ", 1, handler);
 		}
 	}
 	var tFoot = XsltForms_browser.createElement("tfoot", this.element);
@@ -11920,10 +12148,10 @@ function XsltForms_calendar() {
 			XsltForms_calendar.INSTANCE.secList.show();
 		}
 	} );
-	this.yearList = new XsltForms_numberList(title, "calendarList", this.inputYear, 1900, 2050);
-	this.hourList = new XsltForms_numberList(tdFoot, "calendarList", this.inputHour, 0, 23, 2);
-	this.minList = new XsltForms_numberList(tdFoot, "calendarList", this.inputMin, 0, 59, 2);
-	this.secList = new XsltForms_numberList(tdFoot, "calendarList", this.inputSec, 0, 59, 2);
+	this.yearList = new XsltForms_numberList(title, "xsltforms-calendarList", this.inputYear, 1900, 2050);
+	this.hourList = new XsltForms_numberList(tdFoot, "xsltforms-calendarList", this.inputHour, 0, 23, 2);
+	this.minList = new XsltForms_numberList(tdFoot, "xsltforms-calendarList", this.inputMin, 0, 59, 2);
+	this.secList = new XsltForms_numberList(tdFoot, "xsltforms-calendarList", this.inputSec, 0, 59, 2);
 }
 XsltForms_calendar.prototype.today = function() {
 	this.refreshControls(new Date());
@@ -11951,10 +12179,10 @@ XsltForms_calendar.prototype.refresh = function() {
 		for (var j = 0; j < 7; j++, cont++) {
 			var cell = trLine.childNodes[j];
 			var dayInMonth = (cont >= firstDay && cont < firstDay + daysOfMonth);
-			XsltForms_browser.setClass(cell, "hover", false);
-			XsltForms_browser.setClass(cell, "today", currentMonthYear && day === this.currentDay);
-			XsltForms_browser.setClass(cell, "selected", dayInMonth && day === this.day);
-			XsltForms_browser.setClass(cell, "weekend", (j+ini)%7 > 4);
+			XsltForms_browser.setClass(cell, "xsltforms-listHover", false);
+			XsltForms_browser.setClass(cell, "xsltforms-calendar-today", currentMonthYear && day === this.currentDay);
+			XsltForms_browser.setClass(cell, "xsltforms-calendar-selected", dayInMonth && day === this.day);
+			XsltForms_browser.setClass(cell, "xsltforms-calendar-weekend", (j+ini)%7 > 4);
 			cell.firstChild.nodeValue = dayInMonth ? day++ : "";
 		}
 	}
@@ -12004,7 +12232,7 @@ XsltForms_calendar.show = function(input, type) {
 	cal.input = input;
 	cal.type = type;
 	cal.isTimestamp = type !== XsltForms_calendar.ONLY_DATE;
-	XsltForms_browser.setClass(cal.element, "date", !cal.isTimestamp);
+	XsltForms_browser.setClass(cal.element, "xsltforms-calendar-date", !cal.isTimestamp);
 	var date;
 	try {
 		date = cal.isTimestamp? XsltForms_browser.i18n.parse(input.value) : XsltForms_browser.i18n.parseDate(input.value);
@@ -12598,6 +12826,10 @@ XsltForms_typeDefs.Default = {
 		"parse" : function(value) {
 			return value.toUpperCase();
 		}
+	},
+	"select1" : {
+		"nsuri" : "http://www.w3.org/2001/XMLSchema",
+		"whiteSpace" : "preserve"
 	}
 };
 XsltForms_typeDefs.XForms = {
@@ -13043,7 +13275,7 @@ if (typeof xsltforms_d0 === "undefined") {
 			document.getElementsByTagName("body")[0].appendChild(conselt);
 			XsltForms_browser.dialog.show('statusPanel');
 			if (!(document.documentElement.childNodes[0].nodeType === 8 || (XsltForms_browser.isIE && document.documentElement.childNodes[0].childNodes[1] && document.documentElement.childNodes[0].childNodes[1].nodeType === 8))) {
-				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms 1.0 (647) - Copyright (C) 2017 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
+				var comment = document.createComment("HTML elements and Javascript instructions generated by XSLTForms 1.2 (651) - Copyright (C) 2018 <agenceXML> - Alain COUTHURES - http://www.agencexml.com");
 				document.documentElement.insertBefore(comment, document.documentElement.firstChild);
 			}
 			var initelts2 = document.getElementsByTagName("script");
